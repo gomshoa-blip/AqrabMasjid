@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- base -->
+    <path android:fillColor="#FFFFFF" android:pathData="M28,78 h52 v-5 h-52 z" />
+    <!-- body -->
+    <path android:fillColor="#FFFFFF" android:pathData="M35,73 h34 v-15 h-34 z" />
+    <!-- dome -->
+    <path android:fillColor="#FFFFFF" android:pathData="M35,58 C35,47 44,40 52,36 C60,40 69,47 69,58 Z" />
+    <!-- spire -->
+    <path android:fillColor="#C9A227" android:pathData="M51,36 h2 v-7 h-2 z" />
+    <!-- minaret -->
+    <path android:fillColor="#FFFFFF" android:pathData="M73,73 h6 v-31 l-3,-6 l-3,6 z" />
+    <!-- door -->
+    <path android:fillColor="#0F6B4F" android:pathData="M48,73 v-8 a4,4 0 0,1 8,0 v8 z" />
+</vector>
