@@ -1,0 +1,30 @@
+package com.aqrabmasjid.app
+
+/** Change these links in one place. */
+object Config {
+    const val SITE_URL = "https://aqrab-masjid.netlify.app"
+
+    /** Page where people suggest a missing mosque (Google Form or site form). */
+    const val ADD_MOSQUE_URL = "https://aqrab-masjid.netlify.app/#add"
+
+    /** Donate opens official platforms only. */
+    const val DONATE_URL = "https://ehsan.sa"
+
+    /**
+     * Optional list of mosques you added yourself (from the requests you review).
+     * Format: [{"name":"مسجد ...","lat":24.7,"lng":46.6}]
+     * If the file does not exist, the app just skips it.
+     */
+    const val CUSTOM_MOSQUES_URL = "https://aqrab-masjid.netlify.app/mosques.json"
+
+    val OVERPASS_URLS = listOf(
+        "https://overpass-api.de/api/interpreter",
+        "https://overpass.kumi.systems/api/interpreter"
+    )
+
+    const val SHARE_TEXT =
+        "تطبيق مجاني يذكرك بالصلاة ويدلك على أقرب مسجد وأنت تسوق. شاركه والدال على الخير كفاعله\n$SITE_URL"
+
+    /** Minutes before adhan for the first alert. */
+    const val PRE_ALERT_MIN = 10
+}
