@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.pm.ApplicationInfo
 import androidx.car.app.CarAppService
 import androidx.car.app.Screen
+import androidx.car.app.ScreenManager
 import androidx.car.app.Session
 import androidx.car.app.validation.HostValidator
 import com.aqrabmasjid.app.Alerts
@@ -27,10 +28,13 @@ class MasjidCarAppService : CarAppService() {
 
 class MasjidSession : Session() {
 
+    private val screens: ScreenManager
+        get() = carContext.getCarService(ScreenManager::class.java)
+
     override fun onCreateScreen(intent: Intent): Screen {
         if (intent.action == Alerts.ACTION_SHOW_MOSQUES) {
             // Opened from the prayer alert: show mosques, back goes to prayer times
-            screenManager.push(PrayerScreen(carContext))
+            screens.push(PrayerScreen(carContext))
             return MosqueListScreen(carContext)
         }
         return PrayerScreen(carContext)
@@ -38,8 +42,8 @@ class MasjidSession : Session() {
 
     override fun onNewIntent(intent: Intent) {
         if (intent.action == Alerts.ACTION_SHOW_MOSQUES) {
-            if (screenManager.top !is MosqueListScreen) {
-                screenManager.push(MosqueListScreen(carContext))
+            if (screens.top !is MosqueListScreen) {
+                screens.push(MosqueListScreen(carContext))
             }
         }
     }
