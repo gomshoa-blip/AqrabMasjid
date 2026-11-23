@@ -77,6 +77,7 @@ class DrivingActivity : Activity() {
         ring = CountdownRing(this)
         tvTimes = bigText(22f, Color.parseColor("#DDDDDD"), bold = false)
         tvMosque = bigText(20f, Color.parseColor("#7FD3AE"), bold = false)
+        tvMosque.visibility = android.view.View.GONE
         info.addView(ring, LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
         info.addView(tvTimes)
@@ -121,7 +122,6 @@ class DrivingActivity : Activity() {
 
         // Refresh location and nearest mosque in the background
         LocationHelper.get(this) { loc ->
-            if (loc != null) MosqueRepo.nearby(this, loc.first, loc.second) { render() }
             render()
         }
     }
@@ -156,12 +156,12 @@ class DrivingActivity : Activity() {
         val st = PrayerCalc.status(this, lat, lng, now)
         val t = st.time
         RingFill.fill(this, ring, lat, lng, now)
-        tvTimes.text = L.t(
-            "الأذان ${PrayerCalc.fmtTime(t.adhan)} · الإقامة ${PrayerCalc.fmtTime(t.iqama)}",
-            "Adhan ${PrayerCalc.fmtTime(t.adhan)} · Iqama ${PrayerCalc.fmtTime(t.iqama)}"
+        // Only the iqama time (adhan time is already big in the ring)
+        tvTimes.text = if (st.isCurrent) "" else L.t(
+            "الإقامة ${PrayerCalc.fmtTime(t.iqama)}",
+            "Iqama ${PrayerCalc.fmtTime(t.iqama)}"
         )
-        val m = Prefs.nearest(this)
-        tvMosque.text = if (m != null && m.distKm <= 15) L.t("أقرب مسجد: ${m.name} · ${MosqueRepo.fmtDistance(m.distKm)}", "Nearest mosque: ${m.name} · ${MosqueRepo.fmtDistance(m.distKm)}") else ""
+        tvMosque.text = ""
     }
 
     /** Opens the app's own list of nearby mosques; the user picks one. */

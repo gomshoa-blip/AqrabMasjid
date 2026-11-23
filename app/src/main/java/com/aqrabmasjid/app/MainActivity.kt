@@ -186,9 +186,10 @@ class MainActivity : Activity() {
         // قيراط link: Riyadh only
         val riyadh = lat in 24.3..25.2 && lng in 46.2..47.3
         findViewById<View>(R.id.btnQirat).visibility = if (riyadh) View.VISIBLE else View.GONE
-        tvIqamaLeft.text = L.t(
-            "${st.time.prayer.ar}: الأذان ${PrayerCalc.fmtTime(st.time.adhan)} · الإقامة ${PrayerCalc.fmtTime(st.time.iqama)}",
-            "${st.time.prayer.ar}: Adhan ${PrayerCalc.fmtTime(st.time.adhan)} · Iqama ${PrayerCalc.fmtTime(st.time.iqama)}"
+        // Only the iqama time here (adhan time is already big above). After adhan the ring shows it.
+        tvIqamaLeft.text = if (st.isCurrent) "" else L.t(
+            "الإقامة ${PrayerCalc.fmtTime(st.time.iqama)}",
+            "Iqama ${PrayerCalc.fmtTime(st.time.iqama)}"
         )
         tvMethod.text = L.t("طريقة الحساب: ${day.methodName}", "Method: ${day.methodName}")
 
