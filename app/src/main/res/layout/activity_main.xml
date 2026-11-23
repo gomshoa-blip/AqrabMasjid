@@ -126,7 +126,7 @@
             android:layout_marginTop="18dp"
             android:paddingStart="4dp"
             android:paddingEnd="4dp"
-            android:text="تنبيه قبل الأذان بـ 10 دقائق وعند الأذان"
+            android:text="تنبيه عند الأذان، وبعده بـ 10 دقائق للإقامة"
             android:textSize="15sp" />
 
         <Button
