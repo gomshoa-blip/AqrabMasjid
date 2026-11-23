@@ -16,7 +16,7 @@
             android:id="@+id/cardNext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/green"
+            android:background="@drawable/bg_card_green"
             android:gravity="center"
             android:orientation="vertical"
             android:padding="20dp">
@@ -59,10 +59,13 @@
             android:id="@+id/btnGo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:backgroundTint="@color/gold"
+            android:layout_marginTop="10dp"
+            android:minHeight="54dp"
+            android:background="@drawable/bg_btn_gold"
+            android:stateListAnimator="@null"
             android:text="خذني لأقرب مسجد"
-            android:textColor="#000000"
+            android:textAllCaps="false"
+            android:textColor="#1F2A24"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -70,23 +73,31 @@
             android:id="@+id/btnRefresh"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="حدّث موقعي" />
+            android:layout_marginTop="10dp"
+            android:minHeight="54dp"
+            android:background="@drawable/bg_btn_outline"
+            android:stateListAnimator="@null"
+            android:text="حدّث موقعي"
+            android:textAllCaps="false"
+            android:textColor="#0F6B4F"
+            android:textSize="16sp" />
 
         <!-- Prayer times table -->
         <LinearLayout
             android:id="@+id/layoutTimes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:background="#FFFFFF"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_card_white"
             android:orientation="vertical"
-            android:padding="8dp" />
+            android:padding="10dp" />
 
         <TextView
             android:id="@+id/tvMethod"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
             android:textColor="#666666"
             android:textSize="12sp" />
 
@@ -104,6 +115,7 @@
             android:id="@+id/layoutMosques"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:orientation="vertical" />
 
         <!-- Alerts -->
@@ -111,7 +123,9 @@
             android:id="@+id/switchAlerts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="18dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
             android:text="تنبيه قبل الأذان بـ 10 دقائق وعند الأذان"
             android:textSize="15sp" />
 
@@ -119,37 +133,69 @@
             android:id="@+id/btnExact"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:minHeight="54dp"
+            android:background="@drawable/bg_btn_outline"
+            android:stateListAnimator="@null"
             android:text="اسمح بالتنبيه في الوقت الدقيق"
+            android:textAllCaps="false"
+            android:textColor="#0F6B4F"
+            android:textSize="16sp"
             android:visibility="gone" />
 
         <Button
             android:id="@+id/btnIqama"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="وقت الإقامة لكل صلاة" />
+            android:layout_marginTop="10dp"
+            android:minHeight="54dp"
+            android:background="@drawable/bg_btn_outline"
+            android:stateListAnimator="@null"
+            android:text="وقت الإقامة لكل صلاة"
+            android:textAllCaps="false"
+            android:textColor="#0F6B4F"
+            android:textSize="16sp" />
 
         <!-- Share / add / donate -->
         <Button
             android:id="@+id/btnShare"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:backgroundTint="@color/green"
+            android:layout_marginTop="10dp"
+            android:minHeight="54dp"
+            android:background="@drawable/bg_btn_green"
+            android:stateListAnimator="@null"
             android:text="شارك التطبيق - الدال على الخير كفاعله"
+            android:textAllCaps="false"
             android:textColor="#FFFFFF"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <Button
             android:id="@+id/btnAddMosque"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="➕ أضف مسجداً" />
+            android:layout_marginTop="10dp"
+            android:minHeight="54dp"
+            android:background="@drawable/bg_btn_outline"
+            android:stateListAnimator="@null"
+            android:text="➕ أضف مسجداً"
+            android:textAllCaps="false"
+            android:textColor="#0F6B4F"
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/btnDonate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="تبرع عبر منصة إحسان" />
+            android:layout_marginTop="10dp"
+            android:minHeight="54dp"
+            android:background="@drawable/bg_btn_outline"
+            android:stateListAnimator="@null"
+            android:text="تبرع عبر منصة إحسان"
+            android:textAllCaps="false"
+            android:textColor="#0F6B4F"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/tvStatus"
