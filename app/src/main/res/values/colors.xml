@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand colors (same in day and night) -->
+    <color name="green">#0F6B4F</color>
+    <color name="green_dark">#0A4A37</color>
+    <color name="gold">#C9A227</color>
+
+    <!-- Day colors (night versions are in values-night/colors.xml) -->
+    <color name="bg">#F5F7F4</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="stroke">#E3E0D8</color>
+    <color name="row_on">#E3EFE8</color>
+    <color name="text_primary">#1F2A24</color>
+    <color name="text_secondary">#666666</color>
+    <color name="text_hint">#888888</color>
+    <color name="accent_text">#0F6B4F</color>
+    <color name="outline_stroke">#0F6B4F</color>
+    <color name="title_text">#0A4A37</color>
+</resources>
