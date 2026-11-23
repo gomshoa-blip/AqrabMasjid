@@ -34,6 +34,12 @@
             </intent-filter>
         </service>
 
+        <!-- Driving mode: big text, one big button, screen stays on -->
+        <activity
+            android:name=".DrivingActivity"
+            android:exported="false"
+            android:label="وضع القيادة" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
