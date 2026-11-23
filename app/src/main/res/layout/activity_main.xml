@@ -384,6 +384,20 @@
             android:textColor="@color/accent_text"
             android:textSize="16sp"  android:textStyle="bold" />
 
+        <Button
+            android:id="@+id/btnWhatsApp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:minHeight="54dp"
+            android:background="@drawable/bg_btn_whatsapp"
+            android:stateListAnimator="@null"
+            android:text="💬 تواصل معنا عبر واتساب"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/tvStatus"
             android:layout_width="match_parent"
