@@ -65,6 +65,9 @@ class MainActivity : Activity() {
         btnExact = findViewById(R.id.btnExact)
 
         findViewById<Button>(R.id.btnRefresh).setOnClickListener { refresh() }
+        findViewById<Button>(R.id.btnDriving).setOnClickListener {
+            startActivity(Intent(this, DrivingActivity::class.java))
+        }
         findViewById<Button>(R.id.btnGo).setOnClickListener {
             val m = nearest
             if (m != null) openMaps(m) else openUrl("https://www.google.com/maps/search/?api=1&query=" + Uri.encode("مسجد"))
