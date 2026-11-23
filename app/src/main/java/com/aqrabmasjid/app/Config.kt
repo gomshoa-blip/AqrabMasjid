@@ -29,6 +29,9 @@ object Config {
     /** قيراط: Riyadh funeral prayers and cemeteries (shown in Riyadh only). */
     const val QIRAT_URL = "https://janaez-riyadh.netlify.app"
 
+    /** WhatsApp contact. */
+    const val WHATSAPP_URL = "https://wa.me/966552101764"
+
     /** Recommended Quran apps. */
     const val TARTEEL_PKG = "com.mmmoussa.iqra"
     const val WAHY_PKG = "com.logicdev.quran_reader"
