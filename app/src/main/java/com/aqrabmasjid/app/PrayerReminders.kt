@@ -59,6 +59,15 @@ object PrayerReminders {
         )
     )
 
+    /** Fixed ayah for each prayer, shown on the main screen. */
+    fun ayah(p: Prayer): String = when (p) {
+        Prayer.FAJR -> "﴿إِنَّ قُرْآنَ الْفَجْرِ كَانَ مَشْهُودًا﴾"
+        Prayer.DHUHR -> "﴿رِجَالٌ لَا تُلْهِيهِمْ تِجَارَةٌ وَلَا بَيْعٌ عَنْ ذِكْرِ اللَّهِ وَإِقَامِ الصَّلَاةِ﴾"
+        Prayer.ASR -> "﴿أَقِمِ الصَّلَاةَ لِدُلُوكِ الشَّمْسِ إِلَىٰ غَسَقِ اللَّيْلِ﴾"
+        Prayer.MAGHRIB -> "﴿رَبِّ اجْعَلْنِي مُقِيمَ الصَّلَاةِ وَمِن ذُرِّيَّتِي﴾"
+        Prayer.ISHA -> "﴿وَأَقِمِ الصَّلَاةَ طَرَفَيِ النَّهَارِ وَزُلَفًا مِّنَ اللَّيْلِ﴾"
+    }
+
     private fun list(p: Prayer) = (if (L.en) EN else AR)[p] ?: emptyList()
 
     /** Current reminder for this prayer (same until next()). */

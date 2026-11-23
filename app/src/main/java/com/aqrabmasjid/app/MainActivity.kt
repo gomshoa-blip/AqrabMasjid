@@ -86,11 +86,8 @@ class MainActivity : Activity() {
             Alerts.createChannel(this)
             recreate()
         }
-        // Reminder for the next prayer (hadith/ayah). New one on each open and each tap.
+        // Fixed ayah for the next prayer
         reminderBtn = findViewById(R.id.btnTasbih)
-        reminderBtn.setOnClickListener {
-            reminderPrayer?.let { reminderBtn.text = PrayerReminders.next(this, it) }
-        }
         // Iqama settings button removed from the screen
         findViewById<View>(R.id.btnIqama).visibility = View.GONE
         // Opens Google Maps searching "مسجد"; the user picks one
@@ -189,10 +186,7 @@ class MainActivity : Activity() {
         tvGregorian.text = java.text.SimpleDateFormat("d MMMM yyyy", L.locale).format(java.util.Date(now)) + L.t(" م", "")
         RingFill.fill(this, ring, lat, lng, now)
         // Reminder button follows the next/current prayer
-        val rp = st.time.prayer
-        if (!reminderAdvanced) { PrayerReminders.next(this, rp); reminderAdvanced = true }
-        reminderPrayer = rp
-        reminderBtn.text = PrayerReminders.current(this, rp)
+        reminderBtn.text = PrayerReminders.ayah(st.time.prayer)
         // قيراط link: Riyadh only
         val riyadh = lat in 24.3..25.2 && lng in 46.2..47.3
         findViewById<View>(R.id.btnQirat).visibility = if (riyadh) View.VISIBLE else View.GONE
@@ -436,7 +430,5 @@ class MainActivity : Activity() {
     private fun dp(v: Int): Int = (v * resources.displayMetrics.density + 0.5f).toInt()
 
     private lateinit var reminderBtn: Button
-    private var reminderPrayer: Prayer? = null
-    private var reminderAdvanced = false
 
 }
