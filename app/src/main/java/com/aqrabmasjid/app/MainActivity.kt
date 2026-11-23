@@ -84,10 +84,8 @@ class MainActivity : Activity() {
         findViewById<Button>(R.id.btnDriving).setOnClickListener {
             startActivity(Intent(this, DrivingActivity::class.java))
         }
-        findViewById<Button>(R.id.btnGo).setOnClickListener {
-            val m = nearest
-            if (m != null) openMaps(m) else openUrl("https://www.google.com/maps/search/?api=1&query=" + Uri.encode("مسجد"))
-        }
+        // Opens Google Maps with nearby mosques so the user picks one
+        findViewById<Button>(R.id.btnGo).setOnClickListener { MapsSearch.mosques(this) }
         findViewById<Button>(R.id.btnShare).setOnClickListener { share() }
         findViewById<Button>(R.id.btnAddMosque).setOnClickListener { openUrl(Config.ADD_MOSQUE_URL) }
         findViewById<Button>(R.id.btnDonate).setOnClickListener { openUrl(Config.DONATE_URL) }

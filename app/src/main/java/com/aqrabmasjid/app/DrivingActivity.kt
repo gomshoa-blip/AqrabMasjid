@@ -188,16 +188,8 @@ class DrivingActivity : Activity() {
         tvMosque.text = if (m != null && m.distKm <= 15) L.t("أقرب مسجد: ${m.name} · ${MosqueRepo.fmtDistance(m.distKm)}", "Nearest mosque: ${m.name} · ${MosqueRepo.fmtDistance(m.distKm)}") else ""
     }
 
+    /** Opens Google Maps with nearby mosques (or along the route if navigating). */
     private fun goToNearest() {
-        val m = Prefs.nearest(this)?.takeIf { it.distKm <= 15 }
-        val uri = if (m != null) Uri.parse("google.navigation:q=${m.lat},${m.lng}")
-        else Uri.parse("geo:0,0?q=" + Uri.encode("مسجد"))
-        try {
-            startActivity(Intent(Intent.ACTION_VIEW, uri))
-        } catch (_: Exception) {
-            val web = if (m != null) "https://www.google.com/maps/dir/?api=1&destination=${m.lat},${m.lng}"
-            else "https://www.google.com/maps/search/?api=1&query=" + Uri.encode("مسجد")
-            try { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(web))) } catch (_: Exception) {}
-        }
+        MapsSearch.mosques(this)
     }
 }
