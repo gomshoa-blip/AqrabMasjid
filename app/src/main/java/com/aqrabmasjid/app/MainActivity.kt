@@ -93,6 +93,12 @@ class MainActivity : Activity() {
         findViewById<Button>(R.id.btnShare).setOnClickListener { share() }
         findViewById<Button>(R.id.btnAddMosque).setOnClickListener { openUrl(Config.ADD_MOSQUE_URL) }
         findViewById<Button>(R.id.btnDonate).setOnClickListener { openUrl(Config.DONATE_URL) }
+        findViewById<Button>(R.id.btnQirat).setOnClickListener { openUrl(Config.QIRAT_URL) }
+        findViewById<Button>(R.id.btnTarteel).setOnClickListener { openStore(Config.TARTEEL_PKG, null) }
+        findViewById<Button>(R.id.btnWahy).setOnClickListener { openStore(null, Config.WAHY_SEARCH) }
+        // Nearby mosques list removed: Google Maps is more accurate
+        findViewById<View>(R.id.tvMosquesHeader).visibility = View.GONE
+        layoutMosques.visibility = View.GONE
         findViewById<Button>(R.id.btnIqama).setOnClickListener { iqamaDialog() }
 
         val sw = findViewById<Switch>(R.id.switchAlerts)
@@ -153,7 +159,6 @@ class MainActivity : Activity() {
             tvStatus.text = ""
             renderTimes()
             Alerts.scheduleNext(this)
-            loadMosques(loc.first, loc.second)
         }
     }
 
@@ -172,6 +177,9 @@ class MainActivity : Activity() {
         tvClock.text = PrayerCalc.fmtTime(now)
         tvGregorian.text = java.text.SimpleDateFormat("d MMMM yyyy", L.locale).format(java.util.Date(now)) + L.t(" م", "")
         RingFill.fill(this, ring, lat, lng, now)
+        // قيراط link: Riyadh only
+        val riyadh = lat in 24.3..25.2 && lng in 46.2..47.3
+        findViewById<View>(R.id.btnQirat).visibility = if (riyadh) View.VISIBLE else View.GONE
         tvIqamaLeft.text = L.t(
             "${st.time.prayer.ar}: الأذان ${PrayerCalc.fmtTime(st.time.adhan)} · الإقامة ${PrayerCalc.fmtTime(st.time.iqama)}",
             "${st.time.prayer.ar}: Adhan ${PrayerCalc.fmtTime(st.time.adhan)} · Iqama ${PrayerCalc.fmtTime(st.time.iqama)}"
@@ -253,6 +261,19 @@ class MainActivity : Activity() {
             startActivity(nav)
         } catch (_: Exception) {
             openUrl("https://www.google.com/maps/dir/?api=1&destination=${m.lat},${m.lng}")
+        }
+    }
+
+    /** Opens an app page (or a search) in Google Play. */
+    private fun openStore(pkg: String?, search: String?) {
+        val q = Uri.encode(search ?: "")
+        val market = if (pkg != null) "market://details?id=$pkg" else "market://search?q=$q&c=apps"
+        val web = if (pkg != null) "https://play.google.com/store/apps/details?id=$pkg"
+                  else "https://play.google.com/store/search?q=$q&c=apps"
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(market)))
+        } catch (_: Exception) {
+            openUrl(web)
         }
     }
 
@@ -374,6 +395,10 @@ class MainActivity : Activity() {
         b(R.id.btnShare, "شارك التطبيق - الدال على الخير كفاعله", "Share the app")
         b(R.id.btnAddMosque, "➕ أضف مسجداً", "➕ Add a mosque")
         b(R.id.btnDonate, "تبرع عبر منصة إحسان", "Donate via Ehsan")
+        b(R.id.btnQirat, "قيراط - جنائز الرياض والمقابر", "Qirat - Riyadh funerals & cemeteries")
+        b(R.id.tvQuranHeader, "تطبيقات قرآن ننصح بها", "Recommended Quran apps")
+        b(R.id.btnTarteel, "📖 ترتيل", "📖 Tarteel")
+        b(R.id.btnWahy, "📖 وحي", "📖 Wahy")
     }
 
     /** Dark icons on the top bar in day mode, light icons in night mode. */

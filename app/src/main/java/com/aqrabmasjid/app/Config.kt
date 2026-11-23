@@ -26,6 +26,13 @@ object Config {
     const val SHARE_TEXT =
         "تطبيق مجاني يذكرك بالصلاة ويدلك على أقرب مسجد وأنت تسوق. شاركه والدال على الخير كفاعله\n$SITE_URL"
 
+    /** قيراط: Riyadh funeral prayers and cemeteries (shown in Riyadh only). */
+    const val QIRAT_URL = "https://janaez-riyadh.netlify.app"
+
+    /** Recommended Quran apps. */
+    const val TARTEEL_PKG = "com.mmmoussa.iqra"
+    const val WAHY_SEARCH = "وحي القرآن الكريم"
+
     /** Minutes after adhan for the iqama alert. */
     const val IQAMA_ALERT_AFTER_MIN = 10
 }

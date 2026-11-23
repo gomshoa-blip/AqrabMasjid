@@ -21,7 +21,7 @@
             android:background="@drawable/bg_card_green"
             android:gravity="center"
             android:orientation="vertical"
-            android:paddingTop="26dp"
+            android:paddingTop="12dp"
             android:paddingBottom="26dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp">
@@ -32,8 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="34dp"
                 android:layout_gravity="right"
-                android:layout_marginTop="-14dp"
-                android:minHeight="0dp"
+                                android:minHeight="0dp"
                 android:minWidth="0dp"
                 android:paddingLeft="14dp"
                 android:paddingRight="14dp"
@@ -184,6 +183,20 @@
             android:textColor="@color/accent_text"
             android:textSize="16sp" />
 
+        <Button
+            android:id="@+id/btnQirat"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:minHeight="54dp"
+            android:background="@drawable/bg_btn_outline"
+            android:stateListAnimator="@null"
+            android:text="قيراط - جنائز الرياض والمقابر"
+            android:textAllCaps="false"
+            android:textColor="@color/accent_text"
+            android:textSize="16sp" />
+
         <!-- Prayer times table -->
         <LinearLayout
             android:id="@+id/layoutTimes"
@@ -260,6 +273,42 @@
             android:textSize="16sp" />
 
         <!-- Share / add / donate -->
+        <TextView
+            android:id="@+id/tvQuranHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="تطبيقات قرآن ننصح بها"
+            android:textColor="@color/title_text"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnTarteel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:minHeight="54dp"
+            android:background="@drawable/bg_btn_outline"
+            android:stateListAnimator="@null"
+            android:text="📖 ترتيل"
+            android:textAllCaps="false"
+            android:textColor="@color/accent_text"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btnWahy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:minHeight="54dp"
+            android:background="@drawable/bg_btn_outline"
+            android:stateListAnimator="@null"
+            android:text="📖 وحي"
+            android:textAllCaps="false"
+            android:textColor="@color/accent_text"
+            android:textSize="16sp" />
+
         <Button
             android:id="@+id/btnShare"
             android:layout_width="match_parent"
