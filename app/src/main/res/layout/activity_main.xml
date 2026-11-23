@@ -61,6 +61,20 @@
         </LinearLayout>
 
         <Button
+            android:id="@+id/btnDriving"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:minHeight="54dp"
+            android:background="@drawable/bg_btn_green"
+            android:stateListAnimator="@null"
+            android:text="🚗  وضع القيادة"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <Button
             android:id="@+id/btnGo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
