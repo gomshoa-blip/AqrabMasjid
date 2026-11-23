@@ -21,7 +21,7 @@ import androidx.core.content.ContextCompat
 import com.aqrabmasjid.app.car.MasjidCarAppService
 
 /**
- * Two alerts per prayer: 10 minutes before adhan, and at adhan.
+ * Two alerts per prayer: at adhan, and 10 minutes later for iqama (not for Jumuah).
  * Only the next alert is scheduled; when it fires, the one after it is scheduled.
  */
 object Alerts {
@@ -35,7 +35,7 @@ object Alerts {
         val nm = c.getSystemService(NotificationManager::class.java)
         nm.deleteNotificationChannel(OLD_CHANNEL)
         val ch = NotificationChannel(CHANNEL, "تنبيه الصلاة", NotificationManager.IMPORTANCE_HIGH)
-        ch.description = "تنبيه قبل الأذان وعند الأذان"
+        ch.description = "تنبيه عند الأذان، وبعده بـ 10 دقائق للإقامة"
         // Soft chime from res/raw/prayer_chime.ogg
         val sound = Uri.parse("android.resource://${c.packageName}/${R.raw.prayer_chime}")
         val attrs = AudioAttributes.Builder()
@@ -46,6 +46,13 @@ object Alerts {
         ch.enableVibration(true)
         ch.vibrationPattern = longArrayOf(0, 250, 150, 250)
         nm.createNotificationChannel(ch)
+    }
+
+    /** Friday Dhuhr = Jumuah: there is a khutbah, so no iqama alert. */
+    private fun isJumuah(t: PrayerTime): Boolean {
+        if (t.prayer != Prayer.DHUHR) return false
+        val cal = java.util.Calendar.getInstance().apply { timeInMillis = t.adhan }
+        return cal.get(java.util.Calendar.DAY_OF_WEEK) == java.util.Calendar.FRIDAY
     }
 
     fun canExact(c: Context): Boolean =
@@ -65,7 +72,9 @@ object Alerts {
         val now = System.currentTimeMillis()
         data class Ev(val at: Long, val type: String, val t: PrayerTime)
         val events = PrayerCalc.upcoming(app, lat, lng, now).flatMap {
-            listOf(Ev(it.adhan - Config.PRE_ALERT_MIN * MIN, "pre", it), Ev(it.adhan, "adhan", it))
+            val evs = mutableListOf(Ev(it.adhan, "adhan", it))
+            if (!isJumuah(it)) evs += Ev(it.adhan + Config.IQAMA_ALERT_AFTER_MIN * MIN, "iqama", it)
+            evs
         }
         val next = events.filter { it.at > now + 5_000 }.minByOrNull { it.at } ?: return
 
@@ -87,8 +96,10 @@ object Alerts {
         ) return
         createChannel(c)
 
-        val title = if (type == "pre") "${prayer.ar} بعد ${Config.PRE_ALERT_MIN} دقائق"
-        else "حان الآن وقت أذان ${prayer.ar}"
+        val title = if (type == "iqama") {
+            val left = ((iqama - System.currentTimeMillis()) / MIN).toInt()
+            if (left > 0) "إقامة ${prayer.ar} بعد $left د" else "حان وقت إقامة ${prayer.ar}"
+        } else "حان الآن وقت أذان ${prayer.ar}"
         // Saved mosque may be old (user moved to another city) -> show it only if still close
         val nearest = Prefs.nearest(c)?.takeIf { it.distKm <= 5.0 }
         val text = buildString {

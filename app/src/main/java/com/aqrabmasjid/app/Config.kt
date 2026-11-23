@@ -19,12 +19,13 @@ object Config {
 
     val OVERPASS_URLS = listOf(
         "https://overpass-api.de/api/interpreter",
-        "https://overpass.kumi.systems/api/interpreter"
+        "https://overpass.kumi.systems/api/interpreter",
+        "https://maps.mail.ru/osm/tools/overpass/api/interpreter"
     )
 
     const val SHARE_TEXT =
         "تطبيق مجاني يذكرك بالصلاة ويدلك على أقرب مسجد وأنت تسوق. شاركه والدال على الخير كفاعله\n$SITE_URL"
 
-    /** Minutes before adhan for the first alert. */
-    const val PRE_ALERT_MIN = 10
+    /** Minutes after adhan for the iqama alert. */
+    const val IQAMA_ALERT_AFTER_MIN = 10
 }

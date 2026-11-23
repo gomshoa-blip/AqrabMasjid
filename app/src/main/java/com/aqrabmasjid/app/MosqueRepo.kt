@@ -22,7 +22,8 @@ data class Mosque(val name: String, val lat: Double, val lng: Double, val distKm
  * Also adds your own list (Config.CUSTOM_MOSQUES_URL).
  */
 object MosqueRepo {
-    private val exec = Executors.newSingleThreadExecutor()
+    // Several threads, so a slow request never blocks the next search
+    private val exec = Executors.newCachedThreadPool()
     private val main = Handler(Looper.getMainLooper())
 
     @Volatile private var cache: Triple<Double, Double, List<Mosque>>? = null
@@ -36,10 +37,14 @@ object MosqueRepo {
         }
         val app = c.applicationContext
         exec.execute {
+            // Whole search must finish in about 20 seconds
+            val deadline = System.currentTimeMillis() + SEARCH_BUDGET_MS
             var osm: List<Mosque>? = null
             try {
-                osm = queryOsm(lat, lng, 5000)
-                if (osm.size < 3) osm = queryOsm(lat, lng, 15000)
+                osm = queryOsm(lat, lng, 3000, deadline)
+                if (osm.size < 3 && System.currentTimeMillis() < deadline - 4000) {
+                    osm = queryOsm(lat, lng, 10000, deadline)
+                }
             } catch (_: Exception) {
             }
             val custom = try { queryCustom(lat, lng) } catch (_: Exception) { emptyList() }
@@ -56,28 +61,49 @@ object MosqueRepo {
         }
     }
 
-    private fun queryOsm(lat: Double, lng: Double, radius: Int): List<Mosque> {
+    private const val SEARCH_BUDGET_MS = 20_000L
+
+    /**
+     * Same method as the website (it works for thousands of users):
+     * ask all map servers at the same time and take the first good answer.
+     * Search by place type only, so مصلى and دار عبادة still show.
+     */
+    private fun queryOsm(lat: Double, lng: Double, radius: Int, deadline: Long): List<Mosque> {
         val a = "(around:$radius,$lat,$lng)"
-        val q = """
-            [out:json][timeout:20];
-            (
-              nwr["amenity"="place_of_worship"]["religion"="muslim"]$a;
-              nwr["building"="mosque"]$a;
-              nwr["name"~"مسجد|جامع|مصلى|Masjid|Mosque|Musalla|Prayer room",i][!"highway"][!"place"][!"landuse"][!"shop"][!"office"][!"boundary"][!"railway"][!"public_transport"]$a;
-            );
-            out center 80;
-        """.trimIndent()
-        var lastError: Exception? = null
-        for (url in Config.OVERPASS_URLS) {
-            try {
-                val body = "data=" + URLEncoder.encode(q, "UTF-8")
-                val json = post(url, body)
-                return parseOsm(JSONObject(json), lat, lng)
-            } catch (e: Exception) {
-                lastError = e
+        val q = "[out:json][timeout:12];(" +
+            "node[\"amenity\"=\"place_of_worship\"][\"religion\"=\"muslim\"]$a;" +
+            "way[\"amenity\"=\"place_of_worship\"][\"religion\"=\"muslim\"]$a;" +
+            "way[\"building\"=\"mosque\"]$a;" +
+            ");out center 80;"
+        val query = "?data=" + URLEncoder.encode(q, "UTF-8")
+        val left = (deadline - System.currentTimeMillis()).coerceAtLeast(3000L)
+        val timeout = minOf(left, 12_000L).toInt()
+
+        val pool = Executors.newFixedThreadPool(Config.OVERPASS_URLS.size)
+        val done = java.util.concurrent.ExecutorCompletionService<List<Mosque>>(pool)
+        try {
+            for (url in Config.OVERPASS_URLS) {
+                done.submit { parseOsm(JSONObject(get(url + query, timeout)), lat, lng) }
             }
+            var lastError: Exception? = null
+            var gotEmpty = false
+            repeat(Config.OVERPASS_URLS.size) {
+                val f = done.poll(timeout + 1000L, java.util.concurrent.TimeUnit.MILLISECONDS)
+                    ?: return if (gotEmpty) emptyList() else throw (lastError ?: Exception("timeout"))
+                try {
+                    val list = f.get()
+                    // A server sometimes answers with nothing: wait for the others first
+                    if (list.isNotEmpty()) return list
+                    gotEmpty = true
+                } catch (e: Exception) {
+                    lastError = e
+                }
+            }
+            if (gotEmpty) return emptyList()
+            throw lastError ?: Exception("no server")
+        } finally {
+            pool.shutdownNow()
         }
-        throw lastError ?: Exception("no server")
     }
 
     private fun parseOsm(root: JSONObject, lat: Double, lng: Double): List<Mosque> {
@@ -122,27 +148,10 @@ object MosqueRepo {
         return out
     }
 
-    private fun post(url: String, body: String): String {
+    private fun get(url: String, timeoutMs: Int = 6000): String {
         val con = URL(url).openConnection() as HttpURLConnection
-        con.requestMethod = "POST"
-        con.connectTimeout = 15000
-        con.readTimeout = 25000
-        con.doOutput = true
-        con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
-        con.setRequestProperty("User-Agent", "AqrabMasjid-Android/1.0")
-        con.outputStream.use { it.write(body.toByteArray()) }
-        try {
-            if (con.responseCode != 200) throw Exception("HTTP ${con.responseCode}")
-            return con.inputStream.bufferedReader().readText()
-        } finally {
-            con.disconnect()
-        }
-    }
-
-    private fun get(url: String): String {
-        val con = URL(url).openConnection() as HttpURLConnection
-        con.connectTimeout = 10000
-        con.readTimeout = 10000
+        con.connectTimeout = minOf(timeoutMs, 6000)
+        con.readTimeout = timeoutMs
         con.setRequestProperty("User-Agent", "AqrabMasjid-Android/1.0")
         try {
             if (con.responseCode != 200) throw Exception("HTTP ${con.responseCode}")

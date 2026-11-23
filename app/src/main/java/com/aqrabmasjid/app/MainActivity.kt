@@ -182,14 +182,14 @@ class MainActivity : Activity() {
         layoutMosques.addView(TextView(this).apply { text = "جاري البحث..."; setPadding(dp(8), dp(12), dp(8), dp(12)) })
         MosqueRepo.nearby(this, lat, lng) { list ->
             layoutMosques.removeAllViews()
-            if (list == null) {
-                layoutMosques.addView(TextView(this).apply { text = "تعذر الاتصال بالإنترنت"; setPadding(dp(8), dp(12), dp(8), dp(12)) })
+            if (list == null || list.isEmpty()) {
+                val msg = if (list == null) "ما قدرنا نجيب المساجد الحين. اضغط «حدّث موقعي» للمحاولة مرة ثانية."
+                else "ما لقينا مساجد قريبة. اعرضها في خرائط Google، أو أضف مسجداً."
+                layoutMosques.addView(TextView(this).apply { text = msg; setPadding(dp(8), dp(12), dp(8), dp(12)) })
+                layoutMosques.addView(mapsSearchButton(lat, lng))
                 return@nearby
             }
             nearest = list.firstOrNull()
-            if (list.isEmpty()) {
-                layoutMosques.addView(TextView(this).apply { text = "لا توجد مساجد قريبة. أضف مسجداً."; setPadding(dp(8), dp(12), dp(8), dp(12)) })
-            }
             for (m in list.take(3)) {
                 val item = LinearLayout(this)
                 item.orientation = LinearLayout.HORIZONTAL
@@ -277,6 +277,28 @@ class MainActivity : Activity() {
             }
             .setNegativeButton("إلغاء", null)
             .show()
+    }
+
+    /** Fallback: open Google Maps and search for mosques around the user. */
+    private fun mapsSearchButton(lat: Double, lng: Double): View {
+        val b = Button(this)
+        b.text = "🔎 اعرض المساجد القريبة في خرائط Google"
+        b.isAllCaps = false
+        b.setTextColor(Color.parseColor("#0F6B4F"))
+        b.setBackgroundResource(R.drawable.bg_btn_outline)
+        b.stateListAnimator = null
+        b.minHeight = dp(50); b.minimumHeight = dp(50)
+        b.setOnClickListener {
+            val q = Uri.encode("مسجد")
+            val geo = Intent(Intent.ACTION_VIEW, Uri.parse("geo:$lat,$lng?q=$q"))
+            try { startActivity(geo) } catch (_: Exception) {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/search/$q/@$lat,$lng,15z")))
+            }
+        }
+        val lp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        lp.topMargin = dp(6)
+        b.layoutParams = lp
+        return b
     }
 
     private fun dp(v: Int): Int = (v * resources.displayMetrics.density + 0.5f).toInt()
