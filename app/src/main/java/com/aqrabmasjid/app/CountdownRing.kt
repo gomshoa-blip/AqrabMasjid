@@ -32,6 +32,10 @@ class CountdownRing @JvmOverloads constructor(
     /** false = waiting for adhan (gold), true = after adhan (green). */
     var afterAdhan = false
 
+    /** true = more than 30 min to adhan: no ring, just "الصلاة القادمة". */
+    var plain = false
+        set(v) { if (field != v) { field = v; requestLayout() } }
+
     private val density = resources.displayMetrics.density
 
     private val track = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -59,9 +63,10 @@ class CountdownRing @JvmOverloads constructor(
     }
     private val box = RectF()
 
-    fun update(top: String, name: String, big: String, bottom: String, prog: Float, after: Boolean) {
+    fun update(top: String, name: String, big: String, bottom: String, prog: Float, after: Boolean, simple: Boolean = false) {
         topLabel = top; title = name; bigText = big; bottomLabel = bottom
         afterAdhan = after
+        plain = simple
         progress = prog
         contentDescription = "$top $name $big $bottom"
     }
@@ -69,10 +74,11 @@ class CountdownRing @JvmOverloads constructor(
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val w = MeasureSpec.getSize(widthMeasureSpec)
         val size = min(w, (300 * density).toInt())
-        setMeasuredDimension(size, size)
+        setMeasuredDimension(size, if (plain) (size * 0.62f).toInt() else size)
     }
 
     override fun onDraw(canvas: Canvas) {
+        if (plain) { drawPlain(canvas); return }
         val size = min(width, height).toFloat()
         val stroke = size * 0.07f
         val pad = stroke / 2 + 4 * density
@@ -101,6 +107,20 @@ class CountdownRing @JvmOverloads constructor(
         canvas.drawText(title, cx, cy - size * 0.07f, titleText)
         canvas.drawText(bigText, cx, cy + size * 0.13f, bigPaint)
         canvas.drawText(bottomLabel, cx, cy + size * 0.27f, smallText)
+    }
+
+    /** No ring: "الصلاة القادمة", prayer name, adhan time. */
+    private fun drawPlain(canvas: Canvas) {
+        val s = width.toFloat()
+        val h = height.toFloat()
+        val cx = s / 2
+        smallText.textSize = s * 0.075f
+        titleText.textSize = s * 0.15f
+        bigPaint.textSize = fitSize(bigText, s * 0.17f, s * 0.95f)
+        bigPaint.color = Color.parseColor("#C9A227")
+        canvas.drawText(topLabel, cx, h * 0.20f, smallText)
+        canvas.drawText(title, cx, h * 0.52f, titleText)
+        canvas.drawText(bigText, cx, h * 0.86f, bigPaint)
     }
 
     /** Shrink the big text if it is too wide for the ring. */

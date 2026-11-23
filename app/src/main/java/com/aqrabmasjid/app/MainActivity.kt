@@ -88,10 +88,8 @@ class MainActivity : Activity() {
         findViewById<Button>(R.id.btnDriving).setOnClickListener {
             startActivity(Intent(this, DrivingActivity::class.java))
         }
-        // Opens the app's own list of nearby mosques; the user picks one
-        findViewById<Button>(R.id.btnGo).setOnClickListener {
-            startActivity(Intent(this, MosquesActivity::class.java))
-        }
+        // Opens Google Maps searching "مسجد"; the user picks one
+        findViewById<Button>(R.id.btnGo).setOnClickListener { MapsSearch.mosques(this) }
         findViewById<Button>(R.id.btnShare).setOnClickListener { share() }
         findViewById<Button>(R.id.btnAddMosque).setOnClickListener { openUrl(Config.ADD_MOSQUE_URL) }
         findViewById<Button>(R.id.btnDonate).setOnClickListener { openUrl(Config.DONATE_URL) }
@@ -359,6 +357,13 @@ class MainActivity : Activity() {
             if (L.en) View.LAYOUT_DIRECTION_LTR else View.LAYOUT_DIRECTION_RTL
         fun b(id: Int, ar: String, en: String) { findViewById<TextView>(id).text = L.t(ar, en) }
         b(R.id.btnLang, "🌐 English", "🌐 العربية")
+        // Language button: top right in Arabic, top left in English
+        findViewById<View>(R.id.btnLang).let { v ->
+            (v.layoutParams as? LinearLayout.LayoutParams)?.let { lp ->
+                lp.gravity = if (L.en) Gravity.LEFT else Gravity.RIGHT
+                v.layoutParams = lp
+            }
+        }
         b(R.id.btnDriving, "🚗  وضع القيادة", "🚗  Driving mode")
         b(R.id.btnGo, "🕌  أقرب مسجد", "🕌  Nearest mosque")
         b(R.id.btnRefresh, "حدّث موقعي", "Update my location")

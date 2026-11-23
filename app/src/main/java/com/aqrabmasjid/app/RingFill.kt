@@ -4,7 +4,7 @@ import android.content.Context
 
 /** Fills the countdown ring from the prayer times. Shared by the main screen and driving mode. */
 object RingFill {
-    private const val DAY = 24 * 60 * 60_000L
+    private const val WINDOW = 30 * 60_000L
 
     fun fill(c: Context, ring: CountdownRing, lat: Double, lng: Double, now: Long = System.currentTimeMillis()) {
         val st = PrayerCalc.status(c, lat, lng, now)
@@ -13,10 +13,19 @@ object RingFill {
 
         if (!st.isCurrent) {
             // Waiting for adhan: ring shrinks from the previous adhan to the next one
-            val all = PrayerCalc.day(c, lat, lng, now - DAY).list + PrayerCalc.upcoming(c, lat, lng, now)
-            val prev = all.lastOrNull { it.adhan <= now }?.adhan ?: (t.adhan - 6 * 60 * 60_000L)
             val left = t.adhan - now
-            val total = (t.adhan - prev).coerceAtLeast(1L)
+            if (left > WINDOW) {
+                // More than 30 min: no ring, just the next prayer and its time
+                ring.update(
+                    L.t("الصلاة القادمة", "Next prayer"),
+                    name,
+                    L.t("الأذان ${PrayerCalc.fmtTime(t.adhan)}", "Adhan ${PrayerCalc.fmtTime(t.adhan)}"),
+                    "", 1f, false, true
+                )
+                return
+            }
+            // Last 30 min: ring shrinks to zero at adhan
+            val total = WINDOW
             ring.update(
                 L.t("بقي على صلاة", "Time left to"),
                 name,

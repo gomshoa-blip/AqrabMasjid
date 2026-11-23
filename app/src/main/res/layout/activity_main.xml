@@ -26,6 +26,25 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp">
 
+            <!-- Language switch (top corner of the card) -->
+            <Button
+                android:id="@+id/btnLang"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:layout_gravity="right"
+                android:layout_marginTop="-14dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:paddingLeft="14dp"
+                android:paddingRight="14dp"
+                android:background="@drawable/bg_btn_outline"
+                android:stateListAnimator="@null"
+                android:text="🌐 English"
+                android:textAllCaps="false"
+                android:textColor="@color/accent_text"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
             <!-- Big countdown ring: time left to adhan, then to iqama -->
             <com.aqrabmasjid.app.CountdownRing
                 android:id="@+id/ring"
@@ -56,23 +75,6 @@
             android:textSize="22sp"
             android:textStyle="bold" />
 
-        <!-- Language switch -->
-        <Button
-            android:id="@+id/btnLang"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
-            android:minHeight="0dp"
-            android:paddingLeft="18dp"
-            android:paddingRight="18dp"
-            android:background="@drawable/bg_btn_outline"
-            android:stateListAnimator="@null"
-            android:text="🌐 English"
-            android:textAllCaps="false"
-            android:textColor="@color/accent_text"
-            android:textSize="15sp"
-            android:textStyle="bold" />
 
 
         <Button

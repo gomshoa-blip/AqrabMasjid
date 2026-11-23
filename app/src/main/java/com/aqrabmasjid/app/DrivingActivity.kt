@@ -76,6 +76,7 @@ class DrivingActivity : Activity() {
 
         ring = CountdownRing(this)
         tvTimes = bigText(22f, Color.parseColor("#DDDDDD"), bold = false)
+        tvMosque = bigText(20f, Color.parseColor("#7FD3AE"), bold = false)
         info.addView(ring, LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
         info.addView(tvTimes)
@@ -165,6 +166,6 @@ class DrivingActivity : Activity() {
 
     /** Opens the app's own list of nearby mosques; the user picks one. */
     private fun goToNearest() {
-        startActivity(Intent(this, MosquesActivity::class.java))
+        MapsSearch.mosques(this)
     }
 }
