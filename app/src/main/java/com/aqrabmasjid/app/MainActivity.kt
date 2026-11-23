@@ -15,6 +15,8 @@ import android.os.Looper
 import android.provider.Settings
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
+import android.view.WindowInsets
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.NumberPicker
@@ -46,6 +48,7 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        fitSystemBars()
         Alerts.createChannel(this)
 
         tvHijri = findViewById(R.id.tvHijri)
@@ -299,6 +302,27 @@ class MainActivity : Activity() {
         lp.topMargin = dp(6)
         b.layoutParams = lp
         return b
+    }
+
+    /**
+     * Android 15 draws the app under the status bar and the navigation bar.
+     * Add padding so nothing is hidden at the top or bottom.
+     */
+    private fun fitSystemBars() {
+        val root = (findViewById<ViewGroup>(android.R.id.content)).getChildAt(0) ?: return
+        val start = intArrayOf(root.paddingLeft, root.paddingTop, root.paddingRight, root.paddingBottom)
+        root.setOnApplyWindowInsetsListener { v, insets ->
+            if (Build.VERSION.SDK_INT >= 30) {
+                val b = insets.getInsets(WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout())
+                v.setPadding(start[0] + b.left, start[1] + b.top, start[2] + b.right, start[3] + b.bottom)
+            } else {
+                @Suppress("DEPRECATION")
+                v.setPadding(start[0] + insets.systemWindowInsetLeft, start[1] + insets.systemWindowInsetTop,
+                    start[2] + insets.systemWindowInsetRight, start[3] + insets.systemWindowInsetBottom)
+            }
+            insets
+        }
+        root.requestApplyInsets()
     }
 
     private fun dp(v: Int): Int = (v * resources.displayMetrics.density + 0.5f).toInt()
