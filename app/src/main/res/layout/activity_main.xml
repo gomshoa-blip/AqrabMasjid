@@ -102,19 +102,40 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btnAdhkar"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:minHeight="54dp"
-            android:background="@drawable/bg_btn_outline"
-            android:stateListAnimator="@null"
-            android:text="📿  الأذكار"
-            android:textAllCaps="false"
-            android:textColor="@color/accent_text"
-            android:textSize="17sp"
-            android:textStyle="bold" />
+            android:orientation="horizontal">
+        <Button
+                android:id="@+id/btnQuran"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:minHeight="54dp"
+                android:background="@drawable/bg_btn_outline"
+                android:stateListAnimator="@null"
+                android:text="📖  القرآن الكريم"
+                android:textAllCaps="false"
+                android:textColor="@color/accent_text"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+        <Button
+                android:id="@+id/btnAdhkar"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:minHeight="54dp"
+                android:background="@drawable/bg_btn_outline"
+                android:stateListAnimator="@null"
+                android:text="📿  الأذكار"
+                android:textAllCaps="false"
+                android:textColor="@color/accent_text"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
         <!-- Day + time, Hijri + Gregorian dates -->
         <LinearLayout
