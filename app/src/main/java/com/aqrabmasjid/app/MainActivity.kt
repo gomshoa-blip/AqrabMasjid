@@ -99,8 +99,6 @@ class MainActivity : Activity() {
         }
         // Iqama settings button removed from the screen
         findViewById<View>(R.id.btnIqama).visibility = View.GONE
-        }
-        showTasbih()
         // Opens Google Maps searching "مسجد"; the user picks one
         findViewById<Button>(R.id.btnGo).setOnClickListener { MapsSearch.mosques(this) }
         findViewById<Button>(R.id.btnShare).setOnClickListener { share() }
