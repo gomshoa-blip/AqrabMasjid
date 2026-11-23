@@ -1,0 +1,39 @@
+name: AqrabMasjid
+options:
+  bundleIdPrefix: com.aqrabmasjid
+  deploymentTarget:
+    iOS: "16.0"
+  developmentLanguage: ar
+packages:
+  Adhan:
+    url: https://github.com/batoulapps/adhan-swift
+    from: "1.0.0"
+targets:
+  AqrabMasjid:
+    type: application
+    platform: iOS
+    sources:
+      - path: AqrabMasjid
+    dependencies:
+      - package: Adhan
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.aqrabmasjid.app
+        PRODUCT_NAME: AqrabMasjid
+        MARKETING_VERSION: "1.1"
+        CURRENT_PROJECT_VERSION: "1"
+        TARGETED_DEVICE_FAMILY: "1"
+        SWIFT_VERSION: "5.0"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+    info:
+      path: AqrabMasjid/Info.plist
+      properties:
+        CFBundleDisplayName: "أقرب مسجد"
+        CFBundleDevelopmentRegion: ar
+        CFBundleLocalizations: [ar, en]
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        NSLocationWhenInUseUsageDescription: "نستخدم موقعك لحساب مواقيت الصلاة وإيجاد أقرب مسجد لك."
+        LSApplicationQueriesSchemes: [comgooglemaps]
+        ITSAppUsesNonExemptEncryption: false
