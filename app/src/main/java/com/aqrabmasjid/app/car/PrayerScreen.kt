@@ -47,6 +47,7 @@ class PrayerScreen(carContext: CarContext) : Screen(carContext), DefaultLifecycl
     }
 
     override fun onGetTemplate(): Template {
+        var headerTitle = "أقرب مسجد"
         val list = ItemList.Builder()
         val loc = Prefs.location(carContext)
 
@@ -65,16 +66,25 @@ class PrayerScreen(carContext: CarContext) : Screen(carContext), DefaultLifecycl
                 "${st.time.prayer.ar} بعد ${PrayerCalc.fmtLeft(st.time.adhan - now)}"
             }
 
+            // Driver-first: the coming prayer is the first, highlighted row
+            headerTitle = head
             list.addItem(
                 Row.Builder()
                     .setTitle(head)
-                    .addText("اضغط هنا لأقرب مسجد")
+                    .addText("الأذان ${PrayerCalc.fmtTime(st.time.adhan)} · الإقامة ${PrayerCalc.fmtTime(st.time.iqama)}")
+                    .build()
+            )
+            list.addItem(
+                Row.Builder()
+                    .setTitle("🧭 خذني لأقرب مسجد")
                     .setBrowsable(true)
                     .setOnClickListener { openMosques() }
                     .build()
             )
 
+            // Only the prayers still coming today, so the list stays short
             for (p in PrayerCalc.day(carContext, lat, lng, now).list) {
+                if (p.adhan <= now || p.prayer == st.time.prayer) continue
                 list.addItem(
                     Row.Builder()
                         .setTitle(p.prayer.ar)
@@ -87,7 +97,8 @@ class PrayerScreen(carContext: CarContext) : Screen(carContext), DefaultLifecycl
         val builtList = trimToLimit(list.build())
 
         return ListTemplate.Builder()
-            .setTitle("أقرب مسجد")
+            // The coming prayer is also the screen title, so the driver sees it at a glance
+            .setTitle(headerTitle)
             .setHeaderAction(Action.APP_ICON)
             .setSingleList(builtList)
             .setActionStrip(
