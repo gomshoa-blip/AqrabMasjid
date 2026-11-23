@@ -86,9 +86,18 @@ class MainActivity : Activity() {
             Alerts.createChannel(this)
             recreate()
         }
-        findViewById<Button>(R.id.btnDriving).setOnClickListener {
-            startActivity(Intent(this, DrivingActivity::class.java))
+        // Tasbih button: tap to count, ⟳ for the next dhikr
+        val tasbih = findViewById<Button>(R.id.btnTasbih)
+        fun showTasbih() {
+            tasbih.text = if (tasbihCount == 0) TASBIH[tasbihIndex] else "${TASBIH[tasbihIndex]}\n($tasbihCount)"
         }
+        tasbih.setOnClickListener { tasbihCount++; showTasbih() }
+        findViewById<Button>(R.id.btnTasbihNext).setOnClickListener {
+            tasbihIndex = (tasbihIndex + 1) % TASBIH.size
+            tasbihCount = 0
+            showTasbih()
+        }
+        showTasbih()
         // Opens Google Maps searching "مسجد"; the user picks one
         findViewById<Button>(R.id.btnGo).setOnClickListener { MapsSearch.mosques(this) }
         findViewById<Button>(R.id.btnShare).setOnClickListener { share() }
@@ -397,7 +406,6 @@ class MainActivity : Activity() {
                 v.layoutParams = lp
             }
         }
-        b(R.id.btnDriving, "🚗  وضع القيادة", "🚗  Driving mode")
         b(R.id.btnGo, "🕌  أقرب مسجد", "🕌  Nearest mosque")
         b(R.id.btnRefresh, "حدّث موقعي", "Update my location")
         b(R.id.tvMosquesHeader, "أقرب المساجد", "Nearest mosques")
@@ -426,5 +434,13 @@ class MainActivity : Activity() {
     }
 
     private fun dp(v: Int): Int = (v * resources.displayMetrics.density + 0.5f).toInt()
+
+    private var tasbihIndex = 0
+    private var tasbihCount = 0
+    private val TASBIH = listOf(
+        "سبحان الله وبحمده، سبحان الله العظيم",
+        "أستغفر الله العظيم",
+        "اللهم صلّ وسلّم على محمد"
+    )
 
 }
