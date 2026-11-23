@@ -41,17 +41,8 @@ class DrivingActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        CrashLog.install(this)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        window.statusBarColor = Color.BLACK
-        window.navigationBarColor = Color.BLACK
-        if (Build.VERSION.SDK_INT >= 30) {
-            // Light icons (time, battery) on the black top bar
-            window.insetsController?.setSystemBarsAppearance(
-                0,
-                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or
-                    WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
-            )
-        }
 
         val root = LinearLayout(this)
         root.orientation = LinearLayout.VERTICAL
@@ -102,6 +93,18 @@ class DrivingActivity : Activity() {
         root.addView(go, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(150)))
 
         setContentView(root)
+
+        // Light icons (time, battery) on the black top bar
+        if (Build.VERSION.SDK_INT >= 30) {
+            try {
+                window.insetsController?.setSystemBarsAppearance(
+                    0,
+                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or
+                        WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+                )
+            } catch (_: Exception) {
+            }
+        }
 
         // Keep content clear of the top and bottom bars (Android 15+)
         root.setOnApplyWindowInsetsListener { v, insets ->

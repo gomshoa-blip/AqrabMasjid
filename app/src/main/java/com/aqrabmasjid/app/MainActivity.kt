@@ -49,6 +49,7 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        CrashLog.install(this)
         setContentView(R.layout.activity_main)
         matchSystemBars()
         fitSystemBars()
@@ -93,6 +94,7 @@ class MainActivity : Activity() {
         }
 
         askPermissions()
+        CrashLog.showIfAny(this)
     }
 
     override fun onResume() {
