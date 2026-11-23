@@ -7,6 +7,9 @@ on:
       - ".github/workflows/ios.yml"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -36,6 +39,22 @@ jobs:
         with:
           name: AqrabMasjid-apk
           path: app/build/outputs/apk/debug/*.apk
+
+      # Fixed download link for phones (no sign-in, no zip):
+      # https://github.com/gomshoa-blip/AqrabMasjid/releases/download/latest-apk/AqrabMasjid.apk
+      - name: Copy APK with a fixed name
+        if: github.ref == 'refs/heads/main'
+        run: cp app/build/outputs/apk/debug/*.apk AqrabMasjid.apk
+
+      - name: Publish APK download link
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest-apk
+          name: "أقرب مسجد - آخر نسخة"
+          body: "Latest test build. Built from ${{ github.sha }} (run ${{ github.run_number }})."
+          prerelease: true
+          files: AqrabMasjid.apk
 
       # Google Play build (.aab). Runs only after you add the 4 secrets in
       # GitHub: Settings > Secrets and variables > Actions.
