@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.Typeface
 import android.net.Uri
@@ -15,6 +16,7 @@ import android.os.Looper
 import android.provider.Settings
 import android.view.Gravity
 import android.view.View
+import android.view.WindowInsetsController
 import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.Button
@@ -48,6 +50,7 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        matchSystemBars()
         fitSystemBars()
         Alerts.createChannel(this)
 
@@ -173,7 +176,7 @@ class MainActivity : Activity() {
             tv.text = t
             tv.textSize = if (header) 13f else 17f
             tv.gravity = Gravity.CENTER
-            if (header) tv.setTextColor(Color.parseColor("#777777"))
+            if (header) tv.setTextColor(getColor(R.color.text_hint))
             if (highlight) tv.setTypeface(null, Typeface.BOLD)
             l.addView(tv, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
         }
@@ -287,7 +290,7 @@ class MainActivity : Activity() {
         val b = Button(this)
         b.text = "🔎 اعرض المساجد القريبة في خرائط Google"
         b.isAllCaps = false
-        b.setTextColor(Color.parseColor("#0F6B4F"))
+        b.setTextColor(getColor(R.color.accent_text))
         b.setBackgroundResource(R.drawable.bg_btn_outline)
         b.stateListAnimator = null
         b.minHeight = dp(50); b.minimumHeight = dp(50)
@@ -323,6 +326,17 @@ class MainActivity : Activity() {
             insets
         }
         root.requestApplyInsets()
+    }
+
+    /** Dark icons on the top bar in day mode, light icons in night mode. */
+    private fun matchSystemBars() {
+        val night = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+            Configuration.UI_MODE_NIGHT_YES
+        if (Build.VERSION.SDK_INT >= 30) {
+            val light = WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or
+                WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+            window.insetsController?.setSystemBarsAppearance(if (night) 0 else light, light)
+        }
     }
 
     private fun dp(v: Int): Int = (v * resources.displayMetrics.density + 0.5f).toInt()
