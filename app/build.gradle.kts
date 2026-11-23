@@ -9,14 +9,30 @@ android {
     defaultConfig {
         applicationId = "com.aqrabmasjid.app"
         minSdk = 26
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        // Google Play requires Android 16 (API 36) for new apps and updates
+        targetSdk = 36
+        // Each GitHub build gets a higher number (Google Play needs this to accept updates)
+        versionCode = (System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 1) + 100
+        versionName = "1.1"
+    }
+
+    // Upload key for Google Play. The values come from GitHub secrets, never from the code.
+    val ksFile = System.getenv("ANDROID_KEYSTORE_FILE")
+    signingConfigs {
+        if (ksFile != null && file(ksFile).exists()) {
+            create("release") {
+                storeFile = file(ksFile)
+                storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("ANDROID_KEY_ALIAS")
+                keyPassword = System.getenv("ANDROID_KEY_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfigs.findByName("release")?.let { signingConfig = it }
         }
     }
     compileOptions {
