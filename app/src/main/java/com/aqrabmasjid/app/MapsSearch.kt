@@ -14,7 +14,9 @@ object MapsSearch {
     private const val MAPS = "com.google.android.apps.maps"
 
     fun mosques(c: Context) {
-        val q = Uri.encode(L.t("مسجد", "mosque"))
+        // Always search in Arabic: many mosques in Saudi Arabia are only found by
+        // their Arabic name (e.g. "مسجد عقيل بن أبي طالب"), not by the English word.
+        val q = Uri.encode("مسجد")
         val geo = Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=$q"))
         geo.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
