@@ -40,6 +40,11 @@
             android:exported="false"
             android:label="وضع القيادة" />
 
+        <!-- Nearby mosques list: pick one, then navigation starts -->
+        <activity
+            android:name=".MosquesActivity"
+            android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

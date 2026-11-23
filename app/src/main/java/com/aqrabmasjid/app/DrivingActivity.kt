@@ -167,7 +167,7 @@ class DrivingActivity : Activity() {
             tvPrayer.text = t.prayer.ar
             val left = t.iqama - now
             if (left > 0) {
-                tvLeftLabel.text = L.t("تقام الصلاة بعد", "Iqama in")
+                tvLeftLabel.text = L.t("بقي على إقامة صلاة ${t.prayer.ar}", "Iqama for ${t.prayer.ar} in")
                 tvLeft.textSize = 80f
                 tvLeft.text = PrayerCalc.fmtLeft(left)
                 tvTimes.text = L.t("الإقامة ${PrayerCalc.fmtTime(t.iqama)}", "Iqama ${PrayerCalc.fmtTime(t.iqama)}")
@@ -179,7 +179,7 @@ class DrivingActivity : Activity() {
             }
         } else {
             tvPrayer.text = t.prayer.ar
-            tvLeftLabel.text = L.t("يؤذن بعد", "Adhan in")
+            tvLeftLabel.text = L.t("بقي على صلاة ${t.prayer.ar}", "Time left to ${t.prayer.ar}")
             tvLeft.textSize = 80f
             tvLeft.text = PrayerCalc.fmtLeft(t.adhan - now)
             tvTimes.text = L.t("الأذان ${PrayerCalc.fmtTime(t.adhan)} · الإقامة ${PrayerCalc.fmtTime(t.iqama)}", "Adhan ${PrayerCalc.fmtTime(t.adhan)} · Iqama ${PrayerCalc.fmtTime(t.iqama)}")
@@ -188,8 +188,8 @@ class DrivingActivity : Activity() {
         tvMosque.text = if (m != null && m.distKm <= 15) L.t("أقرب مسجد: ${m.name} · ${MosqueRepo.fmtDistance(m.distKm)}", "Nearest mosque: ${m.name} · ${MosqueRepo.fmtDistance(m.distKm)}") else ""
     }
 
-    /** Opens Google Maps with nearby mosques (or along the route if navigating). */
+    /** Opens the app's own list of nearby mosques; the user picks one. */
     private fun goToNearest() {
-        MapsSearch.mosques(this)
+        startActivity(Intent(this, MosquesActivity::class.java))
     }
 }

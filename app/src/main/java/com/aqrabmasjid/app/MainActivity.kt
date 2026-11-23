@@ -84,8 +84,10 @@ class MainActivity : Activity() {
         findViewById<Button>(R.id.btnDriving).setOnClickListener {
             startActivity(Intent(this, DrivingActivity::class.java))
         }
-        // Opens Google Maps with nearby mosques so the user picks one
-        findViewById<Button>(R.id.btnGo).setOnClickListener { MapsSearch.mosques(this) }
+        // Opens the app's own list of nearby mosques; the user picks one
+        findViewById<Button>(R.id.btnGo).setOnClickListener {
+            startActivity(Intent(this, MosquesActivity::class.java))
+        }
         findViewById<Button>(R.id.btnShare).setOnClickListener { share() }
         findViewById<Button>(R.id.btnAddMosque).setOnClickListener { openUrl(Config.ADD_MOSQUE_URL) }
         findViewById<Button>(R.id.btnDonate).setOnClickListener { openUrl(Config.DONATE_URL) }
@@ -171,7 +173,7 @@ class MainActivity : Activity() {
             tvNextTitle.text = st.time.prayer.ar
             val left = st.time.iqama - now
             if (left > 0) {
-                tvLeftLabel.text = L.t("تقام بعد", "Iqama in")
+                tvLeftLabel.text = L.t("بقي على إقامة صلاة ${st.time.prayer.ar}", "Iqama for ${st.time.prayer.ar} in")
                 tvNextLeft.text = PrayerCalc.fmtLeft(left)
             } else {
                 tvLeftLabel.text = ""
@@ -181,7 +183,7 @@ class MainActivity : Activity() {
         } else {
             tvNextLabel.text = L.t("الصلاة القادمة", "Next")
             tvNextTitle.text = st.time.prayer.ar
-            tvLeftLabel.text = L.t("يؤذن بعد", "Adhan in")
+            tvLeftLabel.text = L.t("بقي على صلاة ${st.time.prayer.ar}", "Time left to ${st.time.prayer.ar}")
             tvNextLeft.text = PrayerCalc.fmtLeft(st.time.adhan - now)
             tvIqamaLeft.text = L.t("الأذان ${PrayerCalc.fmtTime(st.time.adhan)} · الإقامة ${PrayerCalc.fmtTime(st.time.iqama)}", "Adhan ${PrayerCalc.fmtTime(st.time.adhan)} · Iqama ${PrayerCalc.fmtTime(st.time.iqama)}")
         }
