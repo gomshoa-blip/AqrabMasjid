@@ -33,7 +33,8 @@ object Config {
     const val WHATSAPP_URL = "https://wa.me/966552101764"
 
     /** Holy Quran online (Wahy, Tafsir Center). */
-    const val QURAN_URL = "https://web.wahy.net/"
+    const val QURAN_URL = "https://web.wahy.net/mushaf"
+    const val QURAN_URL_EN = "https://web.wahy.net/en/mushaf"
 
     /** Recommended Quran apps. */
     const val TARTEEL_PKG = "com.mmmoussa.iqra"
