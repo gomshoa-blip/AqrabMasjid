@@ -31,7 +31,7 @@ object Config {
 
     /** Recommended Quran apps. */
     const val TARTEEL_PKG = "com.mmmoussa.iqra"
-    const val WAHY_SEARCH = "وحي القرآن الكريم"
+    const val WAHY_PKG = "com.logicdev.quran_reader"
 
     /** Minutes after adhan for the iqama alert. */
     const val IQAMA_ALERT_AFTER_MIN = 10

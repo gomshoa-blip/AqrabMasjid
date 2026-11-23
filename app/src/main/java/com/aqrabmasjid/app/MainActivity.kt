@@ -95,7 +95,7 @@ class MainActivity : Activity() {
         findViewById<Button>(R.id.btnDonate).setOnClickListener { openUrl(Config.DONATE_URL) }
         findViewById<Button>(R.id.btnQirat).setOnClickListener { openUrl(Config.QIRAT_URL) }
         findViewById<Button>(R.id.btnTarteel).setOnClickListener { openStore(Config.TARTEEL_PKG, null) }
-        findViewById<Button>(R.id.btnWahy).setOnClickListener { openStore(null, Config.WAHY_SEARCH) }
+        findViewById<Button>(R.id.btnWahy).setOnClickListener { openStore(Config.WAHY_PKG, null) }
         // Nearby mosques list removed: Google Maps is more accurate
         findViewById<View>(R.id.tvMosquesHeader).visibility = View.GONE
         layoutMosques.visibility = View.GONE
