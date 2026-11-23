@@ -47,6 +47,14 @@ object MosqueRepo {
                 }
             } catch (_: Exception) {
             }
+            // Backup: if the map servers failed or found nothing, use other search services
+            if (osm.isNullOrEmpty() && System.currentTimeMillis() < deadline) {
+                try {
+                    val fb = queryFallback(lat, lng, deadline)
+                    if (fb.isNotEmpty()) osm = fb
+                } catch (_: Exception) {
+                }
+            }
             val custom = try { queryCustom(lat, lng) } catch (_: Exception) { emptyList() }
 
             val result: List<Mosque>? =
@@ -61,7 +69,7 @@ object MosqueRepo {
         }
     }
 
-    private const val SEARCH_BUDGET_MS = 20_000L
+    private const val SEARCH_BUDGET_MS = 28_000L
 
     /**
      * Same method as the website (it works for thousands of users):
@@ -104,6 +112,74 @@ object MosqueRepo {
         } finally {
             pool.shutdownNow()
         }
+    }
+
+    /**
+     * Backup search when Overpass is down or slow: Photon and Nominatim
+     * (both OpenStreetMap). Asked at the same time; results merged.
+     */
+    private fun queryFallback(lat: Double, lng: Double, deadline: Long): List<Mosque> {
+        val left = (deadline - System.currentTimeMillis()).coerceAtLeast(3000L)
+        val timeout = minOf(left, 8_000L).toInt()
+        val d = 0.08 // about 8 km box
+        val urls = listOf(
+            "https://photon.komoot.io/api/?q=" + URLEncoder.encode("مسجد", "UTF-8") +
+                "&lat=$lat&lon=$lng&limit=30&osm_tag=amenity:place_of_worship",
+            "https://photon.komoot.io/api/?q=" + URLEncoder.encode("جامع", "UTF-8") +
+                "&lat=$lat&lon=$lng&limit=30&osm_tag=amenity:place_of_worship",
+            "https://nominatim.openstreetmap.org/search?format=jsonv2&limit=40&bounded=1&q=" +
+                URLEncoder.encode("مسجد", "UTF-8") +
+                "&viewbox=${lng - d},${lat + d},${lng + d},${lat - d}"
+        )
+        val pool = Executors.newFixedThreadPool(urls.size)
+        try {
+            val futures = urls.map { u ->
+                pool.submit<List<Mosque>> {
+                    val text = get(u, timeout)
+                    if (u.contains("photon")) parsePhoton(JSONObject(text), lat, lng)
+                    else parseNominatim(JSONArray(text), lat, lng)
+                }
+            }
+            val all = ArrayList<Mosque>()
+            for (f in futures) {
+                try {
+                    all += f.get(timeout + 1000L, java.util.concurrent.TimeUnit.MILLISECONDS)
+                } catch (_: Exception) {
+                }
+            }
+            return all.filter { it.distKm <= 10.0 }
+        } finally {
+            pool.shutdownNow()
+        }
+    }
+
+    private fun parsePhoton(root: JSONObject, lat: Double, lng: Double): List<Mosque> {
+        val out = ArrayList<Mosque>()
+        val fs = root.optJSONArray("features") ?: return out
+        for (i in 0 until fs.length()) {
+            val f = fs.getJSONObject(i)
+            val c = f.optJSONObject("geometry")?.optJSONArray("coordinates") ?: continue
+            val lo = c.optDouble(0)
+            val la = c.optDouble(1)
+            if (la.isNaN() || lo.isNaN()) continue
+            val name = f.optJSONObject("properties")?.optString("name")?.takeIf { it.isNotBlank() } ?: "مسجد"
+            out += Mosque(name, la, lo, distanceKm(lat, lng, la, lo))
+        }
+        return out
+    }
+
+    private fun parseNominatim(arr: JSONArray, lat: Double, lng: Double): List<Mosque> {
+        val out = ArrayList<Mosque>()
+        for (i in 0 until arr.length()) {
+            val o = arr.getJSONObject(i)
+            val la = o.optString("lat").toDoubleOrNull() ?: continue
+            val lo = o.optString("lon").toDoubleOrNull() ?: continue
+            val name = o.optString("name").takeIf { it.isNotBlank() }
+                ?: o.optString("display_name").substringBefore(",").takeIf { it.isNotBlank() }
+                ?: "مسجد"
+            out += Mosque(name, la, lo, distanceKm(lat, lng, la, lo))
+        }
+        return out
     }
 
     private fun parseOsm(root: JSONObject, lat: Double, lng: Double): List<Mosque> {

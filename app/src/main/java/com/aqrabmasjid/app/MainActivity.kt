@@ -36,6 +36,8 @@ class MainActivity : Activity() {
     }
 
     private lateinit var tvHijri: TextView
+    private lateinit var tvWeekday: TextView
+    private lateinit var tvGregorian: TextView
     private lateinit var tvNextTitle: TextView
     private lateinit var tvNextLeft: TextView
     private lateinit var tvIqamaLeft: TextView
@@ -56,6 +58,8 @@ class MainActivity : Activity() {
         Alerts.createChannel(this)
 
         tvHijri = findViewById(R.id.tvHijri)
+        tvWeekday = findViewById(R.id.tvWeekday)
+        tvGregorian = findViewById(R.id.tvGregorian)
         tvNextTitle = findViewById(R.id.tvNextTitle)
         tvNextLeft = findViewById(R.id.tvNextLeft)
         tvIqamaLeft = findViewById(R.id.tvIqamaLeft)
@@ -147,7 +151,10 @@ class MainActivity : Activity() {
         val day = PrayerCalc.day(this, lat, lng, now)
         val st = PrayerCalc.status(this, lat, lng, now)
 
-        tvHijri.text = PrayerCalc.hijriText(now) + if (day.ramadan) " · رمضان كريم" else ""
+        // Hijri date without the weekday (the weekday has its own place in the middle)
+        tvHijri.text = PrayerCalc.hijriText(now) + if (day.ramadan) " · رمضان" else ""
+        tvWeekday.text = java.text.SimpleDateFormat("EEEE", java.util.Locale("ar")).format(java.util.Date(now))
+        tvGregorian.text = java.text.SimpleDateFormat("d MMMM yyyy", java.util.Locale("ar")).format(java.util.Date(now)) + " م"
         if (st.isCurrent) {
             tvNextTitle.text = "الصلاة الحالية: ${st.time.prayer.ar}"
             val left = st.time.iqama - now

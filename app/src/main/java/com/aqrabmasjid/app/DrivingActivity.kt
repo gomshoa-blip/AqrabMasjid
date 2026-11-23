@@ -52,17 +52,22 @@ class DrivingActivity : Activity() {
         val pad = dp(20)
         root.setPadding(pad, pad, pad, pad)
 
-        // Exit button (top)
+        // Exit button (top): a clear rounded pill, easy to tap
         val exit = Button(this)
-        exit.text = "✕  خروج من وضع القيادة"
+        exit.text = "✕   خروج"
         exit.isAllCaps = false
-        exit.textSize = 16f
-        exit.setTextColor(Color.parseColor("#BBBBBB"))
-        exit.setBackgroundColor(Color.TRANSPARENT)
+        exit.textSize = 18f
+        exit.setTypeface(null, Typeface.BOLD)
+        exit.setTextColor(Color.WHITE)
+        exit.setBackgroundResource(R.drawable.bg_btn_exit)
         exit.stateListAnimator = null
+        exit.minHeight = 0
+        exit.minimumHeight = 0
+        exit.setPadding(dp(26), 0, dp(26), 0)
+        exit.contentDescription = "خروج من وضع القيادة"
         exit.setOnClickListener { finish() }
         root.addView(exit, LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT, dp(48)).apply { gravity = Gravity.START })
+            LinearLayout.LayoutParams.WRAP_CONTENT, dp(52)).apply { gravity = Gravity.START })
 
         // Big info area
         val info = LinearLayout(this)
