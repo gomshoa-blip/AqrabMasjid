@@ -162,12 +162,13 @@ class MainActivity : Activity() {
     private fun row(a: String, b: String, c: String, header: Boolean, highlight: Boolean): View {
         val l = LinearLayout(this)
         l.orientation = LinearLayout.HORIZONTAL
-        l.setPadding(8, 14, 8, 14)
-        if (highlight) l.setBackgroundColor(Color.parseColor("#E3F1EA"))
+        l.setPadding(dp(6), dp(10), dp(6), dp(10))
+        l.gravity = Gravity.CENTER_VERTICAL
+        if (highlight) l.setBackgroundResource(R.drawable.bg_row_on)
         for (t in listOf(a, b, c)) {
             val tv = TextView(this)
             tv.text = t
-            tv.textSize = if (header) 13f else 16f
+            tv.textSize = if (header) 13f else 17f
             tv.gravity = Gravity.CENTER
             if (header) tv.setTextColor(Color.parseColor("#777777"))
             if (highlight) tv.setTypeface(null, Typeface.BOLD)
@@ -178,33 +179,40 @@ class MainActivity : Activity() {
 
     private fun loadMosques(lat: Double, lng: Double) {
         layoutMosques.removeAllViews()
-        layoutMosques.addView(TextView(this).apply { text = "جاري البحث..."; setPadding(8, 12, 8, 12) })
+        layoutMosques.addView(TextView(this).apply { text = "جاري البحث..."; setPadding(dp(8), dp(12), dp(8), dp(12)) })
         MosqueRepo.nearby(this, lat, lng) { list ->
             layoutMosques.removeAllViews()
             if (list == null) {
-                layoutMosques.addView(TextView(this).apply { text = "تعذر الاتصال بالإنترنت"; setPadding(8, 12, 8, 12) })
+                layoutMosques.addView(TextView(this).apply { text = "تعذر الاتصال بالإنترنت"; setPadding(dp(8), dp(12), dp(8), dp(12)) })
                 return@nearby
             }
             nearest = list.firstOrNull()
             if (list.isEmpty()) {
-                layoutMosques.addView(TextView(this).apply { text = "لا توجد مساجد قريبة. أضف مسجداً."; setPadding(8, 12, 8, 12) })
+                layoutMosques.addView(TextView(this).apply { text = "لا توجد مساجد قريبة. أضف مسجداً."; setPadding(dp(8), dp(12), dp(8), dp(12)) })
             }
             for (m in list.take(3)) {
                 val item = LinearLayout(this)
                 item.orientation = LinearLayout.HORIZONTAL
                 item.gravity = Gravity.CENTER_VERTICAL
-                item.setPadding(8, 10, 8, 10)
-                item.setBackgroundColor(Color.WHITE)
+                item.setPadding(dp(14), dp(10), dp(14), dp(10))
+                item.setBackgroundResource(R.drawable.bg_card_white)
                 val tv = TextView(this)
                 tv.text = "${m.name}\n${MosqueRepo.fmtDistance(m.distKm)}"
                 tv.textSize = 15f
                 item.addView(tv, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
                 val go = Button(this)
                 go.text = "خذني"
+                go.isAllCaps = false
+                go.setTextColor(Color.WHITE)
+                go.setTypeface(null, Typeface.BOLD)
+                go.setBackgroundResource(R.drawable.bg_btn_green)
+                go.stateListAnimator = null
+                go.minHeight = dp(42); go.minimumHeight = dp(42)
+                go.setPadding(dp(18), 0, dp(18), 0)
                 go.setOnClickListener { openMaps(m) }
-                item.addView(go)
+                item.addView(go, LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, dp(42)))
                 val lp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-                lp.topMargin = 8
+                lp.topMargin = dp(8)
                 layoutMosques.addView(item, lp)
             }
         }
@@ -270,4 +278,7 @@ class MainActivity : Activity() {
             .setNegativeButton("إلغاء", null)
             .show()
     }
+
+    private fun dp(v: Int): Int = (v * resources.displayMetrics.density + 0.5f).toInt()
+
 }

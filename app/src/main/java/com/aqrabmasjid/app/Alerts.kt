@@ -10,6 +10,8 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.AudioAttributes
+import android.net.Uri
 import android.os.Build
 import androidx.car.app.notification.CarAppExtender
 import androidx.car.app.notification.CarPendingIntent
@@ -23,14 +25,27 @@ import com.aqrabmasjid.app.car.MasjidCarAppService
  * Only the next alert is scheduled; when it fires, the one after it is scheduled.
  */
 object Alerts {
-    const val CHANNEL = "prayer_alerts"
+    // New channel id: Android does not allow changing the sound of an existing channel
+    const val CHANNEL = "prayer_alerts_v2"
+    private const val OLD_CHANNEL = "prayer_alerts"
     const val ACTION_SHOW_MOSQUES = "com.aqrabmasjid.app.SHOW_MOSQUES"
     private const val MIN = 60_000L
 
     fun createChannel(c: Context) {
+        val nm = c.getSystemService(NotificationManager::class.java)
+        nm.deleteNotificationChannel(OLD_CHANNEL)
         val ch = NotificationChannel(CHANNEL, "تنبيه الصلاة", NotificationManager.IMPORTANCE_HIGH)
         ch.description = "تنبيه قبل الأذان وعند الأذان"
-        c.getSystemService(NotificationManager::class.java).createNotificationChannel(ch)
+        // Soft chime from res/raw/prayer_chime.ogg
+        val sound = Uri.parse("android.resource://${c.packageName}/${R.raw.prayer_chime}")
+        val attrs = AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .build()
+        ch.setSound(sound, attrs)
+        ch.enableVibration(true)
+        ch.vibrationPattern = longArrayOf(0, 250, 150, 250)
+        nm.createNotificationChannel(ch)
     }
 
     fun canExact(c: Context): Boolean =
