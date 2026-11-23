@@ -76,7 +76,7 @@
 
 
 
-        <!-- Tasbih: tap to count, ⟳ to change the dhikr -->
+        <!-- Short dhikr: changes on tap and each time the app opens -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -94,23 +94,11 @@
                 android:background="@drawable/bg_btn_green"
                 android:stateListAnimator="@null"
                 android:text="سبحان الله وبحمده، سبحان الله العظيم"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/btnTasbihNext"
-                android:layout_width="60dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="8dp"
-                android:minHeight="64dp"
-                android:minWidth="0dp"
-                android:background="@drawable/bg_btn_outline"
-                android:stateListAnimator="@null"
-                android:text="⟳"
-                android:textColor="@color/accent_text"
-                android:textSize="24sp"
                 android:textStyle="bold" />
         </LinearLayout>
 

@@ -86,16 +86,19 @@ class MainActivity : Activity() {
             Alerts.createChannel(this)
             recreate()
         }
-        // Tasbih button: tap to count, ⟳ for the next dhikr
+        // Short dhikr button: a new dhikr on each tap and each time the app opens
         val tasbih = findViewById<Button>(R.id.btnTasbih)
-        fun showTasbih() {
-            tasbih.text = if (tasbihCount == 0) TASBIH[tasbihIndex] else "${TASBIH[tasbihIndex]}\n($tasbihCount)"
+        val tp = getSharedPreferences("tasbih", MODE_PRIVATE)
+        var ti = (tp.getInt("i", -1) + 1) % TASBIH.size
+        tp.edit().putInt("i", ti).apply()
+        tasbih.text = TASBIH[ti]
+        tasbih.setOnClickListener {
+            ti = (ti + 1) % TASBIH.size
+            tp.edit().putInt("i", ti).apply()
+            tasbih.text = TASBIH[ti]
         }
-        tasbih.setOnClickListener { tasbihCount++; showTasbih() }
-        findViewById<Button>(R.id.btnTasbihNext).setOnClickListener {
-            tasbihIndex = (tasbihIndex + 1) % TASBIH.size
-            tasbihCount = 0
-            showTasbih()
+        // Iqama settings button removed from the screen
+        findViewById<View>(R.id.btnIqama).visibility = View.GONE
         }
         showTasbih()
         // Opens Google Maps searching "مسجد"; the user picks one
@@ -435,12 +438,16 @@ class MainActivity : Activity() {
 
     private fun dp(v: Int): Int = (v * resources.displayMetrics.density + 0.5f).toInt()
 
-    private var tasbihIndex = 0
-    private var tasbihCount = 0
     private val TASBIH = listOf(
         "سبحان الله وبحمده، سبحان الله العظيم",
-        "أستغفر الله العظيم",
-        "اللهم صلّ وسلّم على محمد"
+        "اللهم صلّ على محمد وعلى آل محمد",
+        "أستغفر الله العظيم وأتوب إليه",
+        "لا حول ولا قوة إلا بالله",
+        "لا إله إلا الله وحده لا شريك له",
+        "سبحان الله، والحمد لله، والله أكبر",
+        "حسبي الله لا إله إلا هو",
+        "اللهم إنك عفو تحب العفو فاعف عني",
+        "رب اغفر لي وتب عليّ"
     )
 
 }
