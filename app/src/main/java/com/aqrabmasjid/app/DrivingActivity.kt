@@ -28,13 +28,11 @@ class DrivingActivity : Activity() {
     private val tick = object : Runnable {
         override fun run() {
             render()
-            handler.postDelayed(this, 15_000)
+            handler.postDelayed(this, 1_000)
         }
     }
 
-    private lateinit var tvPrayer: TextView
-    private lateinit var tvLeftLabel: TextView
-    private lateinit var tvLeft: TextView
+    private lateinit var ring: CountdownRing
     private lateinit var tvTimes: TextView
     private lateinit var tvMosque: TextView
 
@@ -76,15 +74,10 @@ class DrivingActivity : Activity() {
         info.orientation = LinearLayout.VERTICAL
         info.gravity = Gravity.CENTER
 
-        tvPrayer = bigText(60f, Color.WHITE, bold = true)
-        tvLeftLabel = bigText(26f, Color.WHITE, bold = false)
-        tvLeft = bigText(80f, Color.parseColor("#C9A227"), bold = true)
+        ring = CountdownRing(this)
         tvTimes = bigText(22f, Color.parseColor("#DDDDDD"), bold = false)
-        tvMosque = bigText(20f, Color.parseColor("#7FD3AE"), bold = false)
-        info.addView(tvPrayer)
-        info.addView(tvLeftLabel, LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(10) })
-        info.addView(tvLeft)
+        info.addView(ring, LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
         info.addView(tvTimes)
         info.addView(tvMosque, LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(18) })
@@ -92,7 +85,7 @@ class DrivingActivity : Activity() {
 
         // One big button
         val go = Button(this)
-        go.text = L.t("🕌  خذني لأقرب مسجد", "🕌  Take me to nearest mosque")
+        go.text = L.t("🕌  أقرب مسجد", "🕌  Nearest mosque")
         go.isAllCaps = false
         go.textSize = 30f
         go.setTypeface(null, Typeface.BOLD)
@@ -153,9 +146,7 @@ class DrivingActivity : Activity() {
 
     private fun render() {
         val (lat, lng) = Prefs.location(this) ?: run {
-            tvPrayer.text = L.t("افتح التطبيق واسمح بالموقع", "Open the app and allow location")
-            tvLeftLabel.text = ""
-            tvLeft.text = ""
+            ring.update("", "", "--:--", L.t("افتح التطبيق واسمح بالموقع", "Open the app and allow location"), 0f, false)
             tvTimes.text = ""
             tvMosque.text = ""
             return
@@ -163,27 +154,11 @@ class DrivingActivity : Activity() {
         val now = System.currentTimeMillis()
         val st = PrayerCalc.status(this, lat, lng, now)
         val t = st.time
-        if (st.isCurrent) {
-            tvPrayer.text = t.prayer.ar
-            val left = t.iqama - now
-            if (left > 0) {
-                tvLeftLabel.text = L.t("بقي على إقامة صلاة ${t.prayer.ar}", "Iqama for ${t.prayer.ar} in")
-                tvLeft.textSize = 80f
-                tvLeft.text = PrayerCalc.fmtLeft(left)
-                tvTimes.text = L.t("الإقامة ${PrayerCalc.fmtTime(t.iqama)}", "Iqama ${PrayerCalc.fmtTime(t.iqama)}")
-            } else {
-                tvLeftLabel.text = ""
-                tvLeft.textSize = 44f
-                tvLeft.text = L.t("أقيمت الصلاة", "Prayer started")
-                tvTimes.text = ""
-            }
-        } else {
-            tvPrayer.text = t.prayer.ar
-            tvLeftLabel.text = L.t("بقي على صلاة ${t.prayer.ar}", "Time left to ${t.prayer.ar}")
-            tvLeft.textSize = 80f
-            tvLeft.text = PrayerCalc.fmtLeft(t.adhan - now)
-            tvTimes.text = L.t("الأذان ${PrayerCalc.fmtTime(t.adhan)} · الإقامة ${PrayerCalc.fmtTime(t.iqama)}", "Adhan ${PrayerCalc.fmtTime(t.adhan)} · Iqama ${PrayerCalc.fmtTime(t.iqama)}")
-        }
+        RingFill.fill(this, ring, lat, lng, now)
+        tvTimes.text = L.t(
+            "الأذان ${PrayerCalc.fmtTime(t.adhan)} · الإقامة ${PrayerCalc.fmtTime(t.iqama)}",
+            "Adhan ${PrayerCalc.fmtTime(t.adhan)} · Iqama ${PrayerCalc.fmtTime(t.iqama)}"
+        )
         val m = Prefs.nearest(this)
         tvMosque.text = if (m != null && m.distKm <= 15) L.t("أقرب مسجد: ${m.name} · ${MosqueRepo.fmtDistance(m.distKm)}", "Nearest mosque: ${m.name} · ${MosqueRepo.fmtDistance(m.distKm)}") else ""
     }

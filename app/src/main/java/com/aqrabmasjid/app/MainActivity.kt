@@ -35,15 +35,20 @@ class MainActivity : Activity() {
         }
     }
 
+    /** Updates only the ring every second, so the seconds count down smoothly. */
+    private val ringTick = object : Runnable {
+        override fun run() {
+            Prefs.location(this@MainActivity)?.let { (lat, lng) -> RingFill.fill(this@MainActivity, ring, lat, lng) }
+            handler.postDelayed(this, 1_000)
+        }
+    }
+
     private lateinit var tvHijri: TextView
     private lateinit var tvWeekday: TextView
     private lateinit var tvClock: TextView
     private lateinit var tvGregorian: TextView
-    private lateinit var tvNextLabel: TextView
-    private lateinit var tvLeftLabel: TextView
-    private lateinit var tvNextTitle: TextView
-    private lateinit var tvNextLeft: TextView
     private lateinit var tvIqamaLeft: TextView
+    private lateinit var ring: CountdownRing
     private lateinit var tvMethod: TextView
     private lateinit var tvStatus: TextView
     private lateinit var layoutTimes: LinearLayout
@@ -66,11 +71,8 @@ class MainActivity : Activity() {
         tvWeekday = findViewById(R.id.tvWeekday)
         tvClock = findViewById(R.id.tvClock)
         tvGregorian = findViewById(R.id.tvGregorian)
-        tvNextLabel = findViewById(R.id.tvNextLabel)
-        tvLeftLabel = findViewById(R.id.tvLeftLabel)
-        tvNextTitle = findViewById(R.id.tvNextTitle)
-        tvNextLeft = findViewById(R.id.tvNextLeft)
         tvIqamaLeft = findViewById(R.id.tvIqamaLeft)
+        ring = findViewById(R.id.ring)
         tvMethod = findViewById(R.id.tvMethod)
         tvStatus = findViewById(R.id.tvStatus)
         layoutTimes = findViewById(R.id.layoutTimes)
@@ -118,12 +120,14 @@ class MainActivity : Activity() {
         super.onResume()
         btnExact.visibility = if (Alerts.canExact(this)) View.GONE else View.VISIBLE
         handler.post(tick)
+        handler.post(ringTick)
         Alerts.scheduleNext(this)
     }
 
     override fun onPause() {
         super.onPause()
         handler.removeCallbacks(tick)
+        handler.removeCallbacks(ringTick)
     }
 
     private fun askPermissions() {
@@ -157,9 +161,7 @@ class MainActivity : Activity() {
 
     private fun renderTimes() {
         val (lat, lng) = Prefs.location(this) ?: run {
-            tvNextLabel.text = ""
-            tvLeftLabel.text = ""
-            tvNextTitle.text = L.t("حدّث موقعك لعرض المواقيت", "Update your location to see times")
+            ring.update("", "", "--:--", L.t("حدّث موقعك لعرض المواقيت", "Update your location to see times"), 0f, false)
             return
         }
         val now = System.currentTimeMillis()
@@ -171,25 +173,11 @@ class MainActivity : Activity() {
         tvWeekday.text = java.text.SimpleDateFormat("EEEE", L.locale).format(java.util.Date(now))
         tvClock.text = PrayerCalc.fmtTime(now)
         tvGregorian.text = java.text.SimpleDateFormat("d MMMM yyyy", L.locale).format(java.util.Date(now)) + L.t(" م", "")
-        if (st.isCurrent) {
-            tvNextLabel.text = L.t("الصلاة الحالية", "Now")
-            tvNextTitle.text = st.time.prayer.ar
-            val left = st.time.iqama - now
-            if (left > 0) {
-                tvLeftLabel.text = L.t("بقي على إقامة صلاة ${st.time.prayer.ar}", "Iqama for ${st.time.prayer.ar} in")
-                tvNextLeft.text = PrayerCalc.fmtLeft(left)
-            } else {
-                tvLeftLabel.text = ""
-                tvNextLeft.text = L.t("أقيمت الصلاة", "Prayer started")
-            }
-            tvIqamaLeft.text = L.t("الإقامة ${PrayerCalc.fmtTime(st.time.iqama)}", "Iqama ${PrayerCalc.fmtTime(st.time.iqama)}")
-        } else {
-            tvNextLabel.text = L.t("الصلاة القادمة", "Next")
-            tvNextTitle.text = st.time.prayer.ar
-            tvLeftLabel.text = L.t("بقي على صلاة ${st.time.prayer.ar}", "Time left to ${st.time.prayer.ar}")
-            tvNextLeft.text = PrayerCalc.fmtLeft(st.time.adhan - now)
-            tvIqamaLeft.text = L.t("الأذان ${PrayerCalc.fmtTime(st.time.adhan)} · الإقامة ${PrayerCalc.fmtTime(st.time.iqama)}", "Adhan ${PrayerCalc.fmtTime(st.time.adhan)} · Iqama ${PrayerCalc.fmtTime(st.time.iqama)}")
-        }
+        RingFill.fill(this, ring, lat, lng, now)
+        tvIqamaLeft.text = L.t(
+            "${st.time.prayer.ar}: الأذان ${PrayerCalc.fmtTime(st.time.adhan)} · الإقامة ${PrayerCalc.fmtTime(st.time.iqama)}",
+            "${st.time.prayer.ar}: Adhan ${PrayerCalc.fmtTime(st.time.adhan)} · Iqama ${PrayerCalc.fmtTime(st.time.iqama)}"
+        )
         tvMethod.text = L.t("طريقة الحساب: ${day.methodName}", "Method: ${day.methodName}")
 
         layoutTimes.removeAllViews()
@@ -372,7 +360,7 @@ class MainActivity : Activity() {
         fun b(id: Int, ar: String, en: String) { findViewById<TextView>(id).text = L.t(ar, en) }
         b(R.id.btnLang, "🌐 English", "🌐 العربية")
         b(R.id.btnDriving, "🚗  وضع القيادة", "🚗  Driving mode")
-        b(R.id.btnGo, "خذني لأقرب مسجد", "Take me to nearest mosque")
+        b(R.id.btnGo, "🕌  أقرب مسجد", "🕌  Nearest mosque")
         b(R.id.btnRefresh, "حدّث موقعي", "Update my location")
         b(R.id.tvMosquesHeader, "أقرب المساجد", "Nearest mosques")
         b(R.id.switchAlerts, "تنبيه عند الأذان، وبعده بـ 10 دقائق للإقامة", "Alert at adhan, and 10 minutes later for iqama")

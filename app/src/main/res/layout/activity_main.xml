@@ -13,24 +13,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Language switch -->
-        <Button
-            android:id="@+id/btnLang"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_gravity="end"
-            android:layout_marginBottom="10dp"
-            android:minHeight="0dp"
-            android:paddingLeft="18dp"
-            android:paddingRight="18dp"
-            android:background="@drawable/bg_btn_outline"
-            android:stateListAnimator="@null"
-            android:text="🌐 English"
-            android:textAllCaps="false"
-            android:textColor="@color/accent_text"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
         <!-- Top card: next prayer -->
         <LinearLayout
             android:id="@+id/cardNext"
@@ -43,6 +25,78 @@
             android:paddingBottom="26dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp">
+
+            <!-- Big countdown ring: time left to adhan, then to iqama -->
+            <com.aqrabmasjid.app.CountdownRing
+                android:id="@+id/ring"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal" />
+
+            <TextView
+                android:id="@+id/tvIqamaLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnGo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:minHeight="68dp"
+            android:background="@drawable/bg_btn_gold"
+            android:stateListAnimator="@null"
+            android:text="خذني لأقرب مسجد"
+            android:textAllCaps="false"
+            android:textColor="#1F2A24"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <!-- Language switch -->
+        <Button
+            android:id="@+id/btnLang"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:minHeight="0dp"
+            android:paddingLeft="18dp"
+            android:paddingRight="18dp"
+            android:background="@drawable/bg_btn_outline"
+            android:stateListAnimator="@null"
+            android:text="🌐 English"
+            android:textAllCaps="false"
+            android:textColor="@color/accent_text"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+
+        <Button
+            android:id="@+id/btnDriving"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:minHeight="54dp"
+            android:background="@drawable/bg_btn_green"
+            android:stateListAnimator="@null"
+            android:text="🚗  وضع القيادة"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <!-- Day + time, Hijri + Gregorian dates -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_card_green"
+            android:orientation="vertical"
+            android:padding="12dp">
 
             <!-- First row: two framed boxes.
                  Box 1: day + current time.  Box 2: Hijri date + Gregorian date. -->
@@ -113,99 +167,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- One row: framed label "الصلاة القادمة" + prayer name -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tvNextLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    android:background="@drawable/bg_label_pill"
-                    android:paddingLeft="12dp"
-                    android:paddingTop="5dp"
-                    android:paddingRight="12dp"
-                    android:paddingBottom="5dp"
-                    android:textColor="#FFFFFF"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tvNextTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="..."
-                    android:textColor="#FFFFFF"
-                    android:textSize="40sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <!-- "يؤذن بعد" next to the time left -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tvLeftLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:textColor="#FFFFFF"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/tvNextLeft"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/gold"
-                    android:textSize="40sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/tvIqamaLeft"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp" />
         </LinearLayout>
-
-        <Button
-            android:id="@+id/btnDriving"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:minHeight="54dp"
-            android:background="@drawable/bg_btn_green"
-            android:stateListAnimator="@null"
-            android:text="🚗  وضع القيادة"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/btnGo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:minHeight="54dp"
-            android:background="@drawable/bg_btn_gold"
-            android:stateListAnimator="@null"
-            android:text="خذني لأقرب مسجد"
-            android:textAllCaps="false"
-            android:textColor="#1F2A24"
-            android:textSize="18sp"
-            android:textStyle="bold" />
 
         <Button
             android:id="@+id/btnRefresh"
