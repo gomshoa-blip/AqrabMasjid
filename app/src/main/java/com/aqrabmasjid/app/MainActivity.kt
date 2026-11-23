@@ -213,8 +213,12 @@ class MainActivity : Activity() {
             tv.text = t
             tv.textSize = if (header) 13f else 17f
             tv.gravity = Gravity.CENTER
-            if (header) tv.setTextColor(getColor(R.color.text_hint))
-            if (highlight) tv.setTypeface(null, Typeface.BOLD)
+            tv.setTextColor(getColor(when {
+                header -> R.color.text_hint
+                highlight -> R.color.title_text
+                else -> R.color.text_primary
+            }))
+            if (header || highlight) tv.setTypeface(null, Typeface.BOLD)
             l.addView(tv, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
         }
         return l

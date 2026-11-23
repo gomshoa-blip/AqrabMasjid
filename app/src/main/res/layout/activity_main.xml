@@ -181,7 +181,7 @@
             android:text="حدّث موقعي"
             android:textAllCaps="false"
             android:textColor="@color/accent_text"
-            android:textSize="16sp" />
+            android:textSize="16sp"  android:textStyle="bold" />
 
         <Button
             android:id="@+id/btnQirat"
@@ -195,7 +195,7 @@
             android:text="قيراط - جنائز الرياض والمقابر"
             android:textAllCaps="false"
             android:textColor="@color/accent_text"
-            android:textSize="16sp" />
+            android:textSize="16sp"  android:textStyle="bold" />
 
         <!-- Prayer times table -->
         <LinearLayout
@@ -243,6 +243,7 @@
             android:paddingStart="4dp"
             android:paddingEnd="4dp"
             android:text="تنبيه عند الأذان، وبعده بـ 10 دقائق للإقامة"
+            android:textColor="@color/text_primary"
             android:textSize="15sp" />
 
         <Button
@@ -257,7 +258,7 @@
             android:textAllCaps="false"
             android:textColor="@color/accent_text"
             android:textSize="16sp"
-            android:visibility="gone" />
+            android:visibility="gone"  android:textStyle="bold" />
 
         <Button
             android:id="@+id/btnIqama"
@@ -270,7 +271,7 @@
             android:text="وقت الإقامة لكل صلاة"
             android:textAllCaps="false"
             android:textColor="@color/accent_text"
-            android:textSize="16sp" />
+            android:textSize="16sp"  android:textStyle="bold" />
 
         <!-- Share / add / donate -->
         <TextView
@@ -294,7 +295,7 @@
             android:text="📖 ترتيل"
             android:textAllCaps="false"
             android:textColor="@color/accent_text"
-            android:textSize="16sp" />
+            android:textSize="16sp"  android:textStyle="bold" />
 
         <Button
             android:id="@+id/btnWahy"
@@ -307,7 +308,7 @@
             android:text="📖 وحي"
             android:textAllCaps="false"
             android:textColor="@color/accent_text"
-            android:textSize="16sp" />
+            android:textSize="16sp"  android:textStyle="bold" />
 
         <Button
             android:id="@+id/btnShare"
@@ -334,7 +335,7 @@
             android:text="➕ أضف مسجداً"
             android:textAllCaps="false"
             android:textColor="@color/accent_text"
-            android:textSize="16sp" />
+            android:textSize="16sp"  android:textStyle="bold" />
 
         <Button
             android:id="@+id/btnDonate"
@@ -347,7 +348,7 @@
             android:text="تبرع عبر منصة إحسان"
             android:textAllCaps="false"
             android:textColor="@color/accent_text"
-            android:textSize="16sp" />
+            android:textSize="16sp"  android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvStatus"

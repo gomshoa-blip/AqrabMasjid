@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Night colors (follow the phone's dark mode) -->
-    <color name="bg">#0F1412</color>
-    <color name="surface">#1A221E</color>
-    <color name="stroke">#2C3631</color>
-    <color name="row_on">#1F3A2E</color>
-    <color name="text_primary">#E8EEEA</color>
-    <color name="text_secondary">#A3B0A8</color>
-    <color name="text_hint">#8A968F</color>
-    <color name="accent_text">#7FD3AE</color>
+    <color name="bg">#0E1411</color>
+    <color name="surface">#18211D</color>
+    <color name="stroke">#2A3730</color>
+    <color name="row_on">#1F4033</color>
+    <color name="tonal">#1C3A2E</color>
+    <color name="text_primary">#EEF4F0</color>
+    <color name="text_secondary">#B8C4BD</color>
+    <color name="text_hint">#9AA7A0</color>
+    <color name="accent_text">#A6E8C8</color>
     <color name="outline_stroke">#3FA37C</color>
-    <color name="title_text">#7FD3AE</color>
+    <color name="title_text">#A6E8C8</color>
 </resources>
