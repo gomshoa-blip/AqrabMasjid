@@ -94,6 +94,7 @@ class MainActivity : Activity() {
         findViewById<Button>(R.id.btnShare).setOnClickListener { share() }
         findViewById<Button>(R.id.btnAddMosque).setOnClickListener { openUrl(Config.ADD_MOSQUE_URL) }
         findViewById<Button>(R.id.btnDonate).setOnClickListener { openUrl(Config.DONATE_URL) }
+        findViewById<Button>(R.id.btnAdhkar).setOnClickListener { startActivity(Intent(this, AdhkarActivity::class.java)) }
         findViewById<Button>(R.id.btnQirat).setOnClickListener { openUrl(Config.QIRAT_URL) }
         findViewById<Button>(R.id.btnTarteel).setOnClickListener { openStore(Config.TARTEEL_PKG, null) }
         findViewById<Button>(R.id.btnWahy).setOnClickListener { openStore(Config.WAHY_PKG, null) }
@@ -406,6 +407,7 @@ class MainActivity : Activity() {
         b(R.id.btnShare, "شارك التطبيق - الدال على الخير كفاعله", "Share the app")
         b(R.id.btnAddMosque, "➕ أضف مسجداً", "➕ Add a mosque")
         b(R.id.btnDonate, "تبرع عبر منصة إحسان", "Donate via Ehsan")
+        b(R.id.btnAdhkar, "📿  الأذكار", "📿  Adhkar")
         b(R.id.btnQirat, "قيراط - جنائز الرياض والمقابر", "Qirat - Riyadh funerals & cemeteries")
         b(R.id.tvQuranHeader, "تطبيقات قرآن ننصح بها", "Recommended Quran apps")
         b(R.id.btnTarteel, "📖 ترتيل", "📖 Tarteel")

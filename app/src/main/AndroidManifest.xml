@@ -40,6 +40,11 @@
             android:exported="false"
             android:label="وضع القيادة" />
 
+        <!-- Adhkar: morning, evening, after prayer -->
+        <activity
+            android:name=".AdhkarActivity"
+            android:exported="false" />
+
         <!-- Nearby mosques list: pick one, then navigation starts -->
         <activity
             android:name=".MosquesActivity"
