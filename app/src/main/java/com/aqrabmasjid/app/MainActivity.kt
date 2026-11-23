@@ -31,12 +31,13 @@ class MainActivity : Activity() {
     private val tick = object : Runnable {
         override fun run() {
             renderTimes()
-            handler.postDelayed(this, 30_000)
+            handler.postDelayed(this, 15_000)
         }
     }
 
     private lateinit var tvHijri: TextView
     private lateinit var tvWeekday: TextView
+    private lateinit var tvClock: TextView
     private lateinit var tvGregorian: TextView
     private lateinit var tvNextLabel: TextView
     private lateinit var tvLeftLabel: TextView
@@ -63,6 +64,7 @@ class MainActivity : Activity() {
 
         tvHijri = findViewById(R.id.tvHijri)
         tvWeekday = findViewById(R.id.tvWeekday)
+        tvClock = findViewById(R.id.tvClock)
         tvGregorian = findViewById(R.id.tvGregorian)
         tvNextLabel = findViewById(R.id.tvNextLabel)
         tvLeftLabel = findViewById(R.id.tvLeftLabel)
@@ -167,6 +169,7 @@ class MainActivity : Activity() {
         // Hijri date without the weekday (the weekday has its own place in the middle)
         tvHijri.text = PrayerCalc.hijriText(now) + if (day.ramadan) L.t(" · رمضان", " · Ramadan") else ""
         tvWeekday.text = java.text.SimpleDateFormat("EEEE", L.locale).format(java.util.Date(now))
+        tvClock.text = PrayerCalc.fmtTime(now)
         tvGregorian.text = java.text.SimpleDateFormat("d MMMM yyyy", L.locale).format(java.util.Date(now)) + L.t(" م", "")
         if (st.isCurrent) {
             tvNextLabel.text = L.t("الصلاة الحالية", "Now")
