@@ -79,7 +79,8 @@ class MainActivity : Activity() {
         layoutMosques = findViewById(R.id.layoutMosques)
         btnExact = findViewById(R.id.btnExact)
 
-        findViewById<Button>(R.id.btnRefresh).setOnClickListener { refresh() }
+        // Location updates by itself each time the app opens; no button needed
+        findViewById<View>(R.id.btnRefresh).visibility = View.GONE
         findViewById<Button>(R.id.btnLang).setOnClickListener {
             L.setEnglish(this, !L.en)
             Alerts.createChannel(this)
@@ -126,7 +127,12 @@ class MainActivity : Activity() {
         handler.post(tick)
         handler.post(ringTick)
         Alerts.scheduleNext(this)
+        // Update the location automatically when the app comes back
+        if (resumedOnce && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) refresh()
+        resumedOnce = true
     }
+
+    private var resumedOnce = false
 
     override fun onPause() {
         super.onPause()
