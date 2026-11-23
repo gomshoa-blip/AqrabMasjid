@@ -32,9 +32,8 @@ object Config {
     /** WhatsApp contact. */
     const val WHATSAPP_URL = "https://wa.me/966552101764"
 
-    /** Holy Quran online (Wahy, Tafsir Center). */
-    const val QURAN_URL = "https://web.wahy.net/mushaf"
-    const val QURAN_URL_EN = "https://web.wahy.net/en/mushaf"
+    /** Holy Quran: King Saud University Electronic Mushaf (scanned Madinah Mushaf pages), mobile view. */
+    const val QURAN_URL = "https://quran.ksu.edu.sa/m.php"
 
     /** Recommended Quran apps. */
     const val TARTEEL_PKG = "com.mmmoussa.iqra"

@@ -183,7 +183,7 @@
   <a class="big alt" id="gmaps" style="display:none"></a>
   <button class="big alt" id="retry" style="display:none"></button>
   <div class="row2">
-    <a class="big alt" id="quranBtn" href="https://web.wahy.net/mushaf" target="_blank" rel="noopener" data-t="quran"></a>
+    <a class="big alt" id="quranBtn" href="https://quran.ksu.edu.sa/m.php" target="_blank" rel="noopener" data-t="quran"></a>
     <button class="big alt" id="adhkarBtn" type="button" data-t="adhkar"></button>
   </div>
   <a class="big alt" id="goQirat" href="https://janaez-riyadh.netlify.app" target="_blank" rel="noopener" data-t="qirat" style="display:none"></a>
@@ -917,7 +917,8 @@ function apply(){
   document.documentElement.lang = lang; document.documentElement.dir = lang==="ar" ? "rtl" : "ltr";
   document.querySelectorAll("[data-t]").forEach(e => e.textContent = L()[e.dataset.t]);
   $("langBtn").textContent = L().other;
-  $("quranBtn").href = lang === "en" ? "https://web.wahy.net/en/mushaf" : "https://web.wahy.net/mushaf";
+  // King Saud University Electronic Mushaf: mobile view on phones, full view on computers
+  $("quranBtn").href = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ? "https://quran.ksu.edu.sa/m.php" : "https://quran.ksu.edu.sa/index.php";
   document.title = lang==="ar" ? "أقرب مسجد – ومواقيت الصلاة" : "Nearest Mosque – Prayer Times";
   $("waBtn").href = "https://wa.me/?text=" + encodeURIComponent(L().waMsg);
   if (Array.isArray(statusKey)) setStatus(...statusKey); else setStatus(statusKey);
