@@ -38,6 +38,8 @@ class MainActivity : Activity() {
     private lateinit var tvHijri: TextView
     private lateinit var tvWeekday: TextView
     private lateinit var tvGregorian: TextView
+    private lateinit var tvNextLabel: TextView
+    private lateinit var tvLeftLabel: TextView
     private lateinit var tvNextTitle: TextView
     private lateinit var tvNextLeft: TextView
     private lateinit var tvIqamaLeft: TextView
@@ -60,6 +62,8 @@ class MainActivity : Activity() {
         tvHijri = findViewById(R.id.tvHijri)
         tvWeekday = findViewById(R.id.tvWeekday)
         tvGregorian = findViewById(R.id.tvGregorian)
+        tvNextLabel = findViewById(R.id.tvNextLabel)
+        tvLeftLabel = findViewById(R.id.tvLeftLabel)
         tvNextTitle = findViewById(R.id.tvNextTitle)
         tvNextLeft = findViewById(R.id.tvNextLeft)
         tvIqamaLeft = findViewById(R.id.tvIqamaLeft)
@@ -144,6 +148,8 @@ class MainActivity : Activity() {
 
     private fun renderTimes() {
         val (lat, lng) = Prefs.location(this) ?: run {
+            tvNextLabel.text = ""
+            tvLeftLabel.text = ""
             tvNextTitle.text = "حدّث موقعك لعرض المواقيت"
             return
         }
@@ -156,12 +162,21 @@ class MainActivity : Activity() {
         tvWeekday.text = java.text.SimpleDateFormat("EEEE", java.util.Locale("ar")).format(java.util.Date(now))
         tvGregorian.text = java.text.SimpleDateFormat("d MMMM yyyy", java.util.Locale("ar")).format(java.util.Date(now)) + " م"
         if (st.isCurrent) {
-            tvNextTitle.text = "الصلاة الحالية: ${st.time.prayer.ar}"
+            tvNextLabel.text = "الصلاة الحالية"
+            tvNextTitle.text = st.time.prayer.ar
             val left = st.time.iqama - now
-            tvNextLeft.text = if (left > 0) "الإقامة بعد ${PrayerCalc.fmtLeft(left)}" else "أقيمت الصلاة"
+            if (left > 0) {
+                tvLeftLabel.text = "تقام بعد"
+                tvNextLeft.text = PrayerCalc.fmtLeft(left)
+            } else {
+                tvLeftLabel.text = ""
+                tvNextLeft.text = "أقيمت الصلاة"
+            }
             tvIqamaLeft.text = "الإقامة ${PrayerCalc.fmtTime(st.time.iqama)}"
         } else {
-            tvNextTitle.text = "الصلاة القادمة: ${st.time.prayer.ar}"
+            tvNextLabel.text = "الصلاة القادمة"
+            tvNextTitle.text = st.time.prayer.ar
+            tvLeftLabel.text = "يؤذن بعد"
             tvNextLeft.text = PrayerCalc.fmtLeft(st.time.adhan - now)
             tvIqamaLeft.text = "الأذان ${PrayerCalc.fmtTime(st.time.adhan)} · الإقامة ${PrayerCalc.fmtTime(st.time.iqama)}"
         }

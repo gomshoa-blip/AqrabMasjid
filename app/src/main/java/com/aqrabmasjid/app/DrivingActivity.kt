@@ -33,6 +33,7 @@ class DrivingActivity : Activity() {
     }
 
     private lateinit var tvPrayer: TextView
+    private lateinit var tvLeftLabel: TextView
     private lateinit var tvLeft: TextView
     private lateinit var tvTimes: TextView
     private lateinit var tvMosque: TextView
@@ -74,11 +75,14 @@ class DrivingActivity : Activity() {
         info.orientation = LinearLayout.VERTICAL
         info.gravity = Gravity.CENTER
 
-        tvPrayer = bigText(34f, Color.WHITE, bold = true)
-        tvLeft = bigText(76f, Color.parseColor("#C9A227"), bold = true)
+        tvPrayer = bigText(60f, Color.WHITE, bold = true)
+        tvLeftLabel = bigText(26f, Color.WHITE, bold = false)
+        tvLeft = bigText(80f, Color.parseColor("#C9A227"), bold = true)
         tvTimes = bigText(22f, Color.parseColor("#DDDDDD"), bold = false)
         tvMosque = bigText(20f, Color.parseColor("#7FD3AE"), bold = false)
         info.addView(tvPrayer)
+        info.addView(tvLeftLabel, LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(10) })
         info.addView(tvLeft)
         info.addView(tvTimes)
         info.addView(tvMosque, LinearLayout.LayoutParams(
@@ -149,6 +153,7 @@ class DrivingActivity : Activity() {
     private fun render() {
         val (lat, lng) = Prefs.location(this) ?: run {
             tvPrayer.text = "افتح التطبيق واسمح بالموقع"
+            tvLeftLabel.text = ""
             tvLeft.text = ""
             tvTimes.text = ""
             tvMosque.text = ""
@@ -158,12 +163,23 @@ class DrivingActivity : Activity() {
         val st = PrayerCalc.status(this, lat, lng, now)
         val t = st.time
         if (st.isCurrent) {
-            tvPrayer.text = "الصلاة الحالية: ${t.prayer.ar}"
+            tvPrayer.text = t.prayer.ar
             val left = t.iqama - now
-            tvLeft.text = if (left > 0) PrayerCalc.fmtLeft(left) else "أقيمت"
-            tvTimes.text = if (left > 0) "على الإقامة · ${PrayerCalc.fmtTime(t.iqama)}" else ""
+            if (left > 0) {
+                tvLeftLabel.text = "تقام الصلاة بعد"
+                tvLeft.textSize = 80f
+                tvLeft.text = PrayerCalc.fmtLeft(left)
+                tvTimes.text = "الإقامة ${PrayerCalc.fmtTime(t.iqama)}"
+            } else {
+                tvLeftLabel.text = ""
+                tvLeft.textSize = 44f
+                tvLeft.text = "أقيمت الصلاة"
+                tvTimes.text = ""
+            }
         } else {
             tvPrayer.text = t.prayer.ar
+            tvLeftLabel.text = "يؤذن بعد"
+            tvLeft.textSize = 80f
             tvLeft.text = PrayerCalc.fmtLeft(t.adhan - now)
             tvTimes.text = "الأذان ${PrayerCalc.fmtTime(t.adhan)} · الإقامة ${PrayerCalc.fmtTime(t.iqama)}"
         }
