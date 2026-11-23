@@ -2,11 +2,16 @@ name: Build APK
 
 on:
   push:
+    paths-ignore:
+      - "ios/**"
+      - ".github/workflows/ios.yml"
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      HAS_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
     steps:
       - name: Get the code
         uses: actions/checkout@v4
@@ -31,3 +36,24 @@ jobs:
         with:
           name: AqrabMasjid-apk
           path: app/build/outputs/apk/debug/*.apk
+
+      # Google Play build (.aab). Runs only after you add the 4 secrets in
+      # GitHub: Settings > Secrets and variables > Actions.
+      - name: Build for Google Play (AAB)
+        if: env.HAS_KEYSTORE == 'true'
+        env:
+          KS: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          echo "$KS" | base64 -d > "$RUNNER_TEMP/upload.jks"
+          export ANDROID_KEYSTORE_FILE="$RUNNER_TEMP/upload.jks"
+          ./gradlew bundleRelease --stacktrace
+
+      - name: Upload the Google Play file
+        if: env.HAS_KEYSTORE == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: AqrabMasjid-googleplay-aab
+          path: app/build/outputs/bundle/release/*.aab

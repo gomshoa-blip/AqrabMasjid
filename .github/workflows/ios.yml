@@ -1,0 +1,42 @@
+name: Build iPhone app
+
+on:
+  push:
+    paths:
+      - "ios/**"
+      - ".github/workflows/ios.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Make the Xcode project
+        working-directory: ios
+        run: xcodegen generate
+
+      # Builds for the iPhone simulator to check the code compiles.
+      # Building for real iPhones and the App Store needs an Apple Developer account.
+      - name: Build the app
+        working-directory: ios
+        run: |
+          set +e
+          xcodebuild -project AqrabMasjid.xcodeproj -scheme AqrabMasjid \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build CODE_SIGNING_ALLOWED=NO build > build.log 2>&1
+          code=$?
+          grep -E "error:|BUILD (SUCCEEDED|FAILED)" build.log | head -n 60
+          if [ $code -ne 0 ]; then tail -n 40 build.log; fi
+          exit $code
+
+      - name: Upload the simulator app
+        uses: actions/upload-artifact@v4
+        with:
+          name: AqrabMasjid-ios-simulator
+          path: ios/build/Build/Products/Debug-iphonesimulator/AqrabMasjid.app
