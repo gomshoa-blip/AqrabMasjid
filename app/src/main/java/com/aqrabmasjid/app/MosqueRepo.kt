@@ -247,5 +247,6 @@ object MosqueRepo {
     }
 
     fun fmtDistance(km: Double): String =
-        if (km < 1) "${(km * 1000).toInt()} م" else String.format(java.util.Locale.US, "%.1f كم", km)
+        if (km < 1) L.t("${(km * 1000).toInt()} م", "${(km * 1000).toInt()} m")
+        else String.format(java.util.Locale.US, L.t("%.1f كم", "%.1f km"), km)
 }

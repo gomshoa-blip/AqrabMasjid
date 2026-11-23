@@ -43,11 +43,12 @@ class DrivingActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         CrashLog.install(this)
+        L.init(this)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         val root = LinearLayout(this)
         root.orientation = LinearLayout.VERTICAL
-        root.layoutDirection = View.LAYOUT_DIRECTION_RTL
+        root.layoutDirection = if (L.en) View.LAYOUT_DIRECTION_LTR else View.LAYOUT_DIRECTION_RTL
         root.setBackgroundColor(Color.BLACK)
         root.gravity = Gravity.CENTER_HORIZONTAL
         val pad = dp(20)
@@ -55,7 +56,7 @@ class DrivingActivity : Activity() {
 
         // Exit button (top): a clear rounded pill, easy to tap
         val exit = Button(this)
-        exit.text = "✕   خروج"
+        exit.text = L.t("✕   خروج", "✕   Exit")
         exit.isAllCaps = false
         exit.textSize = 18f
         exit.setTypeface(null, Typeface.BOLD)
@@ -65,7 +66,7 @@ class DrivingActivity : Activity() {
         exit.minHeight = 0
         exit.minimumHeight = 0
         exit.setPadding(dp(26), 0, dp(26), 0)
-        exit.contentDescription = "خروج من وضع القيادة"
+        exit.contentDescription = L.t("خروج من وضع القيادة", "Exit driving mode")
         exit.setOnClickListener { finish() }
         root.addView(exit, LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT, dp(52)).apply { gravity = Gravity.START })
@@ -91,7 +92,7 @@ class DrivingActivity : Activity() {
 
         // One big button
         val go = Button(this)
-        go.text = "🕌  خذني لأقرب مسجد"
+        go.text = L.t("🕌  خذني لأقرب مسجد", "🕌  Take me to nearest mosque")
         go.isAllCaps = false
         go.textSize = 30f
         go.setTypeface(null, Typeface.BOLD)
@@ -152,7 +153,7 @@ class DrivingActivity : Activity() {
 
     private fun render() {
         val (lat, lng) = Prefs.location(this) ?: run {
-            tvPrayer.text = "افتح التطبيق واسمح بالموقع"
+            tvPrayer.text = L.t("افتح التطبيق واسمح بالموقع", "Open the app and allow location")
             tvLeftLabel.text = ""
             tvLeft.text = ""
             tvTimes.text = ""
@@ -166,25 +167,25 @@ class DrivingActivity : Activity() {
             tvPrayer.text = t.prayer.ar
             val left = t.iqama - now
             if (left > 0) {
-                tvLeftLabel.text = "تقام الصلاة بعد"
+                tvLeftLabel.text = L.t("تقام الصلاة بعد", "Iqama in")
                 tvLeft.textSize = 80f
                 tvLeft.text = PrayerCalc.fmtLeft(left)
-                tvTimes.text = "الإقامة ${PrayerCalc.fmtTime(t.iqama)}"
+                tvTimes.text = L.t("الإقامة ${PrayerCalc.fmtTime(t.iqama)}", "Iqama ${PrayerCalc.fmtTime(t.iqama)}")
             } else {
                 tvLeftLabel.text = ""
                 tvLeft.textSize = 44f
-                tvLeft.text = "أقيمت الصلاة"
+                tvLeft.text = L.t("أقيمت الصلاة", "Prayer started")
                 tvTimes.text = ""
             }
         } else {
             tvPrayer.text = t.prayer.ar
-            tvLeftLabel.text = "يؤذن بعد"
+            tvLeftLabel.text = L.t("يؤذن بعد", "Adhan in")
             tvLeft.textSize = 80f
             tvLeft.text = PrayerCalc.fmtLeft(t.adhan - now)
-            tvTimes.text = "الأذان ${PrayerCalc.fmtTime(t.adhan)} · الإقامة ${PrayerCalc.fmtTime(t.iqama)}"
+            tvTimes.text = L.t("الأذان ${PrayerCalc.fmtTime(t.adhan)} · الإقامة ${PrayerCalc.fmtTime(t.iqama)}", "Adhan ${PrayerCalc.fmtTime(t.adhan)} · Iqama ${PrayerCalc.fmtTime(t.iqama)}")
         }
         val m = Prefs.nearest(this)
-        tvMosque.text = if (m != null && m.distKm <= 15) "أقرب مسجد: ${m.name} · ${MosqueRepo.fmtDistance(m.distKm)}" else ""
+        tvMosque.text = if (m != null && m.distKm <= 15) L.t("أقرب مسجد: ${m.name} · ${MosqueRepo.fmtDistance(m.distKm)}", "Nearest mosque: ${m.name} · ${MosqueRepo.fmtDistance(m.distKm)}") else ""
     }
 
     private fun goToNearest() {

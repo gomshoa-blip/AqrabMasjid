@@ -34,8 +34,8 @@ object Alerts {
     fun createChannel(c: Context) {
         val nm = c.getSystemService(NotificationManager::class.java)
         nm.deleteNotificationChannel(OLD_CHANNEL)
-        val ch = NotificationChannel(CHANNEL, "تنبيه الصلاة", NotificationManager.IMPORTANCE_HIGH)
-        ch.description = "تنبيه عند الأذان، وبعده بـ 10 دقائق للإقامة"
+        val ch = NotificationChannel(CHANNEL, L.t("تنبيه الصلاة", "Prayer alerts"), NotificationManager.IMPORTANCE_HIGH)
+        ch.description = L.t("تنبيه عند الأذان، وبعده بـ 10 دقائق للإقامة", "Alert at adhan, and 10 minutes later for iqama")
         // Soft chime from res/raw/prayer_chime.ogg
         val sound = Uri.parse("android.resource://${c.packageName}/${R.raw.prayer_chime}")
         val attrs = AudioAttributes.Builder()
@@ -94,18 +94,19 @@ object Alerts {
         if (Build.VERSION.SDK_INT >= 33 &&
             ContextCompat.checkSelfPermission(c, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
         ) return
+        L.init(c)
         createChannel(c)
 
         val title = if (type == "iqama") {
             val left = ((iqama - System.currentTimeMillis()) / MIN).toInt()
-            if (left > 0) "إقامة ${prayer.ar} بعد $left د" else "حان وقت إقامة ${prayer.ar}"
-        } else "حان الآن وقت أذان ${prayer.ar}"
+            if (left > 0) L.t("إقامة ${prayer.ar} بعد $left د", "${prayer.ar} iqama in $left min") else L.t("حان وقت إقامة ${prayer.ar}", "Time for ${prayer.ar} iqama")
+        } else L.t("حان الآن وقت أذان ${prayer.ar}", "It is time for ${prayer.ar} adhan")
         // Saved mosque may be old (user moved to another city) -> show it only if still close
         val nearest = Prefs.nearest(c)?.takeIf { it.distKm <= 5.0 }
         val text = buildString {
-            if (nearest != null) append("أقرب مسجد: ${nearest.name} على بعد ${MosqueRepo.fmtDistance(nearest.distKm)}")
-            else append("اضغط للذهاب لأقرب مسجد")
-            append(" · الإقامة ${PrayerCalc.fmtTime(iqama)}")
+            if (nearest != null) append(L.t("أقرب مسجد: ${nearest.name} على بعد ${MosqueRepo.fmtDistance(nearest.distKm)}", "Nearest mosque: ${nearest.name}, ${MosqueRepo.fmtDistance(nearest.distKm)} away"))
+            else append(L.t("اضغط للذهاب لأقرب مسجد", "Tap to go to the nearest mosque"))
+            append(L.t(" · الإقامة ${PrayerCalc.fmtTime(iqama)}", " · Iqama ${PrayerCalc.fmtTime(iqama)}"))
         }
 
         // Tap on the car screen -> opens the mosques list in Android Auto
@@ -126,7 +127,7 @@ object Alerts {
             .setSmallIcon(R.drawable.ic_stat_mosque)
             .setContentIntent(carPending)
             .setImportance(NotificationManager.IMPORTANCE_HIGH)
-            .addAction(R.drawable.ic_stat_mosque, "خذني لأقرب مسجد", carPending)
+            .addAction(R.drawable.ic_stat_mosque, L.t("خذني لأقرب مسجد", "Take me to nearest mosque"), carPending)
             .build()
 
         val n = NotificationCompat.Builder(c, CHANNEL)

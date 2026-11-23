@@ -54,7 +54,9 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         CrashLog.install(this)
+        L.init(this)
         setContentView(R.layout.activity_main)
+        applyLanguage()
         matchSystemBars()
         fitSystemBars()
         Alerts.createChannel(this)
@@ -74,6 +76,11 @@ class MainActivity : Activity() {
         btnExact = findViewById(R.id.btnExact)
 
         findViewById<Button>(R.id.btnRefresh).setOnClickListener { refresh() }
+        findViewById<Button>(R.id.btnLang).setOnClickListener {
+            L.setEnglish(this, !L.en)
+            Alerts.createChannel(this)
+            recreate()
+        }
         findViewById<Button>(R.id.btnDriving).setOnClickListener {
             startActivity(Intent(this, DrivingActivity::class.java))
         }
@@ -133,10 +140,10 @@ class MainActivity : Activity() {
     }
 
     private fun refresh() {
-        tvStatus.text = "جاري تحديد موقعك..."
+        tvStatus.text = L.t("جاري تحديد موقعك...", "Finding your location...")
         LocationHelper.get(this) { loc ->
             if (loc == null) {
-                tvStatus.text = "اسمح للتطبيق بالموقع من الإعدادات"
+                tvStatus.text = L.t("اسمح للتطبيق بالموقع من الإعدادات", "Allow location for the app in Settings")
                 return@get
             }
             tvStatus.text = ""
@@ -150,7 +157,7 @@ class MainActivity : Activity() {
         val (lat, lng) = Prefs.location(this) ?: run {
             tvNextLabel.text = ""
             tvLeftLabel.text = ""
-            tvNextTitle.text = "حدّث موقعك لعرض المواقيت"
+            tvNextTitle.text = L.t("حدّث موقعك لعرض المواقيت", "Update your location to see times")
             return
         }
         val now = System.currentTimeMillis()
@@ -158,32 +165,32 @@ class MainActivity : Activity() {
         val st = PrayerCalc.status(this, lat, lng, now)
 
         // Hijri date without the weekday (the weekday has its own place in the middle)
-        tvHijri.text = PrayerCalc.hijriText(now) + if (day.ramadan) " · رمضان" else ""
-        tvWeekday.text = java.text.SimpleDateFormat("EEEE", java.util.Locale("ar")).format(java.util.Date(now))
-        tvGregorian.text = java.text.SimpleDateFormat("d MMMM yyyy", java.util.Locale("ar")).format(java.util.Date(now)) + " م"
+        tvHijri.text = PrayerCalc.hijriText(now) + if (day.ramadan) L.t(" · رمضان", " · Ramadan") else ""
+        tvWeekday.text = java.text.SimpleDateFormat("EEEE", L.locale).format(java.util.Date(now))
+        tvGregorian.text = java.text.SimpleDateFormat("d MMMM yyyy", L.locale).format(java.util.Date(now)) + L.t(" م", "")
         if (st.isCurrent) {
-            tvNextLabel.text = "الصلاة الحالية"
+            tvNextLabel.text = L.t("الصلاة الحالية", "Now")
             tvNextTitle.text = st.time.prayer.ar
             val left = st.time.iqama - now
             if (left > 0) {
-                tvLeftLabel.text = "تقام بعد"
+                tvLeftLabel.text = L.t("تقام بعد", "Iqama in")
                 tvNextLeft.text = PrayerCalc.fmtLeft(left)
             } else {
                 tvLeftLabel.text = ""
-                tvNextLeft.text = "أقيمت الصلاة"
+                tvNextLeft.text = L.t("أقيمت الصلاة", "Prayer started")
             }
-            tvIqamaLeft.text = "الإقامة ${PrayerCalc.fmtTime(st.time.iqama)}"
+            tvIqamaLeft.text = L.t("الإقامة ${PrayerCalc.fmtTime(st.time.iqama)}", "Iqama ${PrayerCalc.fmtTime(st.time.iqama)}")
         } else {
-            tvNextLabel.text = "الصلاة القادمة"
+            tvNextLabel.text = L.t("الصلاة القادمة", "Next")
             tvNextTitle.text = st.time.prayer.ar
-            tvLeftLabel.text = "يؤذن بعد"
+            tvLeftLabel.text = L.t("يؤذن بعد", "Adhan in")
             tvNextLeft.text = PrayerCalc.fmtLeft(st.time.adhan - now)
-            tvIqamaLeft.text = "الأذان ${PrayerCalc.fmtTime(st.time.adhan)} · الإقامة ${PrayerCalc.fmtTime(st.time.iqama)}"
+            tvIqamaLeft.text = L.t("الأذان ${PrayerCalc.fmtTime(st.time.adhan)} · الإقامة ${PrayerCalc.fmtTime(st.time.iqama)}", "Adhan ${PrayerCalc.fmtTime(st.time.adhan)} · Iqama ${PrayerCalc.fmtTime(st.time.iqama)}")
         }
-        tvMethod.text = "طريقة الحساب: ${day.methodName}"
+        tvMethod.text = L.t("طريقة الحساب: ${day.methodName}", "Method: ${day.methodName}")
 
         layoutTimes.removeAllViews()
-        layoutTimes.addView(row("الصلاة", "الأذان", "الإقامة", header = true, highlight = false))
+        layoutTimes.addView(row(L.t("الصلاة", "Prayer"), L.t("الأذان", "Adhan"), L.t("الإقامة", "Iqama"), header = true, highlight = false))
         for (p in day.list) {
             layoutTimes.addView(
                 row(p.prayer.ar, PrayerCalc.fmtTime(p.adhan), PrayerCalc.fmtTime(p.iqama),
@@ -212,12 +219,12 @@ class MainActivity : Activity() {
 
     private fun loadMosques(lat: Double, lng: Double) {
         layoutMosques.removeAllViews()
-        layoutMosques.addView(TextView(this).apply { text = "جاري البحث..."; setPadding(dp(8), dp(12), dp(8), dp(12)) })
+        layoutMosques.addView(TextView(this).apply { text = L.t("جاري البحث...", "Searching..."); setPadding(dp(8), dp(12), dp(8), dp(12)) })
         MosqueRepo.nearby(this, lat, lng) { list ->
             layoutMosques.removeAllViews()
             if (list == null || list.isEmpty()) {
-                val msg = if (list == null) "ما قدرنا نجيب المساجد الحين. اضغط «حدّث موقعي» للمحاولة مرة ثانية."
-                else "ما لقينا مساجد قريبة. اعرضها في خرائط Google، أو أضف مسجداً."
+                val msg = if (list == null) L.t("ما قدرنا نجيب المساجد الحين. اضغط «حدّث موقعي» للمحاولة مرة ثانية.", "Could not load mosques now. Tap \"Update my location\" to try again.")
+                else L.t("ما لقينا مساجد قريبة. اعرضها في خرائط Google، أو أضف مسجداً.", "No mosques found nearby. Show them in Google Maps, or add a mosque.")
                 layoutMosques.addView(TextView(this).apply { text = msg; setPadding(dp(8), dp(12), dp(8), dp(12)) })
                 layoutMosques.addView(mapsSearchButton(lat, lng))
                 return@nearby
@@ -234,7 +241,7 @@ class MainActivity : Activity() {
                 tv.textSize = 15f
                 item.addView(tv, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
                 val go = Button(this)
-                go.text = "خذني"
+                go.text = L.t("خذني", "Go")
                 go.isAllCaps = false
                 go.setTextColor(Color.WHITE)
                 go.setTypeface(null, Typeface.BOLD)
@@ -271,7 +278,7 @@ class MainActivity : Activity() {
         val i = Intent(Intent.ACTION_SEND)
             .setType("text/plain")
             .putExtra(Intent.EXTRA_TEXT, Config.SHARE_TEXT)
-        startActivity(Intent.createChooser(i, "شارك التطبيق"))
+        startActivity(Intent.createChooser(i, L.t("شارك التطبيق", "Share the app")))
     }
 
     /** User can change iqama minutes for each prayer. */
@@ -286,7 +293,7 @@ class MainActivity : Activity() {
             r.orientation = LinearLayout.HORIZONTAL
             r.gravity = Gravity.CENTER_VERTICAL
             val tv = TextView(this)
-            tv.text = "${p.ar} (دقيقة)"
+            tv.text = L.t("${p.ar} (دقيقة)", "${p.ar} (minutes)")
             tv.textSize = 16f
             r.addView(tv, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
             val np = NumberPicker(this)
@@ -298,24 +305,24 @@ class MainActivity : Activity() {
             box.addView(r)
         }
         AlertDialog.Builder(this)
-            .setTitle("وقت الإقامة بعد الأذان")
+            .setTitle(L.t("وقت الإقامة بعد الأذان", "Iqama time after adhan"))
             .setView(box)
-            .setPositiveButton("حفظ") { _, _ ->
+            .setPositiveButton(L.t("حفظ", "Save")) { _, _ ->
                 pickers.forEach { (p, np) -> Prefs.setIqama(this, p, np.value) }
                 renderTimes(); Alerts.scheduleNext(this)
             }
-            .setNeutralButton("الافتراضي") { _, _ ->
+            .setNeutralButton(L.t("الافتراضي", "Default")) { _, _ ->
                 Prayer.values().forEach { Prefs.setIqama(this, it, -1) }
                 renderTimes(); Alerts.scheduleNext(this)
             }
-            .setNegativeButton("إلغاء", null)
+            .setNegativeButton(L.t("إلغاء", "Cancel"), null)
             .show()
     }
 
     /** Fallback: open Google Maps and search for mosques around the user. */
     private fun mapsSearchButton(lat: Double, lng: Double): View {
         val b = Button(this)
-        b.text = "🔎 اعرض المساجد القريبة في خرائط Google"
+        b.text = L.t("🔎 اعرض المساجد القريبة في خرائط Google", "🔎 Show nearby mosques in Google Maps")
         b.isAllCaps = false
         b.setTextColor(getColor(R.color.accent_text))
         b.setBackgroundResource(R.drawable.bg_btn_outline)
@@ -353,6 +360,24 @@ class MainActivity : Activity() {
             insets
         }
         root.requestApplyInsets()
+    }
+
+    /** Set screen direction and all fixed texts in the chosen language. */
+    private fun applyLanguage() {
+        findViewById<View>(R.id.rootScroll).layoutDirection =
+            if (L.en) View.LAYOUT_DIRECTION_LTR else View.LAYOUT_DIRECTION_RTL
+        fun b(id: Int, ar: String, en: String) { findViewById<TextView>(id).text = L.t(ar, en) }
+        b(R.id.btnLang, "🌐 English", "🌐 العربية")
+        b(R.id.btnDriving, "🚗  وضع القيادة", "🚗  Driving mode")
+        b(R.id.btnGo, "خذني لأقرب مسجد", "Take me to nearest mosque")
+        b(R.id.btnRefresh, "حدّث موقعي", "Update my location")
+        b(R.id.tvMosquesHeader, "أقرب المساجد", "Nearest mosques")
+        b(R.id.switchAlerts, "تنبيه عند الأذان، وبعده بـ 10 دقائق للإقامة", "Alert at adhan, and 10 minutes later for iqama")
+        b(R.id.btnExact, "اسمح بالتنبيه في الوقت الدقيق", "Allow exact-time alerts")
+        b(R.id.btnIqama, "وقت الإقامة لكل صلاة", "Iqama time for each prayer")
+        b(R.id.btnShare, "شارك التطبيق - الدال على الخير كفاعله", "Share the app")
+        b(R.id.btnAddMosque, "➕ أضف مسجداً", "➕ Add a mosque")
+        b(R.id.btnDonate, "تبرع عبر منصة إحسان", "Donate via Ehsan")
     }
 
     /** Dark icons on the top bar in day mode, light icons in night mode. */

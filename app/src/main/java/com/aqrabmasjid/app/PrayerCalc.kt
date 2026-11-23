@@ -13,8 +13,12 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-enum class Prayer(val ar: String) {
-    FAJR("الفجر"), DHUHR("الظهر"), ASR("العصر"), MAGHRIB("المغرب"), ISHA("العشاء")
+enum class Prayer(private val arName: String, private val enName: String) {
+    FAJR("الفجر", "Fajr"), DHUHR("الظهر", "Dhuhr"), ASR("العصر", "Asr"),
+    MAGHRIB("المغرب", "Maghrib"), ISHA("العشاء", "Isha");
+
+    /** Name in the current app language (kept as "ar" so old code still works). */
+    val ar: String get() = L.t(arName, enName)
 }
 
 data class PrayerTime(val prayer: Prayer, val adhan: Long, val iqama: Long)
@@ -60,22 +64,22 @@ object PrayerCalc {
     fun hijriText(millis: Long): String {
         val f = android.icu.text.DateFormat.getDateInstance(
             android.icu.text.DateFormat.LONG,
-            ULocale("ar_SA@calendar=islamic-umalqura")
+            ULocale(if (L.en) "en@calendar=islamic-umalqura" else "ar_SA@calendar=islamic-umalqura")
         )
         return f.format(Date(millis))
     }
 
     private fun method(c: Context, lat: Double, lng: Double): Pair<CalculationMethod, String> {
-        if (isSaudi(c, lat, lng)) return CalculationMethod.UMM_AL_QURA to "أم القرى"
+        if (isSaudi(c, lat, lng)) return CalculationMethod.UMM_AL_QURA to L.t("أم القرى", "Umm Al-Qura")
         return when (Prefs.country(c)) {
-            "EG" -> CalculationMethod.EGYPTIAN to "الهيئة المصرية العامة للمساحة"
-            "AE" -> CalculationMethod.DUBAI to "دبي"
-            "KW" -> CalculationMethod.KUWAIT to "الكويت"
-            "QA" -> CalculationMethod.QATAR to "قطر"
-            "PK" -> CalculationMethod.KARACHI to "كراتشي"
-            "SG", "MY", "ID" -> CalculationMethod.SINGAPORE to "سنغافورة"
-            "US", "CA" -> CalculationMethod.NORTH_AMERICA to "أمريكا الشمالية"
-            else -> CalculationMethod.MUSLIM_WORLD_LEAGUE to "رابطة العالم الإسلامي"
+            "EG" -> CalculationMethod.EGYPTIAN to L.t("الهيئة المصرية العامة للمساحة", "Egyptian General Authority")
+            "AE" -> CalculationMethod.DUBAI to L.t("دبي", "Dubai")
+            "KW" -> CalculationMethod.KUWAIT to L.t("الكويت", "Kuwait")
+            "QA" -> CalculationMethod.QATAR to L.t("قطر", "Qatar")
+            "PK" -> CalculationMethod.KARACHI to L.t("كراتشي", "Karachi")
+            "SG", "MY", "ID" -> CalculationMethod.SINGAPORE to L.t("سنغافورة", "Singapore")
+            "US", "CA" -> CalculationMethod.NORTH_AMERICA to L.t("أمريكا الشمالية", "North America")
+            else -> CalculationMethod.MUSLIM_WORLD_LEAGUE to L.t("رابطة العالم الإسلامي", "Muslim World League")
         }
     }
 
@@ -116,16 +120,16 @@ object PrayerCalc {
     }
 
     fun fmtTime(millis: Long): String =
-        SimpleDateFormat("h:mm a", Locale("ar")).format(Date(millis))
+        SimpleDateFormat("h:mm a", L.locale).format(Date(millis))
 
     fun fmtLeft(ms: Long): String {
         val totalMin = ((ms + MIN - 1) / MIN).coerceAtLeast(0)
         val h = totalMin / 60
         val m = totalMin % 60
         return when {
-            h > 0 && m > 0 -> "$h س $m د"
-            h > 0 -> "$h س"
-            else -> "$m د"
+            h > 0 && m > 0 -> L.t("$h س $m د", "${h}h ${m}m")
+            h > 0 -> L.t("$h س", "${h}h")
+            else -> L.t("$m د", "$m min")
         }
     }
 }
