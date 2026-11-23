@@ -16,6 +16,7 @@ import androidx.car.app.model.PlaceListMapTemplate
 import androidx.car.app.model.PlaceMarker
 import androidx.car.app.model.Row
 import androidx.car.app.model.Template
+import com.aqrabmasjid.app.L
 import com.aqrabmasjid.app.LocationHelper
 import com.aqrabmasjid.app.Mosque
 import com.aqrabmasjid.app.MosqueRepo
@@ -36,14 +37,14 @@ class MosqueListScreen(carContext: CarContext) : Screen(carContext) {
         LocationHelper.get(carContext) { loc ->
             if (loc == null) {
                 loading = false
-                error = "لا يوجد موقع. افتح التطبيق في الجوال واسمح بالموقع"
+                error = L.t("لا يوجد موقع. افتح التطبيق في الجوال واسمح بالموقع", "No location. Open the app on your phone and allow location")
                 invalidate()
                 return@get
             }
             MosqueRepo.nearby(carContext, loc.first, loc.second) { list ->
                 loading = false
                 mosques = list
-                error = if (list == null) "تعذر الاتصال بالإنترنت" else null
+                error = if (list == null) L.t("تعذر الاتصال بالإنترنت", "No internet connection") else null
                 invalidate()
             }
         }
@@ -51,7 +52,7 @@ class MosqueListScreen(carContext: CarContext) : Screen(carContext) {
 
     override fun onGetTemplate(): Template {
         val b = PlaceListMapTemplate.Builder()
-            .setTitle("أقرب المساجد")
+            .setTitle(L.t("أقرب المساجد", "Nearest mosques"))
             .setHeaderAction(Action.BACK)
 
         if (loading) return b.setLoading(true).build()
@@ -59,7 +60,7 @@ class MosqueListScreen(carContext: CarContext) : Screen(carContext) {
         val list = ItemList.Builder()
         val m = mosques
         if (m.isNullOrEmpty()) {
-            list.setNoItemsMessage(error ?: "لا توجد مساجد قريبة")
+            list.setNoItemsMessage(error ?: L.t("لا توجد مساجد قريبة", "No mosques nearby"))
         } else {
             m.take(placeLimit()).forEach { mo ->
                 val place = Place.Builder(CarLocation.create(mo.lat, mo.lng))
@@ -94,7 +95,7 @@ class MosqueListScreen(carContext: CarContext) : Screen(carContext) {
         try {
             carContext.startCarApp(Intent(CarContext.ACTION_NAVIGATE, uri))
         } catch (e: Exception) {
-            CarToast.makeText(carContext, "لا يوجد تطبيق ملاحة", CarToast.LENGTH_LONG).show()
+            CarToast.makeText(carContext, L.t("لا يوجد تطبيق ملاحة", "No navigation app"), CarToast.LENGTH_LONG).show()
         }
     }
 }

@@ -14,6 +14,7 @@ import androidx.car.app.model.Template
 import androidx.car.app.versioning.CarAppApiLevels
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import com.aqrabmasjid.app.L
 import com.aqrabmasjid.app.LocationHelper
 import com.aqrabmasjid.app.PrayerCalc
 import com.aqrabmasjid.app.Prefs
@@ -47,12 +48,12 @@ class PrayerScreen(carContext: CarContext) : Screen(carContext), DefaultLifecycl
     }
 
     override fun onGetTemplate(): Template {
-        var headerTitle = "أقرب مسجد"
+        var headerTitle = L.t("أقرب مسجد", "Nearest Mosque")
         val list = ItemList.Builder()
         val loc = Prefs.location(carContext)
 
         if (loc == null) {
-            list.setNoItemsMessage("افتح التطبيق في الجوال واسمح بالموقع")
+            list.setNoItemsMessage(L.t("افتح التطبيق في الجوال واسمح بالموقع", "Open the app on your phone and allow location"))
         } else {
             val (lat, lng) = loc
             val now = System.currentTimeMillis()
@@ -60,10 +61,10 @@ class PrayerScreen(carContext: CarContext) : Screen(carContext), DefaultLifecycl
 
             val head = if (st.isCurrent) {
                 val left = st.time.iqama - now
-                if (left > 0) "${st.time.prayer.ar}: الإقامة بعد ${PrayerCalc.fmtLeft(left)}"
-                else "الصلاة الحالية: ${st.time.prayer.ar}"
+                if (left > 0) L.t("${st.time.prayer.ar}: الإقامة بعد ${PrayerCalc.fmtLeft(left)}", "${st.time.prayer.ar}: iqama in ${PrayerCalc.fmtLeft(left)}")
+                else L.t("الصلاة الحالية: ${st.time.prayer.ar}", "Current prayer: ${st.time.prayer.ar}")
             } else {
-                "${st.time.prayer.ar} بعد ${PrayerCalc.fmtLeft(st.time.adhan - now)}"
+                L.t("${st.time.prayer.ar} بعد ${PrayerCalc.fmtLeft(st.time.adhan - now)}", "${st.time.prayer.ar} in ${PrayerCalc.fmtLeft(st.time.adhan - now)}")
             }
 
             // Driver-first: the coming prayer is the first, highlighted row
@@ -71,12 +72,12 @@ class PrayerScreen(carContext: CarContext) : Screen(carContext), DefaultLifecycl
             list.addItem(
                 Row.Builder()
                     .setTitle(head)
-                    .addText("الأذان ${PrayerCalc.fmtTime(st.time.adhan)} · الإقامة ${PrayerCalc.fmtTime(st.time.iqama)}")
+                    .addText(L.t("الأذان ${PrayerCalc.fmtTime(st.time.adhan)} · الإقامة ${PrayerCalc.fmtTime(st.time.iqama)}", "Adhan ${PrayerCalc.fmtTime(st.time.adhan)} · Iqama ${PrayerCalc.fmtTime(st.time.iqama)}"))
                     .build()
             )
             list.addItem(
                 Row.Builder()
-                    .setTitle("🧭 خذني لأقرب مسجد")
+                    .setTitle(L.t("🧭 خذني لأقرب مسجد", "🧭 Take me to nearest mosque"))
                     .setBrowsable(true)
                     .setOnClickListener { openMosques() }
                     .build()
@@ -88,7 +89,7 @@ class PrayerScreen(carContext: CarContext) : Screen(carContext), DefaultLifecycl
                 list.addItem(
                     Row.Builder()
                         .setTitle(p.prayer.ar)
-                        .addText("الأذان ${PrayerCalc.fmtTime(p.adhan)} · الإقامة ${PrayerCalc.fmtTime(p.iqama)}")
+                        .addText(L.t("الأذان ${PrayerCalc.fmtTime(p.adhan)} · الإقامة ${PrayerCalc.fmtTime(p.iqama)}", "Adhan ${PrayerCalc.fmtTime(p.adhan)} · Iqama ${PrayerCalc.fmtTime(p.iqama)}"))
                         .build()
                 )
             }
@@ -105,7 +106,7 @@ class PrayerScreen(carContext: CarContext) : Screen(carContext), DefaultLifecycl
                 ActionStrip.Builder()
                     .addAction(
                         Action.Builder()
-                            .setTitle("المساجد")
+                            .setTitle(L.t("المساجد", "Mosques"))
                             .setOnClickListener { openMosques() }
                             .build()
                     )

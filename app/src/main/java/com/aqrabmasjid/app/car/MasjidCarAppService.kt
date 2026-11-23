@@ -32,6 +32,7 @@ class MasjidSession : Session() {
         get() = carContext.getCarService(ScreenManager::class.java)
 
     override fun onCreateScreen(intent: Intent): Screen {
+        com.aqrabmasjid.app.L.init(carContext)
         if (intent.action == Alerts.ACTION_SHOW_MOSQUES) {
             // Opened from the prayer alert: show mosques, back goes to prayer times
             screens.push(PrayerScreen(carContext))
