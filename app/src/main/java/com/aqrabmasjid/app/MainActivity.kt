@@ -86,16 +86,10 @@ class MainActivity : Activity() {
             Alerts.createChannel(this)
             recreate()
         }
-        // Short dhikr button: a new dhikr on each tap and each time the app opens
-        val tasbih = findViewById<Button>(R.id.btnTasbih)
-        val tp = getSharedPreferences("tasbih", MODE_PRIVATE)
-        var ti = (tp.getInt("i", -1) + 1) % TASBIH.size
-        tp.edit().putInt("i", ti).apply()
-        tasbih.text = TASBIH[ti]
-        tasbih.setOnClickListener {
-            ti = (ti + 1) % TASBIH.size
-            tp.edit().putInt("i", ti).apply()
-            tasbih.text = TASBIH[ti]
+        // Reminder for the next prayer (hadith/ayah). New one on each open and each tap.
+        reminderBtn = findViewById(R.id.btnTasbih)
+        reminderBtn.setOnClickListener {
+            reminderPrayer?.let { reminderBtn.text = PrayerReminders.next(this, it) }
         }
         // Iqama settings button removed from the screen
         findViewById<View>(R.id.btnIqama).visibility = View.GONE
@@ -194,6 +188,11 @@ class MainActivity : Activity() {
         tvClock.text = PrayerCalc.fmtTime(now)
         tvGregorian.text = java.text.SimpleDateFormat("d MMMM yyyy", L.locale).format(java.util.Date(now)) + L.t(" م", "")
         RingFill.fill(this, ring, lat, lng, now)
+        // Reminder button follows the next/current prayer
+        val rp = st.time.prayer
+        if (!reminderAdvanced) { PrayerReminders.next(this, rp); reminderAdvanced = true }
+        reminderPrayer = rp
+        reminderBtn.text = PrayerReminders.current(this, rp)
         // قيراط link: Riyadh only
         val riyadh = lat in 24.3..25.2 && lng in 46.2..47.3
         findViewById<View>(R.id.btnQirat).visibility = if (riyadh) View.VISIBLE else View.GONE
@@ -436,16 +435,8 @@ class MainActivity : Activity() {
 
     private fun dp(v: Int): Int = (v * resources.displayMetrics.density + 0.5f).toInt()
 
-    private val TASBIH = listOf(
-        "سبحان الله وبحمده، سبحان الله العظيم",
-        "اللهم صلّ على محمد وعلى آل محمد",
-        "أستغفر الله العظيم وأتوب إليه",
-        "لا حول ولا قوة إلا بالله",
-        "لا إله إلا الله وحده لا شريك له",
-        "سبحان الله، والحمد لله، والله أكبر",
-        "حسبي الله لا إله إلا هو",
-        "اللهم إنك عفو تحب العفو فاعف عني",
-        "رب اغفر لي وتب عليّ"
-    )
+    private lateinit var reminderBtn: Button
+    private var reminderPrayer: Prayer? = null
+    private var reminderAdvanced = false
 
 }

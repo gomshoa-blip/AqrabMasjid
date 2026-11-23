@@ -103,6 +103,9 @@ object Alerts {
         } else L.t("حان الآن وقت أذان ${prayer.ar}", "It is time for ${prayer.ar} adhan")
         // Saved mosque may be old (user moved to another city) -> show it only if still close
         val nearest = Prefs.nearest(c)?.takeIf { it.distKm <= 5.0 }
+        // Phone alert: a short reminder for this prayer + iqama time
+        val phoneText = if (type == "iqama") null else
+            PrayerReminders.next(c, prayer) + L.t("\nالإقامة ${PrayerCalc.fmtTime(iqama)}", "\nIqama ${PrayerCalc.fmtTime(iqama)}")
         val text = buildString {
             if (nearest != null) append(L.t("أقرب مسجد: ${nearest.name} على بعد ${MosqueRepo.fmtDistance(nearest.distKm)}", "Nearest mosque: ${nearest.name}, ${MosqueRepo.fmtDistance(nearest.distKm)} away"))
             else append(L.t("اضغط للذهاب لأقرب مسجد", "Tap to go to the nearest mosque"))
@@ -133,8 +136,8 @@ object Alerts {
         val n = NotificationCompat.Builder(c, CHANNEL)
             .setSmallIcon(R.drawable.ic_stat_mosque)
             .setContentTitle(title)
-            .setContentText(text)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            .setContentText(phoneText ?: text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(phoneText ?: text))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setContentIntent(phonePending)
