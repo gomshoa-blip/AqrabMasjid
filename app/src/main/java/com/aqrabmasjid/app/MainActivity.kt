@@ -212,46 +212,29 @@ class MainActivity : Activity() {
     private fun fillHero(lat: Double, lng: Double, now: Long) {
         val st = PrayerCalc.status(this, lat, lng, now)
         val t = st.time
+        // Left side: next prayer, then adhan and iqama times (always)
         tvHeroName.text = t.prayer.ar
-        val adhanTxt = L.t("الأذان ${PrayerCalc.fmtTime(t.adhan)}", "Adhan ${PrayerCalc.fmtTime(t.adhan)}")
+        tvHeroAdhan.text = L.t("الأذان ${PrayerCalc.fmtTime(t.adhan)}", "Adhan ${PrayerCalc.fmtTime(t.adhan)}")
         tvIqamaLeft.text = L.t("الإقامة ${PrayerCalc.fmtTime(t.iqama)}", "Iqama ${PrayerCalc.fmtTime(t.iqama)}")
-        val box = findViewById<View>(R.id.heroTimeBox)
-        val bigTime = findViewById<TextView>(R.id.tvHeroTime)
-        val bigLeft = findViewById<TextView>(R.id.tvHeroLeft)
-        // Big time in the ring's place; the ring replaces it only while counting down
-        fun showBig(time: Long, sub: String) {
-            ring.visibility = View.GONE
-            box.visibility = View.VISIBLE
-            bigTime.text = PrayerCalc.fmtTime(time)
-            bigLeft.text = sub
-            tvHeroAdhan.visibility = View.GONE
-        }
-        fun showRing() {
-            box.visibility = View.GONE
-            ring.visibility = View.VISIBLE
-            tvHeroAdhan.visibility = View.VISIBLE
-            tvHeroAdhan.text = adhanTxt
-        }
+        // Right side: countdown ring only in the last 30 min before adhan, and from adhan to iqama
         val w = 30 * 60_000L
         if (!st.isCurrent) {
             tvHeroLabel.text = L.t("الصلاة القادمة", "Next prayer")
             val left = t.adhan - now
             if (left in 1..w) {
-                showRing()
+                ring.visibility = View.VISIBLE
                 ring.update("", "", CountdownRing.clock(left), L.t("متبقية للأذان", "to adhan"), left.toFloat() / w, false)
-            } else {
-                showBig(t.adhan, L.t("الأذان بعد ${PrayerCalc.fmtLeft(left)}", "Adhan in ${PrayerCalc.fmtLeft(left)}"))
-            }
+            } else ring.visibility = View.GONE
         } else {
             val left = t.iqama - now
             if (left > 0) {
                 tvHeroLabel.text = L.t("حان وقت الصلاة", "Prayer time now")
-                showRing()
+                ring.visibility = View.VISIBLE
                 ring.update("", "", CountdownRing.clock(left), L.t("متبقية للإقامة", "to iqama"),
                     left.toFloat() / (t.iqama - t.adhan).coerceAtLeast(1L), true)
             } else {
                 tvHeroLabel.text = L.t("أقيمت الصلاة", "Prayer has started")
-                showBig(t.adhan, L.t("الأذان", "Adhan"))
+                ring.visibility = View.GONE
             }
         }
     }
@@ -428,9 +411,9 @@ class MainActivity : Activity() {
         off.setTextColor(getColor(R.color.text_hint))
         // Driving: bigger card and buttons so they are easy to read and tap in the car
         val big = drive
-        tvHeroNameView().textSize = if (big) 50f else 40f
+        tvHeroNameView().textSize = if (big) 56f else 46f
         findViewById<TextView>(R.id.tvHeroAdhan).textSize = if (big) 22f else 17f
-        findViewById<TextView>(R.id.tvIqamaLeft).textSize = if (big) 17f else 13f
+        findViewById<TextView>(R.id.tvIqamaLeft).textSize = if (big) 22f else 17f
         findViewById<View>(R.id.ring).layoutParams.let { it.width = dp(if (big) 170 else 140); it.height = it.width }
         for (id in listOf(R.id.btnGo, R.id.btnJami)) {
             val v = findViewById<View>(id)
@@ -438,7 +421,6 @@ class MainActivity : Activity() {
         }
         findViewById<TextView>(R.id.btnGoText).textSize = if (big) 24f else 18f
         findViewById<TextView>(R.id.btnJamiText).textSize = if (big) 22f else 16f
-        findViewById<TextView>(R.id.tvHeroTime).textSize = if (big) 50f else 42f
         findViewById<View>(R.id.ring).requestLayout()
         // Driving: keep the screen on
         if (drive) window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)

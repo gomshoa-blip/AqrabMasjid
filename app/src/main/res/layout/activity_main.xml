@@ -54,11 +54,18 @@
                 android:orientation="horizontal"
                 android:padding="20dp">
 
+                <com.aqrabmasjid.app.CountdownRing
+                    android:id="@+id/ring"
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
+                    android:layout_marginEnd="10dp" />
+
                 <LinearLayout
                     android:id="@+id/heroInfo"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:gravity="end"
                     android:orientation="vertical">
 
                     <TextView
@@ -75,7 +82,7 @@
                         android:layout_height="wrap_content"
                         android:includeFontPadding="false"
                         android:textColor="#FFFFFF"
-                        android:textSize="42sp"
+                        android:textSize="46sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -91,52 +98,12 @@
                         android:id="@+id/tvIqamaLeft"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:background="@drawable/bg_pill_light"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:paddingTop="4dp"
-                        android:paddingBottom="4dp"
-                        android:textColor="#FFFFFF"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <!-- Same place: big adhan time, or the countdown ring (last 30 min / until iqama) -->
-                <LinearLayout
-                    android:id="@+id/heroTimeBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tvHeroTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:includeFontPadding="false"
-                        android:maxLines="1"
-                        android:textColor="#F6D46B"
-                        android:textSize="46sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvHeroLeft"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:maxLines="1"
+                        android:layout_marginTop="2dp"
                         android:textColor="#E6FFFFFF"
-                        android:textSize="14sp"
+                        android:textSize="17sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
-                <com.aqrabmasjid.app.CountdownRing
-                    android:id="@+id/ring"
-                    android:layout_width="140dp"
-                    android:layout_height="140dp"
-                    android:layout_marginStart="10dp" />
             </LinearLayout>
         </FrameLayout>
 
