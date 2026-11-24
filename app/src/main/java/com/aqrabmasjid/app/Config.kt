@@ -30,7 +30,7 @@ object Config {
     const val QIRAT_URL = "https://janaez-riyadh.netlify.app"
 
     /** WhatsApp contact. */
-    const val WHATSAPP_URL = "https://wa.me/966552101764"
+    const val WHATSAPP_URL = "https://wa.me/966556512678"
 
     /** Our simple mushaf page (King Fahd Complex text and Hafs font), shown full screen in the app. */
     const val QURAN_URL = "https://aqrab-masjid.netlify.app/quran/"
