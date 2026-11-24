@@ -104,15 +104,6 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.tileAdd).setOnClickListener { openUrl(Config.ADD_MOSQUE_URL) }
         findViewById<View>(R.id.btnTarteel).setOnClickListener { openStore(Config.TARTEEL_PKG, null) }
         findViewById<View>(R.id.btnWahy).setOnClickListener { openStore(Config.WAHY_PKG, null) }
-        // Bottom bar
-        val scroll = findViewById<android.widget.ScrollView>(R.id.rootScroll)
-        findViewById<View>(R.id.navHome).setOnClickListener { scroll.smoothScrollTo(0, 0) }
-        findViewById<View>(R.id.navQuran).setOnClickListener { startActivity(Intent(this, QuranActivity::class.java)) }
-        findViewById<View>(R.id.navAdhkar).setOnClickListener { startActivity(Intent(this, AdhkarActivity::class.java)) }
-        findViewById<View>(R.id.navMore).setOnClickListener {
-            scroll.smoothScrollTo(0, findViewById<View>(R.id.tvMore).top)
-        }
-
         val sw = findViewById<Switch>(R.id.switchAlerts)
         sw.isChecked = Prefs.alertsOn(this)
         sw.setOnCheckedChangeListener { _, on ->
@@ -382,10 +373,6 @@ class MainActivity : Activity() {
         b(R.id.tvQuranHeader, "تطبيقات قرآن ننصح بها", "Recommended Quran apps")
         b(R.id.btnTarteelText, "ترتيل", "Tarteel")
         b(R.id.btnWahyText, "وحي", "Wahy")
-        b(R.id.navHomeText, "الرئيسية", "Home")
-        b(R.id.navQuranText, "القرآن", "Quran")
-        b(R.id.navAdhkarText, "الأذكار", "Adhkar")
-        b(R.id.navMoreText, "المزيد", "More")
     }
 
     /** Dark icons on the top bar in day mode, light icons in night mode. */
