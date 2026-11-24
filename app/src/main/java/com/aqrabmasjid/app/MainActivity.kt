@@ -109,8 +109,6 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.tileAdhkar).setOnClickListener { startActivity(Intent(this, AdhkarActivity::class.java)) }
         findViewById<View>(R.id.tileQirat).setOnClickListener { openUrl(Config.QIRAT_URL) }
         findViewById<View>(R.id.btnQibla).setOnClickListener { startActivity(Intent(this, QiblaActivity::class.java)) }
-        findViewById<View>(R.id.tileQibla).setOnClickListener { startActivity(Intent(this, QiblaActivity::class.java)) }
-        findViewById<View>(R.id.tileEhsan).setOnClickListener { openUrl(Config.DONATE_URL) }
         findViewById<View>(R.id.tileContact).setOnClickListener { openUrl(Config.WHATSAPP_URL) }
         findViewById<View>(R.id.tileShare).setOnClickListener { share() }
         findViewById<View>(R.id.tileAdd).setOnClickListener { openUrl(Config.ADD_MOSQUE_URL) }
@@ -397,16 +395,13 @@ class MainActivity : Activity() {
         b(R.id.tileQuranText, "القرآن", "Quran")
         b(R.id.tileAdhkarText, "الأذكار", "Adhkar")
         b(R.id.tileQiratText, "قيراط", "Qirat")
-        b(R.id.tileQiblaText, "القبلة", "Qibla")
         b(R.id.btnQibla, "القبلة", "Qibla")
-        b(R.id.tileEhsanText, "إحسان", "Ehsan")
         b(R.id.tileContactText, "تواصل معنا", "Contact us")
         b(R.id.tileShareText, "شارك", "Share")
         b(R.id.tileAddText, "أضف مسجد", "Add a mosque")
         b(R.id.tvMore, "المزيد", "More")
         b(R.id.switchAlerts, "تنبيه عند الأذان، وبعده بـ 10 دقائق للإقامة", "Alert at adhan, and 10 minutes later for iqama")
         b(R.id.btnExact, "اسمح بالتنبيه في الوقت الدقيق", "Allow exact-time alerts")
-        b(R.id.tvQuranHeader, "تطبيقات قرآن ننصح بها", "Recommended Quran apps")
         b(R.id.btnTarteelText, "ترتيل", "Tarteel")
         b(R.id.btnWahyText, "وحي", "Wahy")
     }
