@@ -93,9 +93,14 @@ class MainActivity : Activity() {
         }
         // Mode: driving shows only the car part; home shows the full app
         findViewById<View>(R.id.btnMode).setOnClickListener {
-            setMode(!getSharedPreferences("ui", MODE_PRIVATE).getBoolean("drive", false))
+            val open = getSharedPreferences("ui", MODE_PRIVATE).getBoolean("drive", true)
+            setMode(!open)
+            // Opening "More": scroll down to the rest of the app
+            if (open) findViewById<android.widget.ScrollView>(R.id.rootScroll).post {
+                findViewById<android.widget.ScrollView>(R.id.rootScroll).smoothScrollTo(0, findViewById<View>(R.id.homeSection).top)
+            }
         }
-        setMode(getSharedPreferences("ui", MODE_PRIVATE).getBoolean("drive", false))
+        setMode(getSharedPreferences("ui", MODE_PRIVATE).getBoolean("drive", true))
         // Nearest mosque / Jami: open Google Maps search
         findViewById<View>(R.id.btnGo).setOnClickListener { MapsSearch.mosques(this) }
         findViewById<View>(R.id.btnJami).setOnClickListener { MapsSearch.jami(this) }
@@ -214,7 +219,7 @@ class MainActivity : Activity() {
 
     /** Prayer name size: fills the card width when there is no ring, normal size with the ring. */
     private fun sizeHeroName() {
-        val drive = getSharedPreferences("ui", MODE_PRIVATE).getBoolean("drive", false)
+        val drive = getSharedPreferences("ui", MODE_PRIVATE).getBoolean("drive", true)
         val ringOn = ring.visibility == View.VISIBLE
         val info = findViewById<View>(R.id.heroInfo)
         val avail = info.width.toFloat()
@@ -424,9 +429,9 @@ class MainActivity : Activity() {
         getSharedPreferences("ui", MODE_PRIVATE).edit().putBoolean("drive", drive).apply()
         findViewById<View>(R.id.homeSection).visibility = if (drive) View.GONE else View.VISIBLE
         // The button shows where it will take you: wheel -> driving, house -> full app
-        findViewById<android.widget.ImageView>(R.id.icMode).setImageResource(if (drive) R.drawable.ic_apps else R.drawable.ic_nav)
-        findViewById<View>(R.id.btnMode).contentDescription =
-            if (drive) L.t("العودة للتطبيق الكامل", "Back to full app") else L.t("وضع القيادة", "Driving mode")
+        // Main screen = car part only. "More" opens the rest; "Hide" closes it.
+        findViewById<android.widget.ImageView>(R.id.icMode).setImageResource(if (drive) R.drawable.ic_apps else R.drawable.ic_up)
+        findViewById<TextView>(R.id.tvMode).text = if (drive) L.t("المزيد", "More") else L.t("إخفاء", "Hide")
         // Driving: bigger card and buttons so they are easy to read and tap in the car
         val big = drive
         // Driving: the car part fills the whole screen (card, buttons, ayah, switch spread out)
@@ -479,7 +484,7 @@ class MainActivity : Activity() {
         findViewById<TextView>(R.id.btnJamiText).textSize = if (big) 24f else 17f
         findViewById<View>(R.id.ring).requestLayout()
         tvHeroName.post { sizeHeroName() }
-        // Driving: keep the screen on
+        // Keep the screen on while the short (car) view is shown
         if (drive) window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         else window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
