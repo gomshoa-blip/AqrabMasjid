@@ -16,7 +16,9 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#0F6B4F">
+<meta name="theme-color" content="#0F6B4F" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0A4A37" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="manifest" href="manifest.webmanifest">
@@ -149,6 +151,24 @@
   .dk .cnt{background:var(--soft);color:var(--dark);border-radius:10px;padding:7px;text-align:center;font-weight:800}
   .dk.done{opacity:.75}.dk.done .cnt{background:var(--green);color:#fff}
   .dkSrc{text-align:center;color:var(--muted);font-size:.85rem;margin:6px 0 12px}
+  /* Dark mode: follows the phone setting */
+  @media (prefers-color-scheme: dark){
+    :root{--bg:#0E1411;--card:#18211D;--ink:#EEF4F0;--muted:#B8C4BD;--soft:#1C3A2E;--line:#2A3730;--dark:#A6E8C8}
+    body{color-scheme:dark}
+    header{background:#0A4A37}
+    .hero{background:#0F5A43}
+    .ayah{background:#0F5A43}
+    .sheet,.dk,.qr,.sheet input,.sheet select,.sheet textarea{background:var(--card);color:var(--ink)}
+    .safe{background:#2A2414;border-color:#5A4A20;color:var(--ink)}
+    .iq{background:#2A2414;border-color:#5A4A20;color:#F0D98A}
+    .times div{background:#121A16}
+    .times .on{background:var(--green);color:#fff}
+    .toast{background:#EEF4F0;color:#0E1411}
+    .link{color:var(--dark)}
+    .tblH,.box h2,.sheet h2{color:var(--dark)}
+    .alt{color:var(--dark)}
+    .next .name{color:var(--dark)}
+  }
 </style>
 </head>
 <body>

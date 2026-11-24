@@ -22,7 +22,9 @@ class QuranActivity : Activity() {
         super.onCreate(savedInstanceState)
         CrashLog.install(this)
         web = WebView(this)
-        web.setBackgroundColor(Color.parseColor("#FBF7EC"))
+        val night = (resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK) ==
+            android.content.res.Configuration.UI_MODE_NIGHT_YES
+        web.setBackgroundColor(Color.parseColor(if (night) "#111613" else "#FBF7EC"))
         web.settings.javaScriptEnabled = true
         web.settings.domStorageEnabled = true   // remembers the last page
         web.webViewClient = object : WebViewClient() {
