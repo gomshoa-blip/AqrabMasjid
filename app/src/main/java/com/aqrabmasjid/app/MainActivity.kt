@@ -220,7 +220,7 @@ class MainActivity : Activity() {
         val avail = info.width.toFloat()
         if (avail <= 0) { tvHeroName.post { sizeHeroName() }; return }
         // Biggest size that fits on one line; smaller cap while the ring is showing
-        val cap = dp(if (!ringOn) (if (drive) 150 else 120) else (if (drive) 64 else 46)).toFloat()
+        val cap = dp(if (!ringOn) (if (drive) 130 else 80) else (if (drive) 64 else 46)).toFloat()
         val p = android.graphics.Paint(tvHeroName.paint)
         p.textSize = 100f
         val w = p.measureText(tvHeroName.text.toString()).coerceAtLeast(1f)
@@ -383,7 +383,7 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.rootFrame).layoutDirection =
             if (L.en) View.LAYOUT_DIRECTION_LTR else View.LAYOUT_DIRECTION_RTL
         fun b(id: Int, ar: String, en: String) { findViewById<TextView>(id).text = L.t(ar, en) }
-        b(R.id.btnLang, "EN", "ع")
+        b(R.id.btnLang, "English", "العربية")
         b(R.id.btnGoText, "أقرب مسجد", "Nearest mosque")
         b(R.id.btnGoSub, "يفتح خرائط Google", "Opens Google Maps")
         b(R.id.btnJamiText, "أقرب جامع", "Nearest Jami")
@@ -424,7 +424,7 @@ class MainActivity : Activity() {
         getSharedPreferences("ui", MODE_PRIVATE).edit().putBoolean("drive", drive).apply()
         findViewById<View>(R.id.homeSection).visibility = if (drive) View.GONE else View.VISIBLE
         // The button shows where it will take you: wheel -> driving, house -> full app
-        findViewById<android.widget.ImageView>(R.id.icMode).setImageResource(if (drive) R.drawable.ic_home else R.drawable.ic_wheel)
+        findViewById<android.widget.ImageView>(R.id.icMode).setImageResource(if (drive) R.drawable.ic_apps else R.drawable.ic_nav)
         findViewById<View>(R.id.btnMode).contentDescription =
             if (drive) L.t("العودة للتطبيق الكامل", "Back to full app") else L.t("وضع القيادة", "Driving mode")
         // Driving: bigger card and buttons so they are easy to read and tap in the car

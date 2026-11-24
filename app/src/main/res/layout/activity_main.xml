@@ -33,22 +33,6 @@
             android:paddingBottom="20dp">
 
 
-        <!-- Language: top corner (right in Arabic, left in English) -->
-        <TextView
-            android:id="@+id/btnLang"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="start"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/bg_lang_circle"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:text="EN"
-            android:textColor="@color/text_primary"
-            android:textSize="13sp"
-            android:textStyle="bold" />
-
         <!-- Prayer card -->
         <FrameLayout
             android:id="@+id/hero"
@@ -63,14 +47,36 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/pattern_tile" />
 
+            <!-- Language switch inside the card -->
+            <TextView
+                android:id="@+id/btnLang"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_gravity="top|start"
+                android:layout_margin="12dp"
+                android:background="@drawable/bg_pill_light"
+                android:clickable="true"
+                android:elevation="2dp"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:text="English"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
             <LinearLayout
                 android:id="@+id/heroRow"
+                android:paddingTop="40dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:minHeight="170dp"
+                android:minHeight="150dp"
                 android:orientation="horizontal"
-                android:padding="20dp">
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="18dp">
 
                 <com.aqrabmasjid.app.CountdownRing
                     android:id="@+id/ring"
@@ -83,7 +89,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="end"
+                    android:gravity="center_horizontal"
                     android:orientation="vertical">
 
                     <TextView
@@ -266,7 +272,7 @@
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_wheel"
+                    android:src="@drawable/ic_nav"
                     android:tint="#FFFFFF" />
             </FrameLayout>
 
@@ -288,16 +294,17 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_surface"
                 android:baselineAligned="false"
-                android:gravity="center_vertical"
+                android:gravity="center"
                 android:orientation="horizontal"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp">
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
                     android:orientation="vertical">
 
                     <TextView
@@ -306,7 +313,7 @@
                         android:layout_height="wrap_content"
                         android:maxLines="1"
                         android:textColor="@color/text_primary"
-                        android:textSize="15sp"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -315,7 +322,7 @@
                         android:layout_height="wrap_content"
                         android:maxLines="1"
                         android:textColor="@color/icon"
-                        android:textSize="20sp"
+                        android:textSize="26sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -327,9 +334,9 @@
                     android:background="@color/stroke" />
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
                     android:orientation="vertical">
 
                     <TextView
@@ -338,7 +345,7 @@
                         android:layout_height="wrap_content"
                         android:maxLines="1"
                         android:textColor="@color/text_primary"
-                        android:textSize="14sp"
+                        android:textSize="17sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -348,7 +355,7 @@
                         android:layout_marginTop="3dp"
                         android:maxLines="1"
                         android:textColor="@color/text_hint"
-                        android:textSize="13sp" />
+                        android:textSize="15sp" />
                 </LinearLayout>
             </LinearLayout>
 
