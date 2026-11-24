@@ -238,6 +238,11 @@
   body.drive .go2 .tx{align-items:center}
   body.drive .go2 b{font-size:1.5rem}
   body.drive .ayah2{font-size:1.5rem}
+  .hsep{width:120px;height:1px;background:rgba(255,255,255,.25);margin:12px auto 8px}
+  .hd{font-size:.95rem;font-weight:700;opacity:.9}.hd b{color:#F6D46B}
+  .hd2{font-size:.82rem;opacity:.8;margin-top:2px}
+  .modeBtn{width:auto;border-radius:999px;padding:0 22px;gap:10px;font:inherit;font-weight:800;font-size:1rem}
+  .modeBtn svg{width:22px;height:22px}
 </style>
 </head>
 <body>
@@ -256,6 +261,9 @@
         <div class="pn" id="pName">—</div>
         <div class="ln" id="pAdhan"></div>
         <div class="ln" id="iq"></div>
+        <div class="hsep"></div>
+        <div class="hd"><span id="dDay"></span> <b id="dClock"></b></div>
+        <div class="hd2"><span id="dHijri"></span> · <span id="dGreg"></span></div>
       </div>
     </div>
   </div>
@@ -269,11 +277,6 @@
 
 <!-- Part 2: at home / office (hidden in driving mode) -->
 <div class="wrap2" id="homeSection">
-  <div class="dateBox">
-    <div class="dcol"><div class="d1" id="dDay"></div><div class="d2" id="dClock"></div></div>
-    <div class="sep"></div>
-    <div class="dcol"><div class="d3" id="dHijri"></div><div class="d4" id="dGreg"></div></div>
-  </div>
   <div class="status" id="status"></div>
   <div id="list" style="display:none"></div>
   <a id="gmaps" style="display:none"></a>
@@ -393,7 +396,7 @@
 <script src="adhan.js"></script>
 <script>
 const T = {
- ar:{title:"أقرب مسجد", other:"English", nextLbl:"الصلاة القادمة", curLbl:"حان الآن وقت صلاة", donate:"💚 تبرّع عبر منصة إحسان", mosqueT:"أقرب مسجد", jamiT:"أقرب جامع", mapsSub:"يفتح خرائط Google", quranT:"القرآن", adhkarT:"الأذكار", qiratT:"قيراط", ehsanT:"إحسان", contactT:"تواصل معنا", shareT:"شارك", addT:"أضف مسجد", moreT:"المزيد", tarteel2:"ترتيل", wahy2:"وحي", waShareT:"واتساب", qrT:"رمز QR", instT:"تثبيت", prayerH:"الصلاة", adhanH:"الأذان", iqamaH:"الإقامة", toAdhan:"متبقية للأذان", toIqama:"متبقية للإقامة", nowLbl:"حان وقت الصلاة", startedLbl:"أقيمت الصلاة", driveL:"وضع القيادة", fullL:"التطبيق الكامل", adhkar:"📿 الأذكار", quran:"📖 القرآن الكريم", waContact:"💬 تواصل معنا عبر واتساب", quranH:"تطبيقات قرآن ننصح بها", tarteel:"📖 ترتيل", wahy:"📖 وحي", adhanAt:t=>"الأذان " + t, iqAt:t=>"الإقامة " + t, leftTo:"بقي على صلاة", adhanDone:"أذّن · بقي على الإقامة", iqStarted:"أقيمت الصلاة", stOk:"", donNote:"منصة إحسان الرسمية للعمل الخيري. الموقع لا يجمع أي تبرعات.", nOn:"🔔 نبّهني عند الأذان والإقامة", nIq:(p,m)=>"🕌 إقامة " + p + " بعد " + m + " د", nIqNow:p=>"🕌 حان وقت إقامة " + p, nOff:"🔕 إيقاف تنبيه الصلاة", nPre:(p,m)=>"🕌 أذان " + p + " بعد " + m + " د", nNow:p=>"🕌 حان الآن وقت صلاة " + p, nBody:"اضغط لفتح «أقرب مسجد» والذهاب لأقرب مسجد", nNo:"التنبيه غير مدعوم هنا. في الآيفون: أضف الموقع إلى الشاشة الرئيسية أولاً، ثم افتحه من الأيقونة", nDenied:"التنبيهات مقفلة. فعّلها من إعدادات المتصفح للموقع", nDone:"✅ تم تفعيل التنبيه: عند الأذان، وبعده بـ 10 دقائق للإقامة", nHint:"التنبيه يعمل والموقع مفتوح أو مثبّت على الجوال", qirat:"🤲 قيراط – مواقع الجنائز والمقابر في الرياض", tblH:"🕰️ مواقيت الصلاة اليوم", since:c=>"أُذّن قبل " + c, iqDone:p=>"أُقيمت صلاة " + p,
+ ar:{title:"أقرب مسجد", other:"English", nextLbl:"الصلاة القادمة", curLbl:"حان الآن وقت صلاة", donate:"💚 تبرّع عبر منصة إحسان", mosqueT:"أقرب مسجد", jamiT:"أقرب جامع", mapsSub:"يفتح خرائط Google", quranT:"القرآن", adhkarT:"الأذكار", qiratT:"قيراط", ehsanT:"إحسان", contactT:"تواصل معنا", shareT:"شارك", addT:"أضف مسجد", moreT:"المزيد", hideT:"إخفاء", tarteel2:"ترتيل", wahy2:"وحي", waShareT:"واتساب", qrT:"رمز QR", instT:"تثبيت", prayerH:"الصلاة", adhanH:"الأذان", iqamaH:"الإقامة", toAdhan:"متبقية للأذان", toIqama:"متبقية للإقامة", nowLbl:"حان وقت الصلاة", startedLbl:"أقيمت الصلاة", driveL:"وضع القيادة", fullL:"التطبيق الكامل", adhkar:"📿 الأذكار", quran:"📖 القرآن الكريم", waContact:"💬 تواصل معنا عبر واتساب", quranH:"تطبيقات قرآن ننصح بها", tarteel:"📖 ترتيل", wahy:"📖 وحي", adhanAt:t=>"الأذان " + t, iqAt:t=>"الإقامة " + t, leftTo:"بقي على صلاة", adhanDone:"أذّن · بقي على الإقامة", iqStarted:"أقيمت الصلاة", stOk:"", donNote:"منصة إحسان الرسمية للعمل الخيري. الموقع لا يجمع أي تبرعات.", nOn:"🔔 نبّهني عند الأذان والإقامة", nIq:(p,m)=>"🕌 إقامة " + p + " بعد " + m + " د", nIqNow:p=>"🕌 حان وقت إقامة " + p, nOff:"🔕 إيقاف تنبيه الصلاة", nPre:(p,m)=>"🕌 أذان " + p + " بعد " + m + " د", nNow:p=>"🕌 حان الآن وقت صلاة " + p, nBody:"اضغط لفتح «أقرب مسجد» والذهاب لأقرب مسجد", nNo:"التنبيه غير مدعوم هنا. في الآيفون: أضف الموقع إلى الشاشة الرئيسية أولاً، ثم افتحه من الأيقونة", nDenied:"التنبيهات مقفلة. فعّلها من إعدادات المتصفح للموقع", nDone:"✅ تم تفعيل التنبيه: عند الأذان، وبعده بـ 10 دقائق للإقامة", nHint:"التنبيه يعمل والموقع مفتوح أو مثبّت على الجوال", qirat:"🤲 قيراط – مواقع الجنائز والمقابر في الرياض", tblH:"🕰️ مواقيت الصلاة اليوم", since:c=>"أُذّن قبل " + c, iqDone:p=>"أُقيمت صلاة " + p,
   jumua:"الجمعة", khutba:"خطبة", jumuaNext:t=>"🕌 صلاة الجمعة " + t + " — بكّر بالحضور", jumuaNow:"🕌 خطبة الجمعة الآن",
   names:{fajr:"الفجر", sunrise:"الشروق", dhuhr:"الظهر", asr:"العصر", maghrib:"المغرب", isha:"العشاء"},
   left:c=>"باقي على الأذان " + c,
@@ -434,7 +437,7 @@ const T = {
    and:["افتح الرابط في متصفح Chrome.","اضغط القائمة ⋮ أعلى الشاشة.","اختر «إضافة إلى الشاشة الرئيسية» أو «تثبيت التطبيق»."],
    app:["أنت فاتح الرابط داخل تطبيق (مثل الواتساب).","اضغط ⋮ أو ⋯ واختر «فتح في المتصفح».","بعدها اضغط «أضف إلى شاشة الجوال» مرة ثانية."],
    pc:["في Chrome أو Edge: اضغط أيقونة التثبيت 🖥️ في شريط العنوان، أو من القائمة ⋮ اختر «تثبيت»."]}},
- en:{title:"Nearest Mosque", other:"العربية", nextLbl:"Next prayer", curLbl:"It is now time for", donate:"💚 Donate via Ehsan", mosqueT:"Nearest mosque", jamiT:"Nearest Jami", mapsSub:"Opens Google Maps", quranT:"Quran", adhkarT:"Adhkar", qiratT:"Qirat", ehsanT:"Ehsan", contactT:"Contact us", shareT:"Share", addT:"Add a mosque", moreT:"More", tarteel2:"Tarteel", wahy2:"Wahy", waShareT:"WhatsApp", qrT:"QR code", instT:"Install", prayerH:"Prayer", adhanH:"Adhan", iqamaH:"Iqama", toAdhan:"to adhan", toIqama:"to iqama", nowLbl:"Prayer time now", startedLbl:"Prayer has started", driveL:"Driving mode", fullL:"Full app", adhkar:"📿 Adhkar", quran:"📖 Holy Quran", waContact:"💬 Contact us on WhatsApp", quranH:"Recommended Quran apps", tarteel:"📖 Tarteel", wahy:"📖 Wahy", adhanAt:t=>"Adhan " + t, iqAt:t=>"Iqama " + t, leftTo:"Time left to", adhanDone:"Adhan done · Iqama in", iqStarted:"Prayer started", stOk:"", donNote:"Ehsan is the official Saudi charity platform. This site does not collect any money.", nOn:"🔔 Alert me at adhan and iqama", nIq:(p,m)=>"🕌 " + p + " iqama in " + m + " min", nIqNow:p=>"🕌 " + p + " iqama now", nOff:"🔕 Turn off prayer alerts", nPre:(p,m)=>"🕌 " + p + " adhan in " + m + " min", nNow:p=>"🕌 It is now time for " + p, nBody:"Tap to open Nearest Mosque", nNo:"Alerts are not supported here. On iPhone: add the site to your Home Screen first, then open it from the icon", nDenied:"Notifications are blocked. Allow them in the browser site settings", nDone:"✅ Alerts on: at adhan, and 10 minutes later for iqama", nHint:"Alerts work while the site is open or installed", qirat:"🤲 Qirat – Riyadh funerals & cemeteries", tblH:"🕰️ Today's prayer times", since:c=>"Adhan was " + c + " ago", iqDone:p=>p + " iqama has started",
+ en:{title:"Nearest Mosque", other:"العربية", nextLbl:"Next prayer", curLbl:"It is now time for", donate:"💚 Donate via Ehsan", mosqueT:"Nearest mosque", jamiT:"Nearest Jami", mapsSub:"Opens Google Maps", quranT:"Quran", adhkarT:"Adhkar", qiratT:"Qirat", ehsanT:"Ehsan", contactT:"Contact us", shareT:"Share", addT:"Add a mosque", moreT:"More", hideT:"Hide", tarteel2:"Tarteel", wahy2:"Wahy", waShareT:"WhatsApp", qrT:"QR code", instT:"Install", prayerH:"Prayer", adhanH:"Adhan", iqamaH:"Iqama", toAdhan:"to adhan", toIqama:"to iqama", nowLbl:"Prayer time now", startedLbl:"Prayer has started", driveL:"Driving mode", fullL:"Full app", adhkar:"📿 Adhkar", quran:"📖 Holy Quran", waContact:"💬 Contact us on WhatsApp", quranH:"Recommended Quran apps", tarteel:"📖 Tarteel", wahy:"📖 Wahy", adhanAt:t=>"Adhan " + t, iqAt:t=>"Iqama " + t, leftTo:"Time left to", adhanDone:"Adhan done · Iqama in", iqStarted:"Prayer started", stOk:"", donNote:"Ehsan is the official Saudi charity platform. This site does not collect any money.", nOn:"🔔 Alert me at adhan and iqama", nIq:(p,m)=>"🕌 " + p + " iqama in " + m + " min", nIqNow:p=>"🕌 " + p + " iqama now", nOff:"🔕 Turn off prayer alerts", nPre:(p,m)=>"🕌 " + p + " adhan in " + m + " min", nNow:p=>"🕌 It is now time for " + p, nBody:"Tap to open Nearest Mosque", nNo:"Alerts are not supported here. On iPhone: add the site to your Home Screen first, then open it from the icon", nDenied:"Notifications are blocked. Allow them in the browser site settings", nDone:"✅ Alerts on: at adhan, and 10 minutes later for iqama", nHint:"Alerts work while the site is open or installed", qirat:"🤲 Qirat – Riyadh funerals & cemeteries", tblH:"🕰️ Today's prayer times", since:c=>"Adhan was " + c + " ago", iqDone:p=>p + " iqama has started",
   jumua:"Jumuah", khutba:"Khutbah", jumuaNext:t=>"🕌 Jumuah " + t + " — come early", jumuaNow:"🕌 Jumuah khutbah now",
   names:{fajr:"Fajr", sunrise:"Sunrise", dhuhr:"Dhuhr", asr:"Asr", maghrib:"Maghrib", isha:"Isha"},
   left:c=>"Adhan in " + c,
@@ -551,12 +554,13 @@ function fitName(){
 }
 addEventListener("resize", () => fitName());
 // Mode: driving shows only the car part; the round button shows where it takes you
+const MODE_UP = `<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6" stroke-width="2.4"/></svg>`;
 const MODE_IC = {drive:`<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" fill="currentColor" stroke="none" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>`, full:`<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M4 6.5A2.5 2.5 0 0 1 6.5 4h2A2.5 2.5 0 0 1 11 6.5v2A2.5 2.5 0 0 1 8.5 11h-2A2.5 2.5 0 0 1 4 8.5zM13 6.5A2.5 2.5 0 0 1 15.5 4h2A2.5 2.5 0 0 1 20 6.5v2a2.5 2.5 0 0 1-2.5 2.5h-2A2.5 2.5 0 0 1 13 8.5zM4 15.5A2.5 2.5 0 0 1 6.5 13h2a2.5 2.5 0 0 1 2.5 2.5v2A2.5 2.5 0 0 1 8.5 20h-2A2.5 2.5 0 0 1 4 17.5zM13 15.5a2.5 2.5 0 0 1 2.5-2.5h2a2.5 2.5 0 0 1 2.5 2.5v2a2.5 2.5 0 0 1-2.5 2.5h-2a2.5 2.5 0 0 1-2.5-2.5z"/></svg>`};
 function setMode(drive){
   document.body.classList.toggle("drive", drive);
   try { localStorage.setItem("drive", drive ? "1" : "0"); } catch(_){}
-  const b = $("modeBtn"); b.innerHTML = drive ? MODE_IC.full : MODE_IC.drive;
-  b.setAttribute("aria-label", drive ? L().fullL : L().driveL);
+  // Main view = car part only; "More" opens the rest, "Hide" closes it
+  const b = $("modeBtn"); b.innerHTML = drive ? MODE_IC.full + `<span>${L().moreT}</span>` : MODE_UP + `<span>${L().hideT}</span>`;
   fitName();
 }
 let ptTimer = null;
@@ -1025,8 +1029,13 @@ function apply(){
   if (ptArgs) prayerTimes(...ptArgs);
 }
 $("langBtn").addEventListener("click", ()=>{ lang = lang==="ar" ? "en" : "ar"; try{ localStorage.setItem("lang", lang); }catch(_){} apply(); });
-$("modeBtn").addEventListener("click", () => { setMode(!document.body.classList.contains("drive")); track("mode_" + (document.body.classList.contains("drive") ? "drive" : "full")); });
-try { if (localStorage.getItem("drive") === "1") document.body.classList.add("drive"); } catch(_){}
+$("modeBtn").addEventListener("click", () => {
+  const open = document.body.classList.contains("drive");
+  setMode(!open); track(open ? "more_open" : "more_close");
+  if (open) setTimeout(() => $("homeSection").scrollIntoView({behavior:"smooth"}), 50);
+});
+document.body.classList.add("drive");
+try { if (localStorage.getItem("drive") === "0") document.body.classList.remove("drive"); } catch(_){}
 prayerTimes(RIYADH[0], RIYADH[1], "byRiyadh");
 apply();
 locate();
