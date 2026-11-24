@@ -210,11 +210,28 @@ class MainActivity : Activity() {
      * Prayer card: name, adhan and iqama times.
      * The ring shows only in the last 30 min before adhan (gold) and between adhan and iqama (green).
      */
+    private var heroNameBig = false
+
+    /** Prayer name size: fills the card width when there is no ring, normal size with the ring. */
+    private fun sizeHeroName() {
+        val drive = getSharedPreferences("ui", MODE_PRIVATE).getBoolean("drive", false)
+        val normal = if (drive) 56f else 46f
+        if (ring.visibility == View.VISIBLE) { tvHeroName.textSize = normal; return }
+        val avail = (findViewById<View>(R.id.heroRow).width - dp(40)).toFloat()
+        if (avail <= 0) { tvHeroName.post { sizeHeroName() }; return }
+        val p = android.graphics.Paint(tvHeroName.paint)
+        p.textSize = 100f
+        val w = p.measureText(tvHeroName.text.toString()).coerceAtLeast(1f)
+        val px = (100f * avail / w * 0.96f).coerceAtMost(dp(if (drive) 150 else 120).toFloat())
+        tvHeroName.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, px.coerceAtLeast(normal * resources.displayMetrics.scaledDensity))
+    }
+
     private fun fillHero(lat: Double, lng: Double, now: Long) {
         val st = PrayerCalc.status(this, lat, lng, now)
         val t = st.time
         // Left side: next prayer, then adhan and iqama times (always)
         tvHeroName.text = t.prayer.ar
+        heroNameBig = false
         tvHeroAdhan.text = L.t("الأذان ${PrayerCalc.fmtTime(t.adhan)}", "Adhan ${PrayerCalc.fmtTime(t.adhan)}")
         tvIqamaLeft.text = L.t("الإقامة ${PrayerCalc.fmtTime(t.iqama)}", "Iqama ${PrayerCalc.fmtTime(t.iqama)}")
         // Right side: countdown ring only in the last 30 min before adhan, and from adhan to iqama
@@ -238,6 +255,7 @@ class MainActivity : Activity() {
                 ring.visibility = View.GONE
             }
         }
+        sizeHeroName()
     }
 
     private fun row(a: String, b: String, c: String, header: Boolean, highlight: Boolean): View {
@@ -408,17 +426,33 @@ class MainActivity : Activity() {
             if (drive) L.t("العودة للتطبيق الكامل", "Back to full app") else L.t("وضع القيادة", "Driving mode")
         // Driving: bigger card and buttons so they are easy to read and tap in the car
         val big = drive
-        tvHeroNameView().textSize = if (big) 56f else 46f
+        // Driving: the car part fills the whole screen (card, buttons, ayah, switch spread out)
+        val car = findViewById<LinearLayout>(R.id.carSection)
+        car.layoutParams = car.layoutParams.also { it.height = if (big) ViewGroup.LayoutParams.MATCH_PARENT else ViewGroup.LayoutParams.WRAP_CONTENT }
+        fun weigh(id: Int, w: Float) {
+            val v = findViewById<View>(id)
+            val lp = v.layoutParams as LinearLayout.LayoutParams
+            lp.height = if (big) 0 else ViewGroup.LayoutParams.WRAP_CONTENT
+            lp.weight = if (big) w else 0f
+            v.layoutParams = lp
+        }
+        weigh(R.id.hero, 1.3f)
+        weigh(R.id.ctaRow, 0.8f)
+        findViewById<View>(R.id.heroRow).layoutParams = findViewById<View>(R.id.heroRow).layoutParams.also {
+            it.height = if (big) ViewGroup.LayoutParams.MATCH_PARENT else ViewGroup.LayoutParams.WRAP_CONTENT
+        }
+        findViewById<TextView>(R.id.btnTasbih).textSize = if (big) 24f else 21f
         findViewById<TextView>(R.id.tvHeroAdhan).textSize = if (big) 22f else 17f
         findViewById<TextView>(R.id.tvIqamaLeft).textSize = if (big) 22f else 17f
         findViewById<View>(R.id.ring).layoutParams.let { it.width = dp(if (big) 170 else 140); it.height = it.width }
         for (id in listOf(R.id.btnGo, R.id.btnJami)) {
             val v = findViewById<View>(id)
-            v.layoutParams = v.layoutParams.also { it.height = dp(if (big) 130 else 76) }
+            v.layoutParams = v.layoutParams.also { it.height = if (big) ViewGroup.LayoutParams.MATCH_PARENT else dp(76) }
         }
         findViewById<TextView>(R.id.btnGoText).textSize = if (big) 24f else 18f
         findViewById<TextView>(R.id.btnJamiText).textSize = if (big) 22f else 16f
         findViewById<View>(R.id.ring).requestLayout()
+        tvHeroName.post { sizeHeroName() }
         // Driving: keep the screen on
         if (drive) window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         else window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)

@@ -8,6 +8,7 @@
 
 <ScrollView
     android:id="@+id/rootScroll"
+    android:fillViewport="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToPadding="false"
@@ -47,6 +48,7 @@
                 android:background="@drawable/pattern_tile" />
 
             <LinearLayout
+                android:id="@+id/heroRow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
@@ -109,6 +111,7 @@
 
         <!-- Nearest mosque (gold) + nearest Jami -->
         <LinearLayout
+            android:id="@+id/ctaRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
@@ -213,9 +216,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
             android:gravity="center"
-            android:lineSpacingMultiplier="1.3"
-            android:textColor="@color/text_secondary"
-            android:textSize="16sp" />
+            android:lineSpacingMultiplier="1.35"
+            android:textColor="@color/text_primary"
+            android:textSize="21sp"
+            android:textStyle="bold" />
 
         <!-- Mode switch: driving (car only) or home (full app) + language -->
         <LinearLayout
