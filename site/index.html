@@ -169,81 +169,146 @@
     .alt{color:var(--dark)}
     .next .name{color:var(--dark)}
   }
+
+  /* ===== New design (matches the app) ===== */
+  :root{--bg:#F4F1EA;--panel:#E3EEE7;--sf:#FFFFFF;--tx:#16231C;--mu:#7A857F;--tonal:#EAF2EC;--ic:#0F6B4F;--bd:rgba(0,0,0,.7)}
+  @media (prefers-color-scheme: dark){:root{--bg:#0B100D;--panel:#111B16;--sf:#151C18;--tx:#F1F5F2;--mu:#8C9A92;--tonal:#1B2A22;--ic:#7FD3AE;--bd:#C9A227}}
+  body{background:var(--bg);color:var(--tx)}
+  header{display:none}
+  .wrap2{max-width:560px;margin:0 auto;padding:14px 16px}
+  .carPanel{background:var(--panel);border-radius:0 0 32px 32px}
+  .hero2{position:relative;overflow:hidden;border-radius:28px;border:1.5px solid var(--bd);color:#fff;
+    background:linear-gradient(135deg,#1E9A72,#0F6B4F 50%,#083D2D)}
+  .hero2:before{content:"";position:absolute;inset:0;opacity:.11;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cg fill='none' stroke='white' stroke-width='1'%3E%3Cpath d='M22 2l6 14 14 6-14 6-6 14-6-14-14-6 14-6z'/%3E%3C/g%3E%3C/svg%3E")}
+  .langP{position:absolute;top:12px;inset-inline-end:12px;z-index:2;background:rgba(255,255,255,.18);color:#fff;border:0;border-radius:999px;padding:6px 14px;font:inherit;font-size:.85rem;font-weight:800;cursor:pointer}
+  .heroRow{position:relative;display:flex;align-items:center;gap:12px;padding:46px 20px 20px;min-height:150px}
+  .info{flex:1;min-width:0;text-align:center;display:flex;flex-direction:column;align-items:center}
+  .info .lbl{font-size:.95rem;font-weight:700;opacity:.85}
+  .info .pn{display:inline-block;white-space:nowrap;font-weight:800;line-height:1.15;font-size:46px}
+  .info .ln{font-size:1.1rem;font-weight:700;opacity:.95;white-space:nowrap}
+  .info .ln.iqNow{color:#F6D46B}
+  .ring2{position:relative;width:140px;height:140px;flex:none;order:1}
+  .info{order:2}
+  .ring2 svg{width:100%;height:100%;transform:rotate(-90deg)}
+  .ring2 .trk{fill:none;stroke:rgba(255,255,255,.15);stroke-width:6}
+  .ring2 .arc{fill:none;stroke:#F6D46B;stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .9s linear}
+  .ring2.after .arc{stroke:#7FD3AE}
+  .ring2 .rt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring2 .c{font-size:1.9rem;font-weight:800;color:#F6D46B}.ring2.after .c{color:#7FD3AE}
+  .ring2 .c .clk{font-size:1em;margin:0}
+  .ring2 .d{font-size:.75rem;opacity:.85}
+  .cta2{display:flex;gap:10px;margin-top:14px}
+  .go2{flex:1;height:76px;border-radius:22px;border:1.5px solid var(--bd);display:flex;align-items:center;gap:10px;padding:0 14px;text-decoration:none;font-weight:800}
+  .go2.gold{background:linear-gradient(135deg,#E2BE4E,#C79A22);color:#1B1606}
+  .go2.plainB{background:var(--sf);color:var(--tx)}
+  .go2 .gi{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
+  .go2.gold .gi{background:rgba(255,255,255,.35)}.go2.plainB .gi{background:var(--tonal);color:var(--ic)}
+  .go2 .tx{display:flex;flex-direction:column;white-space:nowrap}.go2 b{font-size:1.15rem}.go2 small{font-size:.72rem;opacity:.7;font-weight:500}
+  .ayah2{text-align:center;color:var(--tx);font-size:1.3rem;font-weight:800;line-height:1.9;margin:14px 4px 0}
+  .modeRow{display:flex;justify-content:center;margin-top:12px}
+  .modeBtn{width:56px;height:56px;border-radius:50%;border:0;background:#0F6B4F;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+  .modeBtn svg{width:28px;height:28px}
+  svg.i{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .dateBox{display:flex;align-items:center;justify-content:center;background:var(--sf);border:1.5px solid var(--bd);border-radius:20px;padding:14px}
+  .dateBox .dcol{text-align:center}.dateBox .sep{width:1px;align-self:stretch;background:var(--mu);opacity:.35;margin:0 16px}
+  .d1{font-size:1.1rem;font-weight:800}.d2{font-size:1.6rem;font-weight:800;color:var(--ic)}.d3{font-size:1.05rem;font-weight:800}.d4{font-size:.92rem;color:var(--mu)}
+  .tiles{display:flex;gap:10px;margin-top:10px}
+  .tile{flex:1;min-width:0;background:var(--sf);border:1.5px solid var(--bd);border-radius:20px;padding:14px 4px 12px;display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--tx);text-decoration:none;font:inherit;font-size:.85rem;font-weight:800;cursor:pointer}
+  .tile .ti{width:40px;height:40px;border-radius:12px;background:var(--tonal);color:var(--ic);display:flex;align-items:center;justify-content:center}
+  .card2{background:var(--sf);border:1.5px solid var(--bd);border-radius:20px;padding:10px;margin-top:10px}
+  .times2 .r{display:grid;grid-template-columns:1fr 1fr 1fr;text-align:center;padding:10px 4px;border-radius:12px;font-size:1.05rem}
+  .times2 .h{font-size:.82rem;color:var(--mu);font-weight:800}
+  .times2 .on{background:var(--tonal);color:var(--ic);font-weight:800}
+  .secT{margin:22px 4px 2px;color:var(--mu);font-size:.85rem;font-weight:800}.secT.small{margin-top:14px}
+  .wideBtn{width:100%;margin-top:10px;background:var(--sf);border:1.5px solid var(--bd);border-radius:18px;padding:14px;font:inherit;font-weight:800;color:var(--tx);cursor:pointer}
+  .safe2{margin:16px 4px;color:var(--mu);font-size:.85rem;text-align:center}
+  .status{min-height:0;margin:6px 0 0}
+  .status:empty{display:none}
+  /* Driving: only the car part, bigger and filling the screen */
+  body.drive #homeSection, body.drive footer{display:none}
+  body.drive .carPanel{min-height:100vh;display:flex}
+  body.drive .carPanel .wrap2{flex:1;display:flex;flex-direction:column;width:100%}
+  body.drive .hero2{flex:1;display:flex}
+  body.drive .heroRow{flex:1;flex-direction:column;justify-content:space-evenly}
+  body.drive .info{order:1}body.drive .ring2{order:2}
+  body.drive .ring2{width:210px;height:210px}
+  body.drive .info .ln{font-size:1.45rem}
+  body.drive .cta2{height:150px}
+  body.drive .go2{height:100%;flex-direction:column;justify-content:center;text-align:center}
+  body.drive .go2 .tx{align-items:center}
+  body.drive .go2 b{font-size:1.5rem}
+  body.drive .ayah2{font-size:1.5rem}
 </style>
 </head>
 <body>
-<header>
-  <button class="lang inst2" id="instTop">📲 <span data-t="instShort"></span></button>
-  <h1><span data-t="title"></span>
-  <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5v2"/><path d="M7 11a5 5 0 0 1 10 0"/><path d="M5 11h14v10H5z"/><path d="M10 21v-4a2 2 0 0 1 4 0v4"/><path d="M2.5 21V9.5M2.5 9.5l1-2 1 2M2.5 13h2v8M21.5 21V9.5M21.5 9.5l-1-2-1 2M21.5 13h-2v8"/><path d="M2 21h20"/></svg></h1>
-</header>
-
-<div class="wrap">
-  <!-- Prayer times -->
-  <div class="pt hero" id="hero">
-    <button class="lang" id="langBtn">English</button>
-    <div class="lbl" id="heroLbl"></div>
-    <div id="plain">
-      <div class="pn" id="pName">—</div>
-      <div class="ptm" id="pTime"></div>
+<span id="instTop" hidden></span>
+<!-- Part 1: in the car -->
+<div class="carPanel" id="carSection"><div class="wrap2">
+  <div class="hero2" id="hero">
+    <button class="langP" id="langBtn">English</button>
+    <div class="heroRow" id="heroRow">
+      <div class="ring2" id="ringWrap" hidden>
+        <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="trk" cx="60" cy="60" r="54"/><circle class="arc" id="arc" cx="60" cy="60" r="54" stroke-dasharray="339.3" stroke-dashoffset="0"/></svg>
+        <div class="rt"><div class="c" id="r3"></div><div class="d" id="r4"></div></div>
+      </div>
+      <div class="info" id="heroInfo">
+        <div class="lbl" id="heroLbl"></div>
+        <div class="pn" id="pName">—</div>
+        <div class="ln" id="pAdhan"></div>
+        <div class="ln" id="iq"></div>
+      </div>
     </div>
-    <div class="ringwrap" id="ringWrap" hidden>
-      <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="trk" cx="60" cy="60" r="52"/><circle class="arc" id="arc" cx="60" cy="60" r="52" stroke-dasharray="326.73" stroke-dashoffset="0"/></svg>
-      <div class="ringtxt"><div class="r1" id="r1"></div><div class="r2" id="r2"></div><div class="r3" id="r3"></div><div class="r4" id="r4"></div></div>
-    </div>
-    <div class="iq" id="iq"></div>
   </div>
-  <div class="ayah" id="ayah"></div>
+  <div class="cta2" id="ctaRow">
+    <a class="go2 gold" id="goNearest" href="https://www.google.com/maps/search/?api=1&query=%D9%85%D8%B3%D8%AC%D8%AF" target="_blank" rel="noopener"><span class="gi"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span><span class="tx"><b data-t="mosqueT"></b><small data-t="mapsSub"></small></span></a>
+    <a class="go2 plainB" id="goJami" href="https://www.google.com/maps/search/?api=1&query=%D8%AC%D8%A7%D9%85%D8%B9" target="_blank" rel="noopener"><span class="gi"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11a7 7 0 0 1 14 0v9"/><path d="M3 20h18"/><path d="M12 4V2"/><path d="M10 20v-4a2 2 0 0 1 4 0v4"/></svg></span><span class="tx"><b data-t="jamiT"></b></span></a>
+  </div>
+  <div class="ayah2" id="ayah"></div>
+  <div class="modeRow"><button class="modeBtn" id="modeBtn" type="button"></button></div>
+</div></div>
 
-  <a class="big go1" id="goNearest" href="https://www.google.com/maps/search/?api=1&query=%D9%85%D8%B3%D8%AC%D8%AF" target="_blank" rel="noopener"></a>
-  <a class="big jami" id="goJami" href="https://www.google.com/maps/search/?api=1&query=%D8%AC%D8%A7%D9%85%D8%B9" target="_blank" rel="noopener"></a>
+<!-- Part 2: at home / office (hidden in driving mode) -->
+<div class="wrap2" id="homeSection">
+  <div class="dateBox">
+    <div class="dcol"><div class="d1" id="dDay"></div><div class="d2" id="dClock"></div></div>
+    <div class="sep"></div>
+    <div class="dcol"><div class="d3" id="dHijri"></div><div class="d4" id="dGreg"></div></div>
+  </div>
   <div class="status" id="status"></div>
-
   <div id="list" style="display:none"></div>
-  <a class="big alt" id="gmaps" style="display:none"></a>
-  <button class="big alt" id="retry" style="display:none"></button>
-  <div class="row2">
-    <a class="big alt" id="quranBtn" href="/quran/" data-t="quran"></a>
-    <button class="big alt" id="adhkarBtn" type="button" data-t="adhkar"></button>
+  <a id="gmaps" style="display:none"></a>
+  <button id="retry" style="display:none"></button>
+
+  <div class="tiles">
+    <a class="tile" id="quranBtn" href="/quran/"><span class="ti"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M9 7h6"/></svg></span><span data-t="quranT"></span></a>
+    <button class="tile" id="adhkarBtn" type="button"><span class="ti"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="17" cy="9" r="2"/><circle cx="17" cy="15" r="2"/><circle cx="7" cy="9" r="2"/><circle cx="7" cy="15" r="2"/><path d="M12 19v2"/></svg></span><span data-t="adhkarT"></span></button>
+    <a class="tile" id="goQirat" href="https://janaez-riyadh.netlify.app" target="_blank" rel="noopener"><span class="ti"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 21v-6l-3-4 2-2 4 4v8"/><path d="M17 21v-6l3-4-2-2-4 4v8"/></svg></span><span data-t="qiratT"></span></a>
   </div>
-  <a class="big alt" id="goQirat" href="https://janaez-riyadh.netlify.app" target="_blank" rel="noopener" data-t="qirat" style="display:none"></a>
-  <a class="big donate" id="goDonate" href="https://ehsan.sa/" target="_blank" rel="noopener" data-t="donate"></a>
-  <div class="donNote" data-t="donNote"></div>
-  <a class="big waC" id="waContact" href="https://wa.me/966552101764" target="_blank" rel="noopener" data-t="waContact"></a>
-  <div class="pt ptTable">
-    <div class="tblH" data-t="tblH"></div>
-    <div class="times" id="times"></div>
+  <div class="card2">
+    <div class="times2" id="times"></div>
     <div class="meta" id="ptMeta"></div>
     <button class="link" id="iqSet" data-t="iqSet" hidden></button>
-    <button class="big alt notif" id="notifBtn" type="button"></button>
   </div>
-
-  <div class="safe">🚗 <b data-t="safeB"></b> <span data-t="safe"></span></div>
-
-  <div class="box">
-    <h2 data-t="addH"></h2>
-    <span data-t="addP"></span>
-    <button class="big alt" id="addBtn" data-t="addBtn"></button>
+  <div class="tiles">
+    <a class="tile" id="goDonate" href="https://ehsan.sa/" target="_blank" rel="noopener"><span class="ti"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg></span><span data-t="ehsanT"></span></a>
+    <a class="tile" id="waContact" href="https://wa.me/966552101764" target="_blank" rel="noopener"><span class="ti"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg></span><span data-t="contactT"></span></a>
+    <button class="tile" id="shareBtn" type="button"><span class="ti"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><path d="M8 11l8-4M8 13l8 4"/></svg></span><span data-t="shareT"></span></button>
   </div>
+  <div class="tiles"><button class="tile" id="addBtn" type="button"><span class="ti"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg></span><span data-t="addT"></span></button></div>
 
-  <div class="box">
-    <h2 data-t="quranH"></h2>
-    <div class="row2">
-      <a class="big alt" id="tarteel" target="_blank" rel="noopener" data-t="tarteel"></a>
-      <a class="big alt" id="wahy" target="_blank" rel="noopener" data-t="wahy"></a>
-    </div>
+  <div class="secT" data-t="moreT"></div>
+  <button class="wideBtn" id="notifBtn" type="button"></button>
+  <div class="secT small" data-t="quranH"></div>
+  <div class="tiles">
+    <a class="tile" id="tarteel" target="_blank" rel="noopener"><span class="ti"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M9 7h6"/></svg></span><span data-t="tarteel2"></span></a>
+    <a class="tile" id="wahy" target="_blank" rel="noopener"><span class="ti"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M9 7h6"/></svg></span><span data-t="wahy2"></span></a>
   </div>
-
-  <div class="box">
-    <h2 data-t="shareH"></h2>
-    <span data-t="shareP"></span>
-    <button class="big share" id="shareBtn" data-t="shareBtn"></button>
-    <a class="big wa" id="waBtn" target="_blank" rel="noopener">
-      <svg viewBox="0 0 24 24" width="22" height="22" fill="#fff" aria-hidden="true" style="vertical-align:-5px;margin-inline-end:6px"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.3-.5-.5-1-1.1-1.3-1.7-.1-.2 0-.4.1-.5l.4-.4.2-.4v-.4l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.6.6-.9 1.4-.9 2.2.1 1 .5 1.9 1 2.7 1.1 1.6 2.4 2.9 4.1 3.7.5.2.9.4 1.4.5.5.1 1 .1 1.5 0 .6-.1 1.2-.5 1.5-1 .2-.4.2-.8.1-1.1l-.4-.2z"/></svg><span data-t="wa"></span>
-    </a>
-    <button class="big qr" id="qrBtn" data-t="qrBtn"></button>
-    <button class="big inst" id="instBtn">📲 <span data-t="inst"></span></button>
+  <div class="tiles">
+    <a class="tile" id="waBtn" target="_blank" rel="noopener"><span class="ti"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.3-4A8 8 0 1 1 8 19z"/></svg></span><span data-t="waShareT"></span></a>
+    <button class="tile" id="qrBtn" type="button"><span class="ti"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2v2h-2zM18 18h2v2h-2zM14 18h2"/></svg></span><span data-t="qrT"></span></button>
+    <button class="tile" id="instBtn" type="button"><span class="ti"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11"/><path d="M7 11l5 5 5-5"/><path d="M5 20h14"/></svg></span><span data-t="instT"></span></button>
   </div>
+  <div class="safe2">🚗 <b data-t="safeB"></b> <span data-t="safe"></span></div>
 </div>
 
 <!-- Iqama settings (outside Saudi Arabia) -->
@@ -328,7 +393,7 @@
 <script src="adhan.js"></script>
 <script>
 const T = {
- ar:{title:"أقرب مسجد", other:"English", nextLbl:"الصلاة القادمة", curLbl:"حان الآن وقت صلاة", donate:"💚 تبرّع عبر منصة إحسان", adhkar:"📿 الأذكار", quran:"📖 القرآن الكريم", waContact:"💬 تواصل معنا عبر واتساب", quranH:"تطبيقات قرآن ننصح بها", tarteel:"📖 ترتيل", wahy:"📖 وحي", adhanAt:t=>"الأذان " + t, iqAt:t=>"الإقامة " + t, leftTo:"بقي على صلاة", adhanDone:"أذّن · بقي على الإقامة", iqStarted:"أقيمت الصلاة", stOk:"", donNote:"منصة إحسان الرسمية للعمل الخيري. الموقع لا يجمع أي تبرعات.", nOn:"🔔 نبّهني عند الأذان والإقامة", nIq:(p,m)=>"🕌 إقامة " + p + " بعد " + m + " د", nIqNow:p=>"🕌 حان وقت إقامة " + p, nOff:"🔕 إيقاف تنبيه الصلاة", nPre:(p,m)=>"🕌 أذان " + p + " بعد " + m + " د", nNow:p=>"🕌 حان الآن وقت صلاة " + p, nBody:"اضغط لفتح «أقرب مسجد» والذهاب لأقرب مسجد", nNo:"التنبيه غير مدعوم هنا. في الآيفون: أضف الموقع إلى الشاشة الرئيسية أولاً، ثم افتحه من الأيقونة", nDenied:"التنبيهات مقفلة. فعّلها من إعدادات المتصفح للموقع", nDone:"✅ تم تفعيل التنبيه: عند الأذان، وبعده بـ 10 دقائق للإقامة", nHint:"التنبيه يعمل والموقع مفتوح أو مثبّت على الجوال", qirat:"🤲 قيراط – مواقع الجنائز والمقابر في الرياض", tblH:"🕰️ مواقيت الصلاة اليوم", since:c=>"أُذّن قبل " + c, iqDone:p=>"أُقيمت صلاة " + p,
+ ar:{title:"أقرب مسجد", other:"English", nextLbl:"الصلاة القادمة", curLbl:"حان الآن وقت صلاة", donate:"💚 تبرّع عبر منصة إحسان", mosqueT:"أقرب مسجد", jamiT:"أقرب جامع", mapsSub:"يفتح خرائط Google", quranT:"القرآن", adhkarT:"الأذكار", qiratT:"قيراط", ehsanT:"إحسان", contactT:"تواصل معنا", shareT:"شارك", addT:"أضف مسجد", moreT:"المزيد", tarteel2:"ترتيل", wahy2:"وحي", waShareT:"واتساب", qrT:"رمز QR", instT:"تثبيت", prayerH:"الصلاة", adhanH:"الأذان", iqamaH:"الإقامة", toAdhan:"متبقية للأذان", toIqama:"متبقية للإقامة", nowLbl:"حان وقت الصلاة", startedLbl:"أقيمت الصلاة", driveL:"وضع القيادة", fullL:"التطبيق الكامل", adhkar:"📿 الأذكار", quran:"📖 القرآن الكريم", waContact:"💬 تواصل معنا عبر واتساب", quranH:"تطبيقات قرآن ننصح بها", tarteel:"📖 ترتيل", wahy:"📖 وحي", adhanAt:t=>"الأذان " + t, iqAt:t=>"الإقامة " + t, leftTo:"بقي على صلاة", adhanDone:"أذّن · بقي على الإقامة", iqStarted:"أقيمت الصلاة", stOk:"", donNote:"منصة إحسان الرسمية للعمل الخيري. الموقع لا يجمع أي تبرعات.", nOn:"🔔 نبّهني عند الأذان والإقامة", nIq:(p,m)=>"🕌 إقامة " + p + " بعد " + m + " د", nIqNow:p=>"🕌 حان وقت إقامة " + p, nOff:"🔕 إيقاف تنبيه الصلاة", nPre:(p,m)=>"🕌 أذان " + p + " بعد " + m + " د", nNow:p=>"🕌 حان الآن وقت صلاة " + p, nBody:"اضغط لفتح «أقرب مسجد» والذهاب لأقرب مسجد", nNo:"التنبيه غير مدعوم هنا. في الآيفون: أضف الموقع إلى الشاشة الرئيسية أولاً، ثم افتحه من الأيقونة", nDenied:"التنبيهات مقفلة. فعّلها من إعدادات المتصفح للموقع", nDone:"✅ تم تفعيل التنبيه: عند الأذان، وبعده بـ 10 دقائق للإقامة", nHint:"التنبيه يعمل والموقع مفتوح أو مثبّت على الجوال", qirat:"🤲 قيراط – مواقع الجنائز والمقابر في الرياض", tblH:"🕰️ مواقيت الصلاة اليوم", since:c=>"أُذّن قبل " + c, iqDone:p=>"أُقيمت صلاة " + p,
   jumua:"الجمعة", khutba:"خطبة", jumuaNext:t=>"🕌 صلاة الجمعة " + t + " — بكّر بالحضور", jumuaNow:"🕌 خطبة الجمعة الآن",
   names:{fajr:"الفجر", sunrise:"الشروق", dhuhr:"الظهر", asr:"العصر", maghrib:"المغرب", isha:"العشاء"},
   left:c=>"باقي على الأذان " + c,
@@ -369,7 +434,7 @@ const T = {
    and:["افتح الرابط في متصفح Chrome.","اضغط القائمة ⋮ أعلى الشاشة.","اختر «إضافة إلى الشاشة الرئيسية» أو «تثبيت التطبيق»."],
    app:["أنت فاتح الرابط داخل تطبيق (مثل الواتساب).","اضغط ⋮ أو ⋯ واختر «فتح في المتصفح».","بعدها اضغط «أضف إلى شاشة الجوال» مرة ثانية."],
    pc:["في Chrome أو Edge: اضغط أيقونة التثبيت 🖥️ في شريط العنوان، أو من القائمة ⋮ اختر «تثبيت»."]}},
- en:{title:"Nearest Mosque", other:"العربية", nextLbl:"Next prayer", curLbl:"It is now time for", donate:"💚 Donate via Ehsan", adhkar:"📿 Adhkar", quran:"📖 Holy Quran", waContact:"💬 Contact us on WhatsApp", quranH:"Recommended Quran apps", tarteel:"📖 Tarteel", wahy:"📖 Wahy", adhanAt:t=>"Adhan " + t, iqAt:t=>"Iqama " + t, leftTo:"Time left to", adhanDone:"Adhan done · Iqama in", iqStarted:"Prayer started", stOk:"", donNote:"Ehsan is the official Saudi charity platform. This site does not collect any money.", nOn:"🔔 Alert me at adhan and iqama", nIq:(p,m)=>"🕌 " + p + " iqama in " + m + " min", nIqNow:p=>"🕌 " + p + " iqama now", nOff:"🔕 Turn off prayer alerts", nPre:(p,m)=>"🕌 " + p + " adhan in " + m + " min", nNow:p=>"🕌 It is now time for " + p, nBody:"Tap to open Nearest Mosque", nNo:"Alerts are not supported here. On iPhone: add the site to your Home Screen first, then open it from the icon", nDenied:"Notifications are blocked. Allow them in the browser site settings", nDone:"✅ Alerts on: at adhan, and 10 minutes later for iqama", nHint:"Alerts work while the site is open or installed", qirat:"🤲 Qirat – Riyadh funerals & cemeteries", tblH:"🕰️ Today's prayer times", since:c=>"Adhan was " + c + " ago", iqDone:p=>p + " iqama has started",
+ en:{title:"Nearest Mosque", other:"العربية", nextLbl:"Next prayer", curLbl:"It is now time for", donate:"💚 Donate via Ehsan", mosqueT:"Nearest mosque", jamiT:"Nearest Jami", mapsSub:"Opens Google Maps", quranT:"Quran", adhkarT:"Adhkar", qiratT:"Qirat", ehsanT:"Ehsan", contactT:"Contact us", shareT:"Share", addT:"Add a mosque", moreT:"More", tarteel2:"Tarteel", wahy2:"Wahy", waShareT:"WhatsApp", qrT:"QR code", instT:"Install", prayerH:"Prayer", adhanH:"Adhan", iqamaH:"Iqama", toAdhan:"to adhan", toIqama:"to iqama", nowLbl:"Prayer time now", startedLbl:"Prayer has started", driveL:"Driving mode", fullL:"Full app", adhkar:"📿 Adhkar", quran:"📖 Holy Quran", waContact:"💬 Contact us on WhatsApp", quranH:"Recommended Quran apps", tarteel:"📖 Tarteel", wahy:"📖 Wahy", adhanAt:t=>"Adhan " + t, iqAt:t=>"Iqama " + t, leftTo:"Time left to", adhanDone:"Adhan done · Iqama in", iqStarted:"Prayer started", stOk:"", donNote:"Ehsan is the official Saudi charity platform. This site does not collect any money.", nOn:"🔔 Alert me at adhan and iqama", nIq:(p,m)=>"🕌 " + p + " iqama in " + m + " min", nIqNow:p=>"🕌 " + p + " iqama now", nOff:"🔕 Turn off prayer alerts", nPre:(p,m)=>"🕌 " + p + " adhan in " + m + " min", nNow:p=>"🕌 It is now time for " + p, nBody:"Tap to open Nearest Mosque", nNo:"Alerts are not supported here. On iPhone: add the site to your Home Screen first, then open it from the icon", nDenied:"Notifications are blocked. Allow them in the browser site settings", nDone:"✅ Alerts on: at adhan, and 10 minutes later for iqama", nHint:"Alerts work while the site is open or installed", qirat:"🤲 Qirat – Riyadh funerals & cemeteries", tblH:"🕰️ Today's prayer times", since:c=>"Adhan was " + c + " ago", iqDone:p=>p + " iqama has started",
   jumua:"Jumuah", khutba:"Khutbah", jumuaNext:t=>"🕌 Jumuah " + t + " — come early", jumuaNow:"🕌 Jumuah khutbah now",
   names:{fajr:"Fajr", sunrise:"Sunrise", dhuhr:"Dhuhr", asr:"Asr", maghrib:"Maghrib", isha:"Isha"},
   left:c=>"Adhan in " + c,
@@ -474,6 +539,26 @@ const REMIND = {
   maghrib:["«صلاة الجماعة أفضل من صلاة الفذّ بسبع وعشرين درجة» متفق عليه","«أحب الأعمال إلى الله: الصلاة على وقتها» متفق عليه"],
   isha:["«من صلى العشاء في جماعة فكأنما قام نصف الليل» رواه مسلم","«لو يعلمون ما في العتمة والصبح لأتوهما ولو حبوًا» متفق عليه"]
 };
+// Prayer name: biggest size that fits; smaller while the ring shows
+function fitName(){
+  const el = $("pName"), box = $("heroInfo"); if (!el || !box) return;
+  const drive = document.body.classList.contains("drive");
+  const ringOn = !$("ringWrap").hidden;
+  const cap = ringOn ? (drive ? 64 : 46) : (drive ? 130 : 84);
+  el.style.fontSize = "100px";
+  const w = el.scrollWidth || 1, avail = box.clientWidth || 1;
+  el.style.fontSize = Math.max(28, Math.min(cap, 100 * avail / w * 0.95)) + "px";
+}
+addEventListener("resize", () => fitName());
+// Mode: driving shows only the car part; the round button shows where it takes you
+const MODE_IC = {drive:`<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" fill="currentColor" stroke="none" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>`, full:`<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M4 6.5A2.5 2.5 0 0 1 6.5 4h2A2.5 2.5 0 0 1 11 6.5v2A2.5 2.5 0 0 1 8.5 11h-2A2.5 2.5 0 0 1 4 8.5zM13 6.5A2.5 2.5 0 0 1 15.5 4h2A2.5 2.5 0 0 1 20 6.5v2a2.5 2.5 0 0 1-2.5 2.5h-2A2.5 2.5 0 0 1 13 8.5zM4 15.5A2.5 2.5 0 0 1 6.5 13h2a2.5 2.5 0 0 1 2.5 2.5v2A2.5 2.5 0 0 1 8.5 20h-2A2.5 2.5 0 0 1 4 17.5zM13 15.5a2.5 2.5 0 0 1 2.5-2.5h2a2.5 2.5 0 0 1 2.5 2.5v2a2.5 2.5 0 0 1-2.5 2.5h-2a2.5 2.5 0 0 1-2.5-2.5z"/></svg>`};
+function setMode(drive){
+  document.body.classList.toggle("drive", drive);
+  try { localStorage.setItem("drive", drive ? "1" : "0"); } catch(_){}
+  const b = $("modeBtn"); b.innerHTML = drive ? MODE_IC.full : MODE_IC.drive;
+  b.setAttribute("aria-label", drive ? L().fullL : L().driveL);
+  fitName();
+}
 let ptTimer = null;
 function prayerTimes(lat, lng, labelKey){
   if (!window.adhan) return;
@@ -515,43 +600,39 @@ function prayerTimes(lat, lng, labelKey){
     const nowMode = since >= 0 && (since < 30*60000 || n < curIq.getTime() + 5*60000);
     const hl = nowMode ? cur : key;
     notifTick(key, t, nowMode ? cur : null, curT, n, nameOf);
-    const W = 30*60000, C = 326.73;
-    const ringOn = (top, name, big, bottom, prog, after) => {
-      $("plain").hidden = true; $("ringWrap").hidden = false; $("heroLbl").textContent = "";
-      $("ringWrap").classList.toggle("after", after);
-      $("r1").textContent = top; $("r2").textContent = name; $("r3").innerHTML = big; $("r4").textContent = bottom;
+    const W = 30*60000, C = 339.3;
+    const ring = (big, sub, prog, after) => {
+      $("ringWrap").hidden = false; $("ringWrap").classList.toggle("after", after);
+      $("r3").innerHTML = big; $("r4").textContent = sub;
       $("arc").setAttribute("stroke-dashoffset", (C * (1 - Math.max(0, Math.min(1, prog)))).toFixed(1));
     };
-    const plainOn = (lbl, name, timeTxt) => {
-      $("ringWrap").hidden = true; $("plain").hidden = false;
-      $("heroLbl").textContent = lbl; $("pName").textContent = name; $("pTime").textContent = timeTxt;
-    };
-    const iq = $("iq"); iq.className = "iq"; iq.textContent = "";
-    if (nowMode && isJ(cur)) {
-      plainOn(L().curLbl, nameOf(cur), fmt(curT));
-      iq.className = "iq now"; iq.textContent = L().jumuaNow;
-    } else if (nowMode) {
+    const iq = $("iq"); iq.className = "ln";
+    const hms = ms => { const s2 = Math.max(0, Math.floor(ms/1000)); return clk([Math.floor(s2/3600), Math.floor(s2/60)%60, s2%60]); };
+    $("ringWrap").hidden = true;
+    if (nowMode) {
+      $("pName").textContent = nameOf(cur);
+      $("pAdhan").textContent = L().adhanAt(fmt(curT));
       const ls = curIq - n;
-      if (ls > 0) {
-        const s2 = Math.floor(ls/1000);
-        ringOn(L().adhanDone, nameOf(cur), clk([Math.floor(s2/3600), Math.floor(s2/60)%60, s2%60]), L().iqAt(fmt(curIq)), ls/(curIq-curT), true);
-      } else {
-        ringOn("", nameOf(cur), L().iqStarted, L().iqAt(fmt(curIq)), 1, true);
-      }
+      if (isJ(cur)) { $("heroLbl").textContent = L().curLbl; iq.textContent = L().jumuaNow; iq.className = "ln iqNow"; }
+      else if (ls > 0) { $("heroLbl").textContent = L().nowLbl; iq.textContent = L().iqAt(fmt(curIq)); ring(hms(ls), L().toIqama, ls/(curIq-curT), true); }
+      else { $("heroLbl").textContent = L().startedLbl; iq.textContent = L().iqAt(fmt(curIq)); }
     } else {
       const left = t - n;
-      const nm2 = (isJ(key) && t.getDate() === n.getDate()) ? L().jumua : L().names[key];
-      if (left > W) plainOn(L().nextLbl, nm2, L().adhanAt(fmt(t)));
-      else {
-        const s2 = Math.max(0, Math.floor(left/1000));
-        ringOn(L().leftTo, nm2, clk([Math.floor(s2/3600), Math.floor(s2/60)%60, s2%60]), L().adhanAt(fmt(t)), left/W, false);
-      }
-      // Below: only the iqama time (the adhan time is already shown above)
-      if (isJ(key) && t.getDate() === n.getDate()) iq.textContent = L().jumuaNext(fmt(t));
-      else iq.textContent = L().iqAt(fmt(new Date(t.getTime() + iqDelay(key)*60000)));
+      const today2 = t.getDate() === n.getDate();
+      $("heroLbl").textContent = L().nextLbl;
+      $("pName").textContent = (isJ(key) && today2) ? L().jumua : L().names[key];
+      $("pAdhan").textContent = L().adhanAt(fmt(t));
+      iq.textContent = (isJ(key) && today2) ? L().jumuaNext(fmt(t)) : L().iqAt(fmt(new Date(t.getTime() + iqDelay(key)*60000)));
+      if (left <= W) ring(hms(left), L().toAdhan, left/W, false);
     }
+    fitName();
     $("ayah").textContent = AYAH[hl] || "";
-    $("times").innerHTML = ORDER.map(k => `<div class="${k===hl ? 'on':''}">${nameOf(k)}<b>${fmt(today[k])}</b><small>${isJ(k) ? L().khutba : L().iqShort + " +" + iqDelay(k) + " " + L().min}</small></div>`).join("");
+    $("times").innerHTML = `<div class="r h"><span>${L().prayerH}</span><span>${L().adhanH}</span><span>${L().iqamaH}</span></div>` +
+      ORDER.map(k => `<div class="r ${k===hl ? 'on':''}"><span>${nameOf(k)}</span><span>${fmt(today[k])}</span><span>${isJ(k) ? L().khutba : fmt(plus(today[k], k))}</span></div>`).join("");
+    $("dDay").textContent = n.toLocaleDateString(L().locale, {weekday:"long"});
+    $("dClock").textContent = fmt(n);
+    try { $("dHijri").textContent = new Intl.DateTimeFormat((lang==="ar"?"ar-SA":"en-US")+"-u-ca-islamic-umalqura",{day:"numeric",month:"long",year:"numeric"}).format(n); } catch(_){}
+    $("dGreg").textContent = n.toLocaleDateString(lang==="ar" ? "ar-SA-u-ca-gregory-nu-latn" : "en-GB", {day:"numeric",month:"long",year:"numeric"});
     let hijri = "";
     try { hijri = new Intl.DateTimeFormat((lang==="ar"?"ar-SA":"en-US")+"-u-ca-islamic-umalqura",{day:"numeric",month:"long",year:"numeric"}).format(n); } catch(_){}
     $("ptMeta").textContent = (hijri ? hijri + " · " : "") + L()[labelKey] + " · " + L().method + " " + L().methods[mt.m];
@@ -627,7 +708,7 @@ async function findJami(){
   } catch(_) {}
   drawJami();
 }
-function drawJami(){
+function drawJami(){ return;
   const b = $("goJami");
   // also use any جامع already in the nearby mosques list, if it is closer
   const near = mosques.filter(isJamiName).sort((x,y)=>x.d-y.d)[0];
@@ -937,14 +1018,15 @@ function apply(){
   document.documentElement.lang = lang; document.documentElement.dir = lang==="ar" ? "rtl" : "ltr";
   document.querySelectorAll("[data-t]").forEach(e => e.textContent = L()[e.dataset.t]);
   $("langBtn").textContent = L().other;
+  if ($("modeBtn")) setMode(document.body.classList.contains("drive"));
   document.title = lang==="ar" ? "أقرب مسجد – ومواقيت الصلاة" : "Nearest Mosque – Prayer Times";
   $("waBtn").href = "https://wa.me/?text=" + encodeURIComponent(L().waMsg);
   if (Array.isArray(statusKey)) setStatus(...statusKey); else setStatus(statusKey);
   if (ptArgs) prayerTimes(...ptArgs);
-  if (mosques.length) draw(false); else $("goNearest").textContent = L().go1;
-  drawJami();
 }
 $("langBtn").addEventListener("click", ()=>{ lang = lang==="ar" ? "en" : "ar"; try{ localStorage.setItem("lang", lang); }catch(_){} apply(); });
+$("modeBtn").addEventListener("click", () => { setMode(!document.body.classList.contains("drive")); track("mode_" + (document.body.classList.contains("drive") ? "drive" : "full")); });
+try { if (localStorage.getItem("drive") === "1") document.body.classList.add("drive"); } catch(_){}
 prayerTimes(RIYADH[0], RIYADH[1], "byRiyadh");
 apply();
 locate();
