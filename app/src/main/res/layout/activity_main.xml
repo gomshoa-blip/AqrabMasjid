@@ -80,6 +80,7 @@
 
                     <TextView
                         android:id="@+id/tvHeroName"
+                        android:maxLines="1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:includeFontPadding="false"
@@ -89,6 +90,7 @@
 
                     <TextView
                         android:id="@+id/tvHeroAdhan"
+                        android:maxLines="1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
@@ -98,6 +100,7 @@
 
                     <TextView
                         android:id="@+id/tvIqamaLeft"
+                        android:maxLines="1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
@@ -122,7 +125,7 @@
                 android:id="@+id/btnGo"
                 android:layout_width="0dp"
                 android:layout_height="76dp"
-                android:layout_weight="1.4"
+                android:layout_weight="1"
                 android:background="@drawable/bg_gold_cta"
                 android:clickable="true"
                 android:elevation="4dp"
@@ -146,6 +149,7 @@
                 </FrameLayout>
 
                 <LinearLayout
+                    android:id="@+id/btnGoTexts"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -153,6 +157,7 @@
 
                     <TextView
                         android:id="@+id/btnGoText"
+                        android:maxLines="1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="أقرب مسجد"
@@ -199,12 +204,13 @@
 
                 <TextView
                     android:id="@+id/btnJamiText"
+                        android:maxLines="1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:text="أقرب جامع"
                     android:textColor="@color/text_primary"
-                    android:textSize="16sp"
+                    android:textSize="17sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>

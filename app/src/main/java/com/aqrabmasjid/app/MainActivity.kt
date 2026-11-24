@@ -215,15 +215,18 @@ class MainActivity : Activity() {
     /** Prayer name size: fills the card width when there is no ring, normal size with the ring. */
     private fun sizeHeroName() {
         val drive = getSharedPreferences("ui", MODE_PRIVATE).getBoolean("drive", false)
-        val normal = if (drive) 56f else 46f
-        if (ring.visibility == View.VISIBLE) { tvHeroName.textSize = normal; return }
-        val avail = (findViewById<View>(R.id.heroRow).width - dp(40)).toFloat()
+        val ringOn = ring.visibility == View.VISIBLE
+        val info = findViewById<View>(R.id.heroInfo)
+        val avail = info.width.toFloat()
         if (avail <= 0) { tvHeroName.post { sizeHeroName() }; return }
+        // Biggest size that fits on one line; smaller cap while the ring is showing
+        val cap = dp(if (!ringOn) (if (drive) 150 else 120) else (if (drive) 64 else 46)).toFloat()
         val p = android.graphics.Paint(tvHeroName.paint)
         p.textSize = 100f
         val w = p.measureText(tvHeroName.text.toString()).coerceAtLeast(1f)
-        val px = (100f * avail / w * 0.96f).coerceAtMost(dp(if (drive) 150 else 120).toFloat())
-        tvHeroName.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, px.coerceAtLeast(normal * resources.displayMetrics.scaledDensity))
+        val px = (100f * avail / w * 0.95f).coerceAtMost(cap)
+        if (kotlin.math.abs(tvHeroName.textSize - px) > 1f)
+            tvHeroName.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, px)
     }
 
     private fun fillHero(lat: Double, lng: Double, now: Long) {
@@ -436,21 +439,44 @@ class MainActivity : Activity() {
             lp.weight = if (big) w else 0f
             v.layoutParams = lp
         }
-        weigh(R.id.hero, 1.3f)
-        weigh(R.id.ctaRow, 0.8f)
+        weigh(R.id.hero, 1f)
+        // Buttons: fixed height, icon above the words in driving mode
+        findViewById<View>(R.id.ctaRow).layoutParams = findViewById<View>(R.id.ctaRow).layoutParams.also {
+            it.height = if (big) dp(150) else ViewGroup.LayoutParams.WRAP_CONTENT
+        }
+        for (id in listOf(R.id.btnGo, R.id.btnJami)) {
+            val b = findViewById<LinearLayout>(id)
+            b.orientation = if (big) LinearLayout.VERTICAL else LinearLayout.HORIZONTAL
+            b.gravity = if (big) android.view.Gravity.CENTER else android.view.Gravity.CENTER_VERTICAL
+        }
+        findViewById<LinearLayout>(R.id.btnGoTexts).gravity = if (big) android.view.Gravity.CENTER_HORIZONTAL else android.view.Gravity.START
+        // Card: in driving mode the info is on top and a bigger ring sits under it
+        val row = findViewById<LinearLayout>(R.id.heroRow)
+        val infoV = findViewById<View>(R.id.heroInfo)
+        row.removeView(ring); row.removeView(infoV)
+        if (big) {
+            row.orientation = LinearLayout.VERTICAL
+            row.gravity = android.view.Gravity.CENTER
+            row.addView(infoV, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+            row.addView(ring, LinearLayout.LayoutParams(dp(210), dp(210)).also { it.topMargin = dp(16); it.gravity = android.view.Gravity.CENTER_HORIZONTAL })
+        } else {
+            row.orientation = LinearLayout.HORIZONTAL
+            row.gravity = android.view.Gravity.CENTER_VERTICAL
+            row.addView(ring, LinearLayout.LayoutParams(dp(140), dp(140)).also { it.marginEnd = dp(10) })
+            row.addView(infoV, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+        }
         findViewById<View>(R.id.heroRow).layoutParams = findViewById<View>(R.id.heroRow).layoutParams.also {
             it.height = if (big) ViewGroup.LayoutParams.MATCH_PARENT else ViewGroup.LayoutParams.WRAP_CONTENT
         }
         findViewById<TextView>(R.id.btnTasbih).textSize = if (big) 24f else 21f
-        findViewById<TextView>(R.id.tvHeroAdhan).textSize = if (big) 22f else 17f
-        findViewById<TextView>(R.id.tvIqamaLeft).textSize = if (big) 22f else 17f
-        findViewById<View>(R.id.ring).layoutParams.let { it.width = dp(if (big) 170 else 140); it.height = it.width }
+        findViewById<TextView>(R.id.tvHeroAdhan).textSize = if (big) 24f else 17f
+        findViewById<TextView>(R.id.tvIqamaLeft).textSize = if (big) 24f else 17f
         for (id in listOf(R.id.btnGo, R.id.btnJami)) {
             val v = findViewById<View>(id)
             v.layoutParams = v.layoutParams.also { it.height = if (big) ViewGroup.LayoutParams.MATCH_PARENT else dp(76) }
         }
         findViewById<TextView>(R.id.btnGoText).textSize = if (big) 24f else 18f
-        findViewById<TextView>(R.id.btnJamiText).textSize = if (big) 22f else 16f
+        findViewById<TextView>(R.id.btnJamiText).textSize = if (big) 24f else 17f
         findViewById<View>(R.id.ring).requestLayout()
         tvHeroName.post { sizeHeroName() }
         // Driving: keep the screen on
