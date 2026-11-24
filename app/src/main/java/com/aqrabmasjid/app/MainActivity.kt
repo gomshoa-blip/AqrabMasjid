@@ -390,7 +390,6 @@ class MainActivity : Activity() {
         fun b(id: Int, ar: String, en: String) { findViewById<TextView>(id).text = L.t(ar, en) }
         b(R.id.btnLang, "English", "العربية")
         b(R.id.btnGoText, "أقرب مسجد", "Nearest mosque")
-        b(R.id.btnGoSub, "يفتح خرائط Google", "Opens Google Maps")
         b(R.id.btnJamiText, "أقرب جامع", "Nearest Jami")
         b(R.id.tvServices, "الخدمات", "Services")
         b(R.id.tileQuranText, "القرآن", "Quran")
@@ -458,17 +457,26 @@ class MainActivity : Activity() {
         // Card: in driving mode the info is on top and a bigger ring sits under it
         val row = findViewById<LinearLayout>(R.id.heroRow)
         val infoV = findViewById<View>(R.id.heroInfo)
-        row.removeView(ring); row.removeView(infoV)
+        // Date + time: at the bottom of the card (big) in the short view, under the times in the full view
+        val dateV = findViewById<LinearLayout>(R.id.heroDate)
+        row.removeAllViews()
+        (dateV.parent as? ViewGroup)?.removeView(dateV)
+        for ((tv, bigSz, smallSz) in listOf(Triple(tvWeekday, 24f, 15f), Triple(tvClock, 24f, 15f),
+                Triple(tvHijri, 20f, 13f), Triple(tvGregorian, 20f, 13f)))
+            tv.textSize = if (big) bigSz else smallSz
         if (big) {
             row.orientation = LinearLayout.VERTICAL
             row.gravity = android.view.Gravity.CENTER
             row.addView(infoV, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
             row.addView(ring, LinearLayout.LayoutParams(dp(210), dp(210)).also { it.topMargin = dp(16); it.gravity = android.view.Gravity.CENTER_HORIZONTAL })
+            row.addView(View(this), LinearLayout.LayoutParams(1, 0, 1f))
+            row.addView(dateV, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).also { it.gravity = android.view.Gravity.CENTER_HORIZONTAL })
         } else {
             row.orientation = LinearLayout.HORIZONTAL
             row.gravity = android.view.Gravity.CENTER_VERTICAL
             row.addView(ring, LinearLayout.LayoutParams(dp(140), dp(140)).also { it.marginEnd = dp(10) })
             row.addView(infoV, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+            (infoV as LinearLayout).addView(dateV)
         }
         findViewById<View>(R.id.heroRow).layoutParams = findViewById<View>(R.id.heroRow).layoutParams.also {
             it.height = if (big) ViewGroup.LayoutParams.MATCH_PARENT else ViewGroup.LayoutParams.WRAP_CONTENT

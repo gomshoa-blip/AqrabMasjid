@@ -243,6 +243,11 @@
   .hd2{font-size:.82rem;opacity:.8;margin-top:2px}
   .modeBtn{width:auto;border-radius:999px;padding:0 22px;gap:10px;font:inherit;font-weight:800;font-size:1rem}
   .modeBtn svg{width:22px;height:22px}
+  .heroRow{flex-wrap:wrap}
+  .hdate{order:3;width:100%;text-align:center}
+  body.drive .hdate{margin-top:auto}
+  body.drive .hd{font-size:1.45rem}
+  body.drive .hd2{font-size:1.2rem}
 </style>
 </head>
 <body>
@@ -261,6 +266,8 @@
         <div class="pn" id="pName">—</div>
         <div class="ln" id="pAdhan"></div>
         <div class="ln" id="iq"></div>
+      </div>
+      <div class="hdate" id="heroDate">
         <div class="hsep"></div>
         <div class="hd"><span id="dDay"></span> <b id="dClock"></b></div>
         <div class="hd2"><span id="dHijri"></span> · <span id="dGreg"></span></div>
@@ -268,7 +275,7 @@
     </div>
   </div>
   <div class="cta2" id="ctaRow">
-    <a class="go2 gold" id="goNearest" href="https://www.google.com/maps/search/?api=1&query=%D9%85%D8%B3%D8%AC%D8%AF" target="_blank" rel="noopener"><span class="gi"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span><span class="tx"><b data-t="mosqueT"></b><small data-t="mapsSub"></small></span></a>
+    <a class="go2 gold" id="goNearest" href="https://www.google.com/maps/search/?api=1&query=%D9%85%D8%B3%D8%AC%D8%AF" target="_blank" rel="noopener"><span class="gi"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span><span class="tx"><b data-t="mosqueT"></b></span></a>
     <a class="go2 plainB" id="goJami" href="https://www.google.com/maps/search/?api=1&query=%D8%AC%D8%A7%D9%85%D8%B9" target="_blank" rel="noopener"><span class="gi"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11a7 7 0 0 1 14 0v9"/><path d="M3 20h18"/><path d="M12 4V2"/><path d="M10 20v-4a2 2 0 0 1 4 0v4"/></svg></span><span class="tx"><b data-t="jamiT"></b></span></a>
   </div>
   <div class="ayah2" id="ayah"></div>
