@@ -219,6 +219,11 @@ class MainActivity : Activity() {
         if (!st.isCurrent) {
             tvHeroLabel.text = L.t("الصلاة القادمة", "Next prayer")
             val left = t.adhan - now
+            // Short countdown next to the adhan time when the ring is hidden
+            if (left > w) {
+                val hm = PrayerCalc.fmtLeft(left)
+                tvHeroAdhan.text = L.t("الأذان ${PrayerCalc.fmtTime(t.adhan)} · بعد $hm", "Adhan ${PrayerCalc.fmtTime(t.adhan)} · in $hm")
+            }
             if (left in 1..w) {
                 ring.visibility = View.VISIBLE
                 ring.update("", "", CountdownRing.clock(left), L.t("متبقية للأذان", "to adhan"), left.toFloat() / w, false)
