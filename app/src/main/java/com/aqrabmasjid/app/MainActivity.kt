@@ -91,6 +91,10 @@ class MainActivity : Activity() {
             Alerts.createChannel(this)
             recreate()
         }
+        // Mode: driving shows only the car part; home shows the full app
+        findViewById<View>(R.id.segCar).setOnClickListener { setMode(true) }
+        findViewById<View>(R.id.segHome).setOnClickListener { setMode(false) }
+        setMode(getSharedPreferences("ui", MODE_PRIVATE).getBoolean("drive", false))
         // Nearest mosque / Jami: open Google Maps search
         findViewById<View>(R.id.btnGo).setOnClickListener { MapsSearch.mosques(this) }
         findViewById<View>(R.id.btnJami).setOnClickListener { MapsSearch.jami(this) }
@@ -356,6 +360,8 @@ class MainActivity : Activity() {
             if (L.en) View.LAYOUT_DIRECTION_LTR else View.LAYOUT_DIRECTION_RTL
         fun b(id: Int, ar: String, en: String) { findViewById<TextView>(id).text = L.t(ar, en) }
         b(R.id.btnLang, "EN", "ع")
+        b(R.id.segCar, "🚗  القيادة", "🚗  Driving")
+        b(R.id.segHome, "🏠  المنزل", "🏠  Home")
         b(R.id.btnGoText, "أقرب مسجد", "Nearest mosque")
         b(R.id.btnGoSub, "يفتح خرائط Google", "Opens Google Maps")
         b(R.id.btnJamiText, "أقرب جامع", "Nearest Jami")
@@ -389,5 +395,19 @@ class MainActivity : Activity() {
     private fun dp(v: Int): Int = (v * resources.displayMetrics.density + 0.5f).toInt()
 
     private lateinit var reminderBtn: TextView
+
+    private fun setMode(drive: Boolean) {
+        getSharedPreferences("ui", MODE_PRIVATE).edit().putBoolean("drive", drive).apply()
+        findViewById<View>(R.id.homeSection).visibility = if (drive) View.GONE else View.VISIBLE
+        val on = findViewById<TextView>(if (drive) R.id.segCar else R.id.segHome)
+        val off = findViewById<TextView>(if (drive) R.id.segHome else R.id.segCar)
+        on.setBackgroundResource(R.drawable.bg_seg_on)
+        on.setTextColor(Color.WHITE)
+        off.background = null
+        off.setTextColor(getColor(R.color.text_hint))
+        // Driving: keep the screen on
+        if (drive) window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        else window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
 
 }

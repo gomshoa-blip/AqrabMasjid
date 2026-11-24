@@ -18,4 +18,5 @@
     <color name="outline_stroke">#0F6B4F</color>
     <color name="title_text">#0A4A37</color>
     <color name="icon">#0F6B4F</color>
+    <color name="car_panel">#E3EEE7</color>
 </resources>

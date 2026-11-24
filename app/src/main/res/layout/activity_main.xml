@@ -17,12 +17,22 @@
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingStart="18dp"
-        android:paddingEnd="18dp"
-        android:paddingTop="12dp">
+        android:orientation="vertical">
 
-        <!-- Top: date box (day + time | Hijri + Gregorian) and language circle -->
+        <!-- Part 1: in the car -->
+        <LinearLayout
+            android:id="@+id/carSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_car_panel"
+            android:orientation="vertical"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="20dp">
+
+
+        <!-- Mode switch: driving (car only) or home (full app) + language -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,80 +41,45 @@
 
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_surface"
-                android:baselineAligned="false"
-                android:gravity="center_vertical"
+                android:background="@drawable/bg_seg"
                 android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp">
+                android:padding="4dp">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tvWeekday"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:maxLines="1"
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvClock"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:maxLines="1"
-                        android:textColor="@color/icon"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="40dp"
-                    android:layout_marginStart="14dp"
-                    android:layout_marginEnd="14dp"
-                    android:background="@color/stroke" />
-
-                <LinearLayout
+                <TextView
+                    android:id="@+id/segCar"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:text="🚗  القيادة"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/tvHijri"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:maxLines="1"
-                        android:textColor="@color/text_primary"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvGregorian"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp"
-                        android:maxLines="1"
-                        android:textColor="@color/text_hint"
-                        android:textSize="13sp" />
-                </LinearLayout>
+                <TextView
+                    android:id="@+id/segHome"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:text="🏠  المنزل"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="1dp" />
             <TextView
                 android:id="@+id/btnLang"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:layout_marginStart="10dp"
-                android:background="@drawable/bg_lang_circle"
+                                android:background="@drawable/bg_lang_circle"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"
@@ -113,7 +88,6 @@
                 android:textSize="13sp"
                 android:textStyle="bold" />
         </LinearLayout>
-
         <!-- Prayer card -->
         <FrameLayout
             android:id="@+id/hero"
@@ -192,17 +166,6 @@
             </LinearLayout>
         </FrameLayout>
 
-        <!-- Ayah for the next prayer -->
-        <TextView
-            android:id="@+id/btnTasbih"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:gravity="center"
-            android:lineSpacingMultiplier="1.3"
-            android:textColor="@color/text_secondary"
-            android:textSize="16sp" />
-
         <!-- Nearest mosque (gold) + nearest Jami -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -214,7 +177,7 @@
             <LinearLayout
                 android:id="@+id/btnGo"
                 android:layout_width="0dp"
-                android:layout_height="68dp"
+                android:layout_height="76dp"
                 android:layout_weight="1.4"
                 android:background="@drawable/bg_gold_cta"
                 android:clickable="true"
@@ -266,7 +229,7 @@
             <LinearLayout
                 android:id="@+id/btnJami"
                 android:layout_width="0dp"
-                android:layout_height="68dp"
+                android:layout_height="76dp"
                 android:layout_marginStart="10dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_tile"
@@ -302,6 +265,117 @@
             </LinearLayout>
         </LinearLayout>
 
+        </LinearLayout>
+
+        <!-- Part 2: at home / office (hidden in driving mode) -->
+        <LinearLayout
+            android:id="@+id/homeSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
+            android:paddingTop="18dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_surface"
+                android:baselineAligned="false"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvWeekday"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvClock"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:textColor="@color/icon"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginEnd="14dp"
+                    android:background="@color/stroke" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvHijri"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvGregorian"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:maxLines="1"
+                        android:textColor="@color/text_hint"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+        <!-- Ayah for the next prayer -->
+        <TextView
+            android:id="@+id/btnTasbih"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:gravity="center"
+            android:lineSpacingMultiplier="1.3"
+            android:textColor="@color/text_secondary"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:id="@+id/layoutTimes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_surface"
+            android:orientation="vertical"
+            android:padding="10dp" />
+
+        <TextView
+            android:id="@+id/tvMethod"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
+            android:textColor="@color/text_hint"
+            android:textSize="12sp" />
+
+        
         <TextView
             android:id="@+id/tvServices"
             android:layout_width="wrap_content"
@@ -430,25 +504,6 @@
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
-        <LinearLayout
-            android:id="@+id/layoutTimes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_surface"
-            android:orientation="vertical"
-            android:padding="10dp" />
-
-        <TextView
-            android:id="@+id/tvMethod"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:gravity="center"
-            android:textColor="@color/text_hint"
-            android:textSize="12sp" />
-
-        
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -747,6 +802,7 @@
             android:gravity="center"
             android:textColor="@color/text_hint"
             android:textSize="12sp" />
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>
 
