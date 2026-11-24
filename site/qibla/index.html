@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>القبلة – أقرب مسجد</title>
+<link rel="icon" type="image/png" href="/icon-192.png">
+<style>
+  html,body{margin:0;height:100%;background:#0B100D;color:#fff;overflow:hidden;font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
+  video{position:fixed;inset:0;width:100%;height:100%;object-fit:cover}
+  canvas{position:fixed;inset:0;width:100%;height:100%}
+  #start{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:#0B100D;text-align:center;padding:24px;z-index:3}
+  #start h1{margin:0;font-size:1.6rem}
+  #start p{margin:0;opacity:.8;line-height:1.7}
+  #go{border:0;border-radius:16px;padding:16px 28px;font:inherit;font-size:1.15rem;font-weight:800;background:linear-gradient(135deg,#E2BE4E,#C79A22);color:#1B1606}
+  #close{position:fixed;top:calc(env(safe-area-inset-top) + 12px);inset-inline-start:12px;z-index:4;border:0;border-radius:999px;background:rgba(0,0,0,.45);color:#fff;font:inherit;font-weight:800;padding:8px 14px;text-decoration:none}
+</style>
+</head>
+<body>
+<video id="v" playsinline muted autoplay></video>
+<canvas id="c"></canvas>
+<a id="close" href="/">✕</a>
+<div id="start">
+  <h1>🕋 القبلة</h1>
+  <p>نستخدم الكاميرا والبوصلة لنريك اتجاه القبلة أمامك.<br>امسك الجوال واقفًا، وابتعد عن المعادن.</p>
+  <button id="go">ابدأ</button>
+</div>
+<script>
+const KLAT = 21.422487, KLNG = 39.826206, R = Math.PI/180;
+let qibla = 0, heading = null, smooth = null, fov = 60, camOk = false, buzzed = false;
+const q = new URLSearchParams(location.search);
+function bearing(lat, lng){
+  const p = lat*R, dL = (KLNG - lng)*R;
+  const y = Math.sin(dL), x = Math.cos(p)*Math.tan(KLAT*R) - Math.sin(p)*Math.cos(dL);
+  return (Math.atan2(y, x)/R + 360) % 360;
+}
+qibla = bearing(+(q.get("lat") || 24.7136), +(q.get("lng") || 46.6753));
+if (navigator.geolocation) navigator.geolocation.getCurrentPosition(p => { qibla = bearing(p.coords.latitude, p.coords.longitude); }, () => {}, {enableHighAccuracy:true, timeout:8000, maximumAge:300000});
+
+// Heading of the back camera (phone held upright)
+function camHeading(a, b, g){
+  a*=R; b*=R; g*=R;
+  const cA = Math.cos(a), sA = Math.sin(a), sB = Math.sin(b), cB = Math.cos(b), sG = Math.sin(g), cG = Math.cos(g);
+  const x = -cA*sG - sA*sB*cG, y = -sA*sG + cA*sB*cG;
+  let h = Math.atan2(x, y)/R; // direction the back camera faces
+  return (360 - h + 360) % 360;
+}
+function onOri(e){
+  let h = null;
+  if (typeof e.webkitCompassHeading === "number") h = e.webkitCompassHeading;
+  else if (e.absolute && e.alpha != null) h = camHeading(e.alpha, e.beta, e.gamma);
+  if (h == null) return;
+  smooth = smooth == null ? h : (smooth + ((((h - smooth) + 540) % 360) - 180)*0.15 + 360) % 360;
+  heading = smooth;
+}
+async function start(){
+  try {
+    if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
+      await DeviceOrientationEvent.requestPermission();
+    }
+  } catch(_){}
+  if ("ondeviceorientationabsolute" in window) addEventListener("deviceorientationabsolute", onOri);
+  else addEventListener("deviceorientation", onOri);
+  try {
+    const s = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}}, audio:false});
+    document.getElementById("v").srcObject = s; camOk = true;
+  } catch(_) { camOk = false; }
+  document.getElementById("start").remove();
+  requestAnimationFrame(draw);
+}
+document.getElementById("go").addEventListener("click", start);
+
+const cv = document.getElementById("c"), ctx = cv.getContext("2d");
+function draw(){
+  const d = devicePixelRatio || 1, w = innerWidth, h = innerHeight;
+  if (cv.width !== w*d) { cv.width = w*d; cv.height = h*d; }
+  ctx.setTransform(d,0,0,d,0,0); ctx.clearRect(0,0,w,h);
+  const cx = w/2, cy = h*0.45;
+  ctx.fillStyle = "rgba(0,0,0,.4)"; ctx.fillRect(0,0,w,110); ctx.fillRect(0,h-160,w,160);
+  ctx.textAlign = "center"; ctx.fillStyle = "#fff";
+  ctx.font = "800 22px system-ui"; ctx.fillText("القبلة", cx, 62);
+  ctx.font = "14px system-ui"; ctx.fillText("امسك الجوال واقفًا وأدر جسمك", cx, 90);
+  ctx.strokeStyle = "rgba(255,255,255,.6)"; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(cx, cy-120); ctx.lineTo(cx, cy+120); ctx.stroke();
+  let msg, col = "#F6D46B";
+  if (heading == null) {
+    msg = "جاري قراءة البوصلة… حرّك الجوال قليلًا";
+  } else {
+    const diff = ((qibla - heading + 540) % 360) - 180, half = fov/2, ok = Math.abs(diff) < 4;
+    col = ok ? "#2ECC8A" : "#F6D46B";
+    if (Math.abs(diff) <= half) {
+      const x = cx + diff/half*(w/2), s = ok ? 64 : 52;
+      ctx.strokeStyle = col; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(x, cy, s*1.05, 0, 2*Math.PI); ctx.stroke();
+      ctx.fillStyle = "#111"; ctx.fillRect(x-s*.55, cy-s*.55, s*1.1, s*1.1);
+      ctx.fillStyle = "#D4AF37"; ctx.fillRect(x-s*.55, cy-s*.28, s*1.1, s*.12); ctx.fillRect(x-s*.12, cy+s*.05, s*.22, s*.5);
+    } else {
+      const right = diff > 0, x = right ? w-60 : 60, s = 46;
+      ctx.fillStyle = "#F6D46B"; ctx.beginPath();
+      if (right) { ctx.moveTo(x+s*.6, cy); ctx.lineTo(x-s*.4, cy-s*.7); ctx.lineTo(x-s*.4, cy+s*.7); }
+      else { ctx.moveTo(x-s*.6, cy); ctx.lineTo(x+s*.4, cy-s*.7); ctx.lineTo(x+s*.4, cy+s*.7); }
+      ctx.closePath(); ctx.fill();
+    }
+    msg = ok ? "أنت باتجاه القبلة ✓" : (diff > 0 ? "استدر يمينًا" : "استدر يسارًا");
+    if (ok && !buzzed && navigator.vibrate) navigator.vibrate(60);
+    buzzed = ok;
+  }
+  ctx.fillStyle = col; ctx.font = "800 26px system-ui"; ctx.fillText(msg, cx, h-104);
+  ctx.fillStyle = "#fff"; ctx.font = "15px system-ui"; ctx.fillText("اتجاه القبلة " + Math.round(qibla) + "° من الشمال", cx, h-72);
+  ctx.font = "13px system-ui"; ctx.fillText(camOk ? "ابتعد عن المعادن · حرّك الجوال على شكل 8 للمعايرة" : "الكاميرا غير متاحة — يعمل كبوصلة", cx, h-44);
+  requestAnimationFrame(draw);
+}
+</script>
+</body>
+</html>

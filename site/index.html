@@ -248,6 +248,8 @@
   body.drive .hdate{margin-top:auto}
   body.drive .hd{font-size:1.45rem}
   body.drive .hd2{font-size:1.2rem}
+  .qiblaP{position:absolute;top:12px;inset-inline-start:12px;z-index:2;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:6px 14px;font-size:.85rem;font-weight:800;text-decoration:none}
+  .qiblaP svg.i{width:18px;height:18px}
 </style>
 </head>
 <body>
@@ -256,6 +258,7 @@
 <div class="carPanel" id="carSection"><div class="wrap2">
   <div class="hero2" id="hero">
     <button class="langP" id="langBtn">English</button>
+    <a class="qiblaP" id="qiblaBtn" href="/qibla/"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg><span data-t="qiblaT"></span></a>
     <div class="heroRow" id="heroRow">
       <div class="ring2" id="ringWrap" hidden>
         <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="trk" cx="60" cy="60" r="54"/><circle class="arc" id="arc" cx="60" cy="60" r="54" stroke-dasharray="339.3" stroke-dashoffset="0"/></svg>
@@ -403,7 +406,7 @@
 <script src="adhan.js"></script>
 <script>
 const T = {
- ar:{title:"أقرب مسجد", other:"English", nextLbl:"الصلاة القادمة", curLbl:"حان الآن وقت صلاة", donate:"💚 تبرّع عبر منصة إحسان", mosqueT:"أقرب مسجد", jamiT:"أقرب جامع", mapsSub:"يفتح خرائط Google", quranT:"القرآن", adhkarT:"الأذكار", qiratT:"قيراط", ehsanT:"إحسان", contactT:"تواصل معنا", shareT:"شارك", addT:"أضف مسجد", moreT:"المزيد", hideT:"إخفاء", tarteel2:"ترتيل", wahy2:"وحي", waShareT:"واتساب", qrT:"رمز QR", instT:"تثبيت", prayerH:"الصلاة", adhanH:"الأذان", iqamaH:"الإقامة", toAdhan:"متبقية للأذان", toIqama:"متبقية للإقامة", nowLbl:"حان وقت الصلاة", startedLbl:"أقيمت الصلاة", driveL:"وضع القيادة", fullL:"التطبيق الكامل", adhkar:"📿 الأذكار", quran:"📖 القرآن الكريم", waContact:"💬 تواصل معنا عبر واتساب", quranH:"تطبيقات قرآن ننصح بها", tarteel:"📖 ترتيل", wahy:"📖 وحي", adhanAt:t=>"الأذان " + t, iqAt:t=>"الإقامة " + t, leftTo:"بقي على صلاة", adhanDone:"أذّن · بقي على الإقامة", iqStarted:"أقيمت الصلاة", stOk:"", donNote:"منصة إحسان الرسمية للعمل الخيري. الموقع لا يجمع أي تبرعات.", nOn:"🔔 نبّهني عند الأذان والإقامة", nIq:(p,m)=>"🕌 إقامة " + p + " بعد " + m + " د", nIqNow:p=>"🕌 حان وقت إقامة " + p, nOff:"🔕 إيقاف تنبيه الصلاة", nPre:(p,m)=>"🕌 أذان " + p + " بعد " + m + " د", nNow:p=>"🕌 حان الآن وقت صلاة " + p, nBody:"اضغط لفتح «أقرب مسجد» والذهاب لأقرب مسجد", nNo:"التنبيه غير مدعوم هنا. في الآيفون: أضف الموقع إلى الشاشة الرئيسية أولاً، ثم افتحه من الأيقونة", nDenied:"التنبيهات مقفلة. فعّلها من إعدادات المتصفح للموقع", nDone:"✅ تم تفعيل التنبيه: عند الأذان، وبعده بـ 10 دقائق للإقامة", nHint:"التنبيه يعمل والموقع مفتوح أو مثبّت على الجوال", qirat:"🤲 قيراط – مواقع الجنائز والمقابر في الرياض", tblH:"🕰️ مواقيت الصلاة اليوم", since:c=>"أُذّن قبل " + c, iqDone:p=>"أُقيمت صلاة " + p,
+ ar:{title:"أقرب مسجد", other:"English", nextLbl:"الصلاة القادمة", curLbl:"حان الآن وقت صلاة", donate:"💚 تبرّع عبر منصة إحسان", mosqueT:"أقرب مسجد", jamiT:"أقرب جامع", mapsSub:"يفتح خرائط Google", quranT:"القرآن", adhkarT:"الأذكار", qiratT:"قيراط", ehsanT:"إحسان", contactT:"تواصل معنا", shareT:"شارك", addT:"أضف مسجد", moreT:"المزيد", qiblaT:"القبلة", hideT:"إخفاء", tarteel2:"ترتيل", wahy2:"وحي", waShareT:"واتساب", qrT:"رمز QR", instT:"تثبيت", prayerH:"الصلاة", adhanH:"الأذان", iqamaH:"الإقامة", toAdhan:"متبقية للأذان", toIqama:"متبقية للإقامة", nowLbl:"حان وقت الصلاة", startedLbl:"أقيمت الصلاة", driveL:"وضع القيادة", fullL:"التطبيق الكامل", adhkar:"📿 الأذكار", quran:"📖 القرآن الكريم", waContact:"💬 تواصل معنا عبر واتساب", quranH:"تطبيقات قرآن ننصح بها", tarteel:"📖 ترتيل", wahy:"📖 وحي", adhanAt:t=>"الأذان " + t, iqAt:t=>"الإقامة " + t, leftTo:"بقي على صلاة", adhanDone:"أذّن · بقي على الإقامة", iqStarted:"أقيمت الصلاة", stOk:"", donNote:"منصة إحسان الرسمية للعمل الخيري. الموقع لا يجمع أي تبرعات.", nOn:"🔔 نبّهني عند الأذان والإقامة", nIq:(p,m)=>"🕌 إقامة " + p + " بعد " + m + " د", nIqNow:p=>"🕌 حان وقت إقامة " + p, nOff:"🔕 إيقاف تنبيه الصلاة", nPre:(p,m)=>"🕌 أذان " + p + " بعد " + m + " د", nNow:p=>"🕌 حان الآن وقت صلاة " + p, nBody:"اضغط لفتح «أقرب مسجد» والذهاب لأقرب مسجد", nNo:"التنبيه غير مدعوم هنا. في الآيفون: أضف الموقع إلى الشاشة الرئيسية أولاً، ثم افتحه من الأيقونة", nDenied:"التنبيهات مقفلة. فعّلها من إعدادات المتصفح للموقع", nDone:"✅ تم تفعيل التنبيه: عند الأذان، وبعده بـ 10 دقائق للإقامة", nHint:"التنبيه يعمل والموقع مفتوح أو مثبّت على الجوال", qirat:"🤲 قيراط – مواقع الجنائز والمقابر في الرياض", tblH:"🕰️ مواقيت الصلاة اليوم", since:c=>"أُذّن قبل " + c, iqDone:p=>"أُقيمت صلاة " + p,
   jumua:"الجمعة", khutba:"خطبة", jumuaNext:t=>"🕌 صلاة الجمعة " + t + " — بكّر بالحضور", jumuaNow:"🕌 خطبة الجمعة الآن",
   names:{fajr:"الفجر", sunrise:"الشروق", dhuhr:"الظهر", asr:"العصر", maghrib:"المغرب", isha:"العشاء"},
   left:c=>"باقي على الأذان " + c,
@@ -444,7 +447,7 @@ const T = {
    and:["افتح الرابط في متصفح Chrome.","اضغط القائمة ⋮ أعلى الشاشة.","اختر «إضافة إلى الشاشة الرئيسية» أو «تثبيت التطبيق»."],
    app:["أنت فاتح الرابط داخل تطبيق (مثل الواتساب).","اضغط ⋮ أو ⋯ واختر «فتح في المتصفح».","بعدها اضغط «أضف إلى شاشة الجوال» مرة ثانية."],
    pc:["في Chrome أو Edge: اضغط أيقونة التثبيت 🖥️ في شريط العنوان، أو من القائمة ⋮ اختر «تثبيت»."]}},
- en:{title:"Nearest Mosque", other:"العربية", nextLbl:"Next prayer", curLbl:"It is now time for", donate:"💚 Donate via Ehsan", mosqueT:"Nearest mosque", jamiT:"Nearest Jami", mapsSub:"Opens Google Maps", quranT:"Quran", adhkarT:"Adhkar", qiratT:"Qirat", ehsanT:"Ehsan", contactT:"Contact us", shareT:"Share", addT:"Add a mosque", moreT:"More", hideT:"Hide", tarteel2:"Tarteel", wahy2:"Wahy", waShareT:"WhatsApp", qrT:"QR code", instT:"Install", prayerH:"Prayer", adhanH:"Adhan", iqamaH:"Iqama", toAdhan:"to adhan", toIqama:"to iqama", nowLbl:"Prayer time now", startedLbl:"Prayer has started", driveL:"Driving mode", fullL:"Full app", adhkar:"📿 Adhkar", quran:"📖 Holy Quran", waContact:"💬 Contact us on WhatsApp", quranH:"Recommended Quran apps", tarteel:"📖 Tarteel", wahy:"📖 Wahy", adhanAt:t=>"Adhan " + t, iqAt:t=>"Iqama " + t, leftTo:"Time left to", adhanDone:"Adhan done · Iqama in", iqStarted:"Prayer started", stOk:"", donNote:"Ehsan is the official Saudi charity platform. This site does not collect any money.", nOn:"🔔 Alert me at adhan and iqama", nIq:(p,m)=>"🕌 " + p + " iqama in " + m + " min", nIqNow:p=>"🕌 " + p + " iqama now", nOff:"🔕 Turn off prayer alerts", nPre:(p,m)=>"🕌 " + p + " adhan in " + m + " min", nNow:p=>"🕌 It is now time for " + p, nBody:"Tap to open Nearest Mosque", nNo:"Alerts are not supported here. On iPhone: add the site to your Home Screen first, then open it from the icon", nDenied:"Notifications are blocked. Allow them in the browser site settings", nDone:"✅ Alerts on: at adhan, and 10 minutes later for iqama", nHint:"Alerts work while the site is open or installed", qirat:"🤲 Qirat – Riyadh funerals & cemeteries", tblH:"🕰️ Today's prayer times", since:c=>"Adhan was " + c + " ago", iqDone:p=>p + " iqama has started",
+ en:{title:"Nearest Mosque", other:"العربية", nextLbl:"Next prayer", curLbl:"It is now time for", donate:"💚 Donate via Ehsan", mosqueT:"Nearest mosque", jamiT:"Nearest Jami", mapsSub:"Opens Google Maps", quranT:"Quran", adhkarT:"Adhkar", qiratT:"Qirat", ehsanT:"Ehsan", contactT:"Contact us", shareT:"Share", addT:"Add a mosque", moreT:"More", qiblaT:"Qibla", hideT:"Hide", tarteel2:"Tarteel", wahy2:"Wahy", waShareT:"WhatsApp", qrT:"QR code", instT:"Install", prayerH:"Prayer", adhanH:"Adhan", iqamaH:"Iqama", toAdhan:"to adhan", toIqama:"to iqama", nowLbl:"Prayer time now", startedLbl:"Prayer has started", driveL:"Driving mode", fullL:"Full app", adhkar:"📿 Adhkar", quran:"📖 Holy Quran", waContact:"💬 Contact us on WhatsApp", quranH:"Recommended Quran apps", tarteel:"📖 Tarteel", wahy:"📖 Wahy", adhanAt:t=>"Adhan " + t, iqAt:t=>"Iqama " + t, leftTo:"Time left to", adhanDone:"Adhan done · Iqama in", iqStarted:"Prayer started", stOk:"", donNote:"Ehsan is the official Saudi charity platform. This site does not collect any money.", nOn:"🔔 Alert me at adhan and iqama", nIq:(p,m)=>"🕌 " + p + " iqama in " + m + " min", nIqNow:p=>"🕌 " + p + " iqama now", nOff:"🔕 Turn off prayer alerts", nPre:(p,m)=>"🕌 " + p + " adhan in " + m + " min", nNow:p=>"🕌 It is now time for " + p, nBody:"Tap to open Nearest Mosque", nNo:"Alerts are not supported here. On iPhone: add the site to your Home Screen first, then open it from the icon", nDenied:"Notifications are blocked. Allow them in the browser site settings", nDone:"✅ Alerts on: at adhan, and 10 minutes later for iqama", nHint:"Alerts work while the site is open or installed", qirat:"🤲 Qirat – Riyadh funerals & cemeteries", tblH:"🕰️ Today's prayer times", since:c=>"Adhan was " + c + " ago", iqDone:p=>p + " iqama has started",
   jumua:"Jumuah", khutba:"Khutbah", jumuaNext:t=>"🕌 Jumuah " + t + " — come early", jumuaNow:"🕌 Jumuah khutbah now",
   names:{fajr:"Fajr", sunrise:"Sunrise", dhuhr:"Dhuhr", asr:"Asr", maghrib:"Maghrib", isha:"Isha"},
   left:c=>"Adhan in " + c,
@@ -759,6 +762,7 @@ function got(lat, lng){
   $("goJami").href = `https://www.google.com/maps/search/%D8%AC%D8%A7%D9%85%D8%B9/@${lat},${lng},14z`;
   prayerTimes(lat, lng, "byLoc");
   setStatus("stOk");
+  $("qiblaBtn").href = `/qibla/?lat=${lat.toFixed(4)}&lng=${lng.toFixed(4)}`;
 }
 // Update the location by itself when the page comes back (no button needed)
 document.addEventListener("visibilitychange", () => { if (!document.hidden && me) locate(); });
@@ -1049,9 +1053,9 @@ locate();
 </script>
 <script>
 document.addEventListener("click", e => {
-  const el = e.target.closest("#goNearest,#goDonate,#goQirat,#waContact,#tarteel,#wahy,#adhkarBtn,#quranBtn,#waBtn,#instBtn,#instTop,#near,#shareBtn,#qrBtn,#qrDl,#addBtn,#iqSet,#goJami,.go");
+  const el = e.target.closest("#goNearest,#goDonate,#goQirat,#waContact,#tarteel,#wahy,#adhkarBtn,#quranBtn,#qiblaBtn,#waBtn,#instBtn,#instTop,#near,#shareBtn,#qrBtn,#qrDl,#addBtn,#iqSet,#goJami,.go");
   if (!el || !window.gtag) return;
-  const name = {goNearest:"nearest_mosque_click", goDonate:"donate_click", goQirat:"qirat_click", waContact:"whatsapp_contact", tarteel:"tarteel_click", wahy:"wahy_click", adhkarBtn:"adhkar_click", quranBtn:"quran_click", waBtn:"whatsapp_share", instBtn:"install_click", instTop:"install_click", near:"show_nearest_click",
+  const name = {goNearest:"nearest_mosque_click", goDonate:"donate_click", goQirat:"qirat_click", waContact:"whatsapp_contact", tarteel:"tarteel_click", wahy:"wahy_click", adhkarBtn:"adhkar_click", quranBtn:"quran_click", qiblaBtn:"qibla_click", waBtn:"whatsapp_share", instBtn:"install_click", instTop:"install_click", near:"show_nearest_click",
     shareBtn:"share_click", qrBtn:"qr_open", qrDl:"qr_download", addBtn:"add_mosque_open", iqSet:"iqama_settings_open", goJami:"nearest_jami_click"}[el.id] || "directions_click";
   gtag("event", name);
 });

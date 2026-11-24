@@ -108,6 +108,7 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.tileQuran).setOnClickListener { startActivity(Intent(this, QuranActivity::class.java)) }
         findViewById<View>(R.id.tileAdhkar).setOnClickListener { startActivity(Intent(this, AdhkarActivity::class.java)) }
         findViewById<View>(R.id.tileQirat).setOnClickListener { openUrl(Config.QIRAT_URL) }
+        findViewById<View>(R.id.btnQibla).setOnClickListener { startActivity(Intent(this, QiblaActivity::class.java)) }
         findViewById<View>(R.id.tileQibla).setOnClickListener { startActivity(Intent(this, QiblaActivity::class.java)) }
         findViewById<View>(R.id.tileEhsan).setOnClickListener { openUrl(Config.DONATE_URL) }
         findViewById<View>(R.id.tileContact).setOnClickListener { openUrl(Config.WHATSAPP_URL) }
@@ -397,6 +398,7 @@ class MainActivity : Activity() {
         b(R.id.tileAdhkarText, "الأذكار", "Adhkar")
         b(R.id.tileQiratText, "قيراط", "Qirat")
         b(R.id.tileQiblaText, "القبلة", "Qibla")
+        b(R.id.btnQibla, "القبلة", "Qibla")
         b(R.id.tileEhsanText, "إحسان", "Ehsan")
         b(R.id.tileContactText, "تواصل معنا", "Contact us")
         b(R.id.tileShareText, "شارك", "Share")
