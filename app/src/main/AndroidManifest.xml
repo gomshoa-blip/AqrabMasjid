@@ -40,6 +40,12 @@
             android:exported="false"
             android:label="وضع القيادة" />
 
+        <!-- Mushaf: full screen web page -->
+        <activity
+            android:name=".QuranActivity"
+            android:exported="false"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+
         <!-- Adhkar: morning, evening, after prayer -->
         <activity
             android:name=".AdhkarActivity"

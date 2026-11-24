@@ -32,8 +32,8 @@ object Config {
     /** WhatsApp contact. */
     const val WHATSAPP_URL = "https://wa.me/966552101764"
 
-    /** Holy Quran: King Saud University Electronic Mushaf (scanned Madinah Mushaf pages), mobile view. */
-    const val QURAN_URL = "https://quran.ksu.edu.sa/m.php"
+    /** Our simple mushaf page (King Fahd Complex text and Hafs font), shown full screen in the app. */
+    const val QURAN_URL = "https://aqrab-masjid.netlify.app/quran/"
 
     /** Recommended Quran apps. */
     const val TARTEEL_PKG = "com.mmmoussa.iqra"

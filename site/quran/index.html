@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FBF7EC">
+<title>المصحف – أقرب مسجد</title>
+<link rel="icon" type="image/png" href="/icon-192.png">
+<link rel="preload" href="hafs18.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  @font-face{font-family:"Hafs";src:url("hafs18.woff2") format("woff2");font-display:block}
+  :root{--paper:#FBF7EC;--ink:#1b1b1b;--green:#0F6B4F;--gold:#C9A227;--line:#e4dcc5}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);overflow:hidden;font-family:system-ui,sans-serif}
+  #page{position:fixed;inset:0;display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top) + 34px) 14px calc(env(safe-area-inset-bottom) + 28px)}
+  #text{flex:1;overflow:hidden;font-family:"Hafs";text-align:justify;text-align-last:center;line-height:2.05;direction:rtl;word-spacing:1px}
+  .sh{display:block;text-align:center;border:2px solid var(--gold);border-radius:10px;margin:.15em 0 .1em;padding:0 .4em;color:var(--green);background:#fff8e2;font-size:.95em}
+  .bs{display:block;text-align:center;margin:0 0 .05em}
+  .top,.bot{position:fixed;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:0 16px;font-size:13px;color:#7a6a3f;pointer-events:none}
+  .top{top:calc(env(safe-area-inset-top) + 8px)} .bot{bottom:calc(env(safe-area-inset-bottom) + 6px);justify-content:center}
+  .top b{font-family:"Hafs";font-size:17px;font-weight:normal;color:var(--green)}
+  /* Menu */
+  #bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 12px calc(env(safe-area-inset-bottom) + 10px);display:flex;gap:8px;z-index:5;box-shadow:0 -6px 20px rgba(0,0,0,.12)}
+  #bar[hidden],#list[hidden]{display:none}
+  #bar button,#bar a{flex:1;border:0;border-radius:12px;padding:12px 6px;font:inherit;font-weight:800;font-size:15px;background:#DCEEE5;color:#0A4A37;text-align:center;text-decoration:none}
+  #list{position:fixed;inset:0;background:#fff;z-index:6;overflow:auto;padding:calc(env(safe-area-inset-top) + 10px) 12px 20px}
+  #list h2{margin:4px 0 10px;color:var(--green);text-align:center;font-size:18px}
+  #list .s{display:flex;justify-content:space-between;align-items:center;padding:12px 10px;border-bottom:1px solid #eee;cursor:pointer}
+  #list .s span:first-child{font-family:"Hafs";font-size:22px;color:var(--ink)}
+  #list .s span:last-child{color:#888;font-size:13px}
+  #list .credit{color:#888;font-size:12px;text-align:center;margin-top:14px;line-height:1.7}
+  #close{position:sticky;top:0;float:left;border:0;background:#DCEEE5;color:#0A4A37;border-radius:10px;padding:8px 14px;font:inherit;font-weight:800}
+</style>
+</head>
+<body>
+<div class="top"><b id="sura"></b><span id="juz"></span></div>
+<div id="page"><div id="text"></div></div>
+<div class="bot"><span id="pno"></span></div>
+
+<div id="bar" hidden>
+  <button id="bNext">→ التالية</button>
+  <button id="bList">☰ السور</button>
+  <button id="bPrev">السابقة ←</button>
+  <a href="/" id="bHome">✕</a>
+</div>
+
+<div id="list" hidden>
+  <button id="close">✕</button>
+  <h2>فهرس السور</h2>
+  <div id="slist"></div>
+  <div class="credit">نص المصحف والخط من مجمع الملك فهد لطباعة المصحف الشريف (رواية حفص عن عاصم)</div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const AR = n => String(n).replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
+const BASMALA = "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ";
+let D = null, page = 1;
+try { page = Math.min(604, Math.max(1, +localStorage.getItem("qpage") || 1)); } catch(_){}
+const h = location.hash.match(/p(\d+)/); if (h) page = Math.min(604, Math.max(1, +h[1]));
+
+function esc(s){ return s.replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+
+function render(){
+  if (!D) return;
+  const rows = D.p[page-1];
+  let html = "";
+  rows.forEach(([s, a, t]) => {
+    if (a === 1) {
+      html += `<span class="sh">سُورَةُ ${esc(D.s[s-1][0])}</span>`;
+      if (s !== 1 && s !== 9) html += `<span class="bs">${BASMALA}</span>`;
+    }
+    html += esc(t) + " ";
+  });
+  const box = $("text");
+  box.innerHTML = html;
+  fit();
+  $("sura").textContent = D.s[rows[0][0]-1][0];
+  $("juz").textContent = "الجزء " + AR(rows[0][3]);
+  $("pno").textContent = AR(page);
+  try { localStorage.setItem("qpage", page); } catch(_){}
+  history.replaceState(null, "", "#p" + page);
+}
+// Biggest font size that fits the page on the screen
+function fit(){
+  const box = $("text");
+  let lo = 12, hi = 44;
+  while (hi - lo > 0.5) {
+    const mid = (lo + hi) / 2;
+    box.style.fontSize = mid + "px";
+    if (box.scrollHeight <= box.clientHeight) lo = mid; else hi = mid;
+  }
+  box.style.fontSize = lo + "px";
+}
+function go(p){ p = Math.min(604, Math.max(1, p)); if (p !== page) { page = p; render(); } }
+
+// Swipe: like a paper mushaf, swipe right for the next page, left for the previous
+let x0 = null, y0 = null, moved = false;
+addEventListener("touchstart", e => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; moved = false; }, {passive:true});
+addEventListener("touchmove", () => { moved = true; }, {passive:true});
+addEventListener("touchend", e => {
+  if (x0 === null) return;
+  const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+  if ($("list").hidden && Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) { go(page + (dx > 0 ? 1 : -1)); $("bar").hidden = true; }
+  x0 = null;
+});
+// Tap the page: show or hide the menu
+$("page").addEventListener("click", () => { if (!moved) $("bar").hidden = !$("bar").hidden; });
+addEventListener("keydown", e => { if (e.key === "ArrowLeft") go(page + 1); if (e.key === "ArrowRight") go(page - 1); });
+$("bNext").onclick = () => go(page + 1);
+$("bPrev").onclick = () => go(page - 1);
+$("bList").onclick = () => { $("list").hidden = false; $("bar").hidden = true; };
+$("close").onclick = () => $("list").hidden = true;
+addEventListener("resize", () => fit());
+
+fetch("data.json").then(r => r.json()).then(j => {
+  D = j;
+  $("slist").innerHTML = D.s.map(([n, p], i) => `<div class="s" data-p="${p}"><span>${AR(i+1)}. ${esc(n)}</span><span>صفحة ${AR(p)}</span></div>`).join("");
+  $("slist").addEventListener("click", e => { const r = e.target.closest(".s"); if (r) { go(+r.dataset.p); $("list").hidden = true; } });
+  document.fonts.load('20px "Hafs"').then(render, render);
+});
+</script>
+</body>
+</html>
