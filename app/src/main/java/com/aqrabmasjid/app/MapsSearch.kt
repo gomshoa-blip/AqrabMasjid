@@ -13,10 +13,15 @@ import android.net.Uri
 object MapsSearch {
     private const val MAPS = "com.google.android.apps.maps"
 
-    fun mosques(c: Context) {
+    fun mosques(c: Context) = search(c, "مسجد")
+
+    /** Nearest Jami (Friday mosque). */
+    fun jami(c: Context) = search(c, "جامع")
+
+    private fun search(c: Context, word: String) {
         // Always search in Arabic: many mosques in Saudi Arabia are only found by
         // their Arabic name (e.g. "مسجد عقيل بن أبي طالب"), not by the English word.
-        val q = Uri.encode("مسجد")
+        val q = Uri.encode(word)
         val geo = Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=$q"))
         geo.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 

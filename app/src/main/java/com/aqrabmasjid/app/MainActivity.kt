@@ -92,6 +92,7 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.btnIqama).visibility = View.GONE
         // Opens Google Maps searching "مسجد"; the user picks one
         findViewById<Button>(R.id.btnGo).setOnClickListener { MapsSearch.mosques(this) }
+        findViewById<Button>(R.id.btnJami).setOnClickListener { MapsSearch.jami(this) }
         findViewById<Button>(R.id.btnShare).setOnClickListener { share() }
         findViewById<Button>(R.id.btnAddMosque).setOnClickListener { openUrl(Config.ADD_MOSQUE_URL) }
         findViewById<Button>(R.id.btnDonate).setOnClickListener { openUrl(Config.DONATE_URL) }
@@ -403,6 +404,7 @@ class MainActivity : Activity() {
             }
         }
         b(R.id.btnGo, "🕌  أقرب مسجد", "🕌  Nearest mosque")
+        b(R.id.btnJami, "🕌  أقرب جامع", "🕌  Nearest Jami")
         b(R.id.btnRefresh, "حدّث موقعي", "Update my location")
         b(R.id.tvMosquesHeader, "أقرب المساجد", "Nearest mosques")
         b(R.id.switchAlerts, "تنبيه عند الأذان، وبعده بـ 10 دقائق للإقامة", "Alert at adhan, and 10 minutes later for iqama")

@@ -60,19 +60,42 @@
                 android:textSize="18sp" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btnGo"
+        <!-- Nearest mosque + nearest Jami (Friday mosque): both open Google Maps -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:minHeight="68dp"
-            android:background="@drawable/bg_btn_gold"
-            android:stateListAnimator="@null"
-            android:text="خذني لأقرب مسجد"
-            android:textAllCaps="false"
-            android:textColor="#1F2A24"
-            android:textSize="22sp"
-            android:textStyle="bold" />
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnGo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="68dp"
+                android:background="@drawable/bg_btn_gold"
+                android:stateListAnimator="@null"
+                android:text="🕌  أقرب مسجد"
+                android:textAllCaps="false"
+                android:textColor="#1F2A24"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnJami"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:minHeight="68dp"
+                android:background="@drawable/bg_btn_jami"
+                android:stateListAnimator="@null"
+                android:text="🕌  أقرب جامع"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
 
 
