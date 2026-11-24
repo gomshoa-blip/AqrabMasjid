@@ -38,7 +38,7 @@ class MainActivity : Activity() {
     /** Updates only the ring every second, so the seconds count down smoothly. */
     private val ringTick = object : Runnable {
         override fun run() {
-            Prefs.location(this@MainActivity)?.let { (lat, lng) -> RingFill.fill(this@MainActivity, ring, lat, lng) }
+            Prefs.location(this@MainActivity)?.let { (lat, lng) -> fillHero(lat, lng, System.currentTimeMillis()) }
             handler.postDelayed(this, 1_000)
         }
     }
@@ -52,8 +52,10 @@ class MainActivity : Activity() {
     private lateinit var tvMethod: TextView
     private lateinit var tvStatus: TextView
     private lateinit var layoutTimes: LinearLayout
-    private lateinit var layoutMosques: LinearLayout
-    private lateinit var btnExact: Button
+    private lateinit var btnExact: View
+    private lateinit var tvHeroLabel: TextView
+    private lateinit var tvHeroName: TextView
+    private lateinit var tvHeroAdhan: TextView
 
     private var nearest: Mosque? = null
 
@@ -72,40 +74,44 @@ class MainActivity : Activity() {
         tvClock = findViewById(R.id.tvClock)
         tvGregorian = findViewById(R.id.tvGregorian)
         tvIqamaLeft = findViewById(R.id.tvIqamaLeft)
+        tvHeroLabel = findViewById(R.id.tvHeroLabel)
+        tvHeroName = findViewById(R.id.tvHeroName)
+        tvHeroAdhan = findViewById(R.id.tvHeroAdhan)
         ring = findViewById(R.id.ring)
         tvMethod = findViewById(R.id.tvMethod)
         tvStatus = findViewById(R.id.tvStatus)
         layoutTimes = findViewById(R.id.layoutTimes)
-        layoutMosques = findViewById(R.id.layoutMosques)
         btnExact = findViewById(R.id.btnExact)
+        reminderBtn = findViewById(R.id.btnTasbih)
+        // Round corners also cut the star pattern inside the prayer card
+        findViewById<View>(R.id.hero).clipToOutline = true
 
-        // Location updates by itself each time the app opens; no button needed
-        findViewById<View>(R.id.btnRefresh).visibility = View.GONE
-        findViewById<Button>(R.id.btnLang).setOnClickListener {
+        findViewById<View>(R.id.btnLang).setOnClickListener {
             L.setEnglish(this, !L.en)
             Alerts.createChannel(this)
             recreate()
         }
-        // Fixed ayah for the next prayer
-        reminderBtn = findViewById(R.id.btnTasbih)
-        // Iqama settings button removed from the screen
-        findViewById<View>(R.id.btnIqama).visibility = View.GONE
-        // Opens Google Maps searching "مسجد"; the user picks one
-        findViewById<Button>(R.id.btnGo).setOnClickListener { MapsSearch.mosques(this) }
-        findViewById<Button>(R.id.btnJami).setOnClickListener { MapsSearch.jami(this) }
-        findViewById<Button>(R.id.btnShare).setOnClickListener { share() }
-        findViewById<Button>(R.id.btnAddMosque).setOnClickListener { openUrl(Config.ADD_MOSQUE_URL) }
-        findViewById<Button>(R.id.btnDonate).setOnClickListener { openUrl(Config.DONATE_URL) }
-        findViewById<Button>(R.id.btnQuran).setOnClickListener { startActivity(Intent(this, QuranActivity::class.java)) }
-        findViewById<Button>(R.id.btnAdhkar).setOnClickListener { startActivity(Intent(this, AdhkarActivity::class.java)) }
-        findViewById<Button>(R.id.btnWhatsApp).setOnClickListener { openUrl(Config.WHATSAPP_URL) }
-        findViewById<Button>(R.id.btnQirat).setOnClickListener { openUrl(Config.QIRAT_URL) }
-        findViewById<Button>(R.id.btnTarteel).setOnClickListener { openStore(Config.TARTEEL_PKG, null) }
-        findViewById<Button>(R.id.btnWahy).setOnClickListener { openStore(Config.WAHY_PKG, null) }
-        // Nearby mosques list removed: Google Maps is more accurate
-        findViewById<View>(R.id.tvMosquesHeader).visibility = View.GONE
-        layoutMosques.visibility = View.GONE
-        findViewById<Button>(R.id.btnIqama).setOnClickListener { iqamaDialog() }
+        // Nearest mosque / Jami: open Google Maps search
+        findViewById<View>(R.id.btnGo).setOnClickListener { MapsSearch.mosques(this) }
+        findViewById<View>(R.id.btnJami).setOnClickListener { MapsSearch.jami(this) }
+        // Services
+        findViewById<View>(R.id.tileQuran).setOnClickListener { startActivity(Intent(this, QuranActivity::class.java)) }
+        findViewById<View>(R.id.tileAdhkar).setOnClickListener { startActivity(Intent(this, AdhkarActivity::class.java)) }
+        findViewById<View>(R.id.tileQirat).setOnClickListener { openUrl(Config.QIRAT_URL) }
+        findViewById<View>(R.id.tileEhsan).setOnClickListener { openUrl(Config.DONATE_URL) }
+        findViewById<View>(R.id.tileContact).setOnClickListener { openUrl(Config.WHATSAPP_URL) }
+        findViewById<View>(R.id.tileShare).setOnClickListener { share() }
+        findViewById<View>(R.id.tileAdd).setOnClickListener { openUrl(Config.ADD_MOSQUE_URL) }
+        findViewById<View>(R.id.btnTarteel).setOnClickListener { openStore(Config.TARTEEL_PKG, null) }
+        findViewById<View>(R.id.btnWahy).setOnClickListener { openStore(Config.WAHY_PKG, null) }
+        // Bottom bar
+        val scroll = findViewById<android.widget.ScrollView>(R.id.rootScroll)
+        findViewById<View>(R.id.navHome).setOnClickListener { scroll.smoothScrollTo(0, 0) }
+        findViewById<View>(R.id.navQuran).setOnClickListener { startActivity(Intent(this, QuranActivity::class.java)) }
+        findViewById<View>(R.id.navAdhkar).setOnClickListener { startActivity(Intent(this, AdhkarActivity::class.java)) }
+        findViewById<View>(R.id.navMore).setOnClickListener {
+            scroll.smoothScrollTo(0, findViewById<View>(R.id.tvMore).top)
+        }
 
         val sw = findViewById<Switch>(R.id.switchAlerts)
         sw.isChecked = Prefs.alertsOn(this)
@@ -175,29 +181,23 @@ class MainActivity : Activity() {
 
     private fun renderTimes() {
         val (lat, lng) = Prefs.location(this) ?: run {
-            ring.update("", "", "--:--", L.t("حدّث موقعك لعرض المواقيت", "Update your location to see times"), 0f, false)
+            tvHeroLabel.text = L.t("حدّث موقعك لعرض المواقيت", "Allow location to see prayer times")
+            ring.visibility = View.GONE
             return
         }
         val now = System.currentTimeMillis()
         val day = PrayerCalc.day(this, lat, lng, now)
         val st = PrayerCalc.status(this, lat, lng, now)
 
-        // Hijri date without the weekday (the weekday has its own place in the middle)
         tvHijri.text = PrayerCalc.hijriText(now) + if (day.ramadan) L.t(" · رمضان", " · Ramadan") else ""
         tvWeekday.text = java.text.SimpleDateFormat("EEEE", L.locale).format(java.util.Date(now))
         tvClock.text = PrayerCalc.fmtTime(now)
         tvGregorian.text = java.text.SimpleDateFormat("d MMMM yyyy", L.locale).format(java.util.Date(now)) + L.t(" م", "")
-        RingFill.fill(this, ring, lat, lng, now)
-        // Reminder button follows the next/current prayer
+        fillHero(lat, lng, now)
         reminderBtn.text = PrayerReminders.ayah(st.time.prayer)
-        // قيراط link: Riyadh only
+        // قيراط: Riyadh only
         val riyadh = lat in 24.3..25.2 && lng in 46.2..47.3
-        findViewById<View>(R.id.btnQirat).visibility = if (riyadh) View.VISIBLE else View.GONE
-        // Only the iqama time here (adhan time is already big above). After adhan the ring shows it.
-        tvIqamaLeft.text = if (st.isCurrent) "" else L.t(
-            "الإقامة ${PrayerCalc.fmtTime(st.time.iqama)}",
-            "Iqama ${PrayerCalc.fmtTime(st.time.iqama)}"
-        )
+        findViewById<View>(R.id.tileQirat).visibility = if (riyadh) View.VISIBLE else View.GONE
         tvMethod.text = L.t("طريقة الحساب: ${day.methodName}", "Method: ${day.methodName}")
 
         layoutTimes.removeAllViews()
@@ -207,6 +207,38 @@ class MainActivity : Activity() {
                 row(p.prayer.ar, PrayerCalc.fmtTime(p.adhan), PrayerCalc.fmtTime(p.iqama),
                     header = false, highlight = p.prayer == st.time.prayer)
             )
+        }
+    }
+
+    /**
+     * Prayer card: name, adhan and iqama times.
+     * The ring shows only in the last 30 min before adhan (gold) and between adhan and iqama (green).
+     */
+    private fun fillHero(lat: Double, lng: Double, now: Long) {
+        val st = PrayerCalc.status(this, lat, lng, now)
+        val t = st.time
+        tvHeroName.text = t.prayer.ar
+        tvHeroAdhan.text = L.t("الأذان ${PrayerCalc.fmtTime(t.adhan)}", "Adhan ${PrayerCalc.fmtTime(t.adhan)}")
+        tvIqamaLeft.text = L.t("الإقامة ${PrayerCalc.fmtTime(t.iqama)}", "Iqama ${PrayerCalc.fmtTime(t.iqama)}")
+        val w = 30 * 60_000L
+        if (!st.isCurrent) {
+            tvHeroLabel.text = L.t("الصلاة القادمة", "Next prayer")
+            val left = t.adhan - now
+            if (left in 1..w) {
+                ring.visibility = View.VISIBLE
+                ring.update("", "", CountdownRing.clock(left), L.t("متبقية للأذان", "to adhan"), left.toFloat() / w, false)
+            } else ring.visibility = View.GONE
+        } else {
+            val left = t.iqama - now
+            if (left > 0) {
+                tvHeroLabel.text = L.t("حان وقت الصلاة", "Prayer time now")
+                ring.visibility = View.VISIBLE
+                ring.update("", "", CountdownRing.clock(left), L.t("متبقية للإقامة", "to iqama"),
+                    left.toFloat() / (t.iqama - t.adhan).coerceAtLeast(1L), true)
+            } else {
+                tvHeroLabel.text = L.t("أقيمت الصلاة", "Prayer has started")
+                ring.visibility = View.GONE
+            }
         }
     }
 
@@ -230,47 +262,6 @@ class MainActivity : Activity() {
             l.addView(tv, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
         }
         return l
-    }
-
-    private fun loadMosques(lat: Double, lng: Double) {
-        layoutMosques.removeAllViews()
-        layoutMosques.addView(TextView(this).apply { text = L.t("جاري البحث...", "Searching..."); setPadding(dp(8), dp(12), dp(8), dp(12)) })
-        MosqueRepo.nearby(this, lat, lng) { list ->
-            layoutMosques.removeAllViews()
-            if (list == null || list.isEmpty()) {
-                val msg = if (list == null) L.t("ما قدرنا نجيب المساجد الحين. اضغط «حدّث موقعي» للمحاولة مرة ثانية.", "Could not load mosques now. Tap \"Update my location\" to try again.")
-                else L.t("ما لقينا مساجد قريبة. اعرضها في خرائط Google، أو أضف مسجداً.", "No mosques found nearby. Show them in Google Maps, or add a mosque.")
-                layoutMosques.addView(TextView(this).apply { text = msg; setPadding(dp(8), dp(12), dp(8), dp(12)) })
-                layoutMosques.addView(mapsSearchButton(lat, lng))
-                return@nearby
-            }
-            nearest = list.firstOrNull()
-            for (m in list.take(3)) {
-                val item = LinearLayout(this)
-                item.orientation = LinearLayout.HORIZONTAL
-                item.gravity = Gravity.CENTER_VERTICAL
-                item.setPadding(dp(14), dp(10), dp(14), dp(10))
-                item.setBackgroundResource(R.drawable.bg_card_white)
-                val tv = TextView(this)
-                tv.text = "${m.name}\n${MosqueRepo.fmtDistance(m.distKm)}"
-                tv.textSize = 15f
-                item.addView(tv, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-                val go = Button(this)
-                go.text = L.t("خذني", "Go")
-                go.isAllCaps = false
-                go.setTextColor(Color.WHITE)
-                go.setTypeface(null, Typeface.BOLD)
-                go.setBackgroundResource(R.drawable.bg_btn_green)
-                go.stateListAnimator = null
-                go.minHeight = dp(42); go.minimumHeight = dp(42)
-                go.setPadding(dp(18), 0, dp(18), 0)
-                go.setOnClickListener { openMaps(m) }
-                item.addView(go, LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, dp(42)))
-                val lp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-                lp.topMargin = dp(8)
-                layoutMosques.addView(item, lp)
-            }
-        }
     }
 
     private fun openMaps(m: Mosque) {
@@ -347,28 +338,6 @@ class MainActivity : Activity() {
             .show()
     }
 
-    /** Fallback: open Google Maps and search for mosques around the user. */
-    private fun mapsSearchButton(lat: Double, lng: Double): View {
-        val b = Button(this)
-        b.text = L.t("🔎 اعرض المساجد القريبة في خرائط Google", "🔎 Show nearby mosques in Google Maps")
-        b.isAllCaps = false
-        b.setTextColor(getColor(R.color.accent_text))
-        b.setBackgroundResource(R.drawable.bg_btn_outline)
-        b.stateListAnimator = null
-        b.minHeight = dp(50); b.minimumHeight = dp(50)
-        b.setOnClickListener {
-            val q = Uri.encode("مسجد")
-            val geo = Intent(Intent.ACTION_VIEW, Uri.parse("geo:$lat,$lng?q=$q"))
-            try { startActivity(geo) } catch (_: Exception) {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/search/$q/@$lat,$lng,15z")))
-            }
-        }
-        val lp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-        lp.topMargin = dp(6)
-        b.layoutParams = lp
-        return b
-    }
-
     /**
      * Android 15 draws the app under the status bar and the navigation bar.
      * Add padding so nothing is hidden at the top or bottom.
@@ -392,34 +361,31 @@ class MainActivity : Activity() {
 
     /** Set screen direction and all fixed texts in the chosen language. */
     private fun applyLanguage() {
-        findViewById<View>(R.id.rootScroll).layoutDirection =
+        findViewById<View>(R.id.rootFrame).layoutDirection =
             if (L.en) View.LAYOUT_DIRECTION_LTR else View.LAYOUT_DIRECTION_RTL
         fun b(id: Int, ar: String, en: String) { findViewById<TextView>(id).text = L.t(ar, en) }
-        b(R.id.btnLang, "🌐 English", "🌐 العربية")
-        // Language button: top right in Arabic, top left in English
-        findViewById<View>(R.id.btnLang).let { v ->
-            (v.layoutParams as? LinearLayout.LayoutParams)?.let { lp ->
-                lp.gravity = if (L.en) Gravity.LEFT else Gravity.RIGHT
-                v.layoutParams = lp
-            }
-        }
-        b(R.id.btnGo, "🕌  أقرب مسجد", "🕌  Nearest mosque")
-        b(R.id.btnJami, "🕌  أقرب جامع", "🕌  Nearest Jami")
-        b(R.id.btnRefresh, "حدّث موقعي", "Update my location")
-        b(R.id.tvMosquesHeader, "أقرب المساجد", "Nearest mosques")
+        b(R.id.btnLang, "EN", "ع")
+        b(R.id.btnGoText, "أقرب مسجد", "Nearest mosque")
+        b(R.id.btnGoSub, "يفتح خرائط Google", "Opens Google Maps")
+        b(R.id.btnJamiText, "أقرب جامع", "Nearest Jami")
+        b(R.id.tvServices, "الخدمات", "Services")
+        b(R.id.tileQuranText, "القرآن", "Quran")
+        b(R.id.tileAdhkarText, "الأذكار", "Adhkar")
+        b(R.id.tileQiratText, "قيراط", "Qirat")
+        b(R.id.tileEhsanText, "إحسان", "Ehsan")
+        b(R.id.tileContactText, "تواصل معنا", "Contact us")
+        b(R.id.tileShareText, "شارك", "Share")
+        b(R.id.tileAddText, "أضف مسجد", "Add a mosque")
+        b(R.id.tvMore, "المزيد", "More")
         b(R.id.switchAlerts, "تنبيه عند الأذان، وبعده بـ 10 دقائق للإقامة", "Alert at adhan, and 10 minutes later for iqama")
         b(R.id.btnExact, "اسمح بالتنبيه في الوقت الدقيق", "Allow exact-time alerts")
-        b(R.id.btnIqama, "وقت الإقامة لكل صلاة", "Iqama time for each prayer")
-        b(R.id.btnShare, "شارك التطبيق - الدال على الخير كفاعله", "Share the app")
-        b(R.id.btnAddMosque, "➕ أضف مسجداً", "➕ Add a mosque")
-        b(R.id.btnDonate, "تبرع عبر منصة إحسان", "Donate via Ehsan")
-        b(R.id.btnQuran, "📖  القرآن الكريم", "📖  Holy Quran")
-        b(R.id.btnAdhkar, "📿  الأذكار", "📿  Adhkar")
-        b(R.id.btnWhatsApp, "💬 تواصل معنا عبر واتساب", "💬 Contact us on WhatsApp")
-        b(R.id.btnQirat, "قيراط - جنائز الرياض والمقابر", "Qirat - Riyadh funerals & cemeteries")
         b(R.id.tvQuranHeader, "تطبيقات قرآن ننصح بها", "Recommended Quran apps")
-        b(R.id.btnTarteel, "📖 ترتيل", "📖 Tarteel")
-        b(R.id.btnWahy, "📖 وحي", "📖 Wahy")
+        b(R.id.btnTarteelText, "ترتيل", "Tarteel")
+        b(R.id.btnWahyText, "وحي", "Wahy")
+        b(R.id.navHomeText, "الرئيسية", "Home")
+        b(R.id.navQuranText, "القرآن", "Quran")
+        b(R.id.navAdhkarText, "الأذكار", "Adhkar")
+        b(R.id.navMoreText, "المزيد", "More")
     }
 
     /** Dark icons on the top bar in day mode, light icons in night mode. */
@@ -435,6 +401,6 @@ class MainActivity : Activity() {
 
     private fun dp(v: Int): Int = (v * resources.displayMetrics.density + 0.5f).toInt()
 
-    private lateinit var reminderBtn: Button
+    private lateinit var reminderBtn: TextView
 
 }

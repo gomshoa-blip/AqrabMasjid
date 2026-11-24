@@ -6,15 +6,16 @@
     <color name="gold">#C9A227</color>
 
     <!-- Day colors (night versions are in values-night/colors.xml) -->
-    <color name="bg">#EDF3EF</color>
+    <color name="bg">#F4F1EA</color>
     <color name="surface">#FFFFFF</color>
-    <color name="stroke">#D3E2D9</color>
+    <color name="stroke">#12000000</color>
     <color name="row_on">#D6ECE1</color>
-    <color name="tonal">#DCEEE5</color>
-    <color name="text_primary">#13241B</color>
-    <color name="text_secondary">#3E4C45</color>
-    <color name="text_hint">#55635C</color>
+    <color name="tonal">#EAF2EC</color>
+    <color name="text_primary">#16231C</color>
+    <color name="text_secondary">#4A5650</color>
+    <color name="text_hint">#7A857F</color>
     <color name="accent_text">#0A4A37</color>
     <color name="outline_stroke">#0F6B4F</color>
     <color name="title_text">#0A4A37</color>
+    <color name="icon">#0F6B4F</color>
 </resources>
