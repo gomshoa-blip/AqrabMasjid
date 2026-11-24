@@ -32,68 +32,12 @@
             android:paddingBottom="20dp">
 
 
-        <!-- Mode switch: driving (car only) or home (full app) + language -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_seg"
-                android:orientation="horizontal"
-                android:padding="4dp">
-
-                <TextView
-                    android:id="@+id/segCar"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center"
-                    android:text="🚗  القيادة"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/segHome"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center"
-                    android:text="🏠  المنزل"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <Space
-                android:layout_width="10dp"
-                android:layout_height="1dp" />
-            <TextView
-                android:id="@+id/btnLang"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                                android:background="@drawable/bg_lang_circle"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:text="EN"
-                android:textColor="@color/text_primary"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-        </LinearLayout>
         <!-- Prayer card -->
         <FrameLayout
             android:id="@+id/hero"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="4dp"
             android:background="@drawable/bg_hero"
             android:elevation="4dp">
 
@@ -155,6 +99,36 @@
                         android:paddingBottom="4dp"
                         android:textColor="#FFFFFF"
                         android:textSize="13sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Same place: big adhan time, or the countdown ring (last 30 min / until iqama) -->
+                <LinearLayout
+                    android:id="@+id/heroTimeBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvHeroTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:textColor="#F6D46B"
+                        android:textSize="46sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvHeroLeft"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:maxLines="1"
+                        android:textColor="#E6FFFFFF"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -265,6 +239,74 @@
             </LinearLayout>
         </LinearLayout>
 
+        <!-- Ayah for the next prayer -->
+        <TextView
+            android:id="@+id/btnTasbih"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:gravity="center"
+            android:lineSpacingMultiplier="1.3"
+            android:textColor="@color/text_secondary"
+            android:textSize="16sp" />
+
+        <!-- Mode switch: driving (car only) or home (full app) + language -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_seg"
+                android:orientation="horizontal"
+                android:padding="4dp">
+
+                <TextView
+                    android:id="@+id/segCar"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:text="🚗  القيادة"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/segHome"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:text="🏠  المنزل"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="1dp" />
+            <TextView
+                android:id="@+id/btnLang"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                                android:background="@drawable/bg_lang_circle"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="EN"
+                android:textColor="@color/text_primary"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </LinearLayout>
         </LinearLayout>
 
         <!-- Part 2: at home / office (hidden in driving mode) -->
@@ -346,16 +388,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-        <!-- Ayah for the next prayer -->
-        <TextView
-            android:id="@+id/btnTasbih"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:gravity="center"
-            android:lineSpacingMultiplier="1.3"
-            android:textColor="@color/text_secondary"
-            android:textSize="16sp" />
 
         <LinearLayout
             android:id="@+id/layoutTimes"
