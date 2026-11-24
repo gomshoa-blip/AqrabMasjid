@@ -92,8 +92,9 @@ class MainActivity : Activity() {
             recreate()
         }
         // Mode: driving shows only the car part; home shows the full app
-        findViewById<View>(R.id.segCar).setOnClickListener { setMode(true) }
-        findViewById<View>(R.id.segHome).setOnClickListener { setMode(false) }
+        findViewById<View>(R.id.btnMode).setOnClickListener {
+            setMode(!getSharedPreferences("ui", MODE_PRIVATE).getBoolean("drive", false))
+        }
         setMode(getSharedPreferences("ui", MODE_PRIVATE).getBoolean("drive", false))
         // Nearest mosque / Jami: open Google Maps search
         findViewById<View>(R.id.btnGo).setOnClickListener { MapsSearch.mosques(this) }
@@ -362,8 +363,6 @@ class MainActivity : Activity() {
             if (L.en) View.LAYOUT_DIRECTION_LTR else View.LAYOUT_DIRECTION_RTL
         fun b(id: Int, ar: String, en: String) { findViewById<TextView>(id).text = L.t(ar, en) }
         b(R.id.btnLang, "EN", "ع")
-        b(R.id.segCar, "🚗  القيادة", "🚗  Driving")
-        b(R.id.segHome, "🏠  المنزل", "🏠  Home")
         b(R.id.btnGoText, "أقرب مسجد", "Nearest mosque")
         b(R.id.btnGoSub, "يفتح خرائط Google", "Opens Google Maps")
         b(R.id.btnJamiText, "أقرب جامع", "Nearest Jami")
@@ -403,12 +402,10 @@ class MainActivity : Activity() {
     private fun setMode(drive: Boolean) {
         getSharedPreferences("ui", MODE_PRIVATE).edit().putBoolean("drive", drive).apply()
         findViewById<View>(R.id.homeSection).visibility = if (drive) View.GONE else View.VISIBLE
-        val on = findViewById<TextView>(if (drive) R.id.segCar else R.id.segHome)
-        val off = findViewById<TextView>(if (drive) R.id.segHome else R.id.segCar)
-        on.setBackgroundResource(R.drawable.bg_seg_on)
-        on.setTextColor(Color.WHITE)
-        off.background = null
-        off.setTextColor(getColor(R.color.text_hint))
+        // The button shows where it will take you: wheel -> driving, house -> full app
+        findViewById<android.widget.ImageView>(R.id.icMode).setImageResource(if (drive) R.drawable.ic_home else R.drawable.ic_wheel)
+        findViewById<View>(R.id.btnMode).contentDescription =
+            if (drive) L.t("العودة للتطبيق الكامل", "Back to full app") else L.t("وضع القيادة", "Driving mode")
         // Driving: bigger card and buttons so they are easy to read and tap in the car
         val big = drive
         tvHeroNameView().textSize = if (big) 56f else 46f
