@@ -396,6 +396,8 @@ class MainActivity : Activity() {
 
     private lateinit var reminderBtn: TextView
 
+    private fun tvHeroNameView(): TextView = findViewById(R.id.tvHeroName)
+
     private fun setMode(drive: Boolean) {
         getSharedPreferences("ui", MODE_PRIVATE).edit().putBoolean("drive", drive).apply()
         findViewById<View>(R.id.homeSection).visibility = if (drive) View.GONE else View.VISIBLE
@@ -405,6 +407,19 @@ class MainActivity : Activity() {
         on.setTextColor(Color.WHITE)
         off.background = null
         off.setTextColor(getColor(R.color.text_hint))
+        // Driving: bigger card and buttons so they are easy to read and tap in the car
+        val big = drive
+        tvHeroNameView().textSize = if (big) 56f else 42f
+        findViewById<TextView>(R.id.tvHeroAdhan).textSize = if (big) 22f else 17f
+        findViewById<TextView>(R.id.tvIqamaLeft).textSize = if (big) 17f else 13f
+        findViewById<View>(R.id.ring).layoutParams.let { it.width = dp(if (big) 170 else 140); it.height = it.width }
+        for (id in listOf(R.id.btnGo, R.id.btnJami)) {
+            val v = findViewById<View>(id)
+            v.layoutParams = v.layoutParams.also { it.height = dp(if (big) 130 else 76) }
+        }
+        findViewById<TextView>(R.id.btnGoText).textSize = if (big) 24f else 18f
+        findViewById<TextView>(R.id.btnJamiText).textSize = if (big) 22f else 16f
+        findViewById<View>(R.id.ring).requestLayout()
         // Driving: keep the screen on
         if (drive) window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         else window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
