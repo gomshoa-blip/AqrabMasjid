@@ -52,7 +52,7 @@
                 android:id="@+id/btnLang"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
-                android:layout_gravity="top|start"
+                android:layout_gravity="top|end"
                 android:layout_margin="12dp"
                 android:background="@drawable/bg_pill_light"
                 android:clickable="true"

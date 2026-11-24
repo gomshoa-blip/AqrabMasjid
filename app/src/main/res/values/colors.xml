@@ -19,4 +19,5 @@
     <color name="title_text">#0A4A37</color>
     <color name="icon">#0F6B4F</color>
     <color name="car_panel">#E3EEE7</color>
+    <color name="card_border">#B3000000</color>
 </resources>
