@@ -391,6 +391,17 @@
 
 <div class="toast" id="toast" hidden></div>
 
+<div class="modal" id="gmModal" hidden>
+  <div class="sheet">
+    <h2 data-t="gmH"></h2>
+    <p data-t="gmP"></p>
+    <ol id="gmSteps"></ol>
+    <div class="two">
+      <a class="big" id="gmGo" target="_blank" rel="noopener" style="text-align:center;text-decoration:none" data-t="gmGo"></a>
+      <button class="big alt" id="gmClose" type="button" data-t="cancel"></button>
+    </div>
+  </div>
+</div>
 <div class="modal" id="modal" hidden>
   <div class="sheet">
     <h2 data-t="instH"></h2>
@@ -417,7 +428,7 @@ const T = {
   iqNow:(p,c)=>"🕌 إقامة " + p + " بعد " + c, iqNext:(p,d)=>"إقامة " + p + " بعد الأذان بـ " + d + " دقيقة",
   iqShort:"إقامة", iqSet:"⚙️ غيّر وقت الإقامة", iqH:"وقت الإقامة بعد الأذان", iqP:"اختر كم دقيقة بين الأذان والإقامة في مسجدك. إذا ما اخترت، نحسبها 20 دقيقة.",
   min:"د", save:"حفظ", cancel:"إلغاء", close:"إغلاق", saved:"تم الحفظ ✓",
-  addH:"مسجد غير موجود في القائمة؟", addP:"إذا تعرف مسجد أو مصلى ما ظهر هنا، أرسله لنا ونضيفه بعد المراجعة. ولك الأجر بإذن الله.", addBtn:"➕ أضف مسجداً",
+  gmH:"أضف مسجدًا في خرائط Google", gmP:"بعد موافقة Google يظهر المسجد للجميع في «أقرب مسجد».", gmGo:"افتح خرائط Google", gmSteps:["افتح خرائط Google من الزر بالأسفل.","اضغط مطوّلًا على مكان المسجد بالضبط حتى يظهر الدبوس الأحمر 📍.","اسحب البطاقة للأعلى واختر «إضافة مكان ناقص».","اكتب اسم المسجد، واختر الفئة «مسجد»، ثم أرسل."], addH:"مسجد غير موجود في القائمة؟", addP:"إذا تعرف مسجد أو مصلى ما ظهر هنا، أرسله لنا ونضيفه بعد المراجعة. ولك الأجر بإذن الله.", addBtn:"➕ أضف مسجداً",
   formH:"أضف مسجداً أو مصلى", formP:"نراجع كل طلب قبل إضافته.", fName:"اسم المسجد", fKind:"النوع",
   kinds:{"مسجد":"مسجد","جامع":"جامع","مصلى":"مصلى","مصلى محطة":"مصلى محطة وقود"},
   fLocL:"موقع المسجد", fPinOk:"✓ تم تحديد مكان المسجد", fMapL:"📍 حدّد مكان المسجد على الخريطة: اضغط على المكان أو اسحب الدبوس", fNeedPin:"حدّد مكان المسجد على الخريطة أولاً.", fOutSA:"المكان المحدد برا السعودية. نستقبل المساجد داخل السعودية فقط.", fChecking:"جاري التحقق من الموقع…", iosTip:"📲 للتثبيت على الآيفون: اضغط «مشاركة» ⬆️ ← «إضافة إلى الشاشة الرئيسية» ➕", appTip:"📲 للتثبيت: افتح الرابط في المتصفح أولاً (⋯ ← فتح في Safari أو Chrome)", tipOk:"تمام", fLoc:"📍 أنا عند المسجد الآن — خذ موقعي", fLocWait:"جاري تحديد موقعك…", fLocOk:"✓ تم أخذ موقعك",
@@ -458,7 +469,7 @@ const T = {
   iqNow:(p,c)=>"🕌 " + p + " iqama in " + c, iqNext:(p,d)=>p + " iqama: " + d + " min after adhan",
   iqShort:"Iqama", iqSet:"⚙️ Change iqama times", iqH:"Iqama time after adhan", iqP:"Choose how many minutes your mosque waits between adhan and iqama. If you do not choose, we use 20 minutes.",
   min:"min", save:"Save", cancel:"Cancel", close:"Close", saved:"Saved ✓",
-  addH:"Mosque not on the list?", addP:"If you know a mosque or prayer room that does not show here, send it to us. We add it after review.", addBtn:"➕ Add a mosque",
+  gmH:"Add a mosque on Google Maps", gmP:"After Google approves it, the mosque shows for everyone in Nearest Mosque.", gmGo:"Open Google Maps", gmSteps:["Open Google Maps with the button below.","Long-press the exact place of the mosque until the red pin 📍 shows.","Swipe the card up and choose “Add a missing place”.","Type the mosque name, pick the category “Mosque”, then send."], addH:"Mosque not on the list?", addP:"If you know a mosque or prayer room that does not show here, send it to us. We add it after review.", addBtn:"➕ Add a mosque",
   formH:"Add a mosque or prayer room", formP:"We review every request before adding it.", fName:"Mosque name", fKind:"Type",
   kinds:{"مسجد":"Mosque","جامع":"Friday mosque (Jami)","مصلى":"Prayer room","مصلى محطة":"Gas station prayer room"},
   fLocL:"Mosque location", fPinOk:"✓ Mosque location set", fMapL:"📍 Mark the mosque on the map: tap the place or drag the pin", fNeedPin:"Please mark the mosque on the map first.", fOutSA:"This point is outside Saudi Arabia. We only accept mosques inside Saudi Arabia.", fChecking:"Checking the location…", iosTip:"📲 To install on iPhone: tap Share ⬆️ → «Add to Home Screen» ➕", appTip:"📲 To install: open the link in your browser first (⋯ → Open in Safari or Chrome)", tipOk:"OK", fLoc:"📍 I am at the mosque now — use my location", fLocWait:"Finding your location…", fLocOk:"✓ Location added",
@@ -869,7 +880,7 @@ if ("serviceWorker" in navigator) { try { navigator.serviceWorker.register("/sw.
 let toastT = null;
 function toast(msg){ const t = $("toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2500); }
 function closeOnBackdrop(id){ $(id).addEventListener("click", e => { if (e.target === $(id)) $(id).hidden = true; }); }
-["iqModal","addModal","qrModal"].forEach(closeOnBackdrop);
+["iqModal","addModal","qrModal","gmModal"].forEach(closeOnBackdrop);
 const SITE = "https://aqrab-masjid.netlify.app/";
 const track = (name, p) => { try { if (window.gtag) gtag("event", name, p || {}); } catch(_){} };
 
@@ -928,7 +939,17 @@ function openAdd(){
   $("addModal").hidden = false;
   initPinMap();
 }
-$("addBtn").addEventListener("click", openAdd);
+// Add a mosque: in Google Maps itself, so it shows in "Nearest mosque" for everyone
+function openGm(){
+  $("gmSteps").innerHTML = L().gmSteps.map(x => `<li>${x}</li>`).join("");
+  const c = me || RIYADH;
+  $("gmGo").href = `https://www.google.com/maps/search/?api=1&query=${c[0].toFixed(6)},${c[1].toFixed(6)}`;
+  $("gmModal").hidden = false;
+  track("add_mosque_google_open");
+}
+$("addBtn").addEventListener("click", openGm);
+$("gmClose").addEventListener("click", () => $("gmModal").hidden = true);
+$("gmGo").addEventListener("click", () => { track("add_mosque_google_go"); setTimeout(() => $("gmModal").hidden = true, 500); });
 $("fCancel").addEventListener("click", () => $("addModal").hidden = true);
 $("fLoc").addEventListener("click", () => {
   const b = $("fLoc");

@@ -111,7 +111,7 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.btnQibla).setOnClickListener { startActivity(Intent(this, QiblaActivity::class.java)) }
         findViewById<View>(R.id.tileContact).setOnClickListener { openUrl(Config.WHATSAPP_URL) }
         findViewById<View>(R.id.tileShare).setOnClickListener { share() }
-        findViewById<View>(R.id.tileAdd).setOnClickListener { openUrl(Config.ADD_MOSQUE_URL) }
+        findViewById<View>(R.id.tileAdd).setOnClickListener { addMosqueDialog() }
         findViewById<View>(R.id.btnTarteel).setOnClickListener { openStore(Config.TARTEEL_PKG, null) }
         findViewById<View>(R.id.btnWahy).setOnClickListener { openStore(Config.WAHY_PKG, null) }
         val sw = findViewById<Switch>(R.id.switchAlerts)
@@ -314,6 +314,42 @@ class MainActivity : Activity() {
         try {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
         } catch (_: Exception) {
+        }
+    }
+
+    /**
+     * Add a mosque in Google Maps itself, so it shows for everyone in "Nearest mosque".
+     * Maps opens on the user's place with a red pin; the user long-presses the exact spot.
+     */
+    private fun addMosqueDialog() {
+        val steps = L.t(
+            "1. افتح خرائط Google من الزر بالأسفل.\n" +
+                "2. اضغط مطوّلًا على مكان المسجد بالضبط حتى يظهر الدبوس الأحمر 📍.\n" +
+                "3. اسحب البطاقة للأعلى واختر «إضافة مكان ناقص».\n" +
+                "4. اكتب اسم المسجد، واختر الفئة «مسجد»، ثم أرسل.\n\n" +
+                "بعد موافقة Google يظهر المسجد للجميع في «أقرب مسجد».",
+            "1. Open Google Maps with the button below.\n" +
+                "2. Long-press the exact place of the mosque until the red pin 📍 shows.\n" +
+                "3. Swipe the card up and choose \u201cAdd a missing place\u201d.\n" +
+                "4. Type the mosque name, pick the category \u201cMosque\u201d, then send.\n\n" +
+                "After Google approves it, the mosque shows for everyone in Nearest Mosque."
+        )
+        AlertDialog.Builder(this)
+            .setTitle(L.t("أضف مسجدًا في خرائط Google", "Add a mosque on Google Maps"))
+            .setMessage(steps)
+            .setPositiveButton(L.t("افتح خرائط Google", "Open Google Maps")) { _, _ -> openMapsAtMe() }
+            .setNegativeButton(L.t("إلغاء", "Cancel"), null)
+            .show()
+    }
+
+    private fun openMapsAtMe() {
+        val (lat, lng) = Prefs.location(this) ?: (24.7136 to 46.6753)
+        val q = "%.6f,%.6f".format(java.util.Locale.US, lat, lng)
+        val geo = Intent(Intent.ACTION_VIEW, Uri.parse("geo:$q?q=$q&z=18"))
+        try {
+            startActivity(Intent(geo).setPackage("com.google.android.apps.maps"))
+        } catch (_: Exception) {
+            openUrl("https://www.google.com/maps/search/?api=1&query=$q")
         }
     }
 
