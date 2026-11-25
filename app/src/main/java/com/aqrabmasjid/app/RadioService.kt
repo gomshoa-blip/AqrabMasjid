@@ -40,7 +40,7 @@ class RadioService : Service() {
 
         val STATIONS = listOf(
             Station("quran", "إذاعة القرآن الكريم – السعودية", "Holy Quran Radio – Saudi Arabia",
-                listOf("https://stream.radiojar.com/0tpy1h0kxtzuv", "http://stream.radiojar.com/0tpy1h0kxtzuv")),
+                listOf("https://stream.radiojar.com/0tpy1h0kxtzuv", "https://stream.radiojar.com/4wqre23fytzuv", "http://stream.radiojar.com/0tpy1h0kxtzuv")),
             Station("sunnah", "إذاعة السنة", "Sunnah Radio",
                 listOf("https://radiosunna.radioca.st/stream", "http://radiosunna.radioca.st/stream"))
         )

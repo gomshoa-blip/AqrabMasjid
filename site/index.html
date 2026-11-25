@@ -223,13 +223,16 @@
   .tile{flex:1;min-width:0;background:var(--sf);border:1.5px solid var(--bd);border-radius:20px;padding:14px 4px 12px;display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--tx);text-decoration:none;font:inherit;font-size:.85rem;font-weight:800;cursor:pointer}
   .tile .ti{width:40px;height:40px;border-radius:12px;background:var(--tonal);color:var(--ic);display:flex;align-items:center;justify-content:center}
   .tiles2+.card2{margin-top:18px}
-  .radioRow{display:flex;align-items:center;gap:8px;margin-top:14px}
-  .rIc{flex:none;width:52px;height:52px;border-radius:14px;background:var(--tonal,#EAF2EC);color:var(--ic,#0F6B4F);display:flex;align-items:center;justify-content:center}
-  .rPill{flex:1;min-width:0;height:52px;border-radius:999px;border:1.5px solid var(--bd);background:var(--sf);color:var(--tx);font:inherit;font-weight:800;font-size:1.1rem;cursor:pointer}
-  .rPill.on{background:linear-gradient(135deg,#E2BE4E,#C79A22);color:#0A4A37;border-color:transparent}
-  .rStop{flex:none;width:52px;height:52px;border-radius:50%;border:1.5px solid var(--bd);background:var(--sf);color:var(--tx);display:flex;align-items:center;justify-content:center;cursor:pointer}
-  .rStop.off{opacity:.4}
-  .rStatus{text-align:center;color:var(--mu);font-size:.85rem;margin-top:4px}
+  .rBar{margin-top:14px;background:linear-gradient(135deg,#1E9A72,#0F6B4F 55%,#083D2D);border:1.5px solid var(--bd);border-radius:24px;padding:10px 12px}
+  .rTop{display:flex;align-items:center;gap:8px}
+  .rSt{flex:1;display:flex;gap:8px;min-width:0}
+  .rSta{flex:1;min-width:0;height:56px;border:0;border-radius:16px;background:rgba(255,255,255,.15);color:#fff;font:inherit;font-weight:800;font-size:.9rem;line-height:1.25;cursor:pointer;padding:0 6px}
+  .rSta.on{background:linear-gradient(135deg,#F6D46B,#C9A227);color:#0A4A37}
+  .rPlay{flex:none;width:68px;height:68px;border-radius:50%;border:3px solid #F6D46B;background:#fff;color:#0A4A37;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .rStatus{color:#E6F2EC;font-size:.8rem;font-weight:800;margin-top:6px;display:flex;align-items:center;gap:6px}
+  .rStatus[hidden]{display:none}
+  .rStatus .dot{width:8px;height:8px;border-radius:50%;background:#FF4D4D;animation:blink 1.2s infinite}
+  @keyframes blink{50%{opacity:.3}}
   .ayah2[hidden]{display:none}
   .tiles2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
   .tile.tl{flex-direction:row;justify-content:flex-start;gap:10px;padding:10px 12px;min-height:64px;font-size:.95rem;text-align:start}
@@ -304,9 +307,8 @@
     <a class="go2 plainB" id="goJami" href="https://www.google.com/maps/search/?api=1&query=%D8%AC%D8%A7%D9%85%D8%B9" target="_blank" rel="noopener"><span class="gi"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11a7 7 0 0 1 14 0v9"/><path d="M3 20h18"/><path d="M12 4V2"/><path d="M10 20v-4a2 2 0 0 1 4 0v4"/></svg></span><span class="tx"><b data-t="jamiT"></b></span></a>
   </div>
   <div class="ayah2" id="ayah" hidden></div>
-  <div class="radioRow" id="radioBar"><span class="rIc"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="9" width="18" height="11" rx="1"/><path d="M7 9l10-5"/><circle cx="14" cy="14.5" r="2"/><path d="M6 13h3M6 16h3"/></svg></span><button type="button" class="rPill" id="rMakkah" data-t="rMakkahT"></button><button type="button" class="rPill" id="rMadinah" data-t="rMadinahT"></button><button type="button" class="rStop" id="rStop" aria-label="stop"><svg viewBox="0 0 24 24" width="22" height="22"><rect x="6" y="6" width="12" height="12" rx="1.5" fill="currentColor"/></svg></button></div>
-  <div class="rStatus" id="rStatus" hidden></div>
   <div class="modeRow"><button class="modeBtn" id="modeBtn" type="button"></button></div>
+  <div class="rBar" id="radioBar"><div class="rTop"><div class="rSt"><button type="button" class="rSta" id="rMakkah" data-t="rMakkahT"></button><button type="button" class="rSta" id="rMadinah" data-t="rMadinahT"></button></div><button type="button" class="rPlay" id="rPlay" aria-label="play/stop"><svg viewBox="0 0 24 24" width="30" height="30"><path fill="currentColor" d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg></button></div><div class="rStatus" id="rStatus" hidden></div></div>
 </div></div>
 
 <!-- Part 2: at home / office (hidden in driving mode) -->
@@ -454,7 +456,7 @@
 <script src="adhan.js"></script>
 <script>
 const T = {
- ar:{title:"أقرب مسجد", soonT:"قريباً:", soonS:"جاري رفع التطبيق على متجر جوجل بلاي وآب ستور.", soonC:"أرسل لنا مقترحاتك أو أي أخطاء 💬",  other:"English", nextLbl:"الصلاة القادمة", curLbl:"حان الآن وقت صلاة", donate:"💚 تبرّع عبر منصة إحسان", mosqueT:"أقرب مسجد", jamiT:"أقرب جامع", mapsSub:"يفتح خرائط Google", quranT:"القرآن", adhkarT:"الأذكار", qiratT:"قيراط", ehsanT:"إحسان", contactT:"تواصل معنا", shareT:"شارك", addT:"أضف مسجد", moreT:"المزيد", qiblaT:"القبلة", hideT:"إخفاء", tarteel2:"ترتيل", wahy2:"وحي", waShareT:"واتساب", qrT:"رمز QR", instT:"تثبيت", prayerH:"الصلاة", adhanH:"الأذان", iqamaH:"الإقامة", toAdhan:"متبقية للأذان", toIqama:"متبقية للإقامة", nowLbl:"حان وقت الصلاة", startedLbl:"أقيمت الصلاة", driveL:"وضع القيادة", fullL:"التطبيق الكامل", adhkar:"📿 الأذكار", quran:"📖 القرآن الكريم", waContact:"💬 تواصل معنا عبر واتساب", quranH:"تطبيقات قرآن ننصح بها", grpQuran:"القرآن والذكر", privT:"سياسة الخصوصية", playW:"تشغيل", pauseW:"إيقاف", rMakkahT:"مكة", rMadinahT:"المدينة", radioT:"إذاعة", radioStop:"⏹ إيقاف", radioQ:"إذاعة القرآن الكريم – السعودية", radioS:"إذاعة السنة", radioPlaying:"يعمل الآن ▶️", radioErr:"تعذر التشغيل. تأكد من الإنترنت", aboutT:"عن أقرب مسجد", grpMosques:"المساجد", grpContact:"تواصل", tarteel:"📖 ترتيل", wahy:"📖 وحي", adhanAt:t=>"الأذان " + t, iqAt:t=>"الإقامة " + t, leftTo:"بقي على صلاة", adhanDone:"أذّن · بقي على الإقامة", iqStarted:"أقيمت الصلاة", stOk:"", donNote:"منصة إحسان الرسمية للعمل الخيري. الموقع لا يجمع أي تبرعات.", nOn:"🔔 نبّهني عند الأذان والإقامة", nIq:(p,m)=>"🕌 إقامة " + p + " بعد " + m + " د", nIqNow:p=>"🕌 حان وقت إقامة " + p, nOff:"🔕 إيقاف تنبيه الصلاة", nPre:(p,m)=>"🕌 أذان " + p + " بعد " + m + " د", nNow:p=>"🕌 حان الآن وقت صلاة " + p, nBody:"اضغط لفتح «أقرب مسجد» والذهاب لأقرب مسجد", nNo:"التنبيه غير مدعوم هنا. في الآيفون: أضف الموقع إلى الشاشة الرئيسية أولاً، ثم افتحه من الأيقونة", nDenied:"التنبيهات مقفلة. فعّلها من إعدادات المتصفح للموقع", nDone:"✅ تم تفعيل التنبيه: عند الأذان، وبعده بـ 10 دقائق للإقامة", nHint:"التنبيه يعمل والموقع مفتوح أو مثبّت على الجوال", qirat:"🤲 قيراط – مواقع الجنائز والمقابر في الرياض", tblH:"🕰️ مواقيت الصلاة اليوم", since:c=>"أُذّن قبل " + c, iqDone:p=>"أُقيمت صلاة " + p,
+ ar:{title:"أقرب مسجد", soonT:"قريباً:", soonS:"جاري رفع التطبيق على متجر جوجل بلاي وآب ستور.", soonC:"أرسل لنا مقترحاتك أو أي أخطاء 💬",  other:"English", nextLbl:"الصلاة القادمة", curLbl:"حان الآن وقت صلاة", donate:"💚 تبرّع عبر منصة إحسان", mosqueT:"أقرب مسجد", jamiT:"أقرب جامع", mapsSub:"يفتح خرائط Google", quranT:"القرآن", adhkarT:"الأذكار", qiratT:"قيراط", ehsanT:"إحسان", contactT:"تواصل معنا", shareT:"شارك", addT:"أضف مسجد", moreT:"المزيد", qiblaT:"القبلة", hideT:"إخفاء", tarteel2:"ترتيل", wahy2:"وحي", waShareT:"واتساب", qrT:"رمز QR", instT:"تثبيت", prayerH:"الصلاة", adhanH:"الأذان", iqamaH:"الإقامة", toAdhan:"متبقية للأذان", toIqama:"متبقية للإقامة", nowLbl:"حان وقت الصلاة", startedLbl:"أقيمت الصلاة", driveL:"وضع القيادة", fullL:"التطبيق الكامل", adhkar:"📿 الأذكار", quran:"📖 القرآن الكريم", waContact:"💬 تواصل معنا عبر واتساب", quranH:"تطبيقات قرآن ننصح بها", grpQuran:"القرآن والذكر", privT:"سياسة الخصوصية", playW:"تشغيل", pauseW:"إيقاف", rMakkahT:"إذاعة القرآن الكريم", rMadinahT:"إذاعة السنة", liveT:"مباشر", radioT:"إذاعة", radioStop:"⏹ إيقاف", radioQ:"إذاعة القرآن الكريم – السعودية", radioS:"إذاعة السنة", radioPlaying:"يعمل الآن ▶️", radioErr:"تعذر التشغيل. تأكد من الإنترنت", aboutT:"عن أقرب مسجد", grpMosques:"المساجد", grpContact:"تواصل", tarteel:"📖 ترتيل", wahy:"📖 وحي", adhanAt:t=>"الأذان " + t, iqAt:t=>"الإقامة " + t, leftTo:"بقي على صلاة", adhanDone:"أذّن · بقي على الإقامة", iqStarted:"أقيمت الصلاة", stOk:"", donNote:"منصة إحسان الرسمية للعمل الخيري. الموقع لا يجمع أي تبرعات.", nOn:"🔔 نبّهني عند الأذان والإقامة", nIq:(p,m)=>"🕌 إقامة " + p + " بعد " + m + " د", nIqNow:p=>"🕌 حان وقت إقامة " + p, nOff:"🔕 إيقاف تنبيه الصلاة", nPre:(p,m)=>"🕌 أذان " + p + " بعد " + m + " د", nNow:p=>"🕌 حان الآن وقت صلاة " + p, nBody:"اضغط لفتح «أقرب مسجد» والذهاب لأقرب مسجد", nNo:"التنبيه غير مدعوم هنا. في الآيفون: أضف الموقع إلى الشاشة الرئيسية أولاً، ثم افتحه من الأيقونة", nDenied:"التنبيهات مقفلة. فعّلها من إعدادات المتصفح للموقع", nDone:"✅ تم تفعيل التنبيه: عند الأذان، وبعده بـ 10 دقائق للإقامة", nHint:"التنبيه يعمل والموقع مفتوح أو مثبّت على الجوال", qirat:"🤲 قيراط – مواقع الجنائز والمقابر في الرياض", tblH:"🕰️ مواقيت الصلاة اليوم", since:c=>"أُذّن قبل " + c, iqDone:p=>"أُقيمت صلاة " + p,
   jumua:"الجمعة", khutba:"خطبة", jumuaNext:t=>"🕌 صلاة الجمعة " + t + " — بكّر بالحضور", jumuaNow:"🕌 خطبة الجمعة الآن",
   names:{fajr:"الفجر", sunrise:"الشروق", dhuhr:"الظهر", asr:"العصر", maghrib:"المغرب", isha:"العشاء"},
   left:c=>"باقي على الأذان " + c,
@@ -495,7 +497,7 @@ const T = {
    and:["افتح الرابط في متصفح Chrome.","اضغط القائمة ⋮ أعلى الشاشة.","اختر «إضافة إلى الشاشة الرئيسية» أو «تثبيت التطبيق»."],
    app:["أنت فاتح الرابط داخل تطبيق (مثل الواتساب).","اضغط ⋮ أو ⋯ واختر «فتح في المتصفح».","بعدها اضغط «أضف إلى شاشة الجوال» مرة ثانية."],
    pc:["في Chrome أو Edge: اضغط أيقونة التثبيت 🖥️ في شريط العنوان، أو من القائمة ⋮ اختر «تثبيت»."]}},
- en:{title:"Aqrab Masjid", soonT:"Coming soon:", soonS:"The Aqrab Masjid app is being published on Google Play and the App Store.", soonC:"Send us your ideas or any errors 💬",  other:"العربية", nextLbl:"Next prayer", curLbl:"It is now time for", donate:"💚 Donate via Ehsan", mosqueT:"Nearest mosque", jamiT:"Nearest Jami", mapsSub:"Opens Google Maps", quranT:"Quran", adhkarT:"Adhkar", qiratT:"Qirat", ehsanT:"Ehsan", contactT:"Contact us", shareT:"Share", addT:"Add a mosque", moreT:"More", qiblaT:"Qibla", hideT:"Hide", tarteel2:"Tarteel", wahy2:"Wahy", waShareT:"WhatsApp", qrT:"QR code", instT:"Install", prayerH:"Prayer", adhanH:"Adhan", iqamaH:"Iqama", toAdhan:"to adhan", toIqama:"to iqama", nowLbl:"Prayer time now", startedLbl:"Prayer has started", driveL:"Driving mode", fullL:"Full app", adhkar:"📿 Adhkar", quran:"📖 Holy Quran", waContact:"💬 Contact us on WhatsApp", quranH:"Recommended Quran apps", grpQuran:"Quran & Dhikr", privT:"Privacy policy", playW:"Play", pauseW:"Pause", rMakkahT:"Makkah", rMadinahT:"Madinah", radioT:"Radio", radioStop:"⏹ Stop", radioQ:"Holy Quran Radio – Saudi Arabia", radioS:"Sunnah Radio", radioPlaying:"Playing now ▶️", radioErr:"Could not play. Check the internet", aboutT:"About Aqrab Masjid", grpMosques:"Mosques", grpContact:"Contact", tarteel:"📖 Tarteel", wahy:"📖 Wahy", adhanAt:t=>"Adhan " + t, iqAt:t=>"Iqama " + t, leftTo:"Time left to", adhanDone:"Adhan done · Iqama in", iqStarted:"Prayer started", stOk:"", donNote:"Ehsan is the official Saudi charity platform. This site does not collect any money.", nOn:"🔔 Alert me at adhan and iqama", nIq:(p,m)=>"🕌 " + p + " iqama in " + m + " min", nIqNow:p=>"🕌 " + p + " iqama now", nOff:"🔕 Turn off prayer alerts", nPre:(p,m)=>"🕌 " + p + " adhan in " + m + " min", nNow:p=>"🕌 It is now time for " + p, nBody:"Tap to open Nearest Mosque", nNo:"Alerts are not supported here. On iPhone: add the site to your Home Screen first, then open it from the icon", nDenied:"Notifications are blocked. Allow them in the browser site settings", nDone:"✅ Alerts on: at adhan, and 10 minutes later for iqama", nHint:"Alerts work while the site is open or installed", qirat:"🤲 Qirat – Riyadh funerals & cemeteries", tblH:"🕰️ Today's prayer times", since:c=>"Adhan was " + c + " ago", iqDone:p=>p + " iqama has started",
+ en:{title:"Aqrab Masjid", soonT:"Coming soon:", soonS:"The Aqrab Masjid app is being published on Google Play and the App Store.", soonC:"Send us your ideas or any errors 💬",  other:"العربية", nextLbl:"Next prayer", curLbl:"It is now time for", donate:"💚 Donate via Ehsan", mosqueT:"Nearest mosque", jamiT:"Nearest Jami", mapsSub:"Opens Google Maps", quranT:"Quran", adhkarT:"Adhkar", qiratT:"Qirat", ehsanT:"Ehsan", contactT:"Contact us", shareT:"Share", addT:"Add a mosque", moreT:"More", qiblaT:"Qibla", hideT:"Hide", tarteel2:"Tarteel", wahy2:"Wahy", waShareT:"WhatsApp", qrT:"QR code", instT:"Install", prayerH:"Prayer", adhanH:"Adhan", iqamaH:"Iqama", toAdhan:"to adhan", toIqama:"to iqama", nowLbl:"Prayer time now", startedLbl:"Prayer has started", driveL:"Driving mode", fullL:"Full app", adhkar:"📿 Adhkar", quran:"📖 Holy Quran", waContact:"💬 Contact us on WhatsApp", quranH:"Recommended Quran apps", grpQuran:"Quran & Dhikr", privT:"Privacy policy", playW:"Play", pauseW:"Pause", rMakkahT:"Holy Quran Radio", rMadinahT:"Sunnah Radio", liveT:"Live", radioT:"Radio", radioStop:"⏹ Stop", radioQ:"Holy Quran Radio – Saudi Arabia", radioS:"Sunnah Radio", radioPlaying:"Playing now ▶️", radioErr:"Could not play. Check the internet", aboutT:"About Aqrab Masjid", grpMosques:"Mosques", grpContact:"Contact", tarteel:"📖 Tarteel", wahy:"📖 Wahy", adhanAt:t=>"Adhan " + t, iqAt:t=>"Iqama " + t, leftTo:"Time left to", adhanDone:"Adhan done · Iqama in", iqStarted:"Prayer started", stOk:"", donNote:"Ehsan is the official Saudi charity platform. This site does not collect any money.", nOn:"🔔 Alert me at adhan and iqama", nIq:(p,m)=>"🕌 " + p + " iqama in " + m + " min", nIqNow:p=>"🕌 " + p + " iqama now", nOff:"🔕 Turn off prayer alerts", nPre:(p,m)=>"🕌 " + p + " adhan in " + m + " min", nNow:p=>"🕌 It is now time for " + p, nBody:"Tap to open Nearest Mosque", nNo:"Alerts are not supported here. On iPhone: add the site to your Home Screen first, then open it from the icon", nDenied:"Notifications are blocked. Allow them in the browser site settings", nDone:"✅ Alerts on: at adhan, and 10 minutes later for iqama", nHint:"Alerts work while the site is open or installed", qirat:"🤲 Qirat – Riyadh funerals & cemeteries", tblH:"🕰️ Today's prayer times", since:c=>"Adhan was " + c + " ago", iqDone:p=>p + " iqama has started",
   jumua:"Jumuah", khutba:"Khutbah", jumuaNext:t=>"🕌 Jumuah " + t + " — come early", jumuaNow:"🕌 Jumuah khutbah now",
   names:{fajr:"Fajr", sunrise:"Sunrise", dhuhr:"Dhuhr", asr:"Asr", maghrib:"Maghrib", isha:"Isha"},
   left:c=>"Adhan in " + c,
@@ -545,7 +547,7 @@ T.ur = Object.assign({}, T.en, {
   quranT:"قرآن", adhkarT:"اذکار", qiratT:"قیراط", contactT:"ہم سے رابطہ", shareT:"شیئر کریں", addT:"مسجد شامل کریں", moreT:"مزید", qiblaT:"قبلہ", hideT:"چھپائیں",
   tarteel2:"ترتیل", wahy2:"وحی", waShareT:"واٹس ایپ", qrT:"کیو آر کوڈ", instT:"انسٹال",
   prayerH:"نماز", adhanH:"اذان", iqamaH:"اقامت", toAdhan:"اذان میں باقی", toIqama:"اقامت میں باقی", nowLbl:"نماز کا وقت ہو گیا", startedLbl:"نماز شروع ہو گئی",
-  grpQuran:"قرآن اور اذکار", grpMosques:"مساجد", grpContact:"رابطہ", privT:"رازداری کی پالیسی", playW:"چلائیں", pauseW:"روکیں", rMakkahT:"مکہ", rMadinahT:"مدینہ", radioT:"ریڈیو", radioStop:"⏹ بند کریں", radioQ:"قرآن کریم ریڈیو – سعودی عرب", radioS:"سنت ریڈیو", radioPlaying:"اب چل رہا ہے ▶️", radioErr:"نہیں چل سکا۔ انٹرنیٹ چیک کریں", aboutT:"اقرب مسجد کے بارے میں",
+  grpQuran:"قرآن اور اذکار", grpMosques:"مساجد", grpContact:"رابطہ", privT:"رازداری کی پالیسی", playW:"چلائیں", pauseW:"روکیں", rMakkahT:"قرآن کریم ریڈیو", rMadinahT:"سنت ریڈیو", liveT:"براہِ راست", radioT:"ریڈیو", radioStop:"⏹ بند کریں", radioQ:"قرآن کریم ریڈیو – سعودی عرب", radioS:"سنت ریڈیو", radioPlaying:"اب چل رہا ہے ▶️", radioErr:"نہیں چل سکا۔ انٹرنیٹ چیک کریں", aboutT:"اقرب مسجد کے بارے میں",
   adhanAt:t=>"اذان " + t, iqAt:t=>"اقامت " + t,
   jumua:"جمعہ", khutba:"خطبہ", jumuaNext:t=>"🕌 جمعہ " + t + " — جلدی آئیں", jumuaNow:"🕌 جمعہ کا خطبہ ہو رہا ہے",
   names:{fajr:"فجر", sunrise:"طلوع آفتاب", dhuhr:"ظہر", asr:"عصر", maghrib:"مغرب", isha:"عشاء"},
@@ -570,7 +572,7 @@ T.id = Object.assign({}, T.en, {
   quranT:"Al-Quran", adhkarT:"Dzikir", qiratT:"Qirat", contactT:"Hubungi kami", shareT:"Bagikan", addT:"Tambah masjid", moreT:"Lainnya", qiblaT:"Kiblat", hideT:"Sembunyikan",
   tarteel2:"Tarteel", wahy2:"Wahy", waShareT:"WhatsApp", qrT:"Kode QR", instT:"Pasang",
   prayerH:"Sholat", adhanH:"Azan", iqamaH:"Iqamah", toAdhan:"menuju azan", toIqama:"menuju iqamah", nowLbl:"Waktunya sholat", startedLbl:"Sholat sudah dimulai",
-  grpQuran:"Al-Quran & Dzikir", grpMosques:"Masjid", grpContact:"Kontak", privT:"Kebijakan privasi", playW:"Putar", pauseW:"Jeda", rMakkahT:"Makkah", rMadinahT:"Madinah", radioT:"Radio", radioStop:"⏹ Berhenti", radioQ:"Radio Al-Quran – Arab Saudi", radioS:"Radio Sunnah", radioPlaying:"Sedang diputar ▶️", radioErr:"Gagal memutar. Periksa internet", aboutT:"Tentang Aqrab Masjid",
+  grpQuran:"Al-Quran & Dzikir", grpMosques:"Masjid", grpContact:"Kontak", privT:"Kebijakan privasi", playW:"Putar", pauseW:"Jeda", rMakkahT:"Radio Al-Quran", rMadinahT:"Radio Sunnah", liveT:"Langsung", radioT:"Radio", radioStop:"⏹ Berhenti", radioQ:"Radio Al-Quran – Arab Saudi", radioS:"Radio Sunnah", radioPlaying:"Sedang diputar ▶️", radioErr:"Gagal memutar. Periksa internet", aboutT:"Tentang Aqrab Masjid",
   adhanAt:t=>"Azan " + t, iqAt:t=>"Iqamah " + t,
   jumua:"Jumat", khutba:"Khutbah", jumuaNext:t=>"🕌 Jumat " + t + " — datang lebih awal", jumuaNow:"🕌 Khutbah Jumat sedang berlangsung",
   names:{fajr:"Subuh", sunrise:"Terbit", dhuhr:"Dzuhur", asr:"Ashar", maghrib:"Maghrib", isha:"Isya"},
@@ -595,7 +597,7 @@ T.bn = Object.assign({}, T.en, {
   quranT:"কুরআন", adhkarT:"জিকির", qiratT:"কিরাত", contactT:"যোগাযোগ করুন", shareT:"শেয়ার করুন", addT:"মসজিদ যোগ করুন", moreT:"আরও", qiblaT:"কিবলা", hideT:"লুকান",
   tarteel2:"তারতিল", wahy2:"ওহী", waShareT:"হোয়াটসঅ্যাপ", qrT:"কিউআর কোড", instT:"ইনস্টল",
   prayerH:"নামাজ", adhanH:"আজান", iqamaH:"ইকামত", toAdhan:"আজান পর্যন্ত বাকি", toIqama:"ইকামত পর্যন্ত বাকি", nowLbl:"নামাজের সময় হয়েছে", startedLbl:"নামাজ শুরু হয়েছে",
-  grpQuran:"কুরআন ও জিকির", grpMosques:"মসজিদ", grpContact:"যোগাযোগ", privT:"গোপনীয়তা নীতি", playW:"চালান", pauseW:"বিরতি", rMakkahT:"মক্কা", rMadinahT:"মদিনা", radioT:"রেডিও", radioStop:"⏹ বন্ধ", radioQ:"পবিত্র কুরআন রেডিও – সৌদি আরব", radioS:"সুন্নাহ রেডিও", radioPlaying:"এখন চলছে ▶️", radioErr:"চালানো যায়নি। ইন্টারনেট দেখুন", aboutT:"Aqrab Masjid সম্পর্কে",
+  grpQuran:"কুরআন ও জিকির", grpMosques:"মসজিদ", grpContact:"যোগাযোগ", privT:"গোপনীয়তা নীতি", playW:"চালান", pauseW:"বিরতি", rMakkahT:"কুরআন রেডিও", rMadinahT:"সুন্নাহ রেডিও", liveT:"সরাসরি", radioT:"রেডিও", radioStop:"⏹ বন্ধ", radioQ:"পবিত্র কুরআন রেডিও – সৌদি আরব", radioS:"সুন্নাহ রেডিও", radioPlaying:"এখন চলছে ▶️", radioErr:"চালানো যায়নি। ইন্টারনেট দেখুন", aboutT:"Aqrab Masjid সম্পর্কে",
   adhanAt:t=>"আজান " + t, iqAt:t=>"ইকামত " + t,
   jumua:"জুমা", khutba:"খুতবা", jumuaNext:t=>"🕌 জুমা " + t + " — আগে আসুন", jumuaNow:"🕌 এখন জুমার খুতবা চলছে",
   names:{fajr:"ফজর", sunrise:"সূর্যোদয়", dhuhr:"যোহর", asr:"আসর", maghrib:"মাগরিব", isha:"এশা"},
@@ -620,7 +622,7 @@ T.tr = Object.assign({}, T.en, {
   quranT:"Kuran", adhkarT:"Zikirler", qiratT:"Kırat", contactT:"Bize ulaşın", shareT:"Paylaş", addT:"Cami ekle", moreT:"Daha fazla", qiblaT:"Kıble", hideT:"Gizle",
   tarteel2:"Tarteel", wahy2:"Wahy", waShareT:"WhatsApp", qrT:"QR kod", instT:"Yükle",
   prayerH:"Namaz", adhanH:"Ezan", iqamaH:"Kamet", toAdhan:"ezana kalan", toIqama:"kamete kalan", nowLbl:"Namaz vakti girdi", startedLbl:"Namaz başladı",
-  grpQuran:"Kuran ve Zikir", grpMosques:"Camiler", grpContact:"İletişim", privT:"Gizlilik politikası", playW:"Çal", pauseW:"Duraklat", rMakkahT:"Mekke", rMadinahT:"Medine", radioT:"Radyo", radioStop:"⏹ Durdur", radioQ:"Kuran-ı Kerim Radyosu – Suudi Arabistan", radioS:"Sünnet Radyosu", radioPlaying:"Şimdi çalıyor ▶️", radioErr:"Çalınamadı. İnterneti kontrol edin", aboutT:"Aqrab Masjid hakkında",
+  grpQuran:"Kuran ve Zikir", grpMosques:"Camiler", grpContact:"İletişim", privT:"Gizlilik politikası", playW:"Çal", pauseW:"Duraklat", rMakkahT:"Kuran Radyosu", rMadinahT:"Sünnet Radyosu", liveT:"Canlı", radioT:"Radyo", radioStop:"⏹ Durdur", radioQ:"Kuran-ı Kerim Radyosu – Suudi Arabistan", radioS:"Sünnet Radyosu", radioPlaying:"Şimdi çalıyor ▶️", radioErr:"Çalınamadı. İnterneti kontrol edin", aboutT:"Aqrab Masjid hakkında",
   adhanAt:t=>"Ezan " + t, iqAt:t=>"Kamet " + t,
   jumua:"Cuma", khutba:"Hutbe", jumuaNext:t=>"🕌 Cuma " + t + " — erken gelin", jumuaNow:"🕌 Cuma hutbesi okunuyor",
   names:{fajr:"Sabah", sunrise:"Güneş", dhuhr:"Öğle", asr:"İkindi", maghrib:"Akşam", isha:"Yatsı"},
@@ -1224,19 +1226,22 @@ function apply(){
 // Quran radio (live audio; keeps playing while the site is open)
 const RADIOS = [{k:"radioQ", url:"https://stream.radiojar.com/0tpy1h0kxtzuv"}, {k:"radioS", url:"https://radiosunna.radioca.st/stream"}];
 let radioOn = null, radioPaused = false;
+let radioSel = 0; try { radioSel = +(localStorage.getItem("radioSel") || 0) || 0; } catch(_){}
 function drawRadioBar(){
   if (!$("radioBar")) return;
-  $("rMakkah").classList.toggle("on", radioOn === 0);
-  $("rMadinah").classList.toggle("on", radioOn === 1);
-  $("rStop").classList.toggle("off", radioOn === null);
+  const sel = radioOn !== null ? radioOn : radioSel;
+  $("rMakkah").classList.toggle("on", sel === 0);
+  $("rMadinah").classList.toggle("on", sel === 1);
+  const playing = radioOn !== null && !radioPaused;
+  $("rPlay").innerHTML = playing ? '<svg viewBox="0 0 24 24" width="28" height="28"><rect x="6" y="6" width="12" height="12" rx="1.5" fill="currentColor"/></svg>' : '<svg viewBox="0 0 24 24" width="30" height="30"><path fill="currentColor" d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>';
   const st = $("rStatus");
-  if (radioOn === null) { st.hidden = true; return; }
+  if (!playing) { st.hidden = true; return; }
   st.hidden = false;
-  st.textContent = "📻 " + L()[RADIOS[radioOn].k] + " · " + (radioPaused ? L().pauseW : L().radioPlaying);
+  st.innerHTML = '<span class="dot"></span>' + L().liveT;
 }
-function radioTap(i){
-  if (radioOn === i) { if (radioPaused) radioPlay(i); else { $("radioAudio").pause(); radioPaused = true; drawRadioBar(); } }
-  else radioPlay(i);
+function radioSelect(i){
+  radioSel = i; try { localStorage.setItem("radioSel", i); } catch(_){}
+  if (radioOn !== null && radioOn !== i) radioPlay(i); else drawRadioBar();
 }
 function radioPlay(i){
   const a = $("radioAudio"), r = RADIOS[i]; a.src = r.url; radioOn = i; radioPaused = false; drawRadio(); drawRadioBar();
@@ -1244,9 +1249,9 @@ function radioPlay(i){
     .catch(() => { $("radioMsg").textContent = L().radioErr; $("radioMsg").className = "msg err"; radioOn = null; drawRadio(); drawRadioBar(); const st = $("rStatus"); st.hidden = false; st.textContent = L().radioErr; });
 }
 function radioClose(){ const a = $("radioAudio"); a.pause(); a.removeAttribute("src"); a.load(); radioOn = null; radioPaused = false; $("radioMsg").textContent = ""; drawRadio(); drawRadioBar(); }
-$("rMakkah").addEventListener("click", () => radioTap(0));
-$("rMadinah").addEventListener("click", () => radioTap(1));
-$("rStop").addEventListener("click", radioClose);
+$("rMakkah").addEventListener("click", () => radioSelect(0));
+$("rMadinah").addEventListener("click", () => radioSelect(1));
+$("rPlay").addEventListener("click", () => { if (radioOn !== null && !radioPaused) radioClose(); else radioPlay(radioSel); });
 function drawRadio(){
   $("radioList").innerHTML = RADIOS.map((r,i) => `<button type="button" class="big ${radioOn===i?'':'alt'}" data-r="${i}">${radioOn===i?'▶️':'📻'} ${L()[r.k]}</button>`).join("");
   $("radioStop").style.display = radioOn === null ? "none" : "";

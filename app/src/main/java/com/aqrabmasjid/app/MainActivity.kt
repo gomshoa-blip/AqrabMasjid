@@ -135,10 +135,14 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.tileAdd).setOnClickListener { addMosqueDialog() }
         findViewById<View>(R.id.btnPrivacy).setOnClickListener { openUrl(Config.PRIVACY_URL) }
         findViewById<View>(R.id.tileRadio).setOnClickListener { radioDialog() }
-        // Radio on the main screen: Makkah = Holy Quran Radio, Madinah = Sunnah radio
-        findViewById<View>(R.id.radioMakkah).setOnClickListener { radioTap("quran") }
-        findViewById<View>(R.id.radioMadinah).setOnClickListener { radioTap("sunnah") }
-        findViewById<View>(R.id.radioStop).setOnClickListener { RadioService.stop(this); showRadioBar() }
+        // Audio player bar: pick a station, big button plays / stops
+        findViewById<View>(R.id.radioMakkah).setOnClickListener { radioSelect("quran") }
+        findViewById<View>(R.id.radioMadinah).setOnClickListener { radioSelect("sunnah") }
+        findViewById<View>(R.id.radioPlay).setOnClickListener {
+            if (RadioService.current != null && !RadioService.paused) RadioService.stop(this)
+            else RadioService.play(this, radioSel())
+            showRadioBar()
+        }
         findViewById<View>(R.id.btnAbout).setOnClickListener { openUrl(Config.ABOUT_URL) }
         findViewById<View>(R.id.tileNear).setOnClickListener { startActivity(Intent(this, MosquesActivity::class.java)) }
         findViewById<View>(R.id.btnTarteel).setOnClickListener { openStore(Config.TARTEEL_PKG, null) }
@@ -544,34 +548,38 @@ class MainActivity : Activity() {
     private fun toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
 
     /** Radio bar on the main screen: only while the radio is on. */
-    /** Tap a station: play it, or pause/play again if it is the one already on. */
-    private fun radioTap(id: String) {
-        if (RadioService.current == id) RadioService.toggle(this) else RadioService.play(this, id)
+    /** Station chosen in the player bar (saved). */
+    private fun radioSel(): String = getSharedPreferences("aqrab", MODE_PRIVATE).getString("radio_sel", "quran") ?: "quran"
+
+    /** Tap a station: select it; if the radio is on, switch to it right away. */
+    private fun radioSelect(id: String) {
+        getSharedPreferences("aqrab", MODE_PRIVATE).edit().putString("radio_sel", id).apply()
+        if (RadioService.current != null && RadioService.current != id) RadioService.play(this, id)
         showRadioBar()
     }
 
     private fun showRadioBar() {
         val cur = RadioService.current
-        val on = cur != null
-        fun pill(viewId: Int, id: String) {
+        val sel = cur ?: radioSel()
+        fun station(viewId: Int, id: String) {
             val v = findViewById<TextView>(viewId) ?: return
-            val active = cur == id
-            v.setBackgroundResource(if (active) R.drawable.bg_pill_on else R.drawable.bg_pill_off)
-            v.setTextColor(if (active) android.graphics.Color.parseColor("#0A4A37") else getColor(R.color.text_primary))
+            val active = sel == id
+            v.setBackgroundResource(if (active) R.drawable.bg_station_on else R.drawable.bg_station_off)
+            v.setTextColor(android.graphics.Color.parseColor(if (active) "#0A4A37" else "#FFFFFF"))
         }
-        pill(R.id.radioMakkah, "quran")
-        pill(R.id.radioMadinah, "sunnah")
-        findViewById<View>(R.id.radioStop)?.alpha = if (on) 1f else 0.4f
-        val status = findViewById<TextView>(R.id.radioStatus) ?: return
-        val st = RadioService.station(cur)
-        if (st == null) { status.visibility = View.GONE; return }
-        status.visibility = View.VISIBLE
-        status.text = "📻 " + st.label + " · " + when (RadioService.status) {
-            RadioService.Status.LOADING -> L.t("جاري التشغيل…", "Starting…")
-            RadioService.Status.PLAYING -> L.t("يعمل الآن", "Playing now")
-            RadioService.Status.PAUSED -> L.t("متوقف مؤقتًا", "Paused")
-            RadioService.Status.ERROR -> L.t("تعذر التشغيل. تأكد من الإنترنت", "Could not play. Check the internet")
-            RadioService.Status.OFF -> ""
+        station(R.id.radioMakkah, "quran")
+        station(R.id.radioMadinah, "sunnah")
+        val playing = cur != null && !RadioService.paused
+        findViewById<android.widget.ImageView>(R.id.radioPlayIcon)
+            ?.setImageResource(if (playing) R.drawable.ic_stop else R.drawable.ic_play)
+        val row = findViewById<View>(R.id.radioStatusRow) ?: return
+        val txt = findViewById<TextView>(R.id.radioStatus)
+        val dot = findViewById<View>(R.id.radioDot)
+        when (if (cur == null) RadioService.Status.OFF else RadioService.status) {
+            RadioService.Status.PLAYING -> { row.visibility = View.VISIBLE; dot.visibility = View.VISIBLE; txt.text = L.t("مباشر", "Live") }
+            RadioService.Status.LOADING -> { row.visibility = View.VISIBLE; dot.visibility = View.GONE; txt.text = L.t("جاري التشغيل…", "Starting…") }
+            RadioService.Status.ERROR -> { row.visibility = View.VISIBLE; dot.visibility = View.GONE; txt.text = L.t("تعذر التشغيل. تأكد من الإنترنت", "Could not play. Check the internet") }
+            else -> row.visibility = View.GONE
         }
     }
 
@@ -672,8 +680,8 @@ class MainActivity : Activity() {
         b(R.id.btnPrivacy, "سياسة الخصوصية", "Privacy policy")
         b(R.id.btnAbout, "عن أقرب مسجد", "About Aqrab Masjid")
         b(R.id.tileRadioText, "إذاعة", "Radio")
-        b(R.id.radioMakkah, "مكة", "Makkah")
-        b(R.id.radioMadinah, "المدينة", "Madinah")
+        b(R.id.radioMakkah, "إذاعة القرآن الكريم", "Holy Quran Radio")
+        b(R.id.radioMadinah, "إذاعة السنة", "Sunnah Radio")
         b(R.id.tileQuranText, "القرآن", "Quran")
         b(R.id.tileAdhkarText, "الأذكار", "Adhkar")
         b(R.id.tileQiratText, "قيراط", "Qirat")
