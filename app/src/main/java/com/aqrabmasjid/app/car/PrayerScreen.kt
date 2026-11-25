@@ -48,7 +48,7 @@ class PrayerScreen(carContext: CarContext) : Screen(carContext), DefaultLifecycl
     }
 
     override fun onGetTemplate(): Template {
-        var headerTitle = L.t("أقرب مسجد", "Nearest Mosque")
+        var headerTitle = L.t("أقرب مسجد", "Aqrab Masjid")
         val list = ItemList.Builder()
         val loc = Prefs.location(carContext)
 

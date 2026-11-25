@@ -88,7 +88,7 @@ object PrayerWidgets {
         v.setTextViewText(R.id.wGo, L.t("🕌 أقرب مسجد", "🕌 Nearest mosque"))
         val n = now(c)
         if (n == null) {
-            v.setTextViewText(R.id.wLabel, L.t("أقرب مسجد", "Nearest Mosque"))
+            v.setTextViewText(R.id.wLabel, L.t("أقرب مسجد", "Aqrab Masjid"))
             v.setTextViewText(R.id.wName, "🕌")
             v.setTextViewText(R.id.wTimes, L.t("افتح التطبيق لتحديد موقعك", "Open the app to set your location"))
             v.setViewVisibility(R.id.wLeftRow, View.GONE)
