@@ -910,6 +910,18 @@
 
 
         <TextView
+            android:id="@+id/btnAbout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="عن أقرب مسجد"
+            android:textColor="@color/icon"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/btnPrivacy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

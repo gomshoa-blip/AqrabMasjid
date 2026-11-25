@@ -133,6 +133,7 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.tileShare).setOnClickListener { share() }
         findViewById<View>(R.id.tileAdd).setOnClickListener { addMosqueDialog() }
         findViewById<View>(R.id.btnPrivacy).setOnClickListener { openUrl(Config.PRIVACY_URL) }
+        findViewById<View>(R.id.btnAbout).setOnClickListener { openUrl(Config.ABOUT_URL) }
         findViewById<View>(R.id.tileNear).setOnClickListener { startActivity(Intent(this, MosquesActivity::class.java)) }
         findViewById<View>(R.id.btnTarteel).setOnClickListener { openStore(Config.TARTEEL_PKG, null) }
         findViewById<View>(R.id.btnWahy).setOnClickListener { openStore(Config.WAHY_PKG, null) }
@@ -614,6 +615,7 @@ class MainActivity : Activity() {
         b(R.id.tvGrpMosques, "المساجد", "Mosques")
         b(R.id.tvGrpContact, "تواصل", "Contact")
         b(R.id.btnPrivacy, "سياسة الخصوصية", "Privacy policy")
+        b(R.id.btnAbout, "عن أقرب مسجد", "About Aqrab Masjid")
         b(R.id.tileQuranText, "القرآن", "Quran")
         b(R.id.tileAdhkarText, "الأذكار", "Adhkar")
         b(R.id.tileQiratText, "قيراط", "Qirat")

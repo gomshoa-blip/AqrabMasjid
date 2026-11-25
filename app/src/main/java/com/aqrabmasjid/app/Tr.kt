@@ -8,6 +8,7 @@ package com.aqrabmasjid.app
 object Tr {
     /** Index in each array: 0 = Urdu, 1 = Indonesian, 2 = Bengali, 3 = Turkish. */
     val MAP: Map<String, Array<String>> = mapOf(
+        "About Aqrab Masjid" to arrayOf("اقرب مسجد کے بارے میں", "Tentang Aqrab Masjid", "Aqrab Masjid সম্পর্কে", "Aqrab Masjid hakkında"),
         "Fajr" to arrayOf("فجر", "Subuh", "ফজর", "Sabah"),
         "Dhuhr" to arrayOf("ظہر", "Dzuhur", "যোহর", "Öğle"),
         "Asr" to arrayOf("عصر", "Ashar", "আসর", "İkindi"),

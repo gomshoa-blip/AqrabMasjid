@@ -32,6 +32,9 @@ object Config {
     /** Privacy policy page (needed for Google Play and App Store). */
     const val PRIVACY_URL = "https://aqrab-masjid.netlify.app/privacy/"
 
+    /** About the project page. */
+    const val ABOUT_URL = "https://aqrab-masjid.netlify.app/about/"
+
     /** WhatsApp contact. */
     const val WHATSAPP_URL = "https://wa.me/966556512678"
 
