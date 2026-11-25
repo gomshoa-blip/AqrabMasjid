@@ -35,8 +35,15 @@ function bearing(lat, lng){
   const y = Math.sin(dL), x = Math.cos(p)*Math.tan(KLAT*R) - Math.sin(p)*Math.cos(dL);
   return (Math.atan2(y, x)/R + 360) % 360;
 }
-qibla = bearing(+(q.get("lat") || 24.7136), +(q.get("lng") || 46.6753));
-if (navigator.geolocation) navigator.geolocation.getCurrentPosition(p => { qibla = bearing(p.coords.latitude, p.coords.longitude); }, () => {}, {enableHighAccuracy:true, timeout:8000, maximumAge:300000});
+// Compass points to magnetic north; Qibla bearing is from true north.
+// Declination fitted to the world magnetic model (2026) for Saudi Arabia and nearby (error < 0.2°).
+function decl(lat, lng){
+  if (lat < 15 || lat > 34 || lng < 33 || lng > 57) return 0;
+  return 8.67899 - 0.167623*lat - 0.12231*lng + 0.004944*lat*lng + 0.001861*lat*lat - 0.001167*lng*lng;
+}
+let dec = 0;
+{ const la = +(q.get("lat") || 24.7136), lo = +(q.get("lng") || 46.6753); qibla = bearing(la, lo); dec = decl(la, lo); }
+if (navigator.geolocation) navigator.geolocation.getCurrentPosition(p => { qibla = bearing(p.coords.latitude, p.coords.longitude); dec = decl(p.coords.latitude, p.coords.longitude); }, () => {}, {enableHighAccuracy:true, timeout:8000, maximumAge:300000});
 
 // Heading of the back camera (phone held upright)
 function camHeading(a, b, g){
@@ -51,6 +58,7 @@ function onOri(e){
   if (typeof e.webkitCompassHeading === "number") h = e.webkitCompassHeading;
   else if (e.absolute && e.alpha != null) h = camHeading(e.alpha, e.beta, e.gamma);
   if (h == null) return;
+  h = (h + dec + 360) % 360;
   smooth = smooth == null ? h : (smooth + ((((h - smooth) + 540) % 360) - 180)*0.15 + 360) % 360;
   heading = smooth;
 }

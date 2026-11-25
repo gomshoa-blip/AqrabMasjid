@@ -45,6 +45,7 @@ class QiblaActivity : Activity(), SensorEventListener, SurfaceHolder.Callback {
     private var heading = 0f        // where the camera points (degrees from north)
     private var smooth = Float.NaN
     private var wasAligned = false
+    private var declination = 0f    // magnetic north -> true north (about +3° in Riyadh)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +56,8 @@ class QiblaActivity : Activity(), SensorEventListener, SurfaceHolder.Callback {
 
         val (lat, lng) = Prefs.location(this) ?: (24.7136 to 46.6753)
         qibla = bearingToKaaba(lat, lng)
+        // The compass points to magnetic north, the Qibla bearing is from true north
+        declination = android.hardware.GeomagneticField(lat.toFloat(), lng.toFloat(), 0f, System.currentTimeMillis()).declination
 
         val root = FrameLayout(this)
         root.setBackgroundColor(Color.parseColor("#0B100D"))
@@ -131,8 +134,8 @@ class QiblaActivity : Activity(), SensorEventListener, SurfaceHolder.Callback {
         // Phone held upright, camera looking forward
         SensorManager.remapCoordinateSystem(rot, SensorManager.AXIS_X, SensorManager.AXIS_Z, remap)
         SensorManager.getOrientation(remap, ori)
-        var az = Math.toDegrees(ori[0].toDouble()).toFloat()
-        az = (az + 360f) % 360f
+        var az = Math.toDegrees(ori[0].toDouble()).toFloat() + declination
+        az = (az + 720f) % 360f
         // Smooth the reading so the marker does not shake
         smooth = if (smooth.isNaN()) az else {
             val d = ((az - smooth + 540f) % 360f) - 180f

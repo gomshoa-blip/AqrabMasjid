@@ -340,7 +340,7 @@
   <div class="sheet">
     <h2 data-t="formH"></h2>
     <p data-t="formP"></p>
-    <form id='addForm' method='POST' name='add-mosque' novalidate>
+    <form id='addForm' method='POST' name='add-mosque' data-netlify='true' netlify-honeypot='bot-field' novalidate>
       <input type="hidden" name="form-name" value="add-mosque">
       <p hidden><label>Do not fill: <input name="bot-field"></label></p>
       <label for="fName" data-t="fName">اسم المسجد</label>
@@ -591,10 +591,12 @@ function prayerTimes(lat, lng, labelKey){
     if (mt.m === "UmmAlQura" && isRamadan(d)) pt.isha = new Date(pt.maghrib.getTime() + 120*60000);
     return pt;
   };
-  const today = make(now);
+  let today = make(now), todayKey = now.toDateString();
   const plus = (t, k) => new Date(t.getTime() + iqDelay(k)*60000);
   const render = () => {
     const n = new Date();
+    // New day (page left open past midnight): use today's times
+    if (n.toDateString() !== todayKey) { today = make(n); todayKey = n.toDateString(); }
     let key = today.nextPrayer(n), t;
     if (key === "sunrise") key = "dhuhr";
     if (key === "none") { // after Isha -> tomorrow's Fajr

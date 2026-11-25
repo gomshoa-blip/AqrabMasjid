@@ -19,6 +19,14 @@ android {
     // Upload key for Google Play. The values come from GitHub secrets, never from the code.
     val ksFile = System.getenv("ANDROID_KEYSTORE_FILE")
     signingConfigs {
+        // Test APK (GitHub link): one fixed key, so a new version installs over the old one.
+        // This key is only for the test APK, not for Google Play.
+        getByName("debug") {
+            storeFile = file("test-signing.keystore")
+            storePassword = "aqrabtest"
+            keyAlias = "aqrabtest"
+            keyPassword = "aqrabtest"
+        }
         if (ksFile != null && file(ksFile).exists()) {
             create("release") {
                 storeFile = file(ksFile)
