@@ -38,21 +38,34 @@ object Alerts {
         BELL1("prayer_bell1_v1", "جرس واحد", "Single bell", R.raw.tone_bell1),
         CHIME3("prayer_chime3_v1", "ثلاث نغمات صاعدة", "Three rising chimes", R.raw.tone_chime3),
         WOOD("prayer_wood_v1", "نغمة خشبية", "Wooden tones", R.raw.tone_wood),
-        GONG("prayer_gong_v1", "رنين عميق", "Deep gong", R.raw.tone_gong),
         DIGITAL("prayer_digital_v1", "تنبيه رقمي", "Digital beep", R.raw.tone_digital),
         VIBRATE("prayer_vibrate_v1", "اهتزاز فقط", "Vibrate only", null),
-        SILENT("prayer_silent_v1", "صامت (بدون صوت واهتزاز)", "Silent", null);
+        SILENT("prayer_silent_v1", "صامت (بدون صوت واهتزاز)", "Silent", null),
+        // A sound the user picked from the phone. Its channel id changes with each new sound.
+        CUSTOM("", "نغمة من جهازي", "From my phone", null);
         val label: String get() = L.t(ar, en)
     }
 
     fun createChannel(c: Context) {
         val nm = c.getSystemService(NotificationManager::class.java)
         nm.deleteNotificationChannel(OLD_CHANNEL)
+        nm.deleteNotificationChannel("prayer_gong_v1")
         val attrs = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_NOTIFICATION)
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
             .build()
+        // The user's own sound
+        val cu = customUri(c)
+        val cid = sp(c).getString("custom_ch", null)
+        if (cu != null && cid != null) {
+            val ch = NotificationChannel(cid, L.t("تنبيه الصلاة - نغمة من جهازي", "Prayer alerts - my sound"), NotificationManager.IMPORTANCE_HIGH)
+            ch.setSound(cu, attrs)
+            ch.enableVibration(true)
+            ch.vibrationPattern = longArrayOf(0, 250, 150, 250)
+            nm.createNotificationChannel(ch)
+        }
         for (t in Tone.values()) {
+            if (t == Tone.CUSTOM) continue
             val ch = NotificationChannel(t.channel, L.t("تنبيه الصلاة - ${t.ar}", "Prayer alerts - ${t.en}"),
                 if (t == Tone.SILENT) NotificationManager.IMPORTANCE_DEFAULT else NotificationManager.IMPORTANCE_HIGH)
             ch.description = L.t("تنبيه عند الأذان، وبعده بـ 10 دقائق للإقامة", "Alert at adhan, and 10 minutes later for iqama")
@@ -61,6 +74,35 @@ object Alerts {
             if (t != Tone.SILENT) ch.vibrationPattern = longArrayOf(0, 250, 150, 250)
             nm.createNotificationChannel(ch)
         }
+    }
+
+    private fun sp(c: Context) = c.getSharedPreferences("aqrab", Context.MODE_PRIVATE)
+
+    fun customUri(c: Context): Uri? = sp(c).getString("custom_uri", null)?.let { Uri.parse(it) }
+    fun customName(c: Context): String? = sp(c).getString("custom_name", null)
+
+    /** Save a sound the user picked, and make a new channel for it (Android can't change a channel's sound). */
+    fun setCustom(c: Context, uri: Uri, name: String) {
+        val nm = c.getSystemService(NotificationManager::class.java)
+        sp(c).getString("custom_ch", null)?.let { nm.deleteNotificationChannel(it) }
+        sp(c).edit()
+            .putString("custom_uri", uri.toString())
+            .putString("custom_name", name)
+            .putString("custom_ch", "prayer_custom_" + System.currentTimeMillis())
+            .putString("tone", Tone.CUSTOM.name)
+            .apply()
+        createChannel(c)
+    }
+
+    /** Channel to post the alert on, for the sound the user picked. */
+    fun channelFor(c: Context): String {
+        val t = tone(c)
+        if (t == Tone.CUSTOM) {
+            val id = sp(c).getString("custom_ch", null)
+            if (id != null && customUri(c) != null) return id
+            return Tone.SOFT.channel
+        }
+        return t.channel
     }
 
     fun soundUri(c: Context, raw: Int): Uri = Uri.parse("android.resource://${c.packageName}/$raw")
@@ -156,7 +198,7 @@ object Alerts {
             .addAction(R.drawable.ic_stat_mosque, L.t("خذني لأقرب مسجد", "Take me to nearest mosque"), carPending)
             .build()
 
-        val nb = NotificationCompat.Builder(c, tone(c).channel)
+        val nb = NotificationCompat.Builder(c, channelFor(c))
             .setSmallIcon(R.drawable.ic_stat_mosque)
             .setContentTitle(title)
             .setContentText(phoneText ?: text)

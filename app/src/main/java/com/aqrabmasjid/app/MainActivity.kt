@@ -28,6 +28,11 @@ import android.widget.Toast
 
 class MainActivity : Activity() {
 
+    companion object {
+        private const val REQ_RINGTONE = 51
+        private const val REQ_AUDIO = 52
+    }
+
     private val handler = Handler(Looper.getMainLooper())
     private val tick = object : Runnable {
         override fun run() {
@@ -374,40 +379,149 @@ class MainActivity : Activity() {
     }
 
     private fun showTone() {
-        findViewById<TextView>(R.id.btnTone).text =
-            L.t("🔔 نغمة التنبيه: ", "🔔 Alert sound: ") + Alerts.tone(this).label + "  ›"
+        val t = Alerts.tone(this)
+        val name = if (t == Alerts.Tone.CUSTOM) (Alerts.customName(this) ?: t.label) else t.label
+        findViewById<TextView>(R.id.btnTone).text = L.t("🔔 نغمة التنبيه: ", "🔔 Alert sound: ") + name + "  ›"
     }
 
-    /** Pick the alert sound. Tapping a choice plays it once. */
+    private var playing: android.media.Ringtone? = null
+
+    private fun playSound(uri: Uri?) {
+        try { playing?.stop() } catch (_: Exception) {}
+        playing = null
+        if (uri == null) return
+        try {
+            playing = android.media.RingtoneManager.getRingtone(this, uri)
+            playing?.play()
+        } catch (_: Exception) {}
+    }
+
+    /** Pick the alert sound. Tapping a choice plays it once. The last choice opens the phone's own sounds. */
     private fun toneDialog() {
-        val tones = Alerts.Tone.values()
-        var pick = tones.indexOf(Alerts.tone(this))
-        var playing: android.media.Ringtone? = null
-        fun play(t: Alerts.Tone) {
-            playing?.stop()
-            playing = null
-            if (t.raw != null) {
-                playing = android.media.RingtoneManager.getRingtone(this, Alerts.soundUri(this, t.raw))
-                playing?.play()
-            } else if (t == Alerts.Tone.VIBRATE) {
-                try {
-                    val v = getSystemService(android.os.Vibrator::class.java)
-                    v.vibrate(android.os.VibrationEffect.createWaveform(longArrayOf(0, 250, 150, 250), -1))
-                } catch (_: Exception) {}
-            }
-        }
-        AlertDialog.Builder(this)
+        val tones = Alerts.Tone.values().filter { it != Alerts.Tone.CUSTOM }
+        val customName = Alerts.customName(this)
+        val labels = tones.map { it.label } +
+            (if (customName != null) L.t("📁 من جهازي: $customName", "📁 My phone: $customName") else L.t("📁 نغمة من جهازي…", "📁 Sound from my phone…"))
+        val cur = Alerts.tone(this)
+        var pick = if (cur == Alerts.Tone.CUSTOM) tones.size else tones.indexOf(cur)
+        lateinit var dlg: AlertDialog
+        dlg = AlertDialog.Builder(this)
             .setTitle(L.t("نغمة التنبيه", "Alert sound"))
-            .setSingleChoiceItems(tones.map { it.label }.toTypedArray(), pick) { _, i -> pick = i; play(tones[i]) }
+            .setSingleChoiceItems(labels.toTypedArray(), pick) { _, i ->
+                pick = i
+                if (i == tones.size) {
+                    // Own sound: play it if there is one, else open the phone's sounds
+                    if (customName != null) playSound(Alerts.customUri(this))
+                    else { dlg.dismiss(); pickPhoneSound() }
+                    return@setSingleChoiceItems
+                }
+                val t = tones[i]
+                if (t.raw != null) playSound(Alerts.soundUri(this, t.raw))
+                else {
+                    playSound(null)
+                    if (t == Alerts.Tone.VIBRATE) try {
+                        getSystemService(android.os.Vibrator::class.java)
+                            .vibrate(android.os.VibrationEffect.createWaveform(longArrayOf(0, 250, 150, 250), -1))
+                    } catch (_: Exception) {}
+                }
+            }
             .setPositiveButton(L.t("حفظ", "Save")) { _, _ ->
-                playing?.stop()
-                Alerts.setTone(this, tones[pick])
+                playSound(null)
+                if (pick == tones.size) Alerts.setTone(this, Alerts.Tone.CUSTOM) else Alerts.setTone(this, tones[pick])
                 showTone()
             }
-            .setNegativeButton(L.t("إلغاء", "Cancel")) { _, _ -> playing?.stop() }
-            .setOnDismissListener { playing?.stop() }
+            .setNeutralButton(L.t("تغيير نغمتي", "Change my sound")) { _, _ -> playSound(null); pickPhoneSound() }
+            .setNegativeButton(L.t("إلغاء", "Cancel")) { _, _ -> playSound(null) }
+            .setOnDismissListener { playSound(null) }
+            .create()
+        dlg.show()
+    }
+
+    /** Choose: one of the phone's sounds, or an audio file (Android 10+). */
+    private fun pickPhoneSound() {
+        val items = mutableListOf(L.t("🔔 نغمات الجوال", "🔔 Phone sounds"))
+        if (Build.VERSION.SDK_INT >= 29) items += L.t("🎵 ملف صوتي (مثل أذان أو تلاوة)", "🎵 Audio file (like an adhan)")
+        AlertDialog.Builder(this)
+            .setTitle(L.t("نغمة من جهازي", "Sound from my phone"))
+            .setItems(items.toTypedArray()) { _, i ->
+                if (i == 0) {
+                    val intent = Intent(android.media.RingtoneManager.ACTION_RINGTONE_PICKER)
+                        .putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_TYPE,
+                            android.media.RingtoneManager.TYPE_NOTIFICATION or android.media.RingtoneManager.TYPE_RINGTONE or android.media.RingtoneManager.TYPE_ALARM)
+                        .putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
+                        .putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, false)
+                        .putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_TITLE, L.t("اختر النغمة", "Pick a sound"))
+                        .putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Alerts.customUri(this))
+                    try { startActivityForResult(intent, REQ_RINGTONE) } catch (_: Exception) { toast(L.t("الجوال لا يدعم هذا", "Not supported on this phone")) }
+                } else {
+                    val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType("audio/*")
+                    try { startActivityForResult(intent, REQ_AUDIO) } catch (_: Exception) { toast(L.t("الجوال لا يدعم هذا", "Not supported on this phone")) }
+                }
+            }
+            .setNegativeButton(L.t("إلغاء", "Cancel"), null)
             .show()
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode != RESULT_OK || data == null) return
+        if (requestCode == REQ_RINGTONE) {
+            @Suppress("DEPRECATION")
+            val uri = data.getParcelableExtra<Uri>(android.media.RingtoneManager.EXTRA_RINGTONE_PICKED_URI) ?: return
+            val name = try { android.media.RingtoneManager.getRingtone(this, uri).getTitle(this) } catch (_: Exception) { null }
+            saveCustom(uri, name ?: L.t("نغمة الجوال", "Phone sound"))
+        } else if (requestCode == REQ_AUDIO) {
+            val src = data.data ?: return
+            toast(L.t("جاري حفظ النغمة…", "Saving the sound…"))
+            Thread {
+                val res = copyToNotifications(src)
+                runOnUiThread {
+                    if (res == null) toast(L.t("ما قدرنا نستخدم هذا الملف", "Could not use this file"))
+                    else saveCustom(res.first, res.second)
+                }
+            }.start()
+        }
+    }
+
+    private fun saveCustom(uri: Uri, name: String) {
+        Alerts.setCustom(this, uri, name)
+        showTone()
+        playSound(uri)
+        toast(L.t("تم: $name", "Saved: $name"))
+    }
+
+    /**
+     * The alert is played by the system, which can't read files picked from other apps.
+     * So we copy the audio into the phone's "Notifications" sounds folder and use that copy.
+     */
+    private fun copyToNotifications(src: Uri): Pair<Uri, String>? {
+        if (Build.VERSION.SDK_INT < 29) return null
+        return try {
+            var name = "Aqrab Masjid sound"
+            contentResolver.query(src, arrayOf(android.provider.OpenableColumns.DISPLAY_NAME), null, null, null)?.use {
+                if (it.moveToFirst()) name = it.getString(0) ?: name
+            }
+            val mime = contentResolver.getType(src) ?: "audio/mpeg"
+            val values = android.content.ContentValues().apply {
+                put(android.provider.MediaStore.Audio.Media.DISPLAY_NAME, "aqrab_" + name)
+                put(android.provider.MediaStore.Audio.Media.MIME_TYPE, mime)
+                put(android.provider.MediaStore.Audio.Media.RELATIVE_PATH, "Notifications/AqrabMasjid")
+                put(android.provider.MediaStore.Audio.Media.IS_NOTIFICATION, 1)
+                put(android.provider.MediaStore.Audio.Media.IS_PENDING, 1)
+            }
+            val col = android.provider.MediaStore.Audio.Media.getContentUri(android.provider.MediaStore.VOLUME_EXTERNAL_PRIMARY)
+            val dst = contentResolver.insert(col, values) ?: return null
+            contentResolver.openInputStream(src).use { inp ->
+                contentResolver.openOutputStream(dst).use { out -> if (inp == null || out == null) return null; inp.copyTo(out) }
+            }
+            values.clear()
+            values.put(android.provider.MediaStore.Audio.Media.IS_PENDING, 0)
+            contentResolver.update(dst, values, null, null)
+            dst to name.substringBeforeLast('.')
+        } catch (_: Exception) { null }
+    }
+
+    private fun toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
 
     private fun share() {
         val i = Intent(Intent.ACTION_SEND)
