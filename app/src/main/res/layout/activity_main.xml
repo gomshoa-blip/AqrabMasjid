@@ -329,6 +329,7 @@
         <!-- Ayah for the next prayer -->
         <TextView
             android:id="@+id/btnTasbih"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
@@ -338,75 +339,87 @@
             android:textSize="21sp"
             android:textStyle="bold" />
 
-            <!-- Radio: shown only while the radio is on (playing or paused) -->
+            <!-- Radio on the main screen: Makkah, Madinah, Stop -->
             <LinearLayout
                 android:id="@+id/radioBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/bg_surface"
+                android:layout_marginTop="14dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="8dp"
-                android:paddingEnd="6dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:visibility="gone">
+                android:orientation="horizontal">
 
-                <!-- Play / pause -->
                 <FrameLayout
-                    android:id="@+id/radioToggle"
                     android:layout_width="52dp"
                     android:layout_height="52dp"
-                    android:background="@drawable/bg_circle_gold"
+                    android:background="@drawable/bg_icon_tile">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_radio"
+                        android:tint="@color/icon" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/radioMakkah"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_pill_off"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="مكة"
+                    android:textColor="@color/text_primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/radioMadinah"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_pill_off"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="المدينة"
+                    android:textColor="@color/text_primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <FrameLayout
+                    android:id="@+id/radioStop"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_pill_off"
                     android:clickable="true"
                     android:focusable="true">
 
                     <ImageView
-                        android:id="@+id/radioToggleIcon"
-                        android:layout_width="26dp"
-                        android:layout_height="26dp"
+                        android:id="@+id/radioStopIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:layout_gravity="center"
-                        android:src="@drawable/ic_pause"
-                        android:tint="#0A4A37" />
+                        android:src="@drawable/ic_stop"
+                        android:tint="@color/text_primary" />
                 </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="12dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/radioName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:maxLines="2"
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/radioStatus"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/text_hint"
-                        android:textSize="13sp" />
-                </LinearLayout>
-
-                <!-- Close the radio -->
-                <ImageView
-                    android:id="@+id/radioClose"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:padding="10dp"
-                    android:src="@drawable/ic_close"
-                    android:tint="@color/text_hint" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/radioStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:textColor="@color/text_hint"
+                android:textSize="13sp"
+                android:visibility="gone" />
 
         <!-- Mode switch: driving (car only) or home (full app) + language -->
         <LinearLayout

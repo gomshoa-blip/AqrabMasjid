@@ -135,8 +135,10 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.tileAdd).setOnClickListener { addMosqueDialog() }
         findViewById<View>(R.id.btnPrivacy).setOnClickListener { openUrl(Config.PRIVACY_URL) }
         findViewById<View>(R.id.tileRadio).setOnClickListener { radioDialog() }
-        findViewById<View>(R.id.radioToggle).setOnClickListener { RadioService.toggle(this); showRadioBar() }
-        findViewById<View>(R.id.radioClose).setOnClickListener { RadioService.stop(this); showRadioBar() }
+        // Radio on the main screen: Makkah = Holy Quran Radio, Madinah = Sunnah radio
+        findViewById<View>(R.id.radioMakkah).setOnClickListener { radioTap("quran") }
+        findViewById<View>(R.id.radioMadinah).setOnClickListener { radioTap("sunnah") }
+        findViewById<View>(R.id.radioStop).setOnClickListener { RadioService.stop(this); showRadioBar() }
         findViewById<View>(R.id.btnAbout).setOnClickListener { openUrl(Config.ABOUT_URL) }
         findViewById<View>(R.id.tileNear).setOnClickListener { startActivity(Intent(this, MosquesActivity::class.java)) }
         findViewById<View>(R.id.btnTarteel).setOnClickListener { openStore(Config.TARTEEL_PKG, null) }
@@ -542,21 +544,35 @@ class MainActivity : Activity() {
     private fun toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
 
     /** Radio bar on the main screen: only while the radio is on. */
+    /** Tap a station: play it, or pause/play again if it is the one already on. */
+    private fun radioTap(id: String) {
+        if (RadioService.current == id) RadioService.toggle(this) else RadioService.play(this, id)
+        showRadioBar()
+    }
+
     private fun showRadioBar() {
-        val bar = findViewById<View>(R.id.radioBar) ?: return
-        val st = RadioService.station(RadioService.current)
-        if (st == null) { bar.visibility = View.GONE; return }
-        bar.visibility = View.VISIBLE
-        findViewById<TextView>(R.id.radioName).text = "📻 " + st.label
-        findViewById<TextView>(R.id.radioStatus).text = when (RadioService.status) {
+        val cur = RadioService.current
+        val on = cur != null
+        fun pill(viewId: Int, id: String) {
+            val v = findViewById<TextView>(viewId) ?: return
+            val active = cur == id
+            v.setBackgroundResource(if (active) R.drawable.bg_pill_on else R.drawable.bg_pill_off)
+            v.setTextColor(if (active) android.graphics.Color.parseColor("#0A4A37") else getColor(R.color.text_primary))
+        }
+        pill(R.id.radioMakkah, "quran")
+        pill(R.id.radioMadinah, "sunnah")
+        findViewById<View>(R.id.radioStop)?.alpha = if (on) 1f else 0.4f
+        val status = findViewById<TextView>(R.id.radioStatus) ?: return
+        val st = RadioService.station(cur)
+        if (st == null) { status.visibility = View.GONE; return }
+        status.visibility = View.VISIBLE
+        status.text = "📻 " + st.label + " · " + when (RadioService.status) {
             RadioService.Status.LOADING -> L.t("جاري التشغيل…", "Starting…")
             RadioService.Status.PLAYING -> L.t("يعمل الآن", "Playing now")
             RadioService.Status.PAUSED -> L.t("متوقف مؤقتًا", "Paused")
             RadioService.Status.ERROR -> L.t("تعذر التشغيل. تأكد من الإنترنت", "Could not play. Check the internet")
             RadioService.Status.OFF -> ""
         }
-        findViewById<android.widget.ImageView>(R.id.radioToggleIcon)
-            .setImageResource(if (RadioService.paused) R.drawable.ic_play else R.drawable.ic_pause)
     }
 
     /** Live Quran radio: pick a station; it keeps playing with the screen off. */
@@ -656,6 +672,8 @@ class MainActivity : Activity() {
         b(R.id.btnPrivacy, "سياسة الخصوصية", "Privacy policy")
         b(R.id.btnAbout, "عن أقرب مسجد", "About Aqrab Masjid")
         b(R.id.tileRadioText, "إذاعة", "Radio")
+        b(R.id.radioMakkah, "مكة", "Makkah")
+        b(R.id.radioMadinah, "المدينة", "Madinah")
         b(R.id.tileQuranText, "القرآن", "Quran")
         b(R.id.tileAdhkarText, "الأذكار", "Adhkar")
         b(R.id.tileQiratText, "قيراط", "Qirat")

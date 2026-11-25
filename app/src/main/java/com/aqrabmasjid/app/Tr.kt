@@ -8,6 +8,8 @@ package com.aqrabmasjid.app
 object Tr {
     /** Index in each array: 0 = Urdu, 1 = Indonesian, 2 = Bengali, 3 = Turkish. */
     val MAP: Map<String, Array<String>> = mapOf(
+        "Makkah" to arrayOf("مکہ", "Makkah", "মক্কা", "Mekke"),
+        "Madinah" to arrayOf("مدینہ", "Madinah", "মদিনা", "Medine"),
         "Play" to arrayOf("چلائیں", "Putar", "চালান", "Çal"),
         "Pause" to arrayOf("روکیں", "Jeda", "বিরতি", "Duraklat"),
         "▶ Play" to arrayOf("▶ چلائیں", "▶ Putar", "▶ চালান", "▶ Çal"),
