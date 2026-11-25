@@ -206,7 +206,7 @@ class MainActivity : Activity() {
         reminderBtn.text = PrayerReminders.ayah(st.time.prayer)
         // قيراط: Riyadh only
         val riyadh = lat in 24.3..25.2 && lng in 46.2..47.3
-        findViewById<View>(R.id.tileQirat).visibility = if (riyadh) View.VISIBLE else View.GONE
+        findViewById<View>(R.id.rowQirat).visibility = if (riyadh) View.VISIBLE else View.GONE
         tvMethod.text = L.t("طريقة الحساب: ${day.methodName}", "Method: ${day.methodName}")
 
         layoutTimes.removeAllViews()
@@ -482,7 +482,9 @@ class MainActivity : Activity() {
         b(R.id.btnLang, "English", "العربية")
         b(R.id.btnGoText, "أقرب مسجد", "Nearest mosque")
         b(R.id.btnJamiText, "أقرب جامع", "Nearest Jami")
-        b(R.id.tvServices, "الخدمات", "Services")
+        b(R.id.tvServices, "القرآن والذكر", "Quran & Dhikr")
+        b(R.id.tvGrpMosques, "المساجد", "Mosques")
+        b(R.id.tvGrpContact, "تواصل", "Contact")
         b(R.id.tileQuranText, "القرآن", "Quran")
         b(R.id.tileAdhkarText, "الأذكار", "Adhkar")
         b(R.id.tileQiratText, "قيراط", "Qirat")

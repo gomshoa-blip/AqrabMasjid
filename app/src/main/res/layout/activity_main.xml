@@ -419,11 +419,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginStart="4dp"
-            android:text="الخدمات"
+            android:text="القرآن والذكر"
             android:textColor="@color/text_hint"
-            android:textSize="13sp"
+            android:textSize="14sp"
             android:textStyle="bold" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -438,10 +437,13 @@
                 android:background="@drawable/bg_tile"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:paddingTop="14dp"
-                android:paddingBottom="12dp">
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:minHeight="64dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
 
                 <FrameLayout
                     android:layout_width="40dp"
@@ -458,12 +460,14 @@
 
                 <TextView
                     android:id="@+id/tileQuranText"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="7dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
                     android:text="القرآن"
+                    android:maxLines="2"
                     android:textColor="@color/text_primary"
-                    android:textSize="13sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
             </LinearLayout>
             <LinearLayout
@@ -475,10 +479,13 @@
                 android:background="@drawable/bg_tile"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:paddingTop="14dp"
-                android:paddingBottom="12dp">
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:minHeight="64dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
 
                 <FrameLayout
                     android:layout_width="40dp"
@@ -495,49 +502,14 @@
 
                 <TextView
                     android:id="@+id/tileAdhkarText"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="7dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
                     android:text="الأذكار"
+                    android:maxLines="2"
                     android:textColor="@color/text_primary"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/tileQirat"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="10dp"
-                android:background="@drawable/bg_tile"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:paddingTop="14dp"
-                android:paddingBottom="12dp">
-
-                <FrameLayout
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/bg_icon_tile">
-
-                    <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_hands"
-                        android:tint="@color/icon" />
-                </FrameLayout>
-
-                <TextView
-                    android:id="@+id/tileQiratText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="7dp"
-                    android:text="قيراط"
-                    android:textColor="@color/text_primary"
-                    android:textSize="13sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
@@ -555,10 +527,13 @@
                 android:background="@drawable/bg_tile"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:paddingTop="14dp"
-                android:paddingBottom="12dp">
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:minHeight="64dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
 
                 <FrameLayout
                     android:layout_width="40dp"
@@ -575,12 +550,14 @@
 
                 <TextView
                     android:id="@+id/btnTarteelText"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="7dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
                     android:text="ترتيل"
+                    android:maxLines="2"
                     android:textColor="@color/text_primary"
-                    android:textSize="13sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
             </LinearLayout>
             <LinearLayout
@@ -592,10 +569,13 @@
                 android:background="@drawable/bg_tile"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:paddingTop="14dp"
-                android:paddingBottom="12dp">
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:minHeight="64dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
 
                 <FrameLayout
                     android:layout_width="40dp"
@@ -612,33 +592,48 @@
 
                 <TextView
                     android:id="@+id/btnWahyText"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="7dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
                     android:text="وحي"
+                    android:maxLines="2"
                     android:textColor="@color/text_primary"
-                    android:textSize="13sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
+        <TextView
+            android:id="@+id/tvGrpMosques"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="4dp"
+            android:text="المساجد"
+            android:textColor="@color/text_hint"
+            android:textSize="14sp"
+            android:textStyle="bold" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
             android:baselineAligned="false"
             android:orientation="horizontal">
             <LinearLayout
                 android:id="@+id/tileNear"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:background="@drawable/bg_tile"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:paddingTop="14dp"
-                android:paddingBottom="12dp">
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:minHeight="64dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
 
                 <FrameLayout
                     android:layout_width="40dp"
@@ -655,101 +650,32 @@
 
                 <TextView
                     android:id="@+id/tileNearText"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="7dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
                     android:text="مساجد قريبة"
+                    android:maxLines="2"
                     android:textColor="@color/text_primary"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/tileContact"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="10dp"
-                android:background="@drawable/bg_tile"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:paddingTop="14dp"
-                android:paddingBottom="12dp">
-
-                <FrameLayout
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/bg_icon_tile">
-
-                    <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_chat"
-                        android:tint="@color/icon" />
-                </FrameLayout>
-
-                <TextView
-                    android:id="@+id/tileContactText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="7dp"
-                    android:text="تواصل معنا"
-                    android:textColor="@color/text_primary"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/tileShare"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="10dp"
-                android:background="@drawable/bg_tile"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:paddingTop="14dp"
-                android:paddingBottom="12dp">
-
-                <FrameLayout
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/bg_icon_tile">
-
-                    <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_share"
-                        android:tint="@color/icon" />
-                </FrameLayout>
-
-                <TextView
-                    android:id="@+id/tileShareText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="7dp"
-                    android:text="شارك"
-                    android:textColor="@color/text_primary"
-                    android:textSize="13sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/tileAdd"
                 android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="10dp"
-                android:layout_height="wrap_content"
                 android:background="@drawable/bg_tile"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:paddingTop="14dp"
-                android:paddingBottom="12dp">
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:minHeight="64dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
 
                 <FrameLayout
                     android:layout_width="40dp"
@@ -766,12 +692,168 @@
 
                 <TextView
                     android:id="@+id/tileAddText"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="7dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
                     android:text="أضف مسجد"
+                    android:maxLines="2"
                     android:textColor="@color/text_primary"
-                    android:textSize="13sp"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/rowQirat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:id="@+id/tileQirat"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_tile"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:minHeight="64dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <FrameLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_icon_tile">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_hands"
+                        android:tint="@color/icon" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tileQiratText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:text="قيراط"
+                    android:maxLines="2"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp" />
+        </LinearLayout>
+        <TextView
+            android:id="@+id/tvGrpContact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="4dp"
+            android:text="تواصل"
+            android:textColor="@color/text_hint"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:id="@+id/tileContact"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_tile"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:minHeight="64dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <FrameLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_icon_tile">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_chat"
+                        android:tint="@color/icon" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tileContactText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:text="تواصل معنا"
+                    android:maxLines="2"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/tileShare"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/bg_tile"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:minHeight="64dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <FrameLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_icon_tile">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_share"
+                        android:tint="@color/icon" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tileShareText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:text="شارك"
+                    android:maxLines="2"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
