@@ -31,10 +31,11 @@ class MosquesActivity : Activity() {
         super.onCreate(savedInstanceState)
         CrashLog.install(this)
         L.init(this)
+        if (L.systemFont) setTheme(R.style.AppTheme_SystemFont)
 
         val scroll = ScrollView(this)
         scroll.setBackgroundColor(getColor(R.color.bg))
-        scroll.layoutDirection = if (L.en) View.LAYOUT_DIRECTION_LTR else View.LAYOUT_DIRECTION_RTL
+        scroll.layoutDirection = if (L.rtl) View.LAYOUT_DIRECTION_RTL else View.LAYOUT_DIRECTION_LTR
 
         val root = LinearLayout(this)
         root.orientation = LinearLayout.VERTICAL

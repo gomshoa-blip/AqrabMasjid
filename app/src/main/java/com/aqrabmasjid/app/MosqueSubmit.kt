@@ -30,7 +30,7 @@ object MosqueSubmit {
             "location_link" to "https://maps.google.com/?q=$la,$lo",
             "country" to (Prefs.country(c) ?: ""),
             "source" to "app",
-            "page_lang" to if (L.en) "en" else "ar"
+            "page_lang" to L.lang
         )
         val body = fields.entries.joinToString("&") {
             URLEncoder.encode(it.key, "UTF-8") + "=" + URLEncoder.encode(it.value, "UTF-8")

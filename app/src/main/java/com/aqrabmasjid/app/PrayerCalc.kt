@@ -64,7 +64,7 @@ object PrayerCalc {
     fun hijriText(millis: Long): String {
         val f = android.icu.text.DateFormat.getDateInstance(
             android.icu.text.DateFormat.LONG,
-            ULocale(if (L.en) "en@calendar=islamic-umalqura" else "ar_SA@calendar=islamic-umalqura")
+            ULocale(L.icu + "@calendar=islamic-umalqura")
         )
         return f.format(Date(millis))
     }

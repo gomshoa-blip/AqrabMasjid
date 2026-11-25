@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Aqrab Masjid</string>
+    <string name="widget_next_name">পরবর্তী নামাজ</string>
+    <string name="widget_day_name">আজকের নামাজের সময়</string>
+    <string name="widget_next_desc">পরবর্তী নামাজ, বাকি সময় এবং নিকটতম মসজিদ বোতাম</string>
+    <string name="widget_day_desc">আজকের পাঁচ ওয়াক্ত নামাজ, পরবর্তীটি চিহ্নিত</string>
+    <string name="w_label">পরবর্তী নামাজ</string>
+    <string name="w_name">আসর</string>
+    <string name="w_times">আজান ৩:১৫ · ইকামত ৩:৩৫</string>
+    <string name="w_left">বাকি</string>
+    <string name="w_go">🕌 নিকটতম মসজিদ</string>
+</resources>

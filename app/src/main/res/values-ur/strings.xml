@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">اقرب مسجد</string>
+    <string name="widget_next_name">اگلی نماز</string>
+    <string name="widget_day_name">آج کے اوقاتِ نماز</string>
+    <string name="widget_next_desc">اگلی نماز، باقی وقت، اور قریب ترین مسجد کا بٹن</string>
+    <string name="widget_day_desc">آج کی پانچ نمازیں، اگلی نماز نمایاں</string>
+    <string name="w_label">اگلی نماز</string>
+    <string name="w_name">عصر</string>
+    <string name="w_times">اذان 3:15 · اقامت 3:35</string>
+    <string name="w_left">باقی</string>
+    <string name="w_go">🕌 قریب ترین مسجد</string>
+</resources>

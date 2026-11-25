@@ -15,4 +15,8 @@
         <!-- Dark icons (time, battery) on the light top bar -->
         <item name="android:windowLightStatusBar">true</item>
     </style>
+    <!-- Urdu and Bengali: the phone's own font (our Arabic font has no Urdu/Bengali letters) -->
+    <style name="AppTheme.SystemFont">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
 </resources>

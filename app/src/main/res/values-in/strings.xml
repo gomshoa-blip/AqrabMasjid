@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Aqrab Masjid</string>
+    <string name="widget_next_name">Sholat berikutnya</string>
+    <string name="widget_day_name">Jadwal sholat hari ini</string>
+    <string name="widget_next_desc">Sholat berikutnya, sisa waktu, dan tombol masjid terdekat</string>
+    <string name="widget_day_desc">Lima waktu sholat hari ini, yang berikutnya disorot</string>
+    <string name="w_label">Sholat berikutnya</string>
+    <string name="w_name">Ashar</string>
+    <string name="w_times">Azan 15:15 · Iqamah 15:35</string>
+    <string name="w_left">sisa</string>
+    <string name="w_go">🕌 Masjid terdekat</string>
+</resources>

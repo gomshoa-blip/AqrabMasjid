@@ -69,6 +69,8 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         CrashLog.install(this)
         L.init(this)
+        // Urdu and Bengali letters are not in the Arabic font: use the phone's font
+        if (L.systemFont) setTheme(R.style.AppTheme_SystemFont)
         setContentView(R.layout.activity_main)
         applyLanguage()
         matchSystemBars()
@@ -93,10 +95,21 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.hero).clipToOutline = true
 
         findViewById<View>(R.id.btnLang).setOnClickListener {
-            L.setEnglish(this, !L.en)
-            Alerts.createChannel(this)
-            PrayerWidgets.updateAll(this)
-            recreate()
+            // Pick the app language
+            val names = L.LANGS.map { it.second }.toTypedArray()
+            val cur = L.LANGS.indexOfFirst { it.first == L.lang }
+            AlertDialog.Builder(this)
+                .setTitle("🌐 " + L.t("اللغة", "Language"))
+                .setSingleChoiceItems(names, cur) { d, i ->
+                    d.dismiss()
+                    if (i != cur) {
+                        L.setLang(this, L.LANGS[i].first)
+                        Alerts.createChannel(this)
+                        PrayerWidgets.updateAll(this)
+                        recreate()
+                    }
+                }
+                .show()
         }
         // Mode: driving shows only the car part; home shows the full app
         findViewById<View>(R.id.btnMode).setOnClickListener {
@@ -592,9 +605,9 @@ class MainActivity : Activity() {
     /** Set screen direction and all fixed texts in the chosen language. */
     private fun applyLanguage() {
         findViewById<View>(R.id.rootFrame).layoutDirection =
-            if (L.en) View.LAYOUT_DIRECTION_LTR else View.LAYOUT_DIRECTION_RTL
+            if (L.rtl) View.LAYOUT_DIRECTION_RTL else View.LAYOUT_DIRECTION_LTR
         fun b(id: Int, ar: String, en: String) { findViewById<TextView>(id).text = L.t(ar, en) }
-        b(R.id.btnLang, "English", "العربية")
+        findViewById<TextView>(R.id.btnLang).text = "🌐 " + (if (L.lang == "id") "Indonesia" else L.name())
         b(R.id.btnGoText, "أقرب مسجد", "Nearest mosque")
         b(R.id.btnJamiText, "أقرب جامع", "Nearest Jami")
         b(R.id.tvServices, "القرآن والذكر", "Quran & Dhikr")
