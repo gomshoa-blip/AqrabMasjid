@@ -45,6 +45,7 @@ class MainActivity : Activity() {
     private val ringTick = object : Runnable {
         override fun run() {
             Prefs.location(this@MainActivity)?.let { (lat, lng) -> fillHero(lat, lng, System.currentTimeMillis()) }
+            showRadioBar()
             handler.postDelayed(this, 1_000)
         }
     }
@@ -134,6 +135,8 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.tileAdd).setOnClickListener { addMosqueDialog() }
         findViewById<View>(R.id.btnPrivacy).setOnClickListener { openUrl(Config.PRIVACY_URL) }
         findViewById<View>(R.id.tileRadio).setOnClickListener { radioDialog() }
+        findViewById<View>(R.id.radioToggle).setOnClickListener { RadioService.toggle(this); handler.postDelayed({ showRadioBar() }, 300) }
+        findViewById<View>(R.id.radioClose).setOnClickListener { RadioService.stop(this); handler.postDelayed({ showRadioBar() }, 300) }
         findViewById<View>(R.id.btnAbout).setOnClickListener { openUrl(Config.ABOUT_URL) }
         findViewById<View>(R.id.tileNear).setOnClickListener { startActivity(Intent(this, MosquesActivity::class.java)) }
         findViewById<View>(R.id.btnTarteel).setOnClickListener { openStore(Config.TARTEEL_PKG, null) }
@@ -537,6 +540,16 @@ class MainActivity : Activity() {
     }
 
     private fun toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+
+    /** Radio bar on the main screen: only while the radio is on. */
+    private fun showRadioBar() {
+        val bar = findViewById<View>(R.id.radioBar) ?: return
+        val st = RadioService.station(RadioService.current)
+        if (st == null) { bar.visibility = View.GONE; return }
+        bar.visibility = View.VISIBLE
+        findViewById<TextView>(R.id.radioToggle).text =
+            (if (RadioService.paused) "▶ " + L.t("تشغيل", "Play") else "⏸ " + L.t("إيقاف", "Pause")) + "  ·  📻 " + st.label
+    }
 
     /** Live Quran radio: pick a station; it keeps playing with the screen off. */
     private fun radioDialog() {

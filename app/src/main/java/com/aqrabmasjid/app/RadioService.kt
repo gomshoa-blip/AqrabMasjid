@@ -29,6 +29,7 @@ class RadioService : Service() {
         private const val NOTIF_ID = 500
         const val ACTION_PLAY = "com.aqrabmasjid.app.RADIO_PLAY"
         const val ACTION_STOP = "com.aqrabmasjid.app.RADIO_STOP"
+        const val ACTION_TOGGLE = "com.aqrabmasjid.app.RADIO_TOGGLE"
 
         val STATIONS = listOf(
             Station("quran", "إذاعة القرآن الكريم – السعودية", "Holy Quran Radio – Saudi Arabia", "https://stream.radiojar.com/0tpy1h0kxtzuv"),
@@ -39,6 +40,20 @@ class RadioService : Service() {
         /** Station playing now (null = stopped). */
         @Volatile var playing: String? = null
             private set
+
+        /** Station chosen (playing or paused); null when the radio is closed. */
+        @Volatile var current: String? = null
+            private set
+
+        @Volatile var paused = false
+            private set
+
+        fun station(id: String?): Station? = STATIONS.firstOrNull { it.id == id }
+
+        /** Pause or play again (live: playing again starts from now). */
+        fun toggle(c: Context) {
+            c.startService(Intent(c, RadioService::class.java).setAction(ACTION_TOGGLE))
+        }
 
         fun play(c: Context, id: String) {
             val i = Intent(c, RadioService::class.java).setAction(ACTION_PLAY).putExtra("id", id)
@@ -58,8 +73,23 @@ class RadioService : Service() {
         L.init(this)
         when (intent?.action) {
             ACTION_STOP -> { stopAll(); return START_NOT_STICKY }
+            ACTION_TOGGLE -> {
+                val st = station(current) ?: run { stopAll(); return START_NOT_STICKY }
+                if (paused) {
+                    paused = false
+                    notify(st, L.t("جاري التشغيل…", "Starting…"))
+                    startPlayer(st)
+                } else {
+                    releasePlayer()
+                    paused = true
+                    playing = null
+                    notify(st, L.t("متوقف مؤقتًا", "Paused"))
+                }
+            }
             ACTION_PLAY -> {
                 val st = STATIONS.firstOrNull { it.id == intent.getStringExtra("id") } ?: STATIONS[0]
+                current = st.id
+                paused = false
                 startForegroundNow(st, L.t("جاري التشغيل…", "Starting…"))
                 startPlayer(st)
             }
@@ -108,6 +138,10 @@ class RadioService : Service() {
             this, 501, Intent(this, RadioService::class.java).setAction(ACTION_STOP),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+        val togglePi = PendingIntent.getService(
+            this, 503, Intent(this, RadioService::class.java).setAction(ACTION_TOGGLE),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
         val openPi = PendingIntent.getActivity(
             this, 502, Intent(this, MainActivity::class.java),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
@@ -119,7 +153,8 @@ class RadioService : Service() {
             .setContentIntent(openPi)
             .setOngoing(true)
             .setSilent(true)
-            .addAction(R.drawable.ic_stat_mosque, L.t("⏹ إيقاف", "⏹ Stop"), stopPi)
+            .addAction(R.drawable.ic_stat_mosque, if (paused) L.t("▶ تشغيل", "▶ Play") else L.t("⏸ إيقاف مؤقت", "⏸ Pause"), togglePi)
+            .addAction(R.drawable.ic_stat_mosque, L.t("✕ إغلاق", "✕ Close"), stopPi)
             .build()
     }
 
@@ -142,6 +177,8 @@ class RadioService : Service() {
     private fun stopAll() {
         releasePlayer()
         playing = null
+        current = null
+        paused = false
         if (Build.VERSION.SDK_INT >= 24) stopForeground(STOP_FOREGROUND_REMOVE) else @Suppress("DEPRECATION") stopForeground(true)
         stopSelf()
     }
@@ -149,6 +186,8 @@ class RadioService : Service() {
     override fun onDestroy() {
         releasePlayer()
         playing = null
+        current = null
+        paused = false
         super.onDestroy()
     }
 }

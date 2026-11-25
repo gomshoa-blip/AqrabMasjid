@@ -8,6 +8,12 @@ package com.aqrabmasjid.app
 object Tr {
     /** Index in each array: 0 = Urdu, 1 = Indonesian, 2 = Bengali, 3 = Turkish. */
     val MAP: Map<String, Array<String>> = mapOf(
+        "Play" to arrayOf("چلائیں", "Putar", "চালান", "Çal"),
+        "Pause" to arrayOf("روکیں", "Jeda", "বিরতি", "Duraklat"),
+        "▶ Play" to arrayOf("▶ چلائیں", "▶ Putar", "▶ চালান", "▶ Çal"),
+        "⏸ Pause" to arrayOf("⏸ روکیں", "⏸ Jeda", "⏸ বিরতি", "⏸ Duraklat"),
+        "✕ Close" to arrayOf("✕ بند کریں", "✕ Tutup", "✕ বন্ধ", "✕ Kapat"),
+        "Paused" to arrayOf("رکا ہوا", "Dijeda", "বিরতিতে", "Duraklatıldı"),
         "Quran radio" to arrayOf("قرآن ریڈیو", "Radio Al-Quran", "কুরআন রেডিও", "Kuran radyosu"),
         "Holy Quran Radio – Saudi Arabia" to arrayOf("قرآن کریم ریڈیو – سعودی عرب", "Radio Al-Quran – Arab Saudi", "পবিত্র কুরআন রেডিও – সৌদি আরব", "Kuran-ı Kerim Radyosu – Suudi Arabistan"),
         "Sunnah Radio" to arrayOf("سنت ریڈیو", "Radio Sunnah", "সুন্নাহ রেডিও", "Sünnet Radyosu"),
