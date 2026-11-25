@@ -29,6 +29,7 @@
 <style>
   :root{--bg:#EDF3EF;--card:#fff;--ink:#13241B;--muted:#3E4C45;--green:#0F6B4F;--green2:#0F6B4F;--soft:#DCEEE5;--gold:#C9A227;--line:#D3E2D9;--dark:#0A4A37}
   *{box-sizing:border-box}
+  html[lang=ur] body,html[lang=bn] body{font-family:system-ui,"Noto Sans",sans-serif}
   body{margin:0;font-family:"Tajawal",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
   header{background:var(--green);color:#fff;padding:16px 14px 14px;text-align:center;position:relative}
   .lang{position:absolute;top:50%;transform:translateY(-50%);inset-inline-start:10px;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:3px 12px;font:inherit;font-size:.85rem;font-weight:700;cursor:pointer}
@@ -401,6 +402,12 @@
 
 <div class="toast" id="toast" hidden></div>
 
+<div class="modal" id="langModal" hidden>
+  <div class="sheet">
+    <h2>🌐 اللغة · Language</h2>
+    <div id="langList" style="display:grid;gap:8px"></div>
+  </div>
+</div>
 <div class="modal" id="gmModal" hidden>
   <div class="sheet">
     <h2 data-t="gmH"></h2>
@@ -508,9 +515,88 @@ const T = {
    app:["You opened this link inside an app (like WhatsApp).","Tap ⋮ or ⋯ and choose “Open in browser”.","Then tap “Add to Home Screen” again."],
    pc:["In Chrome or Edge: click the install icon 🖥️ in the address bar, or open the ⋮ menu and choose “Install”."]}}
 };
+// ---------- More languages: Urdu, Indonesian, Bengali (missing texts fall back to English) ----------
+T.ar.self = "العربية"; T.en.self = "English";
+T.ur = Object.assign({}, T.en, {
+  self:"اردو", title:"اقرب مسجد", soonT:"جلد آ رہا ہے:", soonS:"اقرب مسجد ایپ گوگل پلے اور ایپ اسٹور پر شائع ہو رہی ہے۔", soonC:"اپنی تجاویز یا غلطیاں ہمیں بھیجیں 💬",
+  nextLbl:"اگلی نماز", curLbl:"اب نماز کا وقت ہے:", mosqueT:"قریب ترین مسجد", jamiT:"قریب ترین جامع مسجد",
+  quranT:"قرآن", adhkarT:"اذکار", qiratT:"قیراط", contactT:"ہم سے رابطہ", shareT:"شیئر کریں", addT:"مسجد شامل کریں", moreT:"مزید", qiblaT:"قبلہ", hideT:"چھپائیں",
+  tarteel2:"ترتیل", wahy2:"وحی", waShareT:"واٹس ایپ", qrT:"کیو آر کوڈ", instT:"انسٹال",
+  prayerH:"نماز", adhanH:"اذان", iqamaH:"اقامت", toAdhan:"اذان میں باقی", toIqama:"اقامت میں باقی", nowLbl:"نماز کا وقت ہو گیا", startedLbl:"نماز شروع ہو گئی",
+  grpQuran:"قرآن اور اذکار", grpMosques:"مساجد", grpContact:"رابطہ", privT:"رازداری کی پالیسی",
+  adhanAt:t=>"اذان " + t, iqAt:t=>"اقامت " + t,
+  jumua:"جمعہ", khutba:"خطبہ", jumuaNext:t=>"🕌 جمعہ " + t + " — جلدی آئیں", jumuaNow:"🕌 جمعہ کا خطبہ ہو رہا ہے",
+  names:{fajr:"فجر", sunrise:"طلوع آفتاب", dhuhr:"ظہر", asr:"عصر", maghrib:"مغرب", isha:"عشاء"},
+  nOn:"🔔 اذان اور اقامت پر اطلاع دیں", nOff:"🔕 نماز کی اطلاع بند کریں", nNow:p=>"🕌 " + p + " کا وقت ہو گیا",
+  nIq:(p,m)=>"🕌 " + p + " کی اقامت " + m + " منٹ میں", nIqNow:p=>"🕌 " + p + " کی اقامت کا وقت",
+  nDone:"✅ اطلاع چالو: اذان پر، اور 10 منٹ بعد اقامت کے لیے", nDenied:"اطلاعات بند ہیں۔ براؤزر کی سیٹنگز میں اجازت دیں", nBody:"اقرب مسجد کھولنے کے لیے دبائیں",
+  formH:"مسجد یا جائے نماز شامل کریں", formP:"اکاؤنٹ کی ضرورت نہیں۔ ہم جانچ کر کے ایپ میں شامل کریں گے۔", fName:"مسجد کا نام (اختیاری)",
+  fLoc:"📍 میں ابھی مسجد میں ہوں — میرا مقام لیں", fLocWait:"آپ کا مقام معلوم کیا جا رہا ہے…", fLocOk:"✓ مقام شامل ہو گیا",
+  fLocFail:"آپ کا مقام نہیں مل سکا۔ نقشے پر مسجد کی جگہ بتائیں۔", fMapL:"یا نقشہ ہلائیں تاکہ پن 📍 مسجد کے اوپر ہو", fSatOn:"🛰️ سیٹلائٹ", fSatOff:"🗺️ نقشہ",
+  fPinOk:"✓ مسجد کی جگہ طے ہو گئی", fNeedPin:"پہلے نقشے پر مسجد کی جگہ بتائیں۔", fOutSA:"یہ جگہ سعودی عرب سے باہر ہے۔ ہم صرف سعودی عرب کی مساجد لیتے ہیں۔", fChecking:"جگہ چیک ہو رہی ہے…",
+  fSend:"بھیجیں", fSending:"بھیجا جا رہا ہے…", fThanks:"جزاک اللہ خیراً! ہمیں مل گئی، جانچ کے بعد شامل کر دیں گے۔", fErr:"ابھی نہیں بھیجا جا سکا۔ انٹرنیٹ چیک کر کے دوبارہ کوشش کریں۔",
+  cancel:"منسوخ", save:"محفوظ کریں", ok:"ٹھیک ہے", min:"منٹ", saved:"محفوظ ہو گیا ✓", close:"بند کریں",
+  locating:"آپ کا مقام معلوم کیا جا رہا ہے…", locFail:"آپ کا مقام نہیں مل سکا۔ لوکیشن (GPS) چالو کریں۔",
+  byLoc:"آپ کے موجودہ مقام کے لیے", byRiyadh:"ریاض کے لیے", byRiyadhHint:"ریاض کے لیے (درست اوقات کے لیے لوکیشن چالو کریں)",
+  m:"میٹر", km:"کلومیٹر", mosque:"مسجد", locale:"ur-PK", method:"طریقہ:",
+  f1:"نماز کے اوقات آپ کے مقام کے مطابق آپ کے ملک کے طریقے سے نکالے جاتے ہیں، اور مقامی مسجد سے چند منٹ مختلف ہو سکتے ہیں۔",
+  f2:"«قریب ترین مسجد» کا بٹن گوگل میپس کھولتا ہے تاکہ آپ مسجد چن سکیں۔"
+});
+T.id = Object.assign({}, T.en, {
+  self:"Bahasa Indonesia", title:"Aqrab Masjid", soonT:"Segera hadir:", soonS:"Aplikasi Aqrab Masjid sedang diterbitkan di Google Play dan App Store.", soonC:"Kirim ide atau kesalahan kepada kami 💬",
+  nextLbl:"Sholat berikutnya", curLbl:"Sekarang waktu", mosqueT:"Masjid terdekat", jamiT:"Masjid Jami",
+  quranT:"Al-Quran", adhkarT:"Dzikir", qiratT:"Qirat", contactT:"Hubungi kami", shareT:"Bagikan", addT:"Tambah masjid", moreT:"Lainnya", qiblaT:"Kiblat", hideT:"Sembunyikan",
+  tarteel2:"Tarteel", wahy2:"Wahy", waShareT:"WhatsApp", qrT:"Kode QR", instT:"Pasang",
+  prayerH:"Sholat", adhanH:"Azan", iqamaH:"Iqamah", toAdhan:"menuju azan", toIqama:"menuju iqamah", nowLbl:"Waktunya sholat", startedLbl:"Sholat sudah dimulai",
+  grpQuran:"Al-Quran & Dzikir", grpMosques:"Masjid", grpContact:"Kontak", privT:"Kebijakan privasi",
+  adhanAt:t=>"Azan " + t, iqAt:t=>"Iqamah " + t,
+  jumua:"Jumat", khutba:"Khutbah", jumuaNext:t=>"🕌 Jumat " + t + " — datang lebih awal", jumuaNow:"🕌 Khutbah Jumat sedang berlangsung",
+  names:{fajr:"Subuh", sunrise:"Terbit", dhuhr:"Dzuhur", asr:"Ashar", maghrib:"Maghrib", isha:"Isya"},
+  nOn:"🔔 Ingatkan saya saat azan dan iqamah", nOff:"🔕 Matikan pengingat sholat", nNow:p=>"🕌 Sekarang waktu " + p,
+  nIq:(p,m)=>"🕌 Iqamah " + p + " dalam " + m + " menit", nIqNow:p=>"🕌 Waktunya iqamah " + p,
+  nDone:"✅ Pengingat aktif: saat azan, dan 10 menit kemudian untuk iqamah", nDenied:"Notifikasi diblokir. Izinkan di pengaturan browser", nBody:"Ketuk untuk membuka Aqrab Masjid",
+  formH:"Tambah masjid atau musala", formP:"Tanpa akun. Kami cek lalu tambahkan ke aplikasi.", fName:"Nama masjid (opsional)",
+  fLoc:"📍 Saya sedang di masjid — pakai lokasi saya", fLocWait:"Mencari lokasi Anda…", fLocOk:"✓ Lokasi ditambahkan",
+  fLocFail:"Lokasi tidak ditemukan. Tandai masjid di peta.", fMapL:"Atau geser peta sampai pin 📍 tepat di atas masjid", fSatOn:"🛰️ Satelit", fSatOff:"🗺️ Peta",
+  fPinOk:"✓ Lokasi masjid ditandai", fNeedPin:"Tandai dulu lokasi masjid di peta.", fOutSA:"Titik ini di luar Arab Saudi. Kami hanya menerima masjid di Arab Saudi.", fChecking:"Memeriksa lokasi…",
+  fSend:"Kirim", fSending:"Mengirim…", fThanks:"Jazakallah khairan! Sudah kami terima, akan ditambahkan setelah dicek.", fErr:"Gagal mengirim. Periksa internet dan coba lagi.",
+  cancel:"Batal", save:"Simpan", ok:"OK", min:"menit", saved:"Tersimpan ✓", close:"Tutup",
+  locating:"Mencari lokasi Anda…", locFail:"Lokasi tidak ditemukan. Nyalakan lokasi (GPS).",
+  byLoc:"Untuk lokasi Anda sekarang", byRiyadh:"Untuk Riyadh", byRiyadhHint:"Untuk Riyadh (nyalakan lokasi untuk waktu yang tepat)",
+  m:"m", km:"km", mosque:"Masjid", locale:"id-ID", method:"Metode:",
+  f1:"Jadwal sholat dihitung untuk lokasi Anda dengan metode negara Anda, dan bisa beda beberapa menit dari masjid setempat.",
+  f2:"Tombol «Masjid terdekat» membuka Google Maps agar Anda bisa memilih masjid."
+});
+T.bn = Object.assign({}, T.en, {
+  self:"বাংলা", title:"Aqrab Masjid", soonT:"শীঘ্রই আসছে:", soonS:"Aqrab Masjid অ্যাপটি Google Play ও App Store-এ প্রকাশিত হচ্ছে।", soonC:"আপনার পরামর্শ বা ভুল আমাদের জানান 💬",
+  nextLbl:"পরবর্তী নামাজ", curLbl:"এখন নামাজের সময়:", mosqueT:"নিকটতম মসজিদ", jamiT:"নিকটতম জামে মসজিদ",
+  quranT:"কুরআন", adhkarT:"জিকির", qiratT:"কিরাত", contactT:"যোগাযোগ করুন", shareT:"শেয়ার করুন", addT:"মসজিদ যোগ করুন", moreT:"আরও", qiblaT:"কিবলা", hideT:"লুকান",
+  tarteel2:"তারতিল", wahy2:"ওহী", waShareT:"হোয়াটসঅ্যাপ", qrT:"কিউআর কোড", instT:"ইনস্টল",
+  prayerH:"নামাজ", adhanH:"আজান", iqamaH:"ইকামত", toAdhan:"আজান পর্যন্ত বাকি", toIqama:"ইকামত পর্যন্ত বাকি", nowLbl:"নামাজের সময় হয়েছে", startedLbl:"নামাজ শুরু হয়েছে",
+  grpQuran:"কুরআন ও জিকির", grpMosques:"মসজিদ", grpContact:"যোগাযোগ", privT:"গোপনীয়তা নীতি",
+  adhanAt:t=>"আজান " + t, iqAt:t=>"ইকামত " + t,
+  jumua:"জুমা", khutba:"খুতবা", jumuaNext:t=>"🕌 জুমা " + t + " — আগে আসুন", jumuaNow:"🕌 এখন জুমার খুতবা চলছে",
+  names:{fajr:"ফজর", sunrise:"সূর্যোদয়", dhuhr:"যোহর", asr:"আসর", maghrib:"মাগরিব", isha:"এশা"},
+  nOn:"🔔 আজান ও ইকামতে আমাকে জানান", nOff:"🔕 নামাজের সতর্কতা বন্ধ করুন", nNow:p=>"🕌 এখন " + p + " এর সময়",
+  nIq:(p,m)=>"🕌 " + p + " এর ইকামত " + m + " মিনিটে", nIqNow:p=>"🕌 " + p + " এর ইকামতের সময়",
+  nDone:"✅ সতর্কতা চালু: আজানের সময় এবং ১০ মিনিট পরে ইকামতের জন্য", nDenied:"নোটিফিকেশন বন্ধ। ব্রাউজারের সেটিংসে অনুমতি দিন", nBody:"Aqrab Masjid খুলতে চাপুন",
+  formH:"মসজিদ বা নামাজের জায়গা যোগ করুন", formP:"কোনো অ্যাকাউন্ট লাগবে না। আমরা যাচাই করে অ্যাপে যোগ করব।", fName:"মসজিদের নাম (ঐচ্ছিক)",
+  fLoc:"📍 আমি এখন মসজিদে আছি — আমার লোকেশন নিন", fLocWait:"আপনার লোকেশন খোঁজা হচ্ছে…", fLocOk:"✓ লোকেশন যোগ হয়েছে",
+  fLocFail:"লোকেশন পাওয়া যায়নি। মানচিত্রে মসজিদটি চিহ্নিত করুন।", fMapL:"অথবা মানচিত্র সরান যাতে পিন 📍 মসজিদের উপর থাকে", fSatOn:"🛰️ স্যাটেলাইট", fSatOff:"🗺️ মানচিত্র",
+  fPinOk:"✓ মসজিদের জায়গা ঠিক হয়েছে", fNeedPin:"আগে মানচিত্রে মসজিদটি চিহ্নিত করুন।", fOutSA:"এই জায়গাটি সৌদি আরবের বাইরে। আমরা শুধু সৌদি আরবের মসজিদ নিই।", fChecking:"জায়গা যাচাই হচ্ছে…",
+  fSend:"পাঠান", fSending:"পাঠানো হচ্ছে…", fThanks:"জাযাকাল্লাহু খাইরান! আমরা পেয়েছি, যাচাইয়ের পর যোগ করা হবে।", fErr:"এখন পাঠানো যায়নি। ইন্টারনেট দেখে আবার চেষ্টা করুন।",
+  cancel:"বাতিল", save:"সংরক্ষণ", ok:"ঠিক আছে", min:"মিনিট", saved:"সংরক্ষিত ✓", close:"বন্ধ",
+  locating:"আপনার লোকেশন খোঁজা হচ্ছে…", locFail:"লোকেশন পাওয়া যায়নি। লোকেশন (GPS) চালু করুন।",
+  byLoc:"আপনার বর্তমান লোকেশনের জন্য", byRiyadh:"রিয়াদের জন্য", byRiyadhHint:"রিয়াদের জন্য (সঠিক সময়ের জন্য লোকেশন চালু করুন)",
+  m:"মি", km:"কিমি", mosque:"মসজিদ", locale:"bn-BD", method:"পদ্ধতি:",
+  f1:"নামাজের সময় আপনার লোকেশন অনুযায়ী আপনার দেশের পদ্ধতিতে হিসাব করা হয়, এবং স্থানীয় মসজিদ থেকে কয়েক মিনিট আলাদা হতে পারে।",
+  f2:"«নিকটতম মসজিদ» বোতাম গুগল ম্যাপ খোলে, যাতে আপনি মসজিদ বেছে নিতে পারেন।"
+});
+const LANGS = ["ar","en","ur","id","bn"];
+const RTL = l => l === "ar" || l === "ur";
 let lang = "ar";
-try { const v = localStorage.getItem("lang"); if (v === "en" || v === "ar") lang = v; } catch(_){}
-if (location.hash === "#en") lang = "en"; if (location.hash === "#ar") lang = "ar";
+try { const v = localStorage.getItem("lang"); if (LANGS.includes(v)) lang = v; } catch(_){}
+{ const h = location.hash.slice(1); if (LANGS.includes(h)) lang = h; }
 const L = () => T[lang];
 const ORDER = ["fajr","dhuhr","asr","maghrib","isha"];
 const RIYADH = [24.7136, 46.6753];
@@ -666,10 +752,10 @@ function prayerTimes(lat, lng, labelKey){
       ORDER.map(k => `<div class="r ${k===hl ? 'on':''}"><span>${nameOf(k)}</span><span>${fmt(today[k])}</span><span>${isJ(k) ? L().khutba : fmt(plus(today[k], k))}</span></div>`).join("");
     $("dDay").textContent = n.toLocaleDateString(L().locale, {weekday:"long"});
     $("dClock").textContent = fmt(n);
-    try { $("dHijri").textContent = new Intl.DateTimeFormat((lang==="ar"?"ar-SA":"en-US")+"-u-ca-islamic-umalqura",{day:"numeric",month:"long",year:"numeric"}).format(n); } catch(_){}
-    $("dGreg").textContent = n.toLocaleDateString(lang==="ar" ? "ar-SA-u-ca-gregory-nu-latn" : "en-GB", {day:"numeric",month:"long",year:"numeric"});
+    try { $("dHijri").textContent = new Intl.DateTimeFormat((lang==="en"?"en-US":L().locale)+"-u-ca-islamic-umalqura",{day:"numeric",month:"long",year:"numeric"}).format(n); } catch(_){}
+    $("dGreg").textContent = n.toLocaleDateString(lang==="ar" ? "ar-SA-u-ca-gregory-nu-latn" : lang==="en" ? "en-GB" : L().locale + "-u-ca-gregory", {day:"numeric",month:"long",year:"numeric"});
     let hijri = "";
-    try { hijri = new Intl.DateTimeFormat((lang==="ar"?"ar-SA":"en-US")+"-u-ca-islamic-umalqura",{day:"numeric",month:"long",year:"numeric"}).format(n); } catch(_){}
+    try { hijri = new Intl.DateTimeFormat((lang==="en"?"en-US":L().locale)+"-u-ca-islamic-umalqura",{day:"numeric",month:"long",year:"numeric"}).format(n); } catch(_){}
     $("ptMeta").textContent = (hijri ? hijri + " · " : "") + L()[labelKey] + " · " + L().method + " " + L().methods[mt.m];
   };
   render();
@@ -890,7 +976,7 @@ if ("serviceWorker" in navigator) { try { navigator.serviceWorker.register("/sw.
 let toastT = null;
 function toast(msg){ const t = $("toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2500); }
 function closeOnBackdrop(id){ $(id).addEventListener("click", e => { if (e.target === $(id)) $(id).hidden = true; }); }
-["iqModal","addModal","qrModal","gmModal"].forEach(closeOnBackdrop);
+["iqModal","addModal","qrModal","gmModal","langModal"].forEach(closeOnBackdrop);
 const SITE = "https://aqrab-masjid.netlify.app/";
 const track = (name, p) => { try { if (window.gtag) gtag("event", name, p || {}); } catch(_){} };
 
@@ -1078,16 +1164,25 @@ $("tarteel").href = isIOS ? "https://apps.apple.com/sa/app/id1391009396" : "http
 $("wahy").href = isIOS ? "https://apps.apple.com/sa/app/id1615454207" : "https://play.google.com/store/apps/details?id=com.logicdev.quran_reader";
 
 function apply(){
-  document.documentElement.lang = lang; document.documentElement.dir = lang==="ar" ? "rtl" : "ltr";
+  document.documentElement.lang = lang; document.documentElement.dir = RTL(lang) ? "rtl" : "ltr";
   document.querySelectorAll("[data-t]").forEach(e => e.textContent = L()[e.dataset.t]);
-  $("langBtn").textContent = L().other;
+  $("langBtn").textContent = "🌐 " + (lang === "id" ? "Indonesia" : L().self);
   if ($("modeBtn")) setMode(document.body.classList.contains("drive"));
-  document.title = lang==="ar" ? "أقرب مسجد – ومواقيت الصلاة" : "Nearest Mosque – Prayer Times";
+  document.title = lang==="ar" ? "أقرب مسجد – ومواقيت الصلاة" : L().title + " – " + (lang==="en" ? "Prayer Times" : L().prayerH);
   $("waBtn").href = "https://wa.me/?text=" + encodeURIComponent(L().waMsg);
   if (Array.isArray(statusKey)) setStatus(...statusKey); else setStatus(statusKey);
   if (ptArgs) prayerTimes(...ptArgs);
 }
-$("langBtn").addEventListener("click", ()=>{ lang = lang==="ar" ? "en" : "ar"; try{ localStorage.setItem("lang", lang); }catch(_){} apply(); });
+// Language list
+$("langBtn").addEventListener("click", () => {
+  $("langList").innerHTML = LANGS.map(l => `<button type="button" class="big ${l===lang?'':'alt'}" data-l="${l}" dir="${RTL(l)?'rtl':'ltr'}">${T[l].self}</button>`).join("");
+  $("langModal").hidden = false;
+});
+$("langList").addEventListener("click", e => {
+  const b = e.target.closest("[data-l]"); if (!b) return;
+  lang = b.dataset.l; try{ localStorage.setItem("lang", lang); }catch(_){}
+  $("langModal").hidden = true; apply(); track("language", {lang});
+});
 $("modeBtn").addEventListener("click", () => {
   const open = document.body.classList.contains("drive");
   setMode(!open); track(open ? "more_open" : "more_close");

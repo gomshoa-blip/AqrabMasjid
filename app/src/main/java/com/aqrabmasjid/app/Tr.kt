@@ -23,7 +23,7 @@ object Tr {
         "Prayer has started" to arrayOf("نماز شروع ہو گئی", "Sholat sudah dimulai", "নামাজ শুরু হয়েছে"),
         " · Ramadan" to arrayOf(" · رمضان", " · Ramadan", " · রমজান"),
         "Nearest mosque" to arrayOf("قریب ترین مسجد", "Masjid terdekat", "নিকটতম মসজিদ"),
-        "Nearest Jami" to arrayOf("قریب ترین جامع مسجد", "Masjid Jami terdekat", "নিকটতম জামে মসজিদ"),
+        "Nearest Jami" to arrayOf("قریب ترین جامع مسجد", "Masjid Jami", "নিকটতম জামে মসজিদ"),
         "Quran & Dhikr" to arrayOf("قرآن اور اذکار", "Al-Quran & Dzikir", "কুরআন ও জিকির"),
         "Mosques" to arrayOf("مساجد", "Masjid", "মসজিদ"),
         "Contact" to arrayOf("رابطہ", "Kontak", "যোগাযোগ"),
