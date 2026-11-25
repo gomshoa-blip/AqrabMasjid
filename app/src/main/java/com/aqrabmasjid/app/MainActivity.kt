@@ -605,9 +605,9 @@ class MainActivity : Activity() {
     /** Set screen direction and all fixed texts in the chosen language. */
     private fun applyLanguage() {
         findViewById<View>(R.id.rootFrame).layoutDirection =
-            if (L.rtl) View.LAYOUT_DIRECTION_RTL else View.LAYOUT_DIRECTION_LTR
+            View.LAYOUT_DIRECTION_RTL  // same layout in every language
         fun b(id: Int, ar: String, en: String) { findViewById<TextView>(id).text = L.t(ar, en) }
-        findViewById<TextView>(R.id.btnLang).text = "🌐 " + (if (L.lang == "id") "Indonesia" else L.name())
+        findViewById<TextView>(R.id.btnLang).text = "🌐 " + L.code()
         b(R.id.btnGoText, "أقرب مسجد", "Nearest mosque")
         b(R.id.btnJamiText, "أقرب جامع", "Nearest Jami")
         b(R.id.tvServices, "القرآن والذكر", "Quran & Dhikr")

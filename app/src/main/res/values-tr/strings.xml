@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Aqrab Masjid</string>
+    <string name="widget_next_name">Sıradaki namaz</string>
+    <string name="widget_day_name">Bugünün namaz vakitleri</string>
+    <string name="widget_next_desc">Sıradaki namaz, kalan süre ve en yakın cami düğmesi</string>
+    <string name="widget_day_desc">Bugünün beş vakti, sıradaki vurgulu</string>
+    <string name="w_label">Sıradaki namaz</string>
+    <string name="w_name">İkindi</string>
+    <string name="w_times">Ezan 15:15 · Kamet 15:35</string>
+    <string name="w_left">kalan</string>
+    <string name="w_go">🕌 En yakın cami</string>
+</resources>

@@ -4,9 +4,9 @@ import android.content.Context
 import java.util.Locale
 
 /**
- * App language, saved on the phone: Arabic (default), English, Urdu, Indonesian, Bengali.
+ * App language, saved on the phone: Arabic (default), English, Urdu, Indonesian, Bengali, Turkish.
  * The code gives each text in Arabic and English: L.t(ar, en).
- * Urdu, Indonesian and Bengali come from Tr.MAP (looked up by the English text).
+ * Urdu, Indonesian, Bengali and Turkish come from Tr.MAP (looked up by the English text).
  */
 object L {
     /** Language codes and their names, in the order shown in the language list. */
@@ -15,8 +15,12 @@ object L {
         "en" to "English",
         "ur" to "اردو",
         "id" to "Bahasa Indonesia",
-        "bn" to "বাংলা"
+        "bn" to "বাংলা",
+        "tr" to "Türkçe"
     )
+
+    /** Short code shown on the language button. */
+    fun code(): String = lang.uppercase(Locale.ROOT)
 
     @Volatile var lang = "ar"
         private set
@@ -28,7 +32,7 @@ object L {
     val rtl: Boolean get() = lang == "ar" || lang == "ur"
 
     /** Urdu and Bengali letters are not in our Arabic font, so those use the phone's font. */
-    val systemFont: Boolean get() = lang == "ur" || lang == "bn"
+    val systemFont: Boolean get() = lang == "ur" || lang == "bn" || lang == "tr"
 
     fun init(c: Context) {
         val v = c.getSharedPreferences("aqrab", Context.MODE_PRIVATE).getString("lang", "ar") ?: "ar"
@@ -42,7 +46,7 @@ object L {
 
     fun name(code: String = lang): String = LANGS.firstOrNull { it.first == code }?.second ?: code
 
-    private fun idx(): Int = when (lang) { "ur" -> 0; "id" -> 1; "bn" -> 2; else -> -1 }
+    private fun idx(): Int = when (lang) { "ur" -> 0; "id" -> 1; "bn" -> 2; "tr" -> 3; else -> -1 }
 
     /** Pick the text in the app language. */
     fun t(ar: String, english: String): String {
@@ -77,6 +81,7 @@ object L {
         "ur" -> Locale("ur")
         "id" -> Locale("in", "ID")
         "bn" -> Locale("bn")
+        "tr" -> Locale("tr")
         else -> Locale("ar")
     }
 
@@ -86,6 +91,7 @@ object L {
         "ur" -> "ur"
         "id" -> "id"
         "bn" -> "bn"
+        "tr" -> "tr"
         else -> "en"
     }
 }

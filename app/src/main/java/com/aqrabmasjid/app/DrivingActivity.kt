@@ -46,7 +46,7 @@ class DrivingActivity : Activity() {
 
         val root = LinearLayout(this)
         root.orientation = LinearLayout.VERTICAL
-        root.layoutDirection = if (L.rtl) View.LAYOUT_DIRECTION_RTL else View.LAYOUT_DIRECTION_LTR
+        root.layoutDirection = View.LAYOUT_DIRECTION_RTL  // same layout in every language
         root.setBackgroundColor(Color.BLACK)
         root.gravity = Gravity.CENTER_HORIZONTAL
         val pad = dp(20)

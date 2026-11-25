@@ -29,7 +29,9 @@
 <style>
   :root{--bg:#EDF3EF;--card:#fff;--ink:#13241B;--muted:#3E4C45;--green:#0F6B4F;--green2:#0F6B4F;--soft:#DCEEE5;--gold:#C9A227;--line:#D3E2D9;--dark:#0A4A37}
   *{box-sizing:border-box}
-  html[lang=ur] body,html[lang=bn] body{font-family:system-ui,"Noto Sans",sans-serif}
+  html[lang=ur] body,html[lang=bn] body,html[lang=tr] body{font-family:system-ui,"Noto Sans",sans-serif}
+  /* Layout stays right-to-left in every language; each text line keeps its own direction */
+  html:not([lang=ar]):not([lang=ur]) :is(p,h1,h2,h3,div,label,li){unicode-bidi:plaintext}
   body{margin:0;font-family:"Tajawal",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
   header{background:var(--green);color:#fff;padding:16px 14px 14px;text-align:center;position:relative}
   .lang{position:absolute;top:50%;transform:translateY(-50%);inset-inline-start:10px;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:3px 12px;font:inherit;font-size:.85rem;font-weight:700;cursor:pointer}
@@ -592,7 +594,32 @@ T.bn = Object.assign({}, T.en, {
   f1:"নামাজের সময় আপনার লোকেশন অনুযায়ী আপনার দেশের পদ্ধতিতে হিসাব করা হয়, এবং স্থানীয় মসজিদ থেকে কয়েক মিনিট আলাদা হতে পারে।",
   f2:"«নিকটতম মসজিদ» বোতাম গুগল ম্যাপ খোলে, যাতে আপনি মসজিদ বেছে নিতে পারেন।"
 });
-const LANGS = ["ar","en","ur","id","bn"];
+T.tr = Object.assign({}, T.en, {
+  self:"Türkçe", title:"Aqrab Masjid", soonT:"Yakında:", soonS:"Aqrab Masjid uygulaması Google Play ve App Store'da yayınlanıyor.", soonC:"Fikirlerinizi veya hataları bize yazın 💬",
+  nextLbl:"Sıradaki namaz", curLbl:"Şimdi vakit:", mosqueT:"En yakın cami", jamiT:"Cuma camisi",
+  quranT:"Kuran", adhkarT:"Zikirler", qiratT:"Kırat", contactT:"Bize ulaşın", shareT:"Paylaş", addT:"Cami ekle", moreT:"Daha fazla", qiblaT:"Kıble", hideT:"Gizle",
+  tarteel2:"Tarteel", wahy2:"Wahy", waShareT:"WhatsApp", qrT:"QR kod", instT:"Yükle",
+  prayerH:"Namaz", adhanH:"Ezan", iqamaH:"Kamet", toAdhan:"ezana kalan", toIqama:"kamete kalan", nowLbl:"Namaz vakti girdi", startedLbl:"Namaz başladı",
+  grpQuran:"Kuran ve Zikir", grpMosques:"Camiler", grpContact:"İletişim", privT:"Gizlilik politikası",
+  adhanAt:t=>"Ezan " + t, iqAt:t=>"Kamet " + t,
+  jumua:"Cuma", khutba:"Hutbe", jumuaNext:t=>"🕌 Cuma " + t + " — erken gelin", jumuaNow:"🕌 Cuma hutbesi okunuyor",
+  names:{fajr:"Sabah", sunrise:"Güneş", dhuhr:"Öğle", asr:"İkindi", maghrib:"Akşam", isha:"Yatsı"},
+  nOn:"🔔 Ezan ve kamette beni uyar", nOff:"🔕 Namaz uyarılarını kapat", nNow:p=>"🕌 " + p + " vakti girdi",
+  nIq:(p,m)=>"🕌 " + p + " kameti " + m + " dk sonra", nIqNow:p=>"🕌 " + p + " kamet vakti",
+  nDone:"✅ Uyarılar açık: ezanda ve 10 dakika sonra kamet için", nDenied:"Bildirimler engelli. Tarayıcı ayarlarından izin verin", nBody:"Aqrab Masjid'i açmak için dokunun",
+  formH:"Cami veya mescit ekle", formP:"Hesap gerekmez. Kontrol edip uygulamaya ekleriz.", fName:"Cami adı (isteğe bağlı)",
+  fLoc:"📍 Şu an camideyim — konumumu kullan", fLocWait:"Konumunuz bulunuyor…", fLocOk:"✓ Konum eklendi",
+  fLocFail:"Konumunuz alınamadı. Camiyi haritada işaretleyin.", fMapL:"Ya da iğne 📍 caminin üstüne gelene kadar haritayı kaydırın", fSatOn:"🛰️ Uydu", fSatOff:"🗺️ Harita",
+  fPinOk:"✓ Cami konumu belirlendi", fNeedPin:"Önce camiyi haritada işaretleyin.", fOutSA:"Bu nokta Suudi Arabistan dışında. Sadece Suudi Arabistan'daki camileri alıyoruz.", fChecking:"Konum kontrol ediliyor…",
+  fSend:"Gönder", fSending:"Gönderiliyor…", fThanks:"Allah razı olsun! Aldık, kontrol ettikten sonra ekleyeceğiz.", fErr:"Şu an gönderilemedi. İnterneti kontrol edip tekrar deneyin.",
+  cancel:"İptal", save:"Kaydet", ok:"Tamam", min:"dk", saved:"Kaydedildi ✓", close:"Kapat",
+  locating:"Konumunuz bulunuyor…", locFail:"Konumunuz alınamadı. Konumu (GPS) açın.",
+  byLoc:"Şu anki konumunuz için", byRiyadh:"Riyad için", byRiyadhHint:"Riyad için (doğru vakitler için konumu açın)",
+  m:"m", km:"km", mosque:"Cami", locale:"tr-TR", method:"Yöntem:",
+  f1:"Namaz vakitleri konumunuza göre ülkenizin yöntemiyle hesaplanır ve yerel camiden birkaç dakika farklı olabilir.",
+  f2:"«En yakın cami» düğmesi Google Haritalar'ı açar, böylece bir cami seçebilirsiniz."
+});
+const LANGS = ["ar","en","ur","id","bn","tr"];
 const RTL = l => l === "ar" || l === "ur";
 let lang = "ar";
 try { const v = localStorage.getItem("lang"); if (LANGS.includes(v)) lang = v; } catch(_){}
@@ -1164,9 +1191,9 @@ $("tarteel").href = isIOS ? "https://apps.apple.com/sa/app/id1391009396" : "http
 $("wahy").href = isIOS ? "https://apps.apple.com/sa/app/id1615454207" : "https://play.google.com/store/apps/details?id=com.logicdev.quran_reader";
 
 function apply(){
-  document.documentElement.lang = lang; document.documentElement.dir = RTL(lang) ? "rtl" : "ltr";
+  document.documentElement.lang = lang; document.documentElement.dir = "rtl"; // same layout in every language
   document.querySelectorAll("[data-t]").forEach(e => e.textContent = L()[e.dataset.t]);
-  $("langBtn").textContent = "🌐 " + (lang === "id" ? "Indonesia" : L().self);
+  $("langBtn").textContent = "🌐 " + lang.toUpperCase();
   if ($("modeBtn")) setMode(document.body.classList.contains("drive"));
   document.title = lang==="ar" ? "أقرب مسجد – ومواقيت الصلاة" : L().title + " – " + (lang==="en" ? "Prayer Times" : L().prayerH);
   $("waBtn").href = "https://wa.me/?text=" + encodeURIComponent(L().waMsg);

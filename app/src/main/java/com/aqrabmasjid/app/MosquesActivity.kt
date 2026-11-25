@@ -35,7 +35,7 @@ class MosquesActivity : Activity() {
 
         val scroll = ScrollView(this)
         scroll.setBackgroundColor(getColor(R.color.bg))
-        scroll.layoutDirection = if (L.rtl) View.LAYOUT_DIRECTION_RTL else View.LAYOUT_DIRECTION_LTR
+        scroll.layoutDirection = View.LAYOUT_DIRECTION_RTL  // same layout in every language
 
         val root = LinearLayout(this)
         root.orientation = LinearLayout.VERTICAL
