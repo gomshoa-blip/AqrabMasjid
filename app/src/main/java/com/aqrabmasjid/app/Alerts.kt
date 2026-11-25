@@ -133,7 +133,7 @@ object Alerts {
             .addAction(R.drawable.ic_stat_mosque, L.t("خذني لأقرب مسجد", "Take me to nearest mosque"), carPending)
             .build()
 
-        val n = NotificationCompat.Builder(c, CHANNEL)
+        val nb = NotificationCompat.Builder(c, CHANNEL)
             .setSmallIcon(R.drawable.ic_stat_mosque)
             .setContentTitle(title)
             .setContentText(phoneText ?: text)
@@ -142,9 +142,25 @@ object Alerts {
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setContentIntent(phonePending)
             .setAutoCancel(true)
-            .setTimeoutAfter(40 * MIN)
             .extend(car)
-            .build()
+
+        // Live countdown to iqama (the clock in the alert counts down by itself).
+        // Not on Friday Dhuhr: Jumuah has a khutbah, no fixed iqama.
+        val now = System.currentTimeMillis()
+        val jumuah = prayer == Prayer.DHUHR &&
+            java.util.Calendar.getInstance().apply { timeInMillis = adhan }.get(java.util.Calendar.DAY_OF_WEEK) == java.util.Calendar.FRIDAY
+        if (!jumuah && iqama > now) {
+            nb.setWhen(iqama)
+                .setShowWhen(true)
+                .setUsesChronometer(true)
+                .setChronometerCountDown(true)
+                .setSubText(L.t("متبقي للإقامة", "to iqama"))
+                // Remove the alert a few minutes after iqama
+                .setTimeoutAfter(iqama - now + 5 * MIN)
+        } else {
+            nb.setTimeoutAfter(40 * MIN)
+        }
+        val n = nb.build()
 
         try {
             NotificationManagerCompat.from(c).notify(300, n)
