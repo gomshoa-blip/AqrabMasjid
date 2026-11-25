@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Aqrab Masjid</string>
+    <string name="widget_next_name">Next prayer</string>
+    <string name="widget_day_name">Today\'s prayer times</string>
+    <string name="widget_next_desc">Next prayer, time left, and nearest mosque button</string>
+    <string name="widget_day_desc">Today\'s five prayers, the next one highlighted</string>
+    <string name="w_label">Next prayer</string>
+    <string name="w_name">Asr</string>
+    <string name="w_times">Adhan 3:15 PM · Iqama 3:35 PM</string>
+    <string name="w_left">left</string>
+    <string name="w_go">🕌 Nearest mosque</string>
+</resources>
