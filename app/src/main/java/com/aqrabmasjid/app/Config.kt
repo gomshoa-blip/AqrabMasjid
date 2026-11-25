@@ -29,6 +29,9 @@ object Config {
     /** قيراط: Riyadh funeral prayers and cemeteries (shown in Riyadh only). */
     const val QIRAT_URL = "https://janaez-riyadh.netlify.app"
 
+    /** Privacy policy page (needed for Google Play and App Store). */
+    const val PRIVACY_URL = "https://aqrab-masjid.netlify.app/privacy/"
+
     /** WhatsApp contact. */
     const val WHATSAPP_URL = "https://wa.me/966556512678"
 
