@@ -6,7 +6,7 @@
 - لا نجمع اسمك أو رقمك أو أي بيانات شخصية.
 - التنبيهات تُجهَّز داخل جوالك فقط، ولا تحتاج حساباً.
 - لا يوجد إعلانات، ولا يجمع التطبيق أي أموال. زر التبرع يفتح منصة إحسان الرسمية فقط.
-- للتواصل: gomshoa@gmail.com
+- للتواصل: aqrabmasjid.app@gmail.com
 
 # Privacy Policy — Aqrab Masjid (Android and iPhone)
 
@@ -16,4 +16,4 @@
 - We do not collect your name, phone number, or any personal data.
 - Prayer alerts are set up on your phone only. No account is needed.
 - No ads. The app does not collect money. The donate button only opens the official Ehsan platform.
-- Contact: gomshoa@gmail.com
+- Contact: aqrabmasjid.app@gmail.com
