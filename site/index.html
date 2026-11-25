@@ -110,7 +110,11 @@
   .wrap > .big{margin-bottom:10px}
   .big.notif{display:block;width:100%;margin-top:10px}
   .fmap{height:240px;border:1px solid var(--line);border-radius:12px;margin:6px 0 12px;overflow:hidden;background:var(--soft)}
-  .fmapL{font-size:.9rem;color:var(--muted);margin-top:8px}
+  .fmapL{font-size:.95rem;color:var(--muted);margin-top:12px;font-weight:700}
+  .fmapW{position:relative}
+  .fmapW .fmap{height:300px}
+  .fpin{position:absolute;left:50%;top:50%;transform:translate(-50%,-100%);font-size:44px;line-height:1;pointer-events:none;z-index:500;filter:drop-shadow(0 2px 2px rgba(0,0,0,.5))}
+  .fsat{position:absolute;top:8px;inset-inline-start:8px;z-index:600;background:#fff;color:#111;border:1px solid #999;border-radius:10px;padding:6px 10px;font:inherit;font-size:.85rem;font-weight:700;cursor:pointer}
   .iostip{position:fixed;left:10px;right:10px;bottom:10px;z-index:50;background:var(--green);color:#fff;border-radius:14px;padding:12px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 20px rgba(0,0,0,.25);font-weight:700;max-width:700px;margin:0 auto}
   .iostip span{flex:1}
   .iostip button{background:#fff;color:var(--green);border:0;border-radius:10px;padding:8px 12px;font:inherit;font-weight:800}
@@ -343,21 +347,17 @@
     <form id='addForm' method='POST' name='add-mosque' data-netlify='true' netlify-honeypot='bot-field' novalidate>
       <input type="hidden" name="form-name" value="add-mosque">
       <p hidden><label>Do not fill: <input name="bot-field"></label></p>
-      <label for="fName" data-t="fName">اسم المسجد</label>
-      <input id="fName" name="mosque_name" required maxlength="120" autocomplete="off">
-      <label for="fKind" data-t="fKind">النوع</label>
-      <select id="fKind" name="type"><option value="مسجد">مسجد</option></select>
-      <label data-t="fLocL"></label>
       <button type="button" class="big locbtn" id="fLoc" data-t="fLoc"></button>
+      <div class="fmapL" data-t="fMapL"></div>
+      <div class="fmapW"><div id="fMap" class="fmap"></div><div class="fpin" aria-hidden="true">📍</div>
+        <button type="button" class="fsat" id="fSat"></button></div>
       <input type="hidden" name="lat" id="fLat"><input type="hidden" name="lng" id="fLng">
       <input type="hidden" name="location_link" id="fGeo">
       <input type="hidden" name="country" id="fCountry">
-      <div class="fmapL" data-t="fMapL"></div>
-      <div id="fMap" class="fmap"></div>
-      <label for="fMaps" data-t="fMaps">رابط الخريطة</label>
-      <input id="fMaps" name="maps_link" inputmode="url" placeholder="https://maps.app.goo.gl/…" autocomplete="off">
-      <label for="fNote" data-t="fNote">ملاحظة</label>
-      <textarea id="fNote" name="note" maxlength="500"></textarea>
+      <input type="hidden" name="type" value="مسجد">
+      <input type="hidden" name="source" id="fSrc" value="site">
+      <label for="fName" data-t="fName"></label>
+      <input id="fName" name="mosque_name" maxlength="120" autocomplete="off">
       <input type="hidden" name="page_lang" id="fLang">
       <div class="msg" id="fMsg"></div>
       <div class="two">
@@ -429,9 +429,9 @@ const T = {
   iqShort:"إقامة", iqSet:"⚙️ غيّر وقت الإقامة", iqH:"وقت الإقامة بعد الأذان", iqP:"اختر كم دقيقة بين الأذان والإقامة في مسجدك. إذا ما اخترت، نحسبها 20 دقيقة.",
   min:"د", save:"حفظ", cancel:"إلغاء", close:"إغلاق", saved:"تم الحفظ ✓",
   gmH:"أضف مسجدًا في خرائط Google", gmP:"بعد موافقة Google يظهر المسجد للجميع في «أقرب مسجد».", gmGo:"افتح خرائط Google", gmSteps:["افتح خرائط Google من الزر بالأسفل.","اضغط مطوّلًا على مكان المسجد بالضبط حتى يظهر الدبوس الأحمر 📍.","اسحب البطاقة للأعلى واختر «إضافة مكان ناقص».","اكتب اسم المسجد، واختر الفئة «مسجد»، ثم أرسل."], addH:"مسجد غير موجود في القائمة؟", addP:"إذا تعرف مسجد أو مصلى ما ظهر هنا، أرسله لنا ونضيفه بعد المراجعة. ولك الأجر بإذن الله.", addBtn:"➕ أضف مسجداً",
-  formH:"أضف مسجداً أو مصلى", formP:"نراجع كل طلب قبل إضافته.", fName:"اسم المسجد", fKind:"النوع",
+  formH:"أضف مسجداً أو مصلى", formP:"لا تحتاج حساب. نراجع الطلب ونضيفه في التطبيق.", fName:"اسم المسجد (اختياري)", fKind:"النوع",
   kinds:{"مسجد":"مسجد","جامع":"جامع","مصلى":"مصلى","مصلى محطة":"مصلى محطة وقود"},
-  fLocL:"موقع المسجد", fPinOk:"✓ تم تحديد مكان المسجد", fMapL:"📍 حدّد مكان المسجد على الخريطة: اضغط على المكان أو اسحب الدبوس", fNeedPin:"حدّد مكان المسجد على الخريطة أولاً.", fOutSA:"المكان المحدد برا السعودية. نستقبل المساجد داخل السعودية فقط.", fChecking:"جاري التحقق من الموقع…", iosTip:"📲 للتثبيت على الآيفون: اضغط «مشاركة» ⬆️ ← «إضافة إلى الشاشة الرئيسية» ➕", appTip:"📲 للتثبيت: افتح الرابط في المتصفح أولاً (⋯ ← فتح في Safari أو Chrome)", tipOk:"تمام", fLoc:"📍 أنا عند المسجد الآن — خذ موقعي", fLocWait:"جاري تحديد موقعك…", fLocOk:"✓ تم أخذ موقعك",
+  fLocL:"موقع المسجد", fPinOk:"✓ تم تحديد مكان المسجد", fMapL:"أو حرّك الخريطة حتى يكون الدبوس 📍 فوق المسجد", fSatOn:"🛰️ قمر صناعي", fSatOff:"🗺️ خريطة", fNeedPin:"حدّد مكان المسجد على الخريطة أولاً.", fOutSA:"المكان المحدد برا السعودية. نستقبل المساجد داخل السعودية فقط.", fChecking:"جاري التحقق من الموقع…", iosTip:"📲 للتثبيت على الآيفون: اضغط «مشاركة» ⬆️ ← «إضافة إلى الشاشة الرئيسية» ➕", appTip:"📲 للتثبيت: افتح الرابط في المتصفح أولاً (⋯ ← فتح في Safari أو Chrome)", tipOk:"تمام", fLoc:"📍 أنا عند المسجد الآن — خذ موقعي", fLocWait:"جاري تحديد موقعك…", fLocOk:"✓ تم أخذ موقعك",
   fLocFail:"ما قدرنا نحدد موقعك. حدّد مكان المسجد على الخريطة.", fMaps:"رابط المسجد في خرائط Google (اختياري)",
   fNote:"ملاحظة (اختياري)", fSend:"إرسال", fSending:"جاري الإرسال…", fNeedName:"اكتب اسم المسجد.",
   fNeedLoc:"أرسل الموقع: اضغط «خذ موقعي» أو الصق رابط الخريطة.", fThanks:"جزاك الله خيراً! وصلنا المسجد، ونضيفه بعد المراجعة.",
@@ -470,9 +470,9 @@ const T = {
   iqShort:"Iqama", iqSet:"⚙️ Change iqama times", iqH:"Iqama time after adhan", iqP:"Choose how many minutes your mosque waits between adhan and iqama. If you do not choose, we use 20 minutes.",
   min:"min", save:"Save", cancel:"Cancel", close:"Close", saved:"Saved ✓",
   gmH:"Add a mosque on Google Maps", gmP:"After Google approves it, the mosque shows for everyone in Nearest Mosque.", gmGo:"Open Google Maps", gmSteps:["Open Google Maps with the button below.","Long-press the exact place of the mosque until the red pin 📍 shows.","Swipe the card up and choose “Add a missing place”.","Type the mosque name, pick the category “Mosque”, then send."], addH:"Mosque not on the list?", addP:"If you know a mosque or prayer room that does not show here, send it to us. We add it after review.", addBtn:"➕ Add a mosque",
-  formH:"Add a mosque or prayer room", formP:"We review every request before adding it.", fName:"Mosque name", fKind:"Type",
+  formH:"Add a mosque or prayer room", formP:"No account needed. We review it and add it to the app.", fName:"Mosque name (optional)", fKind:"Type",
   kinds:{"مسجد":"Mosque","جامع":"Friday mosque (Jami)","مصلى":"Prayer room","مصلى محطة":"Gas station prayer room"},
-  fLocL:"Mosque location", fPinOk:"✓ Mosque location set", fMapL:"📍 Mark the mosque on the map: tap the place or drag the pin", fNeedPin:"Please mark the mosque on the map first.", fOutSA:"This point is outside Saudi Arabia. We only accept mosques inside Saudi Arabia.", fChecking:"Checking the location…", iosTip:"📲 To install on iPhone: tap Share ⬆️ → «Add to Home Screen» ➕", appTip:"📲 To install: open the link in your browser first (⋯ → Open in Safari or Chrome)", tipOk:"OK", fLoc:"📍 I am at the mosque now — use my location", fLocWait:"Finding your location…", fLocOk:"✓ Location added",
+  fLocL:"Mosque location", fPinOk:"✓ Mosque location set", fMapL:"Or move the map until the pin 📍 is on the mosque", fSatOn:"🛰️ Satellite", fSatOff:"🗺️ Map", fNeedPin:"Please mark the mosque on the map first.", fOutSA:"This point is outside Saudi Arabia. We only accept mosques inside Saudi Arabia.", fChecking:"Checking the location…", iosTip:"📲 To install on iPhone: tap Share ⬆️ → «Add to Home Screen» ➕", appTip:"📲 To install: open the link in your browser first (⋯ → Open in Safari or Chrome)", tipOk:"OK", fLoc:"📍 I am at the mosque now — use my location", fLocWait:"Finding your location…", fLocOk:"✓ Location added",
   fLocFail:"We could not get your location. Mark the mosque on the map.", fMaps:"Google Maps link (optional)",
   fNote:"Note (optional)", fSend:"Send", fSending:"Sending…", fNeedName:"Write the mosque name.",
   fNeedLoc:"Add the location: tap “use my location” or paste the map link.", fThanks:"Thank you! We received it and will add it after review.",
@@ -898,26 +898,41 @@ function loadLeaflet(){
 }
 function setPin(lat, lng, center){
   $("fLat").value = (+lat).toFixed(6); $("fLng").value = (+lng).toFixed(6);
-  const b = $("fLoc"); b.textContent = L().fPinOk; b.classList.add("done"); fMsg("");
-  if (pinMap && window.L) {
-    if (!pinMarker) { pinMarker = window.L.marker([lat, lng], {draggable: true}).addTo(pinMap); pinMarker.on("dragend", () => { const p = pinMarker.getLatLng(); setPin(p.lat, p.lng, false); }); }
-    else pinMarker.setLatLng([lat, lng]);
-    if (center) pinMap.setView([lat, lng], 17);
-  }
+  if (center && pinMap) { pinMap._quiet = true; pinMap.setView([lat, lng], 18); }
+}
+var pinSet = false, satOn = true, layerMap = null, layerSat = null;
+function setSat(on){
+  satOn = on; $("fSat").textContent = on ? L().fSatOff : L().fSatOn;
+  if (!pinMap) return;
+  if (on) { pinMap.removeLayer(layerMap); layerSat.addTo(pinMap); }
+  else { layerSat.remove(); layerMap.addTo(pinMap); }
 }
 async function initPinMap(){
   try { await loadLeaflet(); } catch(_) { return; }
   const start = (typeof me !== "undefined" && me) ? me : RIYADH;
   if (!pinMap) {
-    pinMap = window.L.map("fMap", {attributionControl: true}).setView(start, me ? 16 : 11);
-    window.L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom: 19, attribution: "© OpenStreetMap"}).addTo(pinMap);
-    pinMap.on("click", e => setPin(e.latlng.lat, e.latlng.lng, false));
+    pinMap = window.L.map("fMap", {attributionControl: true, zoomControl: true}).setView(start, me ? 17 : 11);
+    layerMap = window.L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom: 19, attribution: "© OpenStreetMap"});
+    // Satellite photo: mosque domes and minarets are easy to see
+    layerSat = window.L.layerGroup([
+      window.L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {maxZoom: 19, attribution: "Esri"}),
+      window.L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", {maxZoom: 19})
+    ]);
+    (satOn ? layerSat : layerMap).addTo(pinMap);
+    // The pin is fixed in the middle: moving the map moves the place under it
+    pinMap.on("moveend", () => {
+      const c = pinMap.getCenter();
+      if (pinMap._quiet) { pinMap._quiet = false; }
+      else { pinSet = true; const b = $("fLoc"); b.classList.add("done"); b.textContent = L().fPinOk; }
+      setPin(c.lat, c.lng, false); fMsg("");
+    });
   } else {
-    if (pinMarker) { pinMap.removeLayer(pinMarker); pinMarker = null; }
-    pinMap.setView(start, me ? 16 : 11);
+    pinMap._quiet = true; pinMap.setView(start, me ? 17 : 11);
   }
-  setTimeout(() => pinMap.invalidateSize(), 200);
+  setSat(satOn);
+  setTimeout(() => { pinMap.invalidateSize(); const c = pinMap.getCenter(); setPin(c.lat, c.lng, false); }, 250);
 }
+$("fSat").addEventListener("click", () => setSat(!satOn));
 // Saudi check: rough box first, then OpenStreetMap reverse lookup for the country
 function inSaBox(la, lo){ return la >= 16.3 && la <= 32.2 && lo >= 34.4 && lo <= 55.7; }
 async function countryOf(la, lo){
@@ -932,11 +947,11 @@ async function countryOf(la, lo){
   } catch(_) { return "sa"; }
 }
 function fMsg(key, cls){ const m = $("fMsg"); m.textContent = key ? L()[key] : ""; m.className = "msg" + (cls ? " " + cls : ""); }
-function resetLoc(){ $("fLat").value = ""; $("fLng").value = ""; if (typeof pinMarker !== "undefined" && pinMarker && pinMap) { pinMap.removeLayer(pinMarker); pinMarker = null; } const b = $("fLoc"); b.classList.remove("done"); b.textContent = L().fLoc; }
+function resetLoc(){ pinSet = false; $("fLat").value = ""; $("fLng").value = ""; const b = $("fLoc"); b.classList.remove("done"); b.textContent = L().fLoc; }
 function openAdd(){
-  $("fKind").innerHTML = Object.entries(L().kinds).map(([v, t]) => `<option value="${v}">${t}</option>`).join("");
   $("addForm").reset(); resetLoc(); fMsg(""); $("fSend").disabled = false; $("fSend").textContent = L().fSend;
   $("addModal").hidden = false;
+  $("fSat").textContent = satOn ? L().fSatOff : L().fSatOn;
   initPinMap();
 }
 // Add a mosque: in Google Maps itself, so it shows in "Nearest mosque" for everyone
@@ -947,7 +962,9 @@ function openGm(){
   $("gmModal").hidden = false;
   track("add_mosque_google_open");
 }
-$("addBtn").addEventListener("click", openGm);
+$("addBtn").addEventListener("click", openAdd);
+// Opened from the app ("pick on the map"): /#add opens the form
+if (location.hash === "#add") setTimeout(openAdd, 300);
 $("gmClose").addEventListener("click", () => $("gmModal").hidden = true);
 $("gmGo").addEventListener("click", () => { track("add_mosque_google_go"); setTimeout(() => $("gmModal").hidden = true, 500); });
 $("fCancel").addEventListener("click", () => $("addModal").hidden = true);
@@ -957,15 +974,15 @@ $("fLoc").addEventListener("click", () => {
   b.textContent = L().fLocWait;
   navigator.geolocation.getCurrentPosition(p => {
     setPin(p.coords.latitude, p.coords.longitude, true);
-    b.textContent = L().fLocOk; b.classList.add("done"); fMsg("");
+    pinSet = true; b.textContent = L().fLocOk; b.classList.add("done"); fMsg("");
   }, () => { resetLoc(); fMsg("fLocFail", "err"); }, {enableHighAccuracy:true, timeout:15000, maximumAge:0});
 });
 $("addForm").addEventListener("submit", async e => {
   e.preventDefault();
   const f = e.target;
   const nameEl = f.elements["mosque_name"], mapsEl = f.elements["maps_link"];
-  if (!nameEl.value.trim()) { fMsg("fNeedName", "err"); nameEl.focus(); return; }
-  if (!$("fLat").value || !$("fLng").value) { fMsg("fNeedPin", "err"); track("add_mosque_rejected", {reason: "no_pin"}); return; }
+  if (!nameEl.value.trim()) nameEl.value = L().mosque || "مسجد";
+  if (!pinSet || !$("fLat").value || !$("fLng").value) { fMsg("fNeedPin", "err"); track("add_mosque_rejected", {reason: "no_pin"}); return; }
   { const la = +$("fLat").value, lo = +$("fLng").value;
     $("fSend").disabled = true; fMsg("fChecking");
     const cc = await countryOf(la, lo);

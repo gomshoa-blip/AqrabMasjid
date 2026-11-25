@@ -24,6 +24,7 @@ import android.widget.LinearLayout
 import android.widget.NumberPicker
 import android.widget.Switch
 import android.widget.TextView
+import android.widget.Toast
 
 class MainActivity : Activity() {
 
@@ -112,6 +113,7 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.tileContact).setOnClickListener { openUrl(Config.WHATSAPP_URL) }
         findViewById<View>(R.id.tileShare).setOnClickListener { share() }
         findViewById<View>(R.id.tileAdd).setOnClickListener { addMosqueDialog() }
+        findViewById<View>(R.id.tileNear).setOnClickListener { startActivity(Intent(this, MosquesActivity::class.java)) }
         findViewById<View>(R.id.btnTarteel).setOnClickListener { openStore(Config.TARTEEL_PKG, null) }
         findViewById<View>(R.id.btnWahy).setOnClickListener { openStore(Config.WAHY_PKG, null) }
         val sw = findViewById<Switch>(R.id.switchAlerts)
@@ -318,38 +320,49 @@ class MainActivity : Activity() {
     }
 
     /**
-     * Add a mosque in Google Maps itself, so it shows for everyone in "Nearest mosque".
-     * Maps opens on the user's place with a red pin; the user long-presses the exact spot.
+     * Add a mosque, no account needed:
+     * - "I am at the mosque now": sends the phone location (name is optional).
+     * - "Pick on the map": opens the website form with a map.
+     * We review each request, then the mosque shows in "Nearby mosques" in the app.
      */
     private fun addMosqueDialog() {
-        val steps = L.t(
-            "1. افتح خرائط Google من الزر بالأسفل.\n" +
-                "2. اضغط مطوّلًا على مكان المسجد بالضبط حتى يظهر الدبوس الأحمر 📍.\n" +
-                "3. اسحب البطاقة للأعلى واختر «إضافة مكان ناقص».\n" +
-                "4. اكتب اسم المسجد، واختر الفئة «مسجد»، ثم أرسل.\n\n" +
-                "بعد موافقة Google يظهر المسجد للجميع في «أقرب مسجد».",
-            "1. Open Google Maps with the button below.\n" +
-                "2. Long-press the exact place of the mosque until the red pin 📍 shows.\n" +
-                "3. Swipe the card up and choose \u201cAdd a missing place\u201d.\n" +
-                "4. Type the mosque name, pick the category \u201cMosque\u201d, then send.\n\n" +
-                "After Google approves it, the mosque shows for everyone in Nearest Mosque."
-        )
+        val box = LinearLayout(this)
+        box.orientation = LinearLayout.VERTICAL
+        box.setPadding(dp(22), dp(8), dp(22), 0)
+        val msg = TextView(this)
+        msg.text = L.t("هل أنت عند المسجد الآن؟ نأخذ موقعك ونرسله لنا، ونضيفه بعد المراجعة. لا تحتاج حساب.",
+            "Are you at the mosque now? We send your location to us and add it after review. No account needed.")
+        msg.textSize = 16f
+        msg.setTextColor(getColor(R.color.text_primary))
+        box.addView(msg)
+        val name = android.widget.EditText(this)
+        name.hint = L.t("اسم المسجد (اختياري)", "Mosque name (optional)")
+        name.isSingleLine = true
+        box.addView(name, LinearLayout.LayoutParams(-1, -2).also { it.topMargin = dp(12) })
+
         AlertDialog.Builder(this)
-            .setTitle(L.t("أضف مسجدًا في خرائط Google", "Add a mosque on Google Maps"))
-            .setMessage(steps)
-            .setPositiveButton(L.t("افتح خرائط Google", "Open Google Maps")) { _, _ -> openMapsAtMe() }
+            .setTitle(L.t("أضف مسجدًا", "Add a mosque"))
+            .setView(box)
+            .setPositiveButton(L.t("📍 أنا عند المسجد", "📍 I am at the mosque")) { _, _ -> sendMosqueHere(name.text.toString().trim()) }
+            .setNeutralButton(L.t("حدد على الخريطة", "Pick on the map")) { _, _ -> openUrl(Config.ADD_MOSQUE_URL) }
             .setNegativeButton(L.t("إلغاء", "Cancel"), null)
             .show()
     }
 
-    private fun openMapsAtMe() {
-        val (lat, lng) = Prefs.location(this) ?: (24.7136 to 46.6753)
-        val q = "%.6f,%.6f".format(java.util.Locale.US, lat, lng)
-        val geo = Intent(Intent.ACTION_VIEW, Uri.parse("geo:$q?q=$q&z=18"))
-        try {
-            startActivity(Intent(geo).setPackage("com.google.android.apps.maps"))
-        } catch (_: Exception) {
-            openUrl("https://www.google.com/maps/search/?api=1&query=$q")
+    private fun sendMosqueHere(name: String) {
+        Toast.makeText(this, L.t("جاري أخذ موقعك…", "Getting your location…"), Toast.LENGTH_SHORT).show()
+        LocationHelper.get(this) { loc ->
+            if (loc == null) {
+                Toast.makeText(this, L.t("ما قدرنا نحدد موقعك. حدد المسجد على الخريطة.", "Could not get your location. Pick it on the map."), Toast.LENGTH_LONG).show()
+                openUrl(Config.ADD_MOSQUE_URL)
+                return@get
+            }
+            MosqueSubmit.send(this, name, loc.first, loc.second) { ok ->
+                Toast.makeText(this,
+                    if (ok) L.t("جزاك الله خيرًا! وصلنا المسجد، ونضيفه بعد المراجعة.", "Thank you! We received it and will add it after review.")
+                    else L.t("ما قدرنا نرسل الآن. تأكد من الإنترنت وحاول مرة ثانية.", "Could not send now. Check the internet and try again."),
+                    Toast.LENGTH_LONG).show()
+            }
         }
     }
 
@@ -435,6 +448,7 @@ class MainActivity : Activity() {
         b(R.id.tileContactText, "تواصل معنا", "Contact us")
         b(R.id.tileShareText, "شارك", "Share")
         b(R.id.tileAddText, "أضف مسجد", "Add a mosque")
+        b(R.id.tileNearText, "مساجد قريبة", "Nearby mosques")
         b(R.id.tvMore, "المزيد", "More")
         b(R.id.switchAlerts, "تنبيه عند الأذان، وبعده بـ 10 دقائق للإقامة", "Alert at adhan, and 10 minutes later for iqama")
         b(R.id.btnExact, "اسمح بالتنبيه في الوقت الدقيق", "Allow exact-time alerts")
