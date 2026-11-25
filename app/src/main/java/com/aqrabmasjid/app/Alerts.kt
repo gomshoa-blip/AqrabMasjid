@@ -34,7 +34,12 @@ object Alerts {
     /** Alert sound the user picks. Android fixes the sound per channel, so each choice has its own channel. */
     enum class Tone(val channel: String, val ar: String, val en: String, val raw: Int?) {
         SOFT("prayer_alerts_v2", "نغمة هادئة", "Soft chime", R.raw.prayer_chime),
-        BELL("prayer_bell_v1", "جرس", "Bell", R.raw.prayer_bell),
+        BELL("prayer_bell_v1", "جرس (نغمتين)", "Bell (two notes)", R.raw.prayer_bell),
+        BELL1("prayer_bell1_v1", "جرس واحد", "Single bell", R.raw.tone_bell1),
+        CHIME3("prayer_chime3_v1", "ثلاث نغمات صاعدة", "Three rising chimes", R.raw.tone_chime3),
+        WOOD("prayer_wood_v1", "نغمة خشبية", "Wooden tones", R.raw.tone_wood),
+        GONG("prayer_gong_v1", "رنين عميق", "Deep gong", R.raw.tone_gong),
+        DIGITAL("prayer_digital_v1", "تنبيه رقمي", "Digital beep", R.raw.tone_digital),
         VIBRATE("prayer_vibrate_v1", "اهتزاز فقط", "Vibrate only", null),
         SILENT("prayer_silent_v1", "صامت (بدون صوت واهتزاز)", "Silent", null);
         val label: String get() = L.t(ar, en)
