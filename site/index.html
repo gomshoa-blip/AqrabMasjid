@@ -223,10 +223,13 @@
   .tile{flex:1;min-width:0;background:var(--sf);border:1.5px solid var(--bd);border-radius:20px;padding:14px 4px 12px;display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--tx);text-decoration:none;font:inherit;font-size:.85rem;font-weight:800;cursor:pointer}
   .tile .ti{width:40px;height:40px;border-radius:12px;background:var(--tonal);color:var(--ic);display:flex;align-items:center;justify-content:center}
   .tiles2+.card2{margin-top:18px}
-  .radioBar{display:flex;justify-content:center;align-items:center;gap:4px;margin:8px auto 0;width:max-content;max-width:100%;background:var(--sf);border:1.5px solid var(--bd);border-radius:999px;padding:2px 6px}
+  .radioBar{display:flex;align-items:center;gap:12px;margin:10px 0 0;background:var(--sf);border:1.5px solid var(--bd);border-radius:22px;padding:8px 8px 8px 10px}
   .radioBar[hidden]{display:none}
-  .radioBar button{background:none;border:0;font:inherit;font-weight:800;font-size:1rem;color:var(--tx);padding:10px 12px;cursor:pointer}
-  .radioBar #rbClose{color:var(--mu);font-weight:400}
+  .rbPlay{flex:none;width:52px;height:52px;border-radius:50%;border:0;background:linear-gradient(135deg,#E2BE4E,#C79A22);color:#0A4A37;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .rbText{flex:1;min-width:0;display:flex;flex-direction:column}
+  .rbText b{color:var(--tx);font-size:.95rem}
+  .rbText small{color:var(--mu);font-size:.8rem}
+  #rbClose{flex:none;width:44px;height:44px;border:0;background:none;color:var(--mu);cursor:pointer;display:flex;align-items:center;justify-content:center}
   .tiles2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
   .tile.tl{flex-direction:row;justify-content:flex-start;gap:10px;padding:10px 12px;min-height:64px;font-size:.95rem;text-align:start}
   .card2{background:var(--sf);border:1.5px solid var(--bd);border-radius:20px;padding:10px;margin-top:10px}
@@ -300,7 +303,7 @@
     <a class="go2 plainB" id="goJami" href="https://www.google.com/maps/search/?api=1&query=%D8%AC%D8%A7%D9%85%D8%B9" target="_blank" rel="noopener"><span class="gi"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11a7 7 0 0 1 14 0v9"/><path d="M3 20h18"/><path d="M12 4V2"/><path d="M10 20v-4a2 2 0 0 1 4 0v4"/></svg></span><span class="tx"><b data-t="jamiT"></b></span></a>
   </div>
   <div class="ayah2" id="ayah"></div>
-  <div class="radioBar" id="radioBar" hidden><button type="button" id="rbToggle"></button><button type="button" id="rbClose" aria-label="close">✕</button></div>
+  <div class="radioBar" id="radioBar" hidden><button type="button" id="rbToggle" class="rbPlay" aria-label="play/pause"></button><div class="rbText"><b id="rbName"></b><small id="rbStatus"></small></div><button type="button" id="rbClose" aria-label="close"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></div>
   <div class="modeRow"><button class="modeBtn" id="modeBtn" type="button"></button></div>
 </div></div>
 
@@ -1223,7 +1226,9 @@ function drawRadioBar(){
   const b = $("radioBar"); if (!b) return;
   if (radioOn === null) { b.hidden = true; return; }
   b.hidden = false;
-  $("rbToggle").textContent = (radioPaused ? "▶ " + L().playW : "⏸ " + L().pauseW) + "  ·  📻 " + L()[RADIOS[radioOn].k];
+  $("rbToggle").innerHTML = radioPaused ? '<svg viewBox="0 0 24 24" width="26" height="26"><path fill="currentColor" d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>' : '<svg viewBox="0 0 24 24" width="26" height="26"><path fill="currentColor" d="M7 5h3.5a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm6.5 0H17a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-3.5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/></svg>';
+  $("rbName").textContent = "📻 " + L()[RADIOS[radioOn].k];
+  $("rbStatus").textContent = radioPaused ? L().playW + " ▶" : L().radioPlaying;
 }
 function radioPlay(i){
   const a = $("radioAudio"), r = RADIOS[i]; a.src = r.url; radioOn = i; radioPaused = false; drawRadio(); drawRadioBar();

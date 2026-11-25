@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Radio streams sometimes move to http addresses. Allow that only for the radio hosts. -->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">radiojar.com</domain>
+        <domain includeSubdomains="true">revma.com</domain>
+        <domain includeSubdomains="true">radioca.st</domain>
+    </domain-config>
+</network-security-config>

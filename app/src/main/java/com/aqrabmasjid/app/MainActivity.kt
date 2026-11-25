@@ -135,8 +135,8 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.tileAdd).setOnClickListener { addMosqueDialog() }
         findViewById<View>(R.id.btnPrivacy).setOnClickListener { openUrl(Config.PRIVACY_URL) }
         findViewById<View>(R.id.tileRadio).setOnClickListener { radioDialog() }
-        findViewById<View>(R.id.radioToggle).setOnClickListener { RadioService.toggle(this); handler.postDelayed({ showRadioBar() }, 300) }
-        findViewById<View>(R.id.radioClose).setOnClickListener { RadioService.stop(this); handler.postDelayed({ showRadioBar() }, 300) }
+        findViewById<View>(R.id.radioToggle).setOnClickListener { RadioService.toggle(this); showRadioBar() }
+        findViewById<View>(R.id.radioClose).setOnClickListener { RadioService.stop(this); showRadioBar() }
         findViewById<View>(R.id.btnAbout).setOnClickListener { openUrl(Config.ABOUT_URL) }
         findViewById<View>(R.id.tileNear).setOnClickListener { startActivity(Intent(this, MosquesActivity::class.java)) }
         findViewById<View>(R.id.btnTarteel).setOnClickListener { openStore(Config.TARTEEL_PKG, null) }
@@ -547,20 +547,29 @@ class MainActivity : Activity() {
         val st = RadioService.station(RadioService.current)
         if (st == null) { bar.visibility = View.GONE; return }
         bar.visibility = View.VISIBLE
-        findViewById<TextView>(R.id.radioToggle).text =
-            (if (RadioService.paused) "▶ " + L.t("تشغيل", "Play") else "⏸ " + L.t("إيقاف", "Pause")) + "  ·  📻 " + st.label
+        findViewById<TextView>(R.id.radioName).text = "📻 " + st.label
+        findViewById<TextView>(R.id.radioStatus).text = when (RadioService.status) {
+            RadioService.Status.LOADING -> L.t("جاري التشغيل…", "Starting…")
+            RadioService.Status.PLAYING -> L.t("يعمل الآن", "Playing now")
+            RadioService.Status.PAUSED -> L.t("متوقف مؤقتًا", "Paused")
+            RadioService.Status.ERROR -> L.t("تعذر التشغيل. تأكد من الإنترنت", "Could not play. Check the internet")
+            RadioService.Status.OFF -> ""
+        }
+        findViewById<android.widget.ImageView>(R.id.radioToggleIcon)
+            .setImageResource(if (RadioService.paused) R.drawable.ic_play else R.drawable.ic_pause)
     }
 
     /** Live Quran radio: pick a station; it keeps playing with the screen off. */
     private fun radioDialog() {
         val st = RadioService.STATIONS
-        val now = RadioService.playing
+        val now = RadioService.current
         val items = st.map { (if (it.id == now) "▶️ " else "📻 ") + it.label }.toMutableList()
         val b = AlertDialog.Builder(this)
             .setTitle(L.t("إذاعة", "Radio"))
             .setItems(items.toTypedArray()) { _, i ->
                 RadioService.play(this, st[i].id)
                 toast(L.t("جاري تشغيل: ", "Playing: ") + st[i].label)
+                showRadioBar()
             }
             .setNegativeButton(L.t("إغلاق", "Close"), null)
         if (now != null) b.setPositiveButton(L.t("⏹ إيقاف", "⏹ Stop")) { _, _ -> RadioService.stop(this) }
