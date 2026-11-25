@@ -133,6 +133,7 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.tileShare).setOnClickListener { share() }
         findViewById<View>(R.id.tileAdd).setOnClickListener { addMosqueDialog() }
         findViewById<View>(R.id.btnPrivacy).setOnClickListener { openUrl(Config.PRIVACY_URL) }
+        findViewById<View>(R.id.tileRadio).setOnClickListener { radioDialog() }
         findViewById<View>(R.id.btnAbout).setOnClickListener { openUrl(Config.ABOUT_URL) }
         findViewById<View>(R.id.tileNear).setOnClickListener { startActivity(Intent(this, MosquesActivity::class.java)) }
         findViewById<View>(R.id.btnTarteel).setOnClickListener { openStore(Config.TARTEEL_PKG, null) }
@@ -537,6 +538,25 @@ class MainActivity : Activity() {
 
     private fun toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
 
+    /** Live Quran radio: pick a station; it keeps playing with the screen off. */
+    private fun radioDialog() {
+        val st = RadioService.STATIONS
+        val now = RadioService.playing
+        val items = st.map { (if (it.id == now) "▶️ " else "📻 ") + it.label }.toMutableList()
+        items += "📻 " + L.t("نداء الإسلام – مكة (يفتح الموقع الرسمي)", "Nidaa Al-Islam – Makkah (official site)")
+        val b = AlertDialog.Builder(this)
+            .setTitle(L.t("إذاعة القرآن", "Quran radio"))
+            .setItems(items.toTypedArray()) { _, i ->
+                if (i < st.size) {
+                    RadioService.play(this, st[i].id)
+                    toast(L.t("جاري تشغيل: ", "Playing: ") + st[i].label)
+                } else openUrl(RadioService.NIDAA_URL)
+            }
+            .setNegativeButton(L.t("إغلاق", "Close"), null)
+        if (now != null) b.setPositiveButton(L.t("⏹ إيقاف", "⏹ Stop")) { _, _ -> RadioService.stop(this) }
+        b.show()
+    }
+
     private fun share() {
         val i = Intent(Intent.ACTION_SEND)
             .setType("text/plain")
@@ -616,6 +636,7 @@ class MainActivity : Activity() {
         b(R.id.tvGrpContact, "تواصل", "Contact")
         b(R.id.btnPrivacy, "سياسة الخصوصية", "Privacy policy")
         b(R.id.btnAbout, "عن أقرب مسجد", "About Aqrab Masjid")
+        b(R.id.tileRadioText, "إذاعة القرآن", "Quran radio")
         b(R.id.tileQuranText, "القرآن", "Quran")
         b(R.id.tileAdhkarText, "الأذكار", "Adhkar")
         b(R.id.tileQiratText, "قيراط", "Qirat")

@@ -8,6 +8,17 @@ package com.aqrabmasjid.app
 object Tr {
     /** Index in each array: 0 = Urdu, 1 = Indonesian, 2 = Bengali, 3 = Turkish. */
     val MAP: Map<String, Array<String>> = mapOf(
+        "Quran radio" to arrayOf("قرآن ریڈیو", "Radio Al-Quran", "কুরআন রেডিও", "Kuran radyosu"),
+        "Holy Quran Radio – Saudi Arabia" to arrayOf("قرآن کریم ریڈیو – سعودی عرب", "Radio Al-Quran – Arab Saudi", "পবিত্র কুরআন রেডিও – সৌদি আরব", "Kuran-ı Kerim Radyosu – Suudi Arabistan"),
+        "Sunnah Radio" to arrayOf("سنت ریڈیو", "Radio Sunnah", "সুন্নাহ রেডিও", "Sünnet Radyosu"),
+        "Nidaa Al-Islam – Makkah (official site)" to arrayOf("نداء الاسلام – مکہ (سرکاری ویب سائٹ)", "Nidaa Al-Islam – Makkah (situs resmi)", "নিদা আল-ইসলাম – মক্কা (অফিসিয়াল সাইট)", "Nidaa Al-Islam – Mekke (resmi site)"),
+        "Playing: " to arrayOf("چل رہا ہے: ", "Memutar: ", "চলছে: ", "Çalıyor: "),
+        "⏹ Stop" to arrayOf("⏹ بند کریں", "⏹ Berhenti", "⏹ বন্ধ", "⏹ Durdur"),
+        "Close" to arrayOf("بند کریں", "Tutup", "বন্ধ", "Kapat"),
+        "Starting…" to arrayOf("شروع ہو رہا ہے…", "Memulai…", "শুরু হচ্ছে…", "Başlıyor…"),
+        "Playing now" to arrayOf("اب چل رہا ہے", "Sedang diputar", "এখন চলছে", "Şimdi çalıyor"),
+        "Could not play. Check the internet" to arrayOf("نہیں چل سکا۔ انٹرنیٹ چیک کریں", "Gagal memutar. Periksa internet", "চালানো যায়নি। ইন্টারনেট দেখুন", "Çalınamadı. İnterneti kontrol edin"),
+        "Radio" to arrayOf("ریڈیو", "Radio", "রেডিও", "Radyo"),
         "About Aqrab Masjid" to arrayOf("اقرب مسجد کے بارے میں", "Tentang Aqrab Masjid", "Aqrab Masjid সম্পর্কে", "Aqrab Masjid hakkında"),
         "Fajr" to arrayOf("فجر", "Subuh", "ফজর", "Sabah"),
         "Dhuhr" to arrayOf("ظہر", "Dzuhur", "যোহর", "Öğle"),
