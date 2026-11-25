@@ -543,14 +543,11 @@ class MainActivity : Activity() {
         val st = RadioService.STATIONS
         val now = RadioService.playing
         val items = st.map { (if (it.id == now) "▶️ " else "📻 ") + it.label }.toMutableList()
-        items += "📻 " + L.t("نداء الإسلام – مكة (يفتح الموقع الرسمي)", "Nidaa Al-Islam – Makkah (official site)")
         val b = AlertDialog.Builder(this)
-            .setTitle(L.t("إذاعة القرآن", "Quran radio"))
+            .setTitle(L.t("إذاعة", "Radio"))
             .setItems(items.toTypedArray()) { _, i ->
-                if (i < st.size) {
-                    RadioService.play(this, st[i].id)
-                    toast(L.t("جاري تشغيل: ", "Playing: ") + st[i].label)
-                } else openUrl(RadioService.NIDAA_URL)
+                RadioService.play(this, st[i].id)
+                toast(L.t("جاري تشغيل: ", "Playing: ") + st[i].label)
             }
             .setNegativeButton(L.t("إغلاق", "Close"), null)
         if (now != null) b.setPositiveButton(L.t("⏹ إيقاف", "⏹ Stop")) { _, _ -> RadioService.stop(this) }
@@ -636,7 +633,7 @@ class MainActivity : Activity() {
         b(R.id.tvGrpContact, "تواصل", "Contact")
         b(R.id.btnPrivacy, "سياسة الخصوصية", "Privacy policy")
         b(R.id.btnAbout, "عن أقرب مسجد", "About Aqrab Masjid")
-        b(R.id.tileRadioText, "إذاعة القرآن", "Quran radio")
+        b(R.id.tileRadioText, "إذاعة", "Radio")
         b(R.id.tileQuranText, "القرآن", "Quran")
         b(R.id.tileAdhkarText, "الأذكار", "Adhkar")
         b(R.id.tileQiratText, "قيراط", "Qirat")

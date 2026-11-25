@@ -35,8 +35,6 @@ class RadioService : Service() {
             Station("sunnah", "إذاعة السنة", "Sunnah Radio", "https://radiosunna.radioca.st/stream")
         )
 
-        /** Official page of Nidaa Al-Islam (Saudi Broadcasting Authority), opened in the browser. */
-        const val NIDAA_URL = "https://radioplus.sba.sa/ar/live/1"
 
         /** Station playing now (null = stopped). */
         @Volatile var playing: String? = null
