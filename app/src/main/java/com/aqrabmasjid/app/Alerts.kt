@@ -31,22 +31,40 @@ object Alerts {
     const val ACTION_SHOW_MOSQUES = "com.aqrabmasjid.app.SHOW_MOSQUES"
     private const val MIN = 60_000L
 
+    /** Alert sound the user picks. Android fixes the sound per channel, so each choice has its own channel. */
+    enum class Tone(val channel: String, val ar: String, val en: String, val raw: Int?) {
+        SOFT("prayer_alerts_v2", "نغمة هادئة", "Soft chime", R.raw.prayer_chime),
+        BELL("prayer_bell_v1", "جرس", "Bell", R.raw.prayer_bell),
+        VIBRATE("prayer_vibrate_v1", "اهتزاز فقط", "Vibrate only", null),
+        SILENT("prayer_silent_v1", "صامت (بدون صوت واهتزاز)", "Silent", null);
+        val label: String get() = L.t(ar, en)
+    }
+
     fun createChannel(c: Context) {
         val nm = c.getSystemService(NotificationManager::class.java)
         nm.deleteNotificationChannel(OLD_CHANNEL)
-        val ch = NotificationChannel(CHANNEL, L.t("تنبيه الصلاة", "Prayer alerts"), NotificationManager.IMPORTANCE_HIGH)
-        ch.description = L.t("تنبيه عند الأذان، وبعده بـ 10 دقائق للإقامة", "Alert at adhan, and 10 minutes later for iqama")
-        // Soft chime from res/raw/prayer_chime.ogg
-        val sound = Uri.parse("android.resource://${c.packageName}/${R.raw.prayer_chime}")
         val attrs = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_NOTIFICATION)
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
             .build()
-        ch.setSound(sound, attrs)
-        ch.enableVibration(true)
-        ch.vibrationPattern = longArrayOf(0, 250, 150, 250)
-        nm.createNotificationChannel(ch)
+        for (t in Tone.values()) {
+            val ch = NotificationChannel(t.channel, L.t("تنبيه الصلاة - ${t.ar}", "Prayer alerts - ${t.en}"),
+                if (t == Tone.SILENT) NotificationManager.IMPORTANCE_DEFAULT else NotificationManager.IMPORTANCE_HIGH)
+            ch.description = L.t("تنبيه عند الأذان، وبعده بـ 10 دقائق للإقامة", "Alert at adhan, and 10 minutes later for iqama")
+            if (t.raw != null) ch.setSound(soundUri(c, t.raw), attrs) else ch.setSound(null, null)
+            ch.enableVibration(t != Tone.SILENT)
+            if (t != Tone.SILENT) ch.vibrationPattern = longArrayOf(0, 250, 150, 250)
+            nm.createNotificationChannel(ch)
+        }
     }
+
+    fun soundUri(c: Context, raw: Int): Uri = Uri.parse("android.resource://${c.packageName}/$raw")
+
+    fun tone(c: Context): Tone =
+        runCatching { Tone.valueOf(c.getSharedPreferences("aqrab", Context.MODE_PRIVATE).getString("tone", "SOFT")!!) }.getOrDefault(Tone.SOFT)
+
+    fun setTone(c: Context, t: Tone) =
+        c.getSharedPreferences("aqrab", Context.MODE_PRIVATE).edit().putString("tone", t.name).apply()
 
     /** Friday Dhuhr = Jumuah: there is a khutbah, so no iqama alert. */
     private fun isJumuah(t: PrayerTime): Boolean {
@@ -133,7 +151,7 @@ object Alerts {
             .addAction(R.drawable.ic_stat_mosque, L.t("خذني لأقرب مسجد", "Take me to nearest mosque"), carPending)
             .build()
 
-        val nb = NotificationCompat.Builder(c, CHANNEL)
+        val nb = NotificationCompat.Builder(c, tone(c).channel)
             .setSmallIcon(R.drawable.ic_stat_mosque)
             .setContentTitle(title)
             .setContentText(phoneText ?: text)
@@ -177,11 +195,13 @@ class AlarmReceiver : BroadcastReceiver() {
             Alerts.show(c, type, prayer, i.getLongExtra("adhan", 0), i.getLongExtra("iqama", 0))
         }
         Alerts.scheduleNext(c)
+        PrayerWidgets.updateAll(c)
     }
 }
 
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(c: Context, i: Intent) {
         Alerts.scheduleNext(c)
+        PrayerWidgets.updateAll(c)
     }
 }

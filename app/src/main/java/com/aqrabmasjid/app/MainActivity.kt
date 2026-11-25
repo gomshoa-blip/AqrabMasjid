@@ -90,6 +90,7 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.btnLang).setOnClickListener {
             L.setEnglish(this, !L.en)
             Alerts.createChannel(this)
+            PrayerWidgets.updateAll(this)
             recreate()
         }
         // Mode: driving shows only the car part; home shows the full app
@@ -123,6 +124,9 @@ class MainActivity : Activity() {
             Alerts.scheduleNext(this)
         }
 
+        showTone()
+        findViewById<View>(R.id.btnTone).setOnClickListener { toneDialog() }
+
         btnExact.setOnClickListener {
             if (Build.VERSION.SDK_INT >= 31) {
                 startActivity(
@@ -141,6 +145,7 @@ class MainActivity : Activity() {
         handler.post(tick)
         handler.post(ringTick)
         Alerts.scheduleNext(this)
+        PrayerWidgets.updateAll(this)
         // Update the location automatically when the app comes back
         if (resumedOnce && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) refresh()
         resumedOnce = true
@@ -179,6 +184,7 @@ class MainActivity : Activity() {
             tvStatus.text = ""
             renderTimes()
             Alerts.scheduleNext(this)
+            PrayerWidgets.updateAll(this)
         }
     }
 
@@ -364,6 +370,42 @@ class MainActivity : Activity() {
                     Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+    private fun showTone() {
+        findViewById<TextView>(R.id.btnTone).text =
+            L.t("🔔 نغمة التنبيه: ", "🔔 Alert sound: ") + Alerts.tone(this).label + "  ›"
+    }
+
+    /** Pick the alert sound. Tapping a choice plays it once. */
+    private fun toneDialog() {
+        val tones = Alerts.Tone.values()
+        var pick = tones.indexOf(Alerts.tone(this))
+        var playing: android.media.Ringtone? = null
+        fun play(t: Alerts.Tone) {
+            playing?.stop()
+            playing = null
+            if (t.raw != null) {
+                playing = android.media.RingtoneManager.getRingtone(this, Alerts.soundUri(this, t.raw))
+                playing?.play()
+            } else if (t == Alerts.Tone.VIBRATE) {
+                try {
+                    val v = getSystemService(android.os.Vibrator::class.java)
+                    v.vibrate(android.os.VibrationEffect.createWaveform(longArrayOf(0, 250, 150, 250), -1))
+                } catch (_: Exception) {}
+            }
+        }
+        AlertDialog.Builder(this)
+            .setTitle(L.t("نغمة التنبيه", "Alert sound"))
+            .setSingleChoiceItems(tones.map { it.label }.toTypedArray(), pick) { _, i -> pick = i; play(tones[i]) }
+            .setPositiveButton(L.t("حفظ", "Save")) { _, _ ->
+                playing?.stop()
+                Alerts.setTone(this, tones[pick])
+                showTone()
+            }
+            .setNegativeButton(L.t("إلغاء", "Cancel")) { _, _ -> playing?.stop() }
+            .setOnDismissListener { playing?.stop() }
+            .show()
     }
 
     private fun share() {

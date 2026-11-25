@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">أقرب مسجد</string>
+    <string name="widget_next_name">الصلاة القادمة</string>
+    <string name="widget_day_name">مواقيت اليوم</string>
+    <string name="widget_next_desc">الصلاة القادمة والوقت المتبقي، وزر أقرب مسجد</string>
+    <string name="widget_day_desc">مواقيت الصلوات الخمس اليوم، والقادمة ملوّنة</string>
+    <string name="w_label">الصلاة القادمة</string>
+    <string name="w_name">العصر</string>
+    <string name="w_times">الأذان 3:15 م · الإقامة 3:35 م</string>
+    <string name="w_left">متبقي</string>
+    <string name="w_go">🕌 أقرب مسجد</string>
 </resources>

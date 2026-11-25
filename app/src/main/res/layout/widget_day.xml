@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Home screen widget: today's five prayers, the coming one highlighted, live countdown -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+        <TextView
+            android:id="@+id/dHead"
+            android:text="@string/w_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+        <Chronometer
+            android:id="@+id/dChrono"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#F6D46B"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/dSub"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:maxLines="1"
+        android:textColor="#CFE8DC"
+        android:textSize="11sp" />
+
+    <LinearLayout
+        android:id="@+id/dRow0"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/widget_row_off"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+        <TextView android:id="@+id/dName0" android:text="الفجر" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:gravity="start" android:textColor="#FFFFFF" android:textSize="14sp" android:textStyle="bold" android:maxLines="1" />
+        <TextView android:id="@+id/dAdhan0" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:gravity="center" android:textColor="#FFFFFF" android:textSize="14sp" android:maxLines="1" />
+        <TextView android:id="@+id/dIqama0" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:gravity="center" android:textColor="#CFE8DC" android:textSize="14sp" android:maxLines="1" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/dRow1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/widget_row_off"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+        <TextView android:id="@+id/dName1" android:text="الظهر" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:gravity="start" android:textColor="#FFFFFF" android:textSize="14sp" android:textStyle="bold" android:maxLines="1" />
+        <TextView android:id="@+id/dAdhan1" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:gravity="center" android:textColor="#FFFFFF" android:textSize="14sp" android:maxLines="1" />
+        <TextView android:id="@+id/dIqama1" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:gravity="center" android:textColor="#CFE8DC" android:textSize="14sp" android:maxLines="1" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/dRow2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/widget_row_off"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+        <TextView android:id="@+id/dName2" android:text="العصر" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:gravity="start" android:textColor="#FFFFFF" android:textSize="14sp" android:textStyle="bold" android:maxLines="1" />
+        <TextView android:id="@+id/dAdhan2" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:gravity="center" android:textColor="#FFFFFF" android:textSize="14sp" android:maxLines="1" />
+        <TextView android:id="@+id/dIqama2" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:gravity="center" android:textColor="#CFE8DC" android:textSize="14sp" android:maxLines="1" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/dRow3"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/widget_row_off"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+        <TextView android:id="@+id/dName3" android:text="المغرب" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:gravity="start" android:textColor="#FFFFFF" android:textSize="14sp" android:textStyle="bold" android:maxLines="1" />
+        <TextView android:id="@+id/dAdhan3" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:gravity="center" android:textColor="#FFFFFF" android:textSize="14sp" android:maxLines="1" />
+        <TextView android:id="@+id/dIqama3" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:gravity="center" android:textColor="#CFE8DC" android:textSize="14sp" android:maxLines="1" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/dRow4"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/widget_row_off"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+        <TextView android:id="@+id/dName4" android:text="العشاء" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:gravity="start" android:textColor="#FFFFFF" android:textSize="14sp" android:textStyle="bold" android:maxLines="1" />
+        <TextView android:id="@+id/dAdhan4" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:gravity="center" android:textColor="#FFFFFF" android:textSize="14sp" android:maxLines="1" />
+        <TextView android:id="@+id/dIqama4" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:gravity="center" android:textColor="#CFE8DC" android:textSize="14sp" android:maxLines="1" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/dGo"
+        android:text="@string/w_go"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/widget_pill"
+        android:gravity="center"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:textColor="#0A4A37"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+</LinearLayout>
