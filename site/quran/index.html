@@ -3,164 +3,274 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#FBF7EC" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#111613" media="(prefers-color-scheme: dark)">
-<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#FBF7EC">
 <title>المصحف – أقرب مسجد</title>
 <link rel="icon" type="image/png" href="/icon-192.png">
-<link rel="preload" href="hafs18.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <style>
-  @font-face{font-family:"Hafs";src:url("hafs18.woff2") format("woff2");font-display:block}
-  :root{--paper:#FBF7EC;--ink:#1b1b1b;--green:#0F6B4F;--gold:#C9A227;--line:#e4dcc5}
+  :root{--paper:#FBF7EC;--ink:#1b1b1b;--green:#0F6B4F;--gold:#C9A227;--line:#e4dcc5;--frame:#fff8e2;--soft:#7a6a3f;--btn:#DCEEE5;--btnt:#0A4A37;--panel:#fff}
+  html[data-theme=dark]{--paper:#111613;--ink:#ECE7D8;--green:#8FD9B6;--line:#2A3730;--frame:#1B231E;--soft:#A99A6A;--btn:#1C3A2E;--btnt:#A6E8C8;--panel:#18211D}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);overflow:hidden;font-family:system-ui,sans-serif}
-  #page{position:fixed;inset:0;display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top) + 34px) 14px calc(env(safe-area-inset-bottom) + 28px)}
-  #text{flex:1;overflow:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;font-family:"Hafs";text-align:justify;text-align-last:center;line-height:2.05;direction:rtl;word-spacing:1px}
-  .sh{display:block;text-align:center;border:2px solid var(--gold);border-radius:10px;margin:.15em 0 .1em;padding:0 .4em;color:var(--green);background:#fff8e2;font-size:.95em}
-  .bs{display:block;text-align:center;margin:0 0 .05em}
-  .top,.bot{position:fixed;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:0 16px;font-size:13px;color:#7a6a3f;pointer-events:none}
-  .top{top:calc(env(safe-area-inset-top) + 8px)} .bot{bottom:calc(env(safe-area-inset-bottom) + 6px);justify-content:center}
-  .top b{font-family:"Hafs";font-size:17px;font-weight:normal;color:var(--green)}
-  /* Bigger text: the page scrolls up and down */
-  #text.zoom{overflow-y:auto;text-align:right;text-align-last:auto;line-height:2.25;padding-bottom:20px}
-  #text .nextp{display:block;margin:18px auto 6px;border:0;border-radius:14px;padding:14px 22px;font:800 17px system-ui,sans-serif;background:#DCEEE5;color:#0A4A37}
+  /* Top and bottom info */
+  .top{position:fixed;top:0;left:0;right:0;height:calc(env(safe-area-inset-top) + 44px);padding:env(safe-area-inset-top) 10px 0;display:flex;align-items:center;gap:8px;font-size:14px;color:var(--soft);z-index:3;background:var(--paper)}
+  .top b{font-weight:800;color:var(--green);font-size:16px}
+  .top .sp{flex:1}
+  .top button{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--gold);background:var(--paper);color:var(--green);font-size:19px;padding:0;line-height:1}
+  .top button.on{background:var(--gold)}
+  .bot{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 6px);text-align:center;font-size:14px;color:var(--soft);pointer-events:none;z-index:2}
+  /* The page area */
+  #view{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top) + 44px);bottom:calc(env(safe-area-inset-bottom) + 26px);overflow:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+  #view.scroll{overflow:auto}
+  #sheet{margin:0 auto;direction:rtl;color:var(--ink);position:relative}
+  #sheet .ln{display:flex;flex-direction:row;justify-content:center;align-items:center;white-space:nowrap;line-height:1;direction:rtl}
+  #sheet .ln.j{justify-content:space-between}
+  #sheet .hd{display:flex;justify-content:center;align-items:center}
+  #sheet .hd span{display:flex;align-items:center;justify-content:center;width:100%;height:82%;border:2px solid var(--gold);border-radius:12px;background:var(--frame);color:var(--green)}
+  #msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--soft);font-size:18px;text-align:center;padding:20px;line-height:1.8}
+  #nextp{display:none;margin:14px auto 30px;border:0;border-radius:14px;padding:14px 26px;font:800 18px system-ui,sans-serif;background:var(--btn);color:var(--btnt)}
+  #view.scroll #nextp{display:block}
   /* Text size buttons: always on screen, big for older readers */
   #zoom{position:fixed;left:10px;bottom:calc(env(safe-area-inset-bottom) + 8px);display:flex;gap:6px;z-index:4}
   #zoom button{width:52px;height:52px;border-radius:50%;border:1.5px solid var(--gold);background:var(--paper);color:var(--green);font:800 20px system-ui,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.15)}
   #zoom button small{font-size:13px}
-  #zlbl{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.7);color:#fff;padding:10px 18px;border-radius:14px;font:800 18px system-ui,sans-serif;z-index:9;display:none}
+  #zlbl{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.75);color:#fff;padding:12px 20px;border-radius:14px;font:800 18px system-ui,sans-serif;z-index:9;display:none}
   /* Menu */
-  #bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 12px calc(env(safe-area-inset-bottom) + 10px);display:flex;gap:8px;z-index:5;box-shadow:0 -6px 20px rgba(0,0,0,.12)}
+  #bar{position:fixed;left:0;right:0;bottom:0;background:var(--panel);border-top:1px solid var(--line);padding:10px 12px calc(env(safe-area-inset-bottom) + 10px);display:flex;gap:8px;z-index:5;box-shadow:0 -6px 20px rgba(0,0,0,.12)}
   #bar[hidden],#list[hidden]{display:none}
-  #bar button,#bar a{flex:1;border:0;border-radius:12px;padding:12px 6px;font:inherit;font-weight:800;font-size:15px;background:#DCEEE5;color:#0A4A37;text-align:center;text-decoration:none}
-  #list{position:fixed;inset:0;background:#fff;z-index:6;overflow:auto;padding:calc(env(safe-area-inset-top) + 10px) 12px 20px}
-  #list h2{margin:4px 0 10px;color:var(--green);text-align:center;font-size:18px}
-  #list .s{display:flex;justify-content:space-between;align-items:center;padding:12px 10px;border-bottom:1px solid #eee;cursor:pointer}
-  #list .s span:first-child{font-family:"Hafs";font-size:22px;color:var(--ink)}
-  #list .s span:last-child{color:#888;font-size:13px}
-  #list .credit{color:#888;font-size:12px;text-align:center;margin-top:14px;line-height:1.7}
-  #close{position:sticky;top:0;float:left;border:0;background:#DCEEE5;color:#0A4A37;border-radius:10px;padding:8px 14px;font:inherit;font-weight:800}
-  /* Dark mode: follows the phone setting */
-  @media (prefers-color-scheme: dark){
-    :root{--paper:#111613;--ink:#ECE7D8;--green:#8FD9B6;--line:#2A3730}
-    .sh{background:#1B231E}
-    .top,.bot{color:#A99A6A}
-    #bar{background:#18211D;border-color:#2A3730}
-    #bar button,#bar a,#close{background:#1C3A2E;color:#A6E8C8}
-    #list{background:#18211D}
-    #list .s{border-color:#2A3730}
-  }
+  #bar button,#bar a{flex:1;border:0;border-radius:12px;padding:13px 6px;font:inherit;font-weight:800;font-size:16px;background:var(--btn);color:var(--btnt);text-align:center;text-decoration:none}
+  #list{position:fixed;inset:0;background:var(--panel);z-index:6;overflow:auto;padding:calc(env(safe-area-inset-top) + 10px) 12px 20px}
+  #list h2{margin:16px 0 8px;color:var(--green);font-size:18px}
+  #tabs{display:flex;gap:6px;margin:4px 0 6px}
+  #tabs button{flex:1;border:0;border-radius:12px;padding:12px 4px;font:800 16px system-ui,sans-serif;background:var(--btn);color:var(--btnt);opacity:.6}
+  #tabs button.on{opacity:1;outline:2px solid var(--gold)}
+  #list .s{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 10px;border-bottom:1px solid var(--line);cursor:pointer;font-size:19px}
+  #list .s span:last-child{color:#888;font-size:14px;white-space:nowrap}
+  #list .s .x{border:0;background:none;color:#c0392b;font-size:20px;padding:0 6px}
+  #list .empty{color:#888;text-align:center;padding:30px 10px;line-height:1.8}
+  #list .credit{color:#888;font-size:12px;text-align:center;margin-top:18px;line-height:1.7}
+  #close{position:sticky;top:0;float:left;border:0;background:var(--btn);color:var(--btnt);border-radius:10px;padding:9px 16px;font:inherit;font-weight:800;z-index:1}
+  #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:rgba(0,0,0,.8);color:#fff;padding:11px 18px;border-radius:12px;font-weight:700;z-index:9;display:none;white-space:nowrap}
 </style>
 </head>
 <body>
-<div class="top"><b id="sura"></b><span id="juz"></span></div>
-<div id="page"><div id="text"></div></div>
+<div class="top">
+  <b id="sura"></b><span id="juz"></span><span class="sp"></span>
+  <button id="bMark" aria-label="علامة">🔖</button>
+  <button id="bTheme" aria-label="الوضع الليلي">🌙</button>
+</div>
+<div id="view"><div id="sheet"></div><button id="nextp">الصفحة التالية ←</button><div id="msg">جاري التحميل…</div></div>
 <div class="bot"><span id="pno"></span></div>
-<div id="zoom"><button id="zIn" aria-label="تكبير الخط">أ<small>+</small></button><button id="zOut" aria-label="تصغير الخط">أ<small>−</small></button></div>
+<div id="zoom"><button id="zIn" aria-label="تكبير">أ<small>+</small></button><button id="zOut" aria-label="تصغير">أ<small>−</small></button></div>
 <div id="zlbl"></div>
+<div id="toast"></div>
 
 <div id="bar" hidden>
   <button id="bNext">→ التالية</button>
-  <button id="bList">☰ السور</button>
+  <button id="bList">☰ الفهرس</button>
   <button id="bPrev">السابقة ←</button>
   <a href="/" id="bHome">✕</a>
 </div>
 
 <div id="list" hidden>
   <button id="close">✕</button>
-  <h2>فهرس السور</h2>
+  <div id="tabs" style="clear:both;padding-top:8px">
+    <button data-t="s" class="on">السور</button>
+    <button data-t="j">الأجزاء</button>
+    <button data-t="m">🔖 العلامات</button>
+  </div>
   <div id="slist"></div>
-  <div class="credit">نص المصحف والخط من مجمع الملك فهد لطباعة المصحف الشريف (رواية حفص عن عاصم)</div>
+  <div class="credit">مصحف المدينة النبوية – مجمع الملك فهد لطباعة المصحف الشريف<br>رواية حفص عن عاصم – خط عثمان طه</div>
 </div>
 
 <script>
 const $ = id => document.getElementById(id);
 const AR = n => String(n).replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
-const BASMALA = "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ";
-let D = null, page = 1;
-// Text size: 0 = fit the whole page on the screen; bigger sizes scroll
-const SIZES = [0, 28, 34, 40, 48, 58, 70];
-let zi = 0; try { zi = Math.min(SIZES.length - 1, Math.max(0, +localStorage.getItem("qzoom") || 0)); } catch(_){}
-try { page = Math.min(604, Math.max(1, +localStorage.getItem("qpage") || 1)); } catch(_){}
+const CDN = ["https://cdn.jsdelivr.net/npm/quran-qcf4@1.1.0/fonts-woff2/", "https://unpkg.com/quran-qcf4@1.1.0/fonts-woff2/"];
+const store = {
+  get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : v; } catch(_) { return d; } },
+  set(k, v){ try { localStorage.setItem(k, v); } catch(_){} }
+};
+let D = null, page = Math.min(604, Math.max(1, +store.get("qpage", 1) || 1));
 const h = location.hash.match(/p(\d+)/); if (h) page = Math.min(604, Math.max(1, +h[1]));
 
-function esc(s){ return s.replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
-
-function render(){
-  if (!D) return;
-  const rows = D.p[page-1];
-  let html = "";
-  rows.forEach(([s, a, t]) => {
-    if (a === 1) {
-      html += `<span class="sh">سُورَةُ ${esc(D.s[s-1][0])}</span>`;
-      if (s !== 1 && s !== 9) html += `<span class="bs">${BASMALA}</span>`;
+// ---- Fonts: one font for a group of pages, loaded when needed ----
+const fonts = {}, HDR = "QCF4_QBSML";
+function fontName(n){ return "QCF4_Hafs_" + String(n).padStart(2, "0"); }
+function loadFont(name){
+  if (fonts[name]) return fonts[name];
+  const file = name + (name === HDR ? "" : "_W") + ".woff2";
+  fonts[name] = (async () => {
+    for (const base of CDN) {
+      try { const f = new FontFace(name, `url(${base}${file})`); await f.load(); document.fonts.add(f); return; } catch(_){}
     }
-    html += esc(t) + " ";
-  });
-  const box = $("text");
-  box.innerHTML = html + (SIZES[zi] && page < 604 ? `<button class="nextp" id="nextp">الصفحة التالية ←</button>` : "");
-  box.scrollTop = 0;
-  applyZoom();
-  const nb = $("nextp"); if (nb) nb.onclick = e => { e.stopPropagation(); go(page + 1); };
-  $("sura").textContent = D.s[rows[0][0]-1][0];
-  $("juz").textContent = "الجزء " + AR(rows[0][3]);
+    delete fonts[name]; throw new Error("font");
+  })();
+  return fonts[name];
+}
+
+// ---- Text size ----
+// 0 = whole page on the screen, 1 = page fills the width (scroll down), 2+ = bigger
+const ZOOMS = [0, 1, 1.3, 1.6];
+let zi = Math.min(ZOOMS.length - 1, Math.max(0, +store.get("qzoom2", 0) || 0));
+const RATIO = 1.62;   // page height / page width, like the printed mushaf
+
+let measured = {};    // natural width of each line, per page, at 100px
+function measure(p){
+  if (measured[p]) return measured[p];
+  const [f, , , lines] = D.p[p-1];
+  const s = document.createElement("span");
+  s.style.cssText = `position:absolute;visibility:hidden;white-space:nowrap;font:100px ${fontName(f)}`;
+  document.body.appendChild(s);
+  const w = lines.map(l => { if (typeof l !== "string") return 0; s.textContent = l; return s.getBoundingClientRect().width; });
+  s.remove();
+  return measured[p] = {w, max: Math.max(1, ...w)};
+}
+
+let renderId = 0;
+async function render(){
+  if (!D) return;
+  const id = ++renderId;
+  const [f, juz, sura, lines] = D.p[page-1];
+  $("sura").textContent = "سورة " + D.s[sura-1][0];
+  $("juz").textContent = "· الجزء " + AR(juz);
   $("pno").textContent = AR(page);
-  try { localStorage.setItem("qpage", page); } catch(_){}
+  markBtn();
+  store.set("qpage", page);
   history.replaceState(null, "", "#p" + page);
+  const need = [loadFont(fontName(f)), loadFont(HDR)];
+  if (lines.some(l => l[0] === "b")) need.push(loadFont(fontName(1)));
+  try { await Promise.all(need); }
+  catch(_) { if (id === renderId) { $("sheet").innerHTML = ""; $("msg").style.display = "flex"; $("msg").innerHTML = "تعذر تحميل الصفحة.<br>تأكد من الإنترنت ثم اسحب الصفحة مرة أخرى."; } return; }
+  if (id !== renderId) return;
+  $("msg").style.display = "none";
+  layout();
+  // Get the next pages ready
+  [page + 1, page - 1].forEach(p => { if (p >= 1 && p <= 604) loadFont(fontName(D.p[p-1][0])).catch(() => {}); });
 }
-// Biggest font size that fits the page on the screen
-function fit(){
-  const box = $("text");
-  let lo = 12, hi = 44;
-  while (hi - lo > 0.5) {
-    const mid = (lo + hi) / 2;
-    box.style.fontSize = mid + "px";
-    if (box.scrollHeight <= box.clientHeight) lo = mid; else hi = mid;
-  }
-  box.style.fontSize = lo + "px";
+
+function layout(){
+  const [f, , , lines] = D.p[page-1];
+  const view = $("view"), sheet = $("sheet");
+  const vw = view.clientWidth, vh = view.clientHeight;
+  const pad = Math.min(16, vw * 0.03);
+  let W;
+  if (ZOOMS[zi] === 0) W = Math.min(vw - pad * 2, (vh - 8) / RATIO);
+  else W = (vw - pad * 2) * ZOOMS[zi];
+  const m = measure(page), nat = page <= 2 ? measure(3).max : Math.max(m.max, measure(3).max);
+  const fs = 100 * W / nat;                 // full lines fill the width exactly
+  const rows = page <= 2 ? 15 : lines.length;
+  const lh = W * RATIO / 15;
+  view.classList.toggle("scroll", ZOOMS[zi] !== 0);
+  sheet.style.width = W + "px";
+  sheet.style.padding = (page <= 2 ? lh * 3 : 0) + "px 0";
+  sheet.style.marginTop = ZOOMS[zi] === 0 ? Math.max(0, (vh - lh * 15) / 2) + "px" : "8px";
+  const fam = fontName(f);
+  let html = "";
+  lines.forEach((l, i) => {
+    if (typeof l === "string") {
+      // Full lines are spread to the edges; short lines stay in the middle, as printed
+      const full = page > 2 && m.w[i] > nat * 0.85;
+      html += `<div class="ln${full ? " j" : ""}" style="height:${lh}px;font:${page <= 2 ? fs * 0.9 : fs}px ${fam}">${[...l].map(c => "<span>" + c + "</span>").join("")}</div>`;
+    } else if (l[0] === "h") {
+      html += `<div class="hd" style="height:${lh}px"><span style="font:${fs * 0.95}px ${HDR}">${String.fromCharCode(0xF100 + l[1] - 1)}</span></div>`;
+    } else {
+      html += `<div class="ln" style="height:${lh}px;font:${fs * 0.9}px ${fontName(1)}">${String.fromCharCode(l[1])}</div>`;
+    }
+  });
+  sheet.innerHTML = html;
+  // Wide pages: start from the right side (start of the line)
+  view.scrollTop = 0;
+  view.scrollLeft = view.scrollWidth;
+  $("nextp").style.visibility = page < 604 ? "visible" : "hidden";
 }
-function applyZoom(){
-  const box = $("text");
-  if (SIZES[zi]) { box.classList.add("zoom"); box.style.fontSize = SIZES[zi] + "px"; }
-  else { box.classList.remove("zoom"); fit(); }
+
+function showLabel(t){
+  const l = $("zlbl"); l.textContent = t; l.style.display = "block";
+  clearTimeout(showLabel.t); showLabel.t = setTimeout(() => l.style.display = "none", 900);
+}
+function toast(t){
+  const l = $("toast"); l.textContent = t; l.style.display = "block";
+  clearTimeout(toast.t); toast.t = setTimeout(() => l.style.display = "none", 1600);
 }
 function setZoom(d){
-  const z = Math.min(SIZES.length - 1, Math.max(0, zi + d));
+  const z = Math.min(ZOOMS.length - 1, Math.max(0, zi + d));
   if (z === zi) return;
-  zi = z; try { localStorage.setItem("qzoom", zi); } catch(_){}
-  render();
-  const l = $("zlbl"); l.textContent = zi ? "حجم الخط " + AR(zi) + " / " + AR(SIZES.length - 1) : "صفحة كاملة";
-  l.style.display = "block"; clearTimeout(setZoom.t); setZoom.t = setTimeout(() => l.style.display = "none", 900);
+  zi = z; store.set("qzoom2", zi);
+  if (D) layout();
+  showLabel(zi ? "حجم الخط " + AR(zi) + " / " + AR(ZOOMS.length - 1) : "صفحة كاملة");
 }
 $("zIn").onclick = e => { e.stopPropagation(); setZoom(1); };
 $("zOut").onclick = e => { e.stopPropagation(); setZoom(-1); };
+$("nextp").onclick = e => { e.stopPropagation(); go(page + 1); };
 function go(p){ p = Math.min(604, Math.max(1, p)); if (p !== page) { page = p; render(); } }
 
-// Swipe: like a paper mushaf, swipe right for the next page, left for the previous
+// ---- Night mode ----
+let theme = store.get("qtheme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+function applyTheme(){
+  document.documentElement.dataset.theme = theme;
+  $("bTheme").textContent = theme === "dark" ? "☀️" : "🌙";
+  document.querySelector('meta[name=theme-color]').content = theme === "dark" ? "#111613" : "#FBF7EC";
+}
+$("bTheme").onclick = () => { theme = theme === "dark" ? "light" : "dark"; store.set("qtheme", theme); applyTheme(); };
+applyTheme();
+
+// ---- Bookmarks ----
+function marks(){ try { return JSON.parse(store.get("qmarks", "[]")) || []; } catch(_) { return []; } }
+function markBtn(){ $("bMark").classList.toggle("on", marks().some(m => m.p === page)); }
+$("bMark").onclick = () => {
+  let m = marks();
+  if (m.some(x => x.p === page)) { m = m.filter(x => x.p !== page); toast("حُذفت العلامة"); }
+  else { m.unshift({p: page, t: Date.now()}); toast("حُفظت العلامة – صفحة " + AR(page)); }
+  store.set("qmarks", JSON.stringify(m.slice(0, 50)));
+  markBtn();
+};
+
+// ---- Index: surahs, parts, bookmarks ----
+let tab = "s";
+function fillList(){
+  document.querySelectorAll("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.t === tab));
+  let html = "";
+  if (tab === "s") html = D.s.map(([n, p], i) => `<div class="s" data-p="${p}"><span>${AR(i+1)}. سورة ${n}</span><span>صفحة ${AR(p)}</span></div>`).join("");
+  else if (tab === "j") {
+    const first = {}; D.p.forEach((x, i) => { if (!first[x[1]]) first[x[1]] = i + 1; });
+    html = Object.keys(first).map(j => `<div class="s" data-p="${first[j]}"><span>الجزء ${AR(j)}</span><span>صفحة ${AR(first[j])}</span></div>`).join("");
+  } else {
+    const m = marks();
+    html = m.length ? m.map(x => `<div class="s" data-p="${x.p}"><span>🔖 سورة ${D.s[D.p[x.p-1][2]-1][0]}</span><span>صفحة ${AR(x.p)} <button class="x" data-del="${x.p}">✕</button></span></div>`).join("")
+      : `<div class="empty">لا توجد علامات.<br>اضغط 🔖 في أعلى الصفحة لحفظ مكان القراءة.</div>`;
+  }
+  $("slist").innerHTML = html;
+}
+$("tabs").onclick = e => { const b = e.target.closest("button"); if (b) { tab = b.dataset.t; fillList(); } };
+$("slist").addEventListener("click", e => {
+  const d = e.target.closest("[data-del]");
+  if (d) { e.stopPropagation(); store.set("qmarks", JSON.stringify(marks().filter(x => x.p !== +d.dataset.del))); fillList(); markBtn(); return; }
+  const r = e.target.closest(".s"); if (r) { go(+r.dataset.p); $("list").hidden = true; }
+});
+
+// ---- Turning pages ----
+// Swipe right for the next page, left for the previous, like a paper mushaf
 let x0 = null, y0 = null, moved = false;
-addEventListener("touchstart", e => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; moved = false; }, {passive:true});
+addEventListener("touchstart", e => { if (e.touches.length > 1) { x0 = null; return; } x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; moved = false; }, {passive:true});
 addEventListener("touchmove", () => { moved = true; }, {passive:true});
 addEventListener("touchend", e => {
   if (x0 === null) return;
   const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
-  if ($("list").hidden && Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) { go(page + (dx > 0 ? 1 : -1)); $("bar").hidden = true; }
+  const v = $("view"), wide = v.scrollWidth > v.clientWidth + 2;
+  if ($("list").hidden && !wide && Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) { go(page + (dx > 0 ? 1 : -1)); $("bar").hidden = true; }
   x0 = null;
 });
-// Tap the page: show or hide the menu
-$("page").addEventListener("click", () => { if (!moved) $("bar").hidden = !$("bar").hidden; });
+$("view").addEventListener("click", () => { if (!moved) $("bar").hidden = !$("bar").hidden; });
 addEventListener("keydown", e => { if (e.key === "ArrowLeft") go(page + 1); if (e.key === "ArrowRight") go(page - 1); });
 $("bNext").onclick = () => go(page + 1);
 $("bPrev").onclick = () => go(page - 1);
-$("bList").onclick = () => { $("list").hidden = false; $("bar").hidden = true; };
+$("bList").onclick = () => { fillList(); $("list").hidden = false; $("bar").hidden = true; };
 $("close").onclick = () => $("list").hidden = true;
-addEventListener("resize", () => applyZoom());
+let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { if (D && $("msg").style.display === "none") layout(); }, 120); });
 
-fetch("data.json").then(r => r.json()).then(j => {
-  D = j;
-  $("slist").innerHTML = D.s.map(([n, p], i) => `<div class="s" data-p="${p}"><span>${AR(i+1)}. ${esc(n)}</span><span>صفحة ${AR(p)}</span></div>`).join("");
-  $("slist").addEventListener("click", e => { const r = e.target.closest(".s"); if (r) { go(+r.dataset.p); $("list").hidden = true; } });
-  document.fonts.load('20px "Hafs"').then(render, render);
-});
+fetch("mushaf.json").then(r => r.json()).then(j => { D = j; render(); })
+  .catch(() => { $("msg").innerHTML = "تعذر تحميل المصحف.<br>تأكد من الإنترنت."; });
 </script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "64638759a27a4c02b5d728643dfec736"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
