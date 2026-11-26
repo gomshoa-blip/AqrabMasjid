@@ -10,7 +10,7 @@ import java.util.Locale
 import java.util.concurrent.Executors
 
 /**
- * Sends "add a mosque" to the website form (Netlify Forms), same as the site does.
+ * Sends "add a mosque" to our email form (FormSubmit), same as the site does.
  * The request arrives by email; we review it, then add it to mosques.json.
  */
 object MosqueSubmit {
@@ -22,7 +22,9 @@ object MosqueSubmit {
         val la = String.format(Locale.US, "%.6f", lat)
         val lo = String.format(Locale.US, "%.6f", lng)
         val fields = linkedMapOf(
-            "form-name" to "add-mosque",
+            "_subject" to "أضف مسجداً – add-mosque",
+            "_template" to "table",
+            "_captcha" to "false",
             "mosque_name" to name.ifBlank { "مسجد" },
             "type" to "مسجد",
             "lat" to la,
@@ -37,13 +39,14 @@ object MosqueSubmit {
         }
         exec.execute {
             val ok = try {
-                val con = URL(Config.SITE_URL + "/").openConnection() as HttpURLConnection
+                val con = URL(Config.FORM_URL).openConnection() as HttpURLConnection
                 con.requestMethod = "POST"
                 con.doOutput = true
                 con.instanceFollowRedirects = false
                 con.connectTimeout = 10_000
                 con.readTimeout = 15_000
                 con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+                con.setRequestProperty("Accept", "application/json")
                 con.setRequestProperty("User-Agent", "AqrabMasjid-Android/1.0")
                 con.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
                 val code = con.responseCode

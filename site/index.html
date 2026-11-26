@@ -6,13 +6,13 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-5LHD95P9HE");</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>أقرب مسجد – ومواقيت الصلاة</title>
-<link rel="canonical" href="https://aqrab-masjid.netlify.app/">
+<link rel="canonical" href="https://aqrab-masjid.pages.dev/">
 <meta name="description" content="أقرب مسجد لك الآن، وطريق الوصول بضغطة زر، مع مواقيت الصلاة حسب موقعك">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://aqrab-masjid.netlify.app/">
+<meta property="og:url" content="https://aqrab-masjid.pages.dev/">
 <meta property="og:title" content="أقرب مسجد – ومواقيت الصلاة">
 <meta property="og:description" content="دخل وقت الصلاة وأنت في الطريق؟ اضغط وشوف أقرب مسجد لك وطريق الوصول">
-<meta property="og:image" content="https://aqrab-masjid.netlify.app/og.jpg">
+<meta property="og:image" content="https://aqrab-masjid.pages.dev/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
@@ -371,9 +371,11 @@
   <div class="sheet">
     <h2 data-t="formH"></h2>
     <p data-t="formP"></p>
-    <form id='addForm' method='POST' name='add-mosque' data-netlify='true' netlify-honeypot='bot-field' novalidate>
-      <input type="hidden" name="form-name" value="add-mosque">
-      <p hidden><label>Do not fill: <input name="bot-field"></label></p>
+    <form id='addForm' method='POST' name='add-mosque' novalidate>
+      <input type="hidden" name="_subject" value="أضف مسجداً – add-mosque">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_captcha" value="false">
+      <p hidden><label>Do not fill: <input name="_honey"></label></p>
       <button type="button" class="big locbtn" id="fLoc" data-t="fLoc"></button>
       <div class="fmapL" data-t="fMapL"></div>
       <div class="fmapW"><div id="fMap" class="fmap"></div><div class="fpin" aria-hidden="true">📍</div>
@@ -493,7 +495,7 @@ const T = {
   m:"م", km:"كم", mosque:"مسجد", locale:"ar-SA", method:"طريقة:",
   methods:{UmmAlQura:"أم القرى", Egyptian:"الهيئة المصرية", Dubai:"دبي", Kuwait:"الكويت", Qatar:"قطر", Turkey:"تركيا (ديانت)",
    Karachi:"جامعة كراتشي", Tehran:"طهران", Singapore:"سنغافورة", NorthAmerica:"أمريكا الشمالية (ISNA)", MuslimWorldLeague:"رابطة العالم الإسلامي"},
-  waMsg:"🕌 *أقرب مسجد*\n\nدخل وقت الصلاة وأنت في الطريق؟\nاضغط الرابط ويطلع لك:\n✅ أقرب مسجد لك وطريق الوصول\n✅ مواقيت الصلاة ووقت الإقامة حسب موقعك\n\n📲 أضفه لشاشة جوالك من زر «تثبيت» عشان تفتحه بضغطة وحدة.\n\nhttps://aqrab-masjid.netlify.app\n\nانشره للسواقين وأهلك المسافرين، والدال على الخير كفاعله 🤍",
+  waMsg:"🕌 *أقرب مسجد*\n\nدخل وقت الصلاة وأنت في الطريق؟\nاضغط الرابط ويطلع لك:\n✅ أقرب مسجد لك وطريق الوصول\n✅ مواقيت الصلاة ووقت الإقامة حسب موقعك\n\n📲 أضفه لشاشة جوالك من زر «تثبيت» عشان تفتحه بضغطة وحدة.\n\nhttps://aqrab-masjid.pages.dev\n\nانشره للسواقين وأهلك المسافرين، والدال على الخير كفاعله 🤍",
   steps:{ios:["اضغط زر المشاركة ⬆️ أسفل الشاشة في Safari.","اختر «إضافة إلى الشاشة الرئيسية» ➕.","اضغط «إضافة»."],
    and:["افتح الرابط في متصفح Chrome.","اضغط القائمة ⋮ أعلى الشاشة.","اختر «إضافة إلى الشاشة الرئيسية» أو «تثبيت التطبيق»."],
    app:["أنت فاتح الرابط داخل تطبيق (مثل الواتساب).","اضغط ⋮ أو ⋯ واختر «فتح في المتصفح».","بعدها اضغط «أضف إلى شاشة الجوال» مرة ثانية."],
@@ -534,7 +536,7 @@ const T = {
   m:"m", km:"km", mosque:"Mosque", locale:"en-US", method:"Method:",
   methods:{UmmAlQura:"Umm Al-Qura", Egyptian:"Egyptian Authority", Dubai:"Dubai", Kuwait:"Kuwait", Qatar:"Qatar", Turkey:"Turkey (Diyanet)",
    Karachi:"Karachi", Tehran:"Tehran", Singapore:"Singapore", NorthAmerica:"North America (ISNA)", MuslimWorldLeague:"Muslim World League"},
-  waMsg:"🕌 *Nearest Mosque*\n\nPrayer time and you are on the road?\nOpen the link to see:\n✅ The nearest mosque and directions\n✅ Prayer and iqama times for your location\n\n📲 Add it to your home screen with the «Install» button to open it in one tap.\n\nhttps://aqrab-masjid.netlify.app/#en\n\nShare it with drivers and travelling family. Whoever guides to good gets the same reward 🤍",
+  waMsg:"🕌 *Nearest Mosque*\n\nPrayer time and you are on the road?\nOpen the link to see:\n✅ The nearest mosque and directions\n✅ Prayer and iqama times for your location\n\n📲 Add it to your home screen with the «Install» button to open it in one tap.\n\nhttps://aqrab-masjid.pages.dev/#en\n\nShare it with drivers and travelling family. Whoever guides to good gets the same reward 🤍",
   steps:{ios:["Tap the Share button ⬆️ at the bottom of Safari.","Choose “Add to Home Screen” ➕.","Tap “Add”."],
    and:["Open the link in Chrome.","Tap the ⋮ menu at the top.","Choose “Add to Home screen” or “Install app”."],
    app:["You opened this link inside an app (like WhatsApp).","Tap ⋮ or ⋯ and choose “Open in browser”.","Then tap “Add to Home Screen” again."],
@@ -1027,7 +1029,7 @@ let toastT = null;
 function toast(msg){ const t = $("toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2500); }
 function closeOnBackdrop(id){ $(id).addEventListener("click", e => { if (e.target === $(id)) $(id).hidden = true; }); }
 ["iqModal","addModal","qrModal","gmModal","langModal","radioModal"].forEach(closeOnBackdrop);
-const SITE = "https://aqrab-masjid.netlify.app/";
+const SITE = "https://aqrab-masjid.pages.dev/";
 const track = (name, p) => { try { if (window.gtag) gtag("event", name, p || {}); } catch(_){} };
 
 // ---------- Add a mosque ----------
@@ -1139,8 +1141,8 @@ $("addForm").addEventListener("submit", async e => {
   $("fGeo").value = $("fLat").value ? `https://maps.google.com/?q=${$("fLat").value},${$("fLng").value}` : "";
   $("fSend").disabled = true; $("fSend").textContent = L().fSending; fMsg("");
   try {
-    const res = await fetch("/", {method:"POST", headers:{"Content-Type":"application/x-www-form-urlencoded"},
-      body: new URLSearchParams(new FormData(f)).toString()});
+    // The request arrives by email (FormSubmit); we review it, then add it to mosques.json
+    const res = await fetch("https://formsubmit.co/ajax/aqrabmasjid.app@gmail.com", {method:"POST", headers:{"Accept":"application/json"}, body: new FormData(f)});
     if (!res.ok) throw new Error(res.status);
     track("add_mosque_submit");
     fMsg("fThanks", "ok"); f.reset(); resetLoc();

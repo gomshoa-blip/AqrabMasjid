@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://aqrab-masjid.netlify.app/sitemap.xml
+Sitemap: https://aqrab-masjid.pages.dev/sitemap.xml
