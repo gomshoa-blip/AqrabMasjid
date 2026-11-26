@@ -13,21 +13,35 @@
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);overflow:hidden;font-family:system-ui,sans-serif}
   /* Top and bottom info */
-  .top{position:fixed;top:0;left:0;right:0;height:calc(env(safe-area-inset-top) + 44px);padding:env(safe-area-inset-top) 10px 0;display:flex;align-items:center;gap:8px;font-size:14px;color:var(--soft);z-index:3;background:var(--paper)}
-  .top b{font-weight:800;color:var(--green);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .top{position:fixed;top:0;left:0;right:0;height:calc(env(safe-area-inset-top) + 54px);padding:env(safe-area-inset-top) 8px 0;display:flex;align-items:center;gap:6px;font-size:15px;color:var(--soft);z-index:3;background:var(--paper)}
+  .top b{font-weight:800;color:var(--green);font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
   .top #juz{white-space:nowrap}
   .top .sp{flex:1;min-width:4px}
-  .top button{width:38px;height:38px;flex:none;border-radius:50%;border:1.5px solid var(--gold);background:var(--paper);color:var(--green);font-size:19px;padding:0;line-height:1}
+  .top button{width:46px;height:46px;flex:none;border-radius:50%;border:2px solid var(--gold);background:var(--paper);color:var(--green);font-size:21px;padding:0;line-height:1}
   .top button.on{background:var(--gold)}
-  .top a{width:38px;height:38px;flex:none;border-radius:50%;border:1.5px solid var(--gold);color:var(--green);display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:18px;font-weight:800}
-  .top .z{font:800 17px system-ui,sans-serif}
+  .top a{width:46px;height:46px;flex:none;border-radius:50%;border:2px solid var(--gold);color:var(--green);display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:21px;font-weight:800}
+  .top .z{font:800 20px system-ui,sans-serif}
+  @media (max-width:440px){.top{gap:5px}.top button,.top a{width:42px;height:42px}.top #juz{display:none}.top b{font-size:16px}}
+  @media (max-width:360px){.top button,.top a{width:38px;height:38px}}
+  /* Phone turned sideways: thinner bars, more room for the text */
+  @media (max-height:500px){
+    .top{height:calc(env(safe-area-inset-top) + 44px)}.top button,.top a{width:38px;height:38px;font-size:18px}
+    html #nav{height:calc(env(safe-area-inset-bottom) + 52px);padding-top:5px;padding-bottom:calc(env(safe-area-inset-bottom) + 5px)}
+    html #nav button{font-size:18px}html #nav #bList small{display:inline;margin-right:6px}
+    html #view{top:calc(env(safe-area-inset-top) + 44px);bottom:calc(env(safe-area-inset-bottom) + 52px)}
+  }
   /* Bottom: previous on the right, next on the left, like a paper mushaf */
-  #nav{position:fixed;left:0;right:0;bottom:0;height:calc(env(safe-area-inset-bottom) + 62px);padding:7px 8px calc(env(safe-area-inset-bottom) + 7px);display:flex;gap:7px;background:var(--panel);border-top:1px solid var(--line);z-index:3}
-  #nav button{flex:1;border:0;border-radius:12px;font:800 17px system-ui,sans-serif;background:var(--btn);color:var(--btnt);padding:0 4px}
-  #nav #bList{flex:.9;background:transparent;border:1.5px solid var(--gold);color:var(--green);line-height:1.15}
-  #nav #bList small{display:block;font-size:13px;font-weight:700;color:var(--soft)}
+  #nav{position:fixed;left:0;right:0;bottom:0;height:calc(env(safe-area-inset-bottom) + 72px);padding:8px 8px calc(env(safe-area-inset-bottom) + 8px);display:flex;gap:8px;background:var(--panel);border-top:1px solid var(--line);z-index:3}
+  #nav button{flex:1;border:0;border-radius:14px;font:800 20px system-ui,sans-serif;background:var(--btn);color:var(--btnt);padding:0 4px}
+  #nav #bList{flex:.9;background:transparent;border:2px solid var(--gold);color:var(--green);line-height:1.15}
+  #nav #bList small{display:block;font-size:15px;font-weight:700;color:var(--soft)}
+  /* Big text: the words wrap to fit the screen (no side scrolling) */
+  #sheet.flow{display:flex;flex-wrap:wrap;justify-content:center;align-content:flex-start;align-items:center;direction:rtl;padding:6px 0 0}
+  #sheet.flow > span{display:block;white-space:nowrap}
+  #sheet.flow .hd,#sheet.flow .bs{flex:0 0 100%;display:flex;justify-content:center;align-items:center}
+  #sheet.flow .mk{background:rgba(201,162,39,.35);border-radius:8px}
   /* The page area */
-  #view{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top) + 44px);bottom:calc(env(safe-area-inset-bottom) + 62px);overflow:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+  #view{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top) + 54px);bottom:calc(env(safe-area-inset-bottom) + 72px);overflow:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
   #view.scroll{overflow:auto}
   #sheet{margin:0 auto;direction:rtl;color:var(--ink);position:relative}
   #sheet .ln{display:flex;flex-direction:row;justify-content:center;align-items:center;white-space:nowrap;line-height:1;direction:rtl}
@@ -114,9 +128,12 @@ function loadFont(name){
 }
 
 // ---- Text size ----
-// 0 = whole page on the screen, 1 = page fills the width (scroll down), 2+ = bigger
-const ZOOMS = [0, 1, 1.3, 1.6];
-let zi = Math.min(ZOOMS.length - 1, Math.max(0, +store.get("qzoom2", 0) || 0));
+// 0 = whole page as printed. 1+ = big text: words wrap to fit the screen.
+// The number is how many words fit on one row (fewer words = bigger text).
+const ZOOMS = [0, 7, 5.5, 4.5, 3.5, 2.7];
+// New default: big text (good for elderly). Old saved sizes are not used.
+let zi = Math.min(ZOOMS.length - 1, Math.max(0, +store.get("qzoom3", 2)));
+if (isNaN(zi)) zi = 2;
 const RATIO = 1.62;   // page height / page width, like the printed mushaf
 
 let measured = {};    // natural width of each line, per page, at 100px
@@ -153,20 +170,70 @@ async function render(){
   [page + 1, page - 1].forEach(p => { if (p >= 1 && p <= 604) loadFont(fontName(D.p[p-1][0])).catch(() => {}); });
 }
 
-function layout(){
+// Words of one mushaf line, each with its ayah
+function words(l, vk){
+  const ch = [...l], out = []; let k = 0;
+  for (const [n, v] of vk) for (let j = 0; j < n; j++) out.push([ch[k++] || "", v]);
+  while (k < ch.length) out.push([ch[k++], ""]);
+  return out;
+}
+
+// Big text: all words of the page flow and wrap to the screen width
+function layoutFlow(){
   const [f, , , lines, vk] = D.p[page-1];
   const view = $("view"), sheet = $("sheet");
   const vw = view.clientWidth, vh = view.clientHeight;
+  const pad = Math.max(8, Math.min(18, vw * 0.035));
+  const W = vw - pad * 2;
+  // Average word width at 100px, from this page and page 3 (a full page)
+  const avg = p => { const m = measure(p); let w = 0, n = 0; D.p[p-1][3].forEach((l, i) => { if (typeof l === "string") { w += m.w[i]; n += [...l].length; } }); return n ? w / n : 60; };
+  const aw = Math.max(avg(page), avg(3));
+  // Turned phone (wide screen): keep the same text size as a normal phone, more words per row
+  const Wref = Math.min(W, 520);
+  let fs = 100 * Wref / (ZOOMS[zi] * aw * 1.12);
+  fs = Math.min(fs, Math.max(vh, 300) / 4);   // never bigger than a quarter of the screen height
+  const fam = fontName(f), gap = fs * 0.12;
+  view.classList.add("scroll");
+  sheet.className = "flow";
+  sheet.style.cssText = `width:${W}px;margin-top:0;font:${fs}px ${fam};line-height:${fs * 1.75}px;column-gap:${gap}px`;
+  let html = "";
+  lines.forEach((l, i) => {
+    if (typeof l === "string") {
+      html += words(l, vk[i]).map(([c, v]) => v ? `<span data-v="${v}">${c}</span>` : `<span>${c}</span>`).join("");
+    } else if (l[0] === "h") {
+      const hf = Math.min(fs * 1.1, W / 5.5);
+      html += `<div class="hd" style="height:${hf * 1.9}px;margin:${fs * 0.2}px 0"><span style="font:${hf}px ${HDR}">${String.fromCharCode(0xF100 + l[1] - 1)}</span></div>`;
+    } else {
+      html += `<div class="bs" style="line-height:${fs * 1.6}px"><span style="font:${fs}px ${fontName(1)}">${String.fromCharCode(l[1])}</span></div>`;
+    }
+  });
+  sheet.innerHTML = html;
+  // Anything still wider than the screen (like بسم الله at big sizes) is made smaller to fit
+  sheet.querySelectorAll(".bs span, #sheet > span").forEach(el => {
+    const w = el.getBoundingClientRect().width, max = W * (el.parentNode === sheet ? 1 : 0.92);
+    if (w > max) el.style.fontSize = (parseFloat(getComputedStyle(el).fontSize) * max / w) + "px";
+  });
+  showMarks();
+  view.scrollTop = 0;
+  view.scrollLeft = 0;
+  $("nextp").style.visibility = page < 604 ? "visible" : "hidden";
+}
+
+function layout(){
+  if (ZOOMS[zi] !== 0) return layoutFlow();
+  const [f, , , lines, vk] = D.p[page-1];
+  const view = $("view"), sheet = $("sheet");
+  sheet.className = ""; sheet.style.cssText = "";
+  const vw = view.clientWidth, vh = view.clientHeight;
   const pad = Math.min(16, vw * 0.03);
   let W;
-  if (ZOOMS[zi] === 0 && vw <= vh * 1.1) W = Math.min(vw - pad * 2, (vh - 8) / RATIO);
-  else if (ZOOMS[zi] === 0) W = Math.min(vw - pad * 2, 900);
-  else W = (vw - pad * 2) * ZOOMS[zi];
+  if (vw <= vh * 1.1) W = Math.min(vw - pad * 2, (vh - 8) / RATIO);
+  else W = Math.min(vw - pad * 2, 900);
   const m = measure(page), nat = page <= 2 ? measure(3).max : Math.max(m.max, measure(3).max);
   const fs = 100 * W / nat;                 // full lines fill the width exactly
   const rows = page <= 2 ? 15 : lines.length;
   const lh = W * RATIO / 15;
-  const fitAll = ZOOMS[zi] === 0 && vw <= vh * 1.1;
+  const fitAll = vw <= vh * 1.1;
   view.classList.toggle("scroll", !fitAll);
   sheet.style.width = W + "px";
   sheet.style.padding = (page <= 2 ? lh * 3 : 0) + "px 0";
@@ -203,9 +270,9 @@ function toast(t){
 function setZoom(d){
   const z = Math.min(ZOOMS.length - 1, Math.max(0, zi + d));
   if (z === zi) return;
-  zi = z; store.set("qzoom2", zi);
+  zi = z; store.set("qzoom3", zi);
   if (D) layout();
-  showLabel(zi ? "حجم الخط " + AR(zi) + " / " + AR(ZOOMS.length - 1) : "صفحة كاملة");
+  showLabel(zi ? "حجم الخط " + AR(zi) + " / " + AR(ZOOMS.length - 1) : "الصفحة كاملة");
 }
 $("zIn").onclick = e => { e.stopPropagation(); setZoom(1); };
 $("zOut").onclick = e => { e.stopPropagation(); setZoom(-1); };
@@ -231,8 +298,11 @@ function markBtn(){ const m = marks()[0]; $("bMark").classList.toggle("on", mark
 function showMarks(){
   const sheet = $("sheet");
   sheet.querySelectorAll(".hl").forEach(e => e.remove());
+  sheet.querySelectorAll(".mk").forEach(e => e.classList.remove("mk"));
   const m = marks()[0];
-  if (m && m.p === page && m.v) {
+  if (m && m.p === page && m.v && sheet.classList.contains("flow")) {
+    sheet.querySelectorAll(`span[data-v="${m.v}"]`).forEach(w => w.classList.add("mk"));
+  } else if (m && m.p === page && m.v) {
     const base = sheet.getBoundingClientRect();
     sheet.querySelectorAll(".ln").forEach(ln => {
       const ws = [...ln.querySelectorAll(`span[data-v="${m.v}"]`)];
@@ -319,7 +389,12 @@ $("bNext").onclick = () => go(page + 1);
 $("bPrev").onclick = () => go(page - 1);
 $("bList").onclick = () => { fillList(); $("list").hidden = false; };
 $("close").onclick = () => $("list").hidden = true;
-let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { if (D && $("msg").style.display === "none") layout(); }, 120); });
+// Turning the phone: redraw to fit the new screen
+let rt; const relayout = () => { clearTimeout(rt); rt = setTimeout(() => { if (D && $("msg").style.display === "none") layout(); }, 150); };
+addEventListener("resize", relayout);
+addEventListener("orientationchange", relayout);
+if (window.visualViewport) visualViewport.addEventListener("resize", relayout);
+if (window.ResizeObserver) new ResizeObserver(relayout).observe($("view"));
 
 fetch("mushaf.json").then(r => r.json()).then(j => { D = j; render(); })
   .catch(() => { $("msg").innerHTML = "تعذر تحميل المصحف.<br>تأكد من الإنترنت."; });
