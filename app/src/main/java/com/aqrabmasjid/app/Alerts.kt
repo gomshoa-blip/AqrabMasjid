@@ -293,6 +293,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val prayer = i.getStringExtra("prayer")?.let { runCatching { Prayer.valueOf(it) }.getOrNull() }
         if (type != null && prayer != null) {
             Alerts.show(c, type, prayer, i.getLongExtra("adhan", 0), i.getLongExtra("iqama", 0))
+            if (type == "adhan") runCatching { RateAsk.onAdhan(c) }
         }
         Alerts.scheduleNext(c)
         PrayerWidgets.updateAll(c)
