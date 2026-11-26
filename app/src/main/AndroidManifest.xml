@@ -80,6 +80,17 @@
             </intent-filter>
         </activity>
 
+        <!-- Quran radio on the car screen (Android Auto media app) -->
+        <service
+            android:name=".RadioCarService"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaLibraryService" />
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
         <!-- Quran radio (live stream) -->
         <service
             android:name=".RadioService"
