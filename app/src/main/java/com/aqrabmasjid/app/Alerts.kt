@@ -186,6 +186,16 @@ object Alerts {
         val events = PrayerCalc.upcoming(app, lat, lng, now).flatMap {
             val evs = mutableListOf(Ev(it.adhan - PRE_MIN * MIN, "pre", it), Ev(it.adhan, "adhan", it))
             if (!isJumuah(it)) evs += Ev(it.adhan + Config.IQAMA_ALERT_AFTER_MIN * MIN, "iqama", it)
+            // Friday: read Surat Al-Kahf (9:00 AM), and go early for the khutbah (1 hour before adhan)
+            if (isJumuah(it)) {
+                val nine = java.util.Calendar.getInstance().apply {
+                    timeInMillis = it.adhan
+                    set(java.util.Calendar.HOUR_OF_DAY, 9); set(java.util.Calendar.MINUTE, 0)
+                    set(java.util.Calendar.SECOND, 0); set(java.util.Calendar.MILLISECOND, 0)
+                }.timeInMillis
+                if (nine < it.adhan - 60 * MIN) evs += Ev(nine, "kahf", it)
+                evs += Ev(it.adhan - 60 * MIN, "early", it)
+            }
             evs
         }
         // Already inside the 30 minutes before adhan (app just opened): show the countdown now
@@ -206,6 +216,36 @@ object Alerts {
         else am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, next.at, pending)
     }
 
+    /** Friday reminders: Surat Al-Kahf in the morning, and going early to the mosque before Jumuah. */
+    private fun showFriday(c: Context, type: String, adhan: Long) {
+        val kahf = type == "kahf"
+        val title = if (kahf) L.t("📖 الجمعة: لا تنسَ سورة الكهف", "📖 Friday: don't forget Surat Al-Kahf")
+                    else L.t("🕌 الجمعة: بكّر إلى المسجد", "🕌 Friday: go early to the mosque")
+        val text = if (kahf)
+            L.t("«من قرأ سورة الكهف في يوم الجمعة أضاء له من النور ما بين الجمعتين» رواه الحاكم والبيهقي\nاضغط لفتح سورة الكهف",
+                "Reading Surat Al-Kahf on Friday gives light until the next Friday (Al-Hakim, Al-Bayhaqi).\nTap to open Surat Al-Kahf")
+        else
+            L.t("«إذا كان يوم الجمعة وقفت الملائكة على باب المسجد يكتبون الأول فالأول» متفق عليه\nأذان الجمعة ${PrayerCalc.fmtTime(adhan)}",
+                "On Friday, the angels stand at the mosque door writing who comes first (Bukhari, Muslim).\nJumuah adhan ${PrayerCalc.fmtTime(adhan)}")
+        val open = if (kahf) Intent(c, QuranActivity::class.java).putExtra("page", 293)
+                   else Intent(c, MainActivity::class.java)
+        val pending = PendingIntent.getActivity(c, if (kahf) 203 else 204, open,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val n = NotificationCompat.Builder(c, channelFor(c))
+            .setSmallIcon(R.drawable.ic_stat_mosque)
+            .setContentTitle(title)
+            .setContentText(text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_REMINDER)
+            .setContentIntent(pending)
+            .setAutoCancel(true)
+            .setBadgeIconType(NotificationCompat.BADGE_ICON_NONE)
+            .setTimeoutAfter(if (kahf) 6 * 60 * MIN else 60 * MIN)
+            .build()
+        try { NotificationManagerCompat.from(c).notify(if (kahf) 310 else 311, n) } catch (_: SecurityException) {}
+    }
+
     fun show(c: Context, type: String, prayer: Prayer, adhan: Long, iqama: Long) {
         if (Build.VERSION.SDK_INT >= 33 &&
             ContextCompat.checkSelfPermission(c, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
@@ -213,6 +253,7 @@ object Alerts {
         L.init(c)
         createChannel(c)
         if (type == "pre") { showPre(c, prayer, adhan, iqama); return }
+        if (type == "kahf" || type == "early") { showFriday(c, type, adhan); return }
 
         val title = if (type == "iqama") {
             val left = ((iqama - System.currentTimeMillis()) / MIN).toInt()

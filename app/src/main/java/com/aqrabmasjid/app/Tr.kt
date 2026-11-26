@@ -172,6 +172,8 @@ object Tr {
         "Later" to arrayOf("بعد میں", "Nanti", "পরে", "Sonra"),
         "Alerts on time" to arrayOf("وقت پر اطلاع", "Pengingat tepat waktu", "সময়মতো সতর্কতা", "Zamanında uyarı"),
         "So the adhan alert comes exactly on time, with no delay, allow the app to use \"Alarms & reminders\".\n\nOn the next page: turn the switch on, then come back to the app." to arrayOf("تاکہ اذان کی اطلاع بالکل وقت پر آئے، ایپ کو \"الارم اور یاد دہانیاں\" کی اجازت دیں۔\n\nاگلے صفحے پر: بٹن آن کریں، پھر ایپ پر واپس آئیں۔", "Agar pengingat azan datang tepat waktu tanpa terlambat, izinkan aplikasi memakai \"Alarm & pengingat\".\n\nDi halaman berikutnya: nyalakan tombolnya, lalu kembali ke aplikasi.", "আজানের সতর্কতা যেন ঠিক সময়ে আসে, অ্যাপকে \"অ্যালার্ম ও রিমাইন্ডার\" ব্যবহারের অনুমতি দিন।\n\nপরের পাতায়: সুইচ চালু করুন, তারপর অ্যাপে ফিরে আসুন।", "Ezan uyarısının tam zamanında gelmesi için uygulamaya \"Alarmlar ve hatırlatıcılar\" izni verin.\n\nSonraki sayfada: düğmeyi açın, sonra uygulamaya dönün."),
+        "📖 Friday: don't forget Surat Al-Kahf" to arrayOf("📖 جمعہ: سورۂ کہف پڑھنا نہ بھولیں", "📖 Jumat: jangan lupa Surah Al-Kahfi", "📖 জুমা: সূরা কাহফ পড়তে ভুলবেন না", "📖 Cuma: Kehf Suresi'ni unutmayın"),
+        "🕌 Friday: go early to the mosque" to arrayOf("🕌 جمعہ: مسجد جلدی جائیں", "🕌 Jumat: datanglah lebih awal ke masjid", "🕌 জুমা: আগে আগে মসজিদে যান", "🕌 Cuma: camiye erken gidin"),
         "Allow" to arrayOf("اجازت دیں", "Izinkan", "অনুমতি দিন", "İzin ver"),
     )
 }

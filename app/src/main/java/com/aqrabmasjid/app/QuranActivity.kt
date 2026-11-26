@@ -53,7 +53,11 @@ class QuranActivity : Activity() {
         }
 
         if (savedInstanceState != null) web.restoreState(savedInstanceState)
-        else web.loadUrl(Config.QURAN_URL)
+        else {
+            // Opened from the Friday alert: go straight to a page (Al-Kahf = 293)
+            val page = intent.getIntExtra("page", 0)
+            web.loadUrl(if (page in 1..604) Config.QURAN_URL + "#p" + page else Config.QURAN_URL)
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
