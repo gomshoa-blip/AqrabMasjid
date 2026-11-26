@@ -138,6 +138,8 @@ class MainActivity : Activity() {
         // Audio player bar: pick a station, big button plays / stops
         findViewById<View>(R.id.radioPrev).setOnClickListener { radioStep(-1) }
         findViewById<View>(R.id.radioNext).setOnClickListener { radioStep(1) }
+        findViewById<View>(R.id.radioSave).setOnClickListener { saveRadioClip() }
+        findViewById<View>(R.id.radioRecs).setOnClickListener { radioClipsDialog() }
         findViewById<View>(R.id.radioPlay).setOnClickListener {
             if (RadioService.current != null && !RadioService.paused) RadioService.stop(this)
             else RadioService.play(this, radioSel())
@@ -182,6 +184,11 @@ class MainActivity : Activity() {
     }
 
     private var resumedOnce = false
+
+    override fun onDestroy() {
+        stopClip()
+        super.onDestroy()
+    }
 
     override fun onPause() {
         super.onPause()
@@ -566,6 +573,7 @@ class MainActivity : Activity() {
     }
 
     private fun showRadioBar() {
+        showSaveButton()
         val cur = RadioService.current
         val sel = cur ?: radioSel()
         findViewById<TextView>(R.id.radioName)?.text = RadioService.station(sel)?.label ?: ""
@@ -581,6 +589,106 @@ class MainActivity : Activity() {
             RadioService.Status.ERROR -> { row.visibility = View.VISIBLE; dot.visibility = View.GONE; txt.text = L.t("تعذر التشغيل. تأكد من الإنترنت", "Could not play. Check the internet") }
             else -> row.visibility = View.GONE
         }
+    }
+
+    // ---- Radio clips: save the last 3 minutes, keep the last 5 ----
+
+    private var clipPlayer: android.media.MediaPlayer? = null
+
+    private fun mmss(sec: Long) = String.format(L.locale, "%d:%02d", sec / 60, sec % 60)
+
+    private fun showSaveButton() {
+        val v = findViewById<TextView>(R.id.radioSave) ?: return
+        val ms = RadioRecorder.bufferedMs()
+        v.alpha = if (ms > 0) 1f else 0.55f
+        v.text = if (ms >= RadioRecorder.KEEP_MS - 1000 || ms == 0L) L.t("⏺ احفظ آخر ٣ دقائق", "⏺ Save last 3 min")
+            else L.t("⏺ احفظ آخر ", "⏺ Save last ") + mmss(ms / 1000)
+    }
+
+    private fun saveRadioClip() {
+        val id = RadioRecorder.station
+        if (RadioRecorder.bufferedMs() < 2000 || id == null) {
+            toast(L.t("شغّل الإذاعة أولاً، ثم اضغط حفظ", "Play the radio first, then press Save")); return
+        }
+        val f = try { RadioRecorder.save(this, id) } catch (_: Exception) { null }
+        if (f == null) { toast(L.t("تعذر الحفظ", "Could not save")); return }
+        toast(L.t("تم الحفظ ✅ في «تسجيلاتي» (", "Saved ✅ in My clips (") + mmss(RadioRecorder.seconds(f)) + ")")
+    }
+
+    private fun radioClipsDialog() {
+        val files = RadioRecorder.list(this)
+        if (files.isEmpty()) {
+            AlertDialog.Builder(this)
+                .setTitle(L.t("🎧 تسجيلاتي", "🎧 My clips"))
+                .setMessage(L.t("لا توجد تسجيلات.\nأثناء تشغيل الإذاعة اضغط «احفظ آخر ٣ دقائق» ليُحفظ ما سمعته الآن.\nنحتفظ بآخر ٥ تسجيلات في جوالك.",
+                    "No clips yet.\nWhile the radio plays, press \"Save last 3 min\" to keep what you just heard.\nThe last 5 clips stay on your phone."))
+                .setPositiveButton(L.t("حسناً", "OK"), null).show()
+            return
+        }
+        val fmt = java.text.SimpleDateFormat("EEEE d MMM · h:mm a", L.locale)
+        val items = files.map { f ->
+            val st = RadioService.station(RadioRecorder.stationId(f))?.label ?: L.t("إذاعة", "Radio")
+            "📻 $st\n${fmt.format(java.util.Date(f.lastModified()))} · ${mmss(RadioRecorder.seconds(f))}"
+        }
+        AlertDialog.Builder(this)
+            .setTitle(L.t("🎧 تسجيلاتي (آخر ٥)", "🎧 My clips (last 5)"))
+            .setItems(items.toTypedArray()) { _, i -> clipActions(files[i]) }
+            .setNegativeButton(L.t("إغلاق", "Close"), null)
+            .show()
+    }
+
+    private fun clipActions(f: java.io.File) {
+        val opts = arrayOf(L.t("▶ تشغيل", "▶ Play"), L.t("📤 مشاركة", "📤 Share"), L.t("🗑 حذف", "🗑 Delete"))
+        AlertDialog.Builder(this)
+            .setItems(opts) { _, i ->
+                when (i) {
+                    0 -> playClip(f)
+                    1 -> shareClip(f)
+                    else -> AlertDialog.Builder(this)
+                        .setMessage(L.t("حذف هذا التسجيل؟", "Delete this clip?"))
+                        .setPositiveButton(L.t("حذف", "Delete")) { _, _ -> f.delete(); radioClipsDialog() }
+                        .setNegativeButton(L.t("إلغاء", "Cancel"), null).show()
+                }
+            }.show()
+    }
+
+    private fun stopClip() {
+        try { clipPlayer?.release() } catch (_: Exception) {}
+        clipPlayer = null
+    }
+
+    private fun playClip(f: java.io.File) {
+        stopClip()
+        // The live radio stops while the clip plays
+        if (RadioService.current != null && !RadioService.paused) RadioService.toggle(this)
+        val mp = android.media.MediaPlayer()
+        try {
+            mp.setDataSource(f.absolutePath)
+            mp.prepare()
+            mp.start()
+        } catch (_: Exception) {
+            mp.release(); toast(L.t("تعذر تشغيل التسجيل", "Could not play the clip")); return
+        }
+        clipPlayer = mp
+        val d = AlertDialog.Builder(this)
+            .setTitle(L.t("🎧 يعمل التسجيل", "🎧 Playing clip"))
+            .setMessage(RadioService.station(RadioRecorder.stationId(f))?.label ?: "")
+            .setPositiveButton(L.t("⏹ إيقاف", "⏹ Stop"), null)
+            .setNeutralButton(L.t("📤 مشاركة", "📤 Share")) { _, _ -> shareClip(f) }
+            .setOnDismissListener { stopClip() }
+            .show()
+        mp.setOnCompletionListener { if (d.isShowing) d.dismiss() }
+    }
+
+    private fun shareClip(f: java.io.File) {
+        try {
+            val uri = androidx.core.content.FileProvider.getUriForFile(this, "$packageName.files", f)
+            val i = Intent(Intent.ACTION_SEND)
+                .setType(if (f.extension == "aac") "audio/aac" else "audio/mpeg")
+                .putExtra(Intent.EXTRA_STREAM, uri)
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            startActivity(Intent.createChooser(i, L.t("مشاركة التسجيل", "Share clip")))
+        } catch (_: Exception) { toast(L.t("تعذرت المشاركة", "Could not share")) }
     }
 
     /** Live Quran radio: pick a station; it keeps playing with the screen off. */
@@ -681,6 +789,7 @@ class MainActivity : Activity() {
         b(R.id.btnAbout, "عن أقرب مسجد", "About Aqrab Masjid")
         b(R.id.tileRadioText, "إذاعة", "Radio")
         b(R.id.radioLabel, "إذاعة", "Radio")
+        b(R.id.radioRecs, "🎧 تسجيلاتي", "🎧 My clips")
         b(R.id.tileQuranText, "القرآن", "Quran")
         b(R.id.tileAdhkarText, "الأذكار", "Adhkar")
         b(R.id.tileQiratText, "قيراط", "Qirat")

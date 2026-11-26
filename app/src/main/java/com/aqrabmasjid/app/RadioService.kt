@@ -16,7 +16,12 @@ import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 
 /**
  * Live Quran radio. Plays in the background (screen off, in the car) with
@@ -111,10 +116,16 @@ class RadioService : Service() {
         return START_NOT_STICKY
     }
 
+    @androidx.annotation.OptIn(markerClass = [UnstableApi::class])
     private fun startPlayer(st: Station) {
         releasePlayer()
+        RadioRecorder.begin(st.id)
         try {
-            val p = ExoPlayer.Builder(this).build()
+            // The stream also goes to the recorder (last 3 minutes, for "Save")
+            val http = DefaultHttpDataSource.Factory().setAllowCrossProtocolRedirects(true)
+            val base = DefaultDataSource.Factory(this, http)
+            val rec = DataSource.Factory { RecordingDataSource(base.createDataSource()) }
+            val p = ExoPlayer.Builder(this).setMediaSourceFactory(DefaultMediaSourceFactory(rec)).build()
             p.setAudioAttributes(
                 AudioAttributes.Builder()
                     .setUsage(C.USAGE_MEDIA)
