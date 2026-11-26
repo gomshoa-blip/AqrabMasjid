@@ -59,6 +59,8 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.3.0")
     // Quran radio player (live streams, follows redirects, keeps playing in the background)
     implementation("androidx.media3:media3-exoplayer:1.4.1")
+    // Quran radio on the car screen (Android Auto)
+    implementation("androidx.media3:media3-session:1.4.1")
     // Prayer times (Umm Al-Qura and other methods)
     implementation("com.batoulapps.adhan:adhan:1.2.1")
 }
