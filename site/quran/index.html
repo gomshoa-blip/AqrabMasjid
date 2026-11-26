@@ -14,11 +14,12 @@
   html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);overflow:hidden;font-family:system-ui,sans-serif}
   /* Top and bottom info */
   .top{position:fixed;top:0;left:0;right:0;height:calc(env(safe-area-inset-top) + 44px);padding:env(safe-area-inset-top) 10px 0;display:flex;align-items:center;gap:8px;font-size:14px;color:var(--soft);z-index:3;background:var(--paper)}
-  .top b{font-weight:800;color:var(--green);font-size:16px}
-  .top .sp{flex:1}
-  .top button{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--gold);background:var(--paper);color:var(--green);font-size:19px;padding:0;line-height:1}
+  .top b{font-weight:800;color:var(--green);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .top #juz{white-space:nowrap}
+  .top .sp{flex:1;min-width:4px}
+  .top button{width:38px;height:38px;flex:none;border-radius:50%;border:1.5px solid var(--gold);background:var(--paper);color:var(--green);font-size:19px;padding:0;line-height:1}
   .top button.on{background:var(--gold)}
-  .top a{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--gold);color:var(--green);display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:18px;font-weight:800}
+  .top a{width:38px;height:38px;flex:none;border-radius:50%;border:1.5px solid var(--gold);color:var(--green);display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:18px;font-weight:800}
   .top .z{font:800 17px system-ui,sans-serif}
   /* Bottom: previous on the right, next on the left, like a paper mushaf */
   #nav{position:fixed;left:0;right:0;bottom:0;height:calc(env(safe-area-inset-bottom) + 62px);padding:7px 8px calc(env(safe-area-inset-bottom) + 7px);display:flex;gap:7px;background:var(--panel);border-top:1px solid var(--line);z-index:3}
@@ -31,7 +32,8 @@
   #sheet{margin:0 auto;direction:rtl;color:var(--ink);position:relative}
   #sheet .ln{display:flex;flex-direction:row;justify-content:center;align-items:center;white-space:nowrap;line-height:1;direction:rtl}
   #sheet .ln.j{justify-content:space-between}
-  #sheet .ln span.mk{background:rgba(201,162,39,.30);box-shadow:0 0 0 2px rgba(201,162,39,.30)}
+  #sheet .ln{position:relative;z-index:1}
+  #sheet .hl{position:absolute;z-index:0;background:rgba(201,162,39,.28);border-radius:8px;pointer-events:none}
   #view.marking #sheet .ln span[data-v]{cursor:pointer}
   #view.marking{outline:3px dashed var(--gold);outline-offset:-3px}
   #sheet .hd{display:flex;justify-content:center;align-items:center}
@@ -78,7 +80,7 @@
   <div id="tabs" style="clear:both;padding-top:8px">
     <button data-t="s" class="on">السور</button>
     <button data-t="j">الأجزاء</button>
-    <button data-t="m">🔖 العلامات</button>
+    <button data-t="m">🔖 العلامة</button>
   </div>
   <div id="slist"></div>
   <div class="credit">مصحف المدينة النبوية – مجمع الملك فهد لطباعة المصحف الشريف<br>رواية حفص عن عاصم – خط عثمان طه</div>
@@ -134,7 +136,7 @@ async function render(){
   const id = ++renderId;
   const [f, juz, sura, lines] = D.p[page-1];
   $("sura").textContent = "سورة " + D.s[sura-1][0];
-  $("juz").textContent = "· الجزء " + AR(juz);
+  $("juz").textContent = "· ج" + AR(juz);
   $("pno").textContent = "صفحة " + AR(page);
   markBtn();
   store.set("qpage", page);
@@ -224,15 +226,29 @@ applyTheme();
 let marking = false;
 function marks(){ try { return JSON.parse(store.get("qmarks", "[]")) || []; } catch(_) { return []; } }
 function ayaName(v){ const [s, a] = v.split(":"); return "سورة " + D.s[s-1][0] + " – الآية " + AR(a); }
-function markBtn(){ $("bMark").classList.toggle("on", marking || marks().some(m => m.p === page)); }
+function markBtn(){ const m = marks()[0]; $("bMark").classList.toggle("on", marking || (!!m && m.p === page)); }
 function showMarks(){
-  const on = new Set(marks().filter(m => m.p === page && m.v).map(m => m.v));
-  document.querySelectorAll("#sheet span[data-v]").forEach(e => e.classList.toggle("mk", on.has(e.dataset.v)));
+  const sheet = $("sheet");
+  sheet.querySelectorAll(".hl").forEach(e => e.remove());
+  const m = marks()[0];
+  if (m && m.p === page && m.v) {
+    const base = sheet.getBoundingClientRect();
+    sheet.querySelectorAll(".ln").forEach(ln => {
+      const ws = [...ln.querySelectorAll(`span[data-v="${m.v}"]`)];
+      if (!ws.length) return;
+      let l = Infinity, r = -Infinity;
+      ws.forEach(w => { const b = w.getBoundingClientRect(); l = Math.min(l, b.left); r = Math.max(r, b.right); });
+      const h = ln.offsetHeight, d = document.createElement("div");
+      d.className = "hl";
+      d.style.cssText = `left:${l - base.left - 3}px;width:${r - l + 6}px;top:${ln.offsetTop + h * 0.08}px;height:${h * 0.84}px`;
+      sheet.appendChild(d);
+    });
+  }
   markBtn();
 }
 function setMarking(on){
   marking = on; $("view").classList.toggle("marking", on); markBtn();
-  if (on) toast("اضغط على الآية لوضع العلامة");
+  if (on) toast("اضغط على الآية التي وقفت عندها");
 }
 $("bMark").onclick = () => setMarking(!marking);
 $("view").addEventListener("click", e => {
@@ -240,10 +256,10 @@ $("view").addEventListener("click", e => {
   const w = e.target.closest("span[data-v]");
   if (!w) { setMarking(false); return; }
   const v = w.dataset.v;
-  let m = marks();
-  if (m.some(x => x.v === v)) { m = m.filter(x => x.v !== v); toast("حُذفت العلامة"); }
-  else { m.unshift({p: page, v, t: Date.now()}); toast("🔖 " + ayaName(v)); }
-  store.set("qmarks", JSON.stringify(m.slice(0, 50)));
+  // One bookmark, like the ribbon of a paper mushaf: it moves to the new ayah
+  const old = marks()[0];
+  if (old && old.v === v) { store.set("qmarks", "[]"); toast("حُذفت العلامة"); }
+  else { store.set("qmarks", JSON.stringify([{p: page, v, t: Date.now()}])); toast("🔖 " + ayaName(v)); }
   setMarking(false);
   showMarks();
 });
@@ -258,7 +274,7 @@ function fillList(){
     const first = {}; D.p.forEach((x, i) => { if (!first[x[1]]) first[x[1]] = i + 1; });
     html = Object.keys(first).map(j => `<div class="s" data-p="${first[j]}"><span>الجزء ${AR(j)}</span><span>صفحة ${AR(first[j])}</span></div>`).join("");
   } else {
-    const m = marks();
+    const m = marks().slice(0, 1);
     html = m.length ? m.map(x => `<div class="s" data-p="${x.p}"><span>🔖 ${x.v ? ayaName(x.v) : "سورة " + D.s[D.p[x.p-1][2]-1][0]}</span><span>صفحة ${AR(x.p)} <button class="x" data-del="${x.v || x.p}">✕</button></span></div>`).join("")
       : `<div class="empty">لا توجد علامات.<br>اضغط 🔖 في أعلى الصفحة، ثم اضغط على الآية.</div>`;
   }
@@ -267,7 +283,7 @@ function fillList(){
 $("tabs").onclick = e => { const b = e.target.closest("button"); if (b) { tab = b.dataset.t; fillList(); } };
 $("slist").addEventListener("click", e => {
   const d = e.target.closest("[data-del]");
-  if (d) { e.stopPropagation(); const k = d.dataset.del; store.set("qmarks", JSON.stringify(marks().filter(x => (x.v || String(x.p)) !== k))); fillList(); markBtn(); return; }
+  if (d) { e.stopPropagation(); const k = d.dataset.del; store.set("qmarks", JSON.stringify(marks().filter(x => (x.v || String(x.p)) !== k))); fillList(); showMarks(); return; }
   const r = e.target.closest(".s"); if (r) { go(+r.dataset.p); $("list").hidden = true; }
 });
 
