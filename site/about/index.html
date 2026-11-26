@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+<script>/* Old link (pages.dev): go to the new link */(function(){if(/\.pages\.dev$/.test(location.hostname)){var q=location.search;location.replace("https://masjid.gomshoa.com"+location.pathname+(q?q+"&":"?")+"moved=1"+location.hash);}})();</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>أقرب مسجد.. دليلك إلى بيوت الله أينما كنت | Aqrab Masjid</title>
@@ -149,5 +150,18 @@
 
 <footer>أقرب مسجد · Aqrab Masjid · <a href="/privacy/">سياسة الخصوصية</a></footer>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "64638759a27a4c02b5d728643dfec736"}'></script><!-- End Cloudflare Web Analytics -->
+<!-- "We moved" note: shown once when people come from an old link -->
+<div id="movedNote" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.55);align-items:center;justify-content:center;padding:18px">
+ <div style="background:#fff;color:#1b1b1b;border-radius:18px;max-width:420px;width:100%;padding:22px 18px;text-align:center;font-family:system-ui,sans-serif;box-shadow:0 10px 40px rgba(0,0,0,.3)">
+  <div style="font-size:34px">📌</div>
+  <div style="font-size:21px;font-weight:800;color:#0F6B4F;margin:6px 0 4px">انتقلنا إلى رابط جديد</div>
+  <div style="font-size:15px;color:#555;margin-bottom:12px">We moved to a new link</div>
+  <div dir="ltr" style="font-size:20px;font-weight:800;background:#F3EEDD;border:2px solid #C9A227;border-radius:12px;padding:12px 8px;margin-bottom:12px;word-break:break-all">masjid.gomshoa.com</div>
+  <div style="font-size:16px;line-height:1.8;margin-bottom:14px">احفظ الرابط الجديد في المفضلة.<br>إذا أضفت الموقع لشاشة الجوال، احذفه وأضفه مرة ثانية من هذا الرابط.<br><span dir="ltr" style="display:block;font-size:14px;color:#666">Save the new link. If you added it to your home screen, add it again from this link.</span></div>
+  <button id="movedCopy" type="button" style="width:100%;border:0;border-radius:12px;padding:14px;font:800 18px system-ui,sans-serif;background:#0F6B4F;color:#fff;margin-bottom:8px">📋 انسخ الرابط · Copy link</button>
+  <button id="movedOk" type="button" style="width:100%;border:2px solid #C9A227;border-radius:12px;padding:12px;font:800 17px system-ui,sans-serif;background:#fff;color:#0F6B4F">حسناً · OK</button>
+ </div>
+</div>
+<script>(function(){try{var u=new URL(location.href);if(u.searchParams.get("moved")!=="1")return;u.searchParams.delete("moved");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);var n=document.getElementById("movedNote");n.style.display="flex";document.getElementById("movedOk").onclick=function(){n.style.display="none"};document.getElementById("movedCopy").onclick=function(){var t="masjid.gomshoa.com";try{navigator.clipboard.writeText(t)}catch(e){}this.textContent="✅ تم النسخ · Copied"};}catch(e){}})();</script>
 </body>
 </html>
