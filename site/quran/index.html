@@ -35,29 +35,31 @@
   #nav{position:fixed;left:0;right:0;bottom:0;height:calc(env(safe-area-inset-bottom) + 72px);padding:8px 8px calc(env(safe-area-inset-bottom) + 8px);display:flex;gap:8px;background:var(--panel);border-top:1px solid var(--line);z-index:3}
   #nav button{flex:1;border:0;border-radius:14px;font:800 20px system-ui,sans-serif;background:var(--btn);color:var(--btnt);padding:0 4px}
   #nav #bList{flex:.9;background:transparent;border:2px solid var(--gold);color:var(--green);line-height:1.15}
-  #nav #bList small{display:block;font-size:15px;font-weight:700;color:var(--soft)}
+  #nav #bList small{display:block;font-size:13px;font-weight:700;color:var(--soft);white-space:nowrap}
   /* Page turn: the old page is a "leaf" that turns over the new page, like a paper book */
-  #turnbox{position:fixed;z-index:4;pointer-events:none;perspective:1800px;overflow:visible}
+  #turnbox{position:fixed;z-index:4;pointer-events:none;perspective:1300px;overflow:visible}
   #leaf{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform}
   #leaf .face{position:absolute;inset:0;overflow:hidden;background:var(--paper);-webkit-backface-visibility:hidden;backface-visibility:hidden}
-  #leaf .back{transform:rotateY(180deg);background:linear-gradient(90deg,var(--frame),var(--paper))}
+  #leaf .back{transform:rotateY(180deg);background:var(--paper)}
+  #leaf .back .scopy{opacity:.07;transform:scaleX(-1)}
   #leaf .shade{position:absolute;inset:0;pointer-events:none}
-  #under{position:absolute;inset:0;background:#000;opacity:0}
+  #under{position:absolute;inset:0;opacity:0}
+  /* Binding: which side of the open mushaf this page is on.
+     Right page (odd number): the spine is on its left. Left page (even): the spine is on its right. */
+  #bind{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top) + 54px);bottom:calc(env(safe-area-inset-bottom) + 72px);pointer-events:none;z-index:2}
+  #bind .spine{position:absolute;top:0;bottom:0;width:22px}
+  #bind .edges{position:absolute;top:6px;bottom:6px;width:5px;opacity:.55;background:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 2.5px)}
+  #bind.r .spine{left:0;background:linear-gradient(90deg,rgba(0,0,0,.28),rgba(0,0,0,.08) 45%,rgba(0,0,0,0))}
+  #bind.r .edges{right:1px}
+  #bind.l .spine{right:0;background:linear-gradient(270deg,rgba(0,0,0,.28),rgba(0,0,0,.08) 45%,rgba(0,0,0,0))}
+  #bind.l .edges{left:1px}
+  html[data-theme=dark] #bind .spine{filter:brightness(0) opacity(.9)}
+  @media (max-height:500px){#bind{top:calc(env(safe-area-inset-top) + 44px);bottom:calc(env(safe-area-inset-bottom) + 52px)}}
   /* Bookmark ribbon hanging on a marked page */
-  :is(#sheet,.scopy) .rib{position:absolute;top:-2px;left:-13px;width:12px;height:46px;z-index:2;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3));pointer-events:none}
-  /* Bookmarks sheet */
-  #mpanel[hidden]{display:none}
-  #mpanel{position:fixed;inset:0;z-index:7;background:rgba(0,0,0,.45);display:flex;align-items:flex-end}
-  #mpanel .box{width:100%;max-height:80%;overflow:auto;background:var(--panel);border-radius:22px 22px 0 0;padding:14px 14px calc(env(safe-area-inset-bottom) + 16px);border-top:3px solid var(--gold)}
-  #mpanel h3{margin:4px 0 12px;color:var(--green);font-size:19px;text-align:center}
-  #mpanel .act{display:block;width:100%;border:0;border-radius:14px;padding:15px 12px;margin-bottom:8px;font:800 18px system-ui,sans-serif;background:var(--btn);color:var(--btnt)}
-  #mpanel .act.gold{background:var(--gold);color:#1b1b1b}
-  .bm{display:flex;align-items:center;gap:10px;padding:12px 8px;border-bottom:1px solid var(--line);cursor:pointer}
-  .bm .rb{flex:none;width:14px;height:34px;clip-path:polygon(0 0,100% 0,100% 100%,50% 78%,0 100%)}
-  .bm .tx{flex:1;min-width:0}
-  .bm .tx b{display:block;font-size:17px;color:var(--ink)}
-  .bm .tx small{color:var(--soft);font-size:14px}
-  .bm .x{flex:none;border:0;background:none;color:#c0392b;font-size:22px;padding:4px 8px}
+  :is(#sheet,.scopy) .rib{position:absolute;top:-8px;width:24px;height:78px;opacity:.95;z-index:2;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3));pointer-events:none}
+  /* "Go to bookmark" chip, shown when the mushaf opens on another page */
+  #gomark{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 86px);transform:translateX(-50%);z-index:5;border:2px solid var(--gold);background:var(--panel);color:var(--green);border-radius:999px;padding:11px 18px;font:800 16px system-ui,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25);white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis}
+  #gomark[hidden]{display:none}
   /* The page area */
   #view{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top) + 54px);bottom:calc(env(safe-area-inset-bottom) + 72px);overflow:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
   #view.scroll{overflow:auto}
@@ -105,14 +107,9 @@
   <button id="bList">☰ الفهرس<small id="pno"></small></button>
   <button id="bNext">التالية ←</button>
 </div>
+<div id="bind"><div class="spine"></div><div class="edges"></div></div>
 <div id="zlbl"></div>
-<div id="mpanel" hidden><div class="box">
-  <h3>🔖 العلامات</h3>
-  <button class="act gold" id="mPage">🔖 ضع علامة على هذه الصفحة</button>
-  <button class="act" id="mAyah">📍 ضع علامة على آية (اضغط على الآية)</button>
-  <div id="mlist"></div>
-  <button class="act" id="mClose" style="margin-top:12px">إغلاق</button>
-</div></div>
+<button id="gomark" hidden></button>
 <div id="toast"></div>
 
 <div id="list" hidden>
@@ -120,9 +117,10 @@
   <div id="tabs" style="clear:both;padding-top:8px">
     <button data-t="s" class="on">السور</button>
     <button data-t="j">الأجزاء</button>
-    <button data-t="m">🔖 العلامات</button>
+    <button data-t="m">🔖 العلامة</button>
   </div>
   <div id="slist"></div>
+  <button id="bSound" style="display:block;margin:16px auto 0;border:2px solid var(--gold);background:transparent;color:var(--green);border-radius:12px;padding:10px 18px;font:800 16px system-ui,sans-serif"></button>
   <div class="credit">مصحف المدينة النبوية – مجمع الملك فهد لطباعة المصحف الشريف<br>رواية حفص عن عاصم – خط عثمان طه</div>
 </div>
 
@@ -179,7 +177,8 @@ async function render(keep){
   const [f, juz, sura, lines] = D.p[page-1];
   $("sura").textContent = "سورة " + D.s[sura-1][0];
   $("juz").textContent = "· ج" + AR(juz);
-  $("pno").textContent = "صفحة " + AR(page);
+  $("pno").textContent = "صفحة " + AR(page) + (page % 2 ? " · اليمنى" : " · اليسرى");
+  $("bind").className = page % 2 ? "r" : "l";
   store.set("qpage", page);
   history.replaceState(null, "", "#p" + page);
   const need = [loadFont(fontName(f)), loadFont(HDR)];
@@ -281,96 +280,76 @@ function applyTheme(){
 $("bTheme").onclick = () => { theme = theme === "dark" ? "light" : "dark"; store.set("qtheme", theme); applyTheme(); };
 applyTheme();
 
-// ---- Bookmarks ----
-// 🔖 opens the bookmarks panel: mark this page in one tap, or mark an ayah, and see all saved marks.
-// Press and hold on an ayah also marks it. A marked page shows a red ribbon; a marked ayah is highlighted.
-// Up to 10 marks, newest first. Each mark has its own ribbon color.
-const COLORS = ["#C0392B", "#0F6B4F", "#C9A227", "#2E6DB4", "#8E44AD"];
-let marking = false;
-function marks(){ try { return (JSON.parse(store.get("qmarks", "[]")) || []).filter(x => x && x.p); } catch(_) { return []; } }
-function saveMarks(m){ store.set("qmarks", JSON.stringify(m.slice(0, 10))); }
+// ---- Bookmark: ONE ribbon, like a paper mushaf ----
+// Tap 🔖: put the ribbon on this page (tap again on the same page: remove it).
+// Press and hold on an ayah: put the ribbon there and color that ayah.
+// Opening the mushaf on another page shows "go to bookmark".
+let marking = false;   // kept for old code paths; no special mode any more
+function getMark(){ try { const m = (JSON.parse(store.get("qmarks", "[]")) || [])[0]; return m && m.p ? m : null; } catch(_) { return null; } }
+function marks(){ const m = getMark(); return m ? [m] : []; }
+function setMarkObj(m){ store.set("qmarks", JSON.stringify(m ? [m] : [])); }
 function ayaName(v){ const [s, a] = v.split(":"); return "سورة " + D.s[s-1][0] + " – الآية " + AR(a); }
-function markName(x){ return x.v ? ayaName(x.v) : "سورة " + D.s[D.p[x.p-1][2]-1][0]; }
-function ago(t){
-  if (!t) return "";
-  const m = Math.round((Date.now() - t) / 60000);
-  if (m < 1) return "الآن"; if (m < 60) return "قبل " + AR(m) + " د";
-  const h = Math.round(m / 60); if (h < 24) return "قبل " + AR(h) + " س";
-  return "قبل " + AR(Math.round(h / 24)) + " يوم";
-}
-function markBtn(){ $("bMark").classList.toggle("on", marking || marks().some(x => x.p === page)); }
+function markName(x){ return x.v ? ayaName(x.v) : "سورة " + D.s[D.p[x.p-1][2]-1][0] + " – صفحة " + AR(x.p); }
+function markBtn(){ const m = getMark(); $("bMark").classList.toggle("on", !!m && m.p === page); }
 function showMarks(){
   const sheet = $("sheet");
-  sheet.querySelectorAll(".hl").forEach(e => e.remove());
-  const mine = marks().filter(x => x.p === page);
-  // Ribbon hanging on the page (color of the newest mark on this page)
-  sheet.querySelectorAll(".rib").forEach(e => e.remove());
-  if (mine.length) {
-    const c = COLORS[(mine[0].c || 0) % COLORS.length];
-    sheet.insertAdjacentHTML("beforeend", `<svg class="rib" viewBox="0 0 26 58" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0h26v58l-13-10L0 58z" fill="${c}"/><path d="M5 0h16v49l-8-6-8 6z" fill="rgba(255,255,255,.18)"/></svg>`);
+  sheet.querySelectorAll(".hl,.rib").forEach(e => e.remove());
+  const m = getMark();
+  if (m && m.p === page) {
+    // Ribbon hanging over the outer edge of the page (away from the spine)
+    const side = page % 2 ? "right:-6px" : "left:-6px";
+    sheet.insertAdjacentHTML("beforeend", `<svg class="rib" style="${side}" viewBox="0 0 24 78" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0h24v78l-12-12L0 78z" fill="#C0392B"/><path d="M4 0h3v70l-3 3z M17 0h3v73l-3-3z" fill="rgba(255,255,255,.22)"/></svg>`);
+    if (m.v) {
+      const base = sheet.getBoundingClientRect();
+      sheet.querySelectorAll(".ln").forEach(ln => {
+        const ws = [...ln.querySelectorAll(`span[data-v="${m.v}"]`)];
+        if (!ws.length) return;
+        let l = Infinity, r = -Infinity;
+        ws.forEach(w => { const b = w.getBoundingClientRect(); l = Math.min(l, b.left); r = Math.max(r, b.right); });
+        const h = ln.offsetHeight, d = document.createElement("div");
+        d.className = "hl";
+        d.style.cssText = `left:${l - base.left - 3}px;width:${r - l + 6}px;top:${ln.offsetTop + h * 0.08}px;height:${h * 0.84}px`;
+        sheet.appendChild(d);
+      });
+    }
   }
-  const base = sheet.getBoundingClientRect();
-  mine.filter(x => x.v).forEach(m => {
-    sheet.querySelectorAll(".ln").forEach(ln => {
-      const ws = [...ln.querySelectorAll(`span[data-v="${m.v}"]`)];
-      if (!ws.length) return;
-      let l = Infinity, r = -Infinity;
-      ws.forEach(w => { const b = w.getBoundingClientRect(); l = Math.min(l, b.left); r = Math.max(r, b.right); });
-      const h = ln.offsetHeight, d = document.createElement("div");
-      d.className = "hl";
-      d.style.cssText = `left:${l - base.left - 3}px;width:${r - l + 6}px;top:${ln.offsetTop + h * 0.08}px;height:${h * 0.84}px`;
-      sheet.appendChild(d);
-    });
-  });
   markBtn();
 }
-function nextColor(){ const m = marks(); return m.length ? ((m[0].c || 0) + 1) % COLORS.length : 0; }
-function addMark(v){
-  let m = marks();
-  const same = m.find(x => x.p === page && (x.v || "") === (v || ""));
-  if (same) { saveMarks(m.filter(x => x !== same)); toast("حُذفت العلامة"); }
-  else { m.unshift({p: page, v: v || "", t: Date.now(), c: nextColor()}); saveMarks(m); toast("🔖 " + (v ? ayaName(v) : "صفحة " + AR(page))); }
+function putMark(v){
+  const old = getMark();
+  if (old && old.p === page && (!v || old.v === v)) { setMarkObj(null); toast("حُذفت العلامة"); }
+  else { setMarkObj({p: page, v: v || "", t: Date.now()}); toast("🔖 " + (v ? ayaName(v) : "وُضعت العلامة على صفحة " + AR(page))); paperSound(0.35); }
+  $("gomark").hidden = true;
   showMarks();
 }
-function setMarking(on){
-  marking = on; $("view").classList.toggle("marking", on); markBtn();
-  if (on) toast("اضغط على الآية");
-}
-function fillMarks(el){
-  const m = marks();
-  el.innerHTML = m.length ? m.map((x, i) => `<div class="bm" data-p="${x.p}"><span class="rb" style="background:${COLORS[(x.c || 0) % COLORS.length]}"></span><span class="tx"><b>${markName(x)}</b><small>صفحة ${AR(x.p)} · ج${AR(D.p[x.p-1][1])} · ${ago(x.t)}</small></span><button class="x" data-del="${i}" aria-label="حذف">✕</button></div>`).join("")
-    : `<div class="empty" style="color:#888;text-align:center;padding:18px 8px;line-height:1.8">لا توجد علامات بعد.<br>اضغط «ضع علامة على هذه الصفحة»، أو اضغط مطولاً على الآية.</div>`;
-}
-function openMarks(){ fillMarks($("mlist")); $("mpanel").hidden = false; }
-$("bMark").onclick = () => { if (marking) { setMarking(false); return; } openMarks(); };
-$("mClose").onclick = () => $("mpanel").hidden = true;
-$("mpanel").addEventListener("click", e => {
-  if (e.target.id === "mpanel") { $("mpanel").hidden = true; return; }
-  const d = e.target.closest("[data-del]");
-  if (d) { e.stopPropagation(); const m = marks(); m.splice(+d.dataset.del, 1); saveMarks(m); fillMarks($("mlist")); showMarks(); return; }
-  const row = e.target.closest(".bm"); if (row) { $("mpanel").hidden = true; go(+row.dataset.p); }
-});
-$("mPage").onclick = () => { $("mpanel").hidden = true; addMark(""); };
-$("mAyah").onclick = () => { $("mpanel").hidden = true; setMarking(true); };
-// Mark mode: tap the ayah
-$("view").addEventListener("click", e => {
-  if (!marking) return;
-  const w = e.target.closest("span[data-v]");
-  setMarking(false);
-  if (w) addMark(w.dataset.v);
-});
-// Or press and hold on the ayah
+$("bMark").onclick = () => putMark("");
+// Press and hold on an ayah
 let holdT = null, hx = 0, hy = 0;
 $("view").addEventListener("touchstart", e => {
   const w = e.target.closest("span[data-v]");
   clearTimeout(holdT);
   if (!w || e.touches.length > 1) return;
   hx = e.touches[0].clientX; hy = e.touches[0].clientY;
-  holdT = setTimeout(() => { holdT = null; try { navigator.vibrate && navigator.vibrate(30); } catch(_){} marking = false; addMark(w.dataset.v); }, 550);
+  holdT = setTimeout(() => { holdT = null; try { navigator.vibrate && navigator.vibrate(30); } catch(_){} if (!T || T.mode === "?") putMark(w.dataset.v); }, 600);
 }, {passive:true});
 $("view").addEventListener("touchmove", e => { if (holdT && Math.hypot(e.touches[0].clientX - hx, e.touches[0].clientY - hy) > 10) { clearTimeout(holdT); holdT = null; } }, {passive:true});
 $("view").addEventListener("touchend", () => { clearTimeout(holdT); holdT = null; }, {passive:true});
 $("view").addEventListener("contextmenu", e => e.preventDefault());
+// "Go to bookmark" when the mushaf opens on another page
+function offerMark(){
+  const m = getMark();
+  if (!m || m.p === page) return;
+  const b = $("gomark");
+  b.textContent = "🔖 اذهب إلى العلامة: " + markName(m);
+  b.hidden = false;
+  b.onclick = () => { b.hidden = true; go(m.p); };
+  clearTimeout(offerMark.t); offerMark.t = setTimeout(() => b.hidden = true, 9000);
+}
+function fillMarks(el){
+  const m = getMark();
+  el.innerHTML = m ? `<div class="s" data-p="${m.p}"><span>🔖 ${markName(m)}</span><span>صفحة ${AR(m.p)} <button class="x" data-del="0">✕</button></span></div>`
+    : `<div class="empty">لا توجد علامة.<br>اضغط 🔖 في الأعلى لوضع العلامة على الصفحة،<br>أو اضغط مطولاً على الآية.</div>`;
+}
 
 // ---- Index: surahs, parts, bookmarks ----
 let tab = "s";
@@ -387,7 +366,7 @@ function fillList(){
 $("tabs").onclick = e => { const b = e.target.closest("button"); if (b) { tab = b.dataset.t; fillList(); } };
 $("slist").addEventListener("click", e => {
   const d = e.target.closest("[data-del]");
-  if (d) { e.stopPropagation(); const m = marks(); m.splice(+d.dataset.del, 1); saveMarks(m); fillList(); showMarks(); return; }
+  if (d) { e.stopPropagation(); setMarkObj(null); fillList(); showMarks(); return; }
   const r = e.target.closest(".s,.bm"); if (r) { go(+r.dataset.p); $("list").hidden = true; }
 });
 
@@ -423,26 +402,35 @@ function makeLeaf(dir){
   front.appendChild(copy);
   const shade = document.createElement("div"); shade.className = "shade"; front.appendChild(shade);
   const back = document.createElement("div"); back.className = "face back";
+  const ghost = copy.cloneNode(true); back.appendChild(ghost);
+  const bshade = document.createElement("div"); bshade.className = "shade"; back.appendChild(bshade);
   leaf.appendChild(front); leaf.appendChild(back);
   const under = document.createElement("div"); under.id = "under";
   box.appendChild(under); box.appendChild(leaf);
   document.body.appendChild(box);
-  return {leaf, shade, under, box};
+  return {leaf, shade, bshade, under, box};
 }
 function setTurn(t, p){
-  // p: 0 (flat) .. 1 (turned over)
-  const a = Math.max(0, Math.min(1, p)) * 180 * t.dir;
-  t.el.leaf.style.transform = `rotateY(${a}deg)`;
-  const k = Math.sin(Math.min(1, p) * Math.PI);
-  t.el.shade.style.background = `linear-gradient(${t.dir > 0 ? 270 : 90}deg, rgba(0,0,0,${0.35 * k}), rgba(0,0,0,0) 60%)`;
-  t.el.under.style.opacity = String(0.25 * (1 - Math.min(1, p)));
+  // p: 0 (flat) .. 1 (turned over). The paper lifts a little, bends a little, and casts a shadow.
+  p = Math.max(0, Math.min(1, p));
+  const a = p * 180 * t.dir, k = Math.sin(p * Math.PI);
+  t.el.leaf.style.transform = `rotateY(${a}deg) translateZ(${18 * k}px) skewY(${-2.2 * k * t.dir}deg)`;
+  // Front: darker near the fold as it lifts, with a soft light line at the bending edge
+  const side = t.dir > 0 ? 270 : 90;
+  t.el.shade.style.background = `linear-gradient(${side}deg, rgba(0,0,0,${0.32 * k}) 0%, rgba(0,0,0,${0.1 * k}) 35%, rgba(255,255,255,${0.12 * k}) 70%, rgba(0,0,0,${0.18 * k}) 100%)`;
+  if (t.el.bshade) t.el.bshade.style.background = `linear-gradient(${side}deg, rgba(0,0,0,${0.25 * k}), rgba(0,0,0,0) 60%)`;
+  // Shadow of the turning page on the next page, strongest near the spine
+  t.el.under.style.background = `linear-gradient(${side}deg, rgba(0,0,0,.45), rgba(0,0,0,0) ${30 + 50 * (1 - p)}%)`;
+  t.el.under.style.opacity = String(0.9 * (1 - p) * Math.min(1, p * 4));
 }
 let lastTurn = null;
 function endTurn(t, done){
   if (t.ending) return; t.ending = true;
-  const from = t.p, to = done ? 1 : 0, start = performance.now(), dur = 260 * Math.abs(to - from) + 60;
+  const from = t.p, to = done ? 1 : 0, start = performance.now(), dur = 700 * Math.abs(to - from) + 140;
+  if (done) paperSound(0.9);
   const step = now => {
-    const k = Math.min(1, (now - start) / dur), e = 1 - Math.pow(1 - k, 3);
+    const k = Math.min(1, (now - start) / dur);
+    const e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;   // slow start and slow end
     setTurn(t, from + (to - from) * e);
     if (k < 1) return requestAnimationFrame(step);
     if (!done) { page = t.from; render(); }
@@ -450,6 +438,39 @@ function endTurn(t, done){
   };
   requestAnimationFrame(step);
 }
+
+// ---- Paper sound (made in the browser, no file to download) ----
+let actx = null, soundOn = store.get("qsound", "1") === "1";
+function audio(){
+  if (!soundOn) return null;
+  try {
+    if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === "suspended") actx.resume();
+    return actx;
+  } catch(_) { return null; }
+}
+function paperSound(v){
+  const ac = audio(); if (!ac) return;
+  try {
+    const t0 = ac.currentTime, len = 0.55, n = Math.floor(ac.sampleRate * len);
+    const buf = ac.createBuffer(1, n, ac.sampleRate), d = buf.getChannelData(0);
+    // Rustle: noise with small crackles, getting louder then fading out
+    let last = 0;
+    for (let i = 0; i < n; i++) {
+      const x = i / n, env = Math.pow(Math.sin(Math.PI * Math.min(1, x * 1.15)), 1.6);
+      const crack = Math.random() < 0.004 ? (Math.random() * 2 - 1) * 2.2 : 0;
+      last = last * 0.55 + (Math.random() * 2 - 1) * 0.45;
+      d[i] = (last + crack) * env;
+    }
+    const src = ac.createBufferSource(); src.buffer = buf;
+    const bp = ac.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 2600; bp.Q.value = 0.7;
+    const hp = ac.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 500;
+    const g = ac.createGain(); g.gain.value = 0.35 * (v || 1);
+    src.connect(bp); bp.connect(hp); hp.connect(g); g.connect(ac.destination);
+    src.start(t0);
+  } catch(_) {}
+}
+
 function startTurn(dir){
   const to = page + dir;
   if (to < 1 || to > 604) return null;
@@ -465,6 +486,7 @@ function turn(dir){
   const t = startTurn(dir); if (t) endTurn(t, true);
 }
 view.addEventListener("touchstart", e => {
+  audio();
   // A turn left half-way (touch lost): finish it now
   if (lastTurn && !lastTurn.ending && !(T && T.mode === "turn")) endTurn(lastTurn, lastTurn.p > 0.25);
   if (!$("list").hidden || marking) { T = null; return; }
@@ -501,6 +523,7 @@ addEventListener("touchmove", e => {
       const t = startTurn(dir);
       if (!t) { T.mode = "pan"; return; }
       T.mode = "turn"; T.t = t; T.x0 = x;
+      paperSound(0.45);
     } else { T.mode = "pan"; return; }
   }
   if (T.mode === "turn") {
@@ -529,6 +552,9 @@ $("bNext").onclick = () => turn(1);
 $("bPrev").onclick = () => turn(-1);
 $("bList").onclick = () => { fillList(); $("list").hidden = false; };
 $("close").onclick = () => $("list").hidden = true;
+function soundBtn(){ $("bSound").textContent = soundOn ? "🔊 صوت تقليب الورق: يعمل" : "🔇 صوت تقليب الورق: متوقف"; }
+$("bSound").onclick = () => { soundOn = !soundOn; store.set("qsound", soundOn ? "1" : "0"); soundBtn(); if (soundOn) paperSound(0.8); };
+soundBtn();
 // Turning the phone: redraw to fit the new screen
 let rt; const relayout = () => { clearTimeout(rt); rt = setTimeout(() => { if (D && $("msg").style.display === "none") layout(); }, 150); };
 addEventListener("resize", relayout);
@@ -536,7 +562,7 @@ addEventListener("orientationchange", relayout);
 if (window.visualViewport) visualViewport.addEventListener("resize", relayout);
 if (window.ResizeObserver) new ResizeObserver(relayout).observe($("view"));
 
-fetch("mushaf.json").then(r => r.json()).then(j => { D = j; render(); })
+fetch("mushaf.json").then(r => r.json()).then(j => { D = j; render(); setTimeout(offerMark, 800); })
   .catch(() => { $("msg").innerHTML = "تعذر تحميل المصحف.<br>تأكد من الإنترنت."; });
 </script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "64638759a27a4c02b5d728643dfec736"}'></script><!-- End Cloudflare Web Analytics -->
