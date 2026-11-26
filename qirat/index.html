@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5LHD95P9HE"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-5LHD95P9HE");</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>قيراط – جنائز الرياض | Qirat – Riyadh Funerals</title>
+<meta name="description" content="أقرب جامع يُصلّى فيه على الجنائز وأقرب مقبرة في الرياض — بضغطة زر">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://janaez-riyadh.pages.dev/">
+<meta property="og:title" content="قيراط – جنائز الرياض">
+<meta property="og:description" content="أقرب جامع يُصلّى فيه على الجنائز، وأقرب مقبرة في الرياض — بضغطة زر">
+<meta property="og:image" content="https://janaez-riyadh.pages.dev/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ar_SA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://janaez-riyadh.pages.dev/og.jpg">
+<meta name="theme-color" content="#1f5c45">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="قيراط">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f4ef; --card:#ffffff; --ink:#1f2a24; --muted:#6b756f;
+    --green:#1f5c45; --green2:#2e7d5f; --soft:#e7efe9; --gold:#b08a3e; --line:#e3e0d8;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Tajawal",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+  header{background:var(--green);color:#fff;padding:44px 14px 22px;text-align:center;position:relative}
+  header h1{margin:0;font-size:clamp(1.15rem,5.2vw,1.55rem);font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+  header h1 svg{width:1.15em;height:1.15em;flex:none}
+  header p{margin:6px 0 0;opacity:.9;font-size:1rem}
+  .lang{position:absolute;top:10px;inset-inline-start:12px;background:rgba(255,255,255,.15);color:#fff;
+    border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:4px 14px;font:inherit;font-size:.95rem;
+    font-weight:700;cursor:pointer}
+  .wrap{max-width:720px;margin:0 auto;padding:16px}
+  .hadith{background:var(--card);border:1px solid var(--line);border-inline-start:5px solid var(--gold);
+    border-radius:14px;padding:14px 16px;margin:-2px 0 16px;font-size:1.02rem}
+  .hadith small, .box small{display:block;color:var(--muted);margin-top:4px}
+  .big{display:block;width:100%;border:0;border-radius:14px;padding:16px;font:inherit;font-size:1.15rem;
+    font-weight:700;background:var(--green2);color:#fff;cursor:pointer;text-align:center;text-decoration:none}
+  .big:active{transform:scale(.99)}
+  .alt{background:#fff;color:var(--green);border:2px solid var(--green2);margin-top:6px;font-size:1rem}
+  .status{color:var(--muted);text-align:center;font-size:.92rem;margin:8px 0 6px;min-height:1.2em}
+  .sec{font-size:1.2rem;color:var(--green);margin:22px 0 10px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;
+    display:flex;align-items:center;gap:12px}
+  .card .info{flex:1;min-width:0}
+  .card h3{margin:0;font-size:1.08rem}
+  .card .meta{color:var(--muted);font-size:.92rem}
+  .dist{display:inline-block;background:var(--soft);color:var(--green);border-radius:8px;padding:0 8px;
+    font-weight:700;font-size:.88rem;margin-inline-start:6px}
+  .go{flex:none;background:var(--green);color:#fff;text-decoration:none;border-radius:12px;padding:10px 14px;
+    font-weight:700;font-size:.98rem;white-space:nowrap}
+  .first{border:2px solid var(--green2)}
+  .tag{display:inline-block;background:var(--gold);color:#fff;border-radius:6px;padding:0 8px;font-size:.8rem;margin-bottom:4px}
+  .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:18px 0}
+  .box h2{margin:0 0 6px;font-size:1.1rem;color:var(--green)}
+  .box ul{margin:0;padding-inline-start:20px}
+  .dua{font-size:1.08rem}
+  .ar-only{font-size:1.05rem}
+  .wa{background:#25D366;margin-top:10px}
+  .inst{background:var(--green);margin-top:12px}
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;z-index:9}
+  .modal[hidden]{display:none}
+  .sheet{background:#fff;border-radius:18px 18px 0 0;padding:20px 18px 24px;width:100%;max-width:520px}
+  .sheet h2{margin:0 0 8px;color:var(--green);font-size:1.15rem}
+  .sheet ol{margin:0 0 16px;padding-inline-start:22px;font-size:1.05rem;line-height:1.9}
+  footer{text-align:center;color:var(--muted);font-size:.85rem;padding:10px 16px 30px}
+</style>
+</head>
+<body>
+<header>
+  <button class="lang" id="langBtn">English</button>
+  <h1><span data-t="title"></span><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5v2"/><path d="M7 11a5 5 0 0 1 10 0"/><path d="M5 11h14v10H5z"/><path d="M10 21v-4a2 2 0 0 1 4 0v4"/><path d="M2.5 21V9.5M2.5 9.5l1-2 1 2M2.5 13h2v8M21.5 21V9.5M21.5 9.5l-1-2-1 2M21.5 13h-2v8"/><path d="M2 21h20"/></svg></h1>
+  <p data-t="sub"></p>
+</header>
+
+<div class="wrap">
+  <div class="hadith"><span data-t="hadith"></span><small data-t="agreed"></small></div>
+
+  <button class="big" id="near" data-t="near"></button>
+  <div class="status" id="status"></div>
+
+  <h2 class="sec" data-t="mosques"></h2>
+  <div id="list"></div>
+  <a class="big alt" target="_blank" rel="noopener" data-t="moreM"
+     href="https://www.google.com/maps/search/?api=1&query=%D9%85%D8%BA%D8%B3%D9%84%D8%A9+%D9%85%D9%88%D8%AA%D9%89+%D8%AC%D8%A7%D9%85%D8%B9+%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D8%B6"></a>
+
+  <h2 class="sec" data-t="graves"></h2>
+  <div id="graves"></div>
+  <a class="big alt" target="_blank" rel="noopener" data-t="moreG"
+     href="https://www.google.com/maps/search/?api=1&query=%D9%85%D9%82%D8%A8%D8%B1%D8%A9+%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D8%B6"></a>
+
+  <div class="box">
+    <h2 data-t="whenH"></h2>
+    <ul><li data-t="when1"></li><li data-t="when2"></li><li data-t="when3"></li></ul>
+  </div>
+
+  <div class="box dua">
+    <h2 data-t="duaH"></h2>
+    <div class="ar-only">«اللهم اغفر له وارحمه، وعافه واعفُ عنه، وأكرم نُزُله، ووسّع مُدخله، واغسله بالماء والثلج والبَرَد»</div>
+    <div data-t="duaEn"></div>
+    <small data-t="muslim"></small>
+  </div>
+
+  <div class="box dua">
+    <h2 data-t="visitH"></h2>
+    <div class="ar-only">«السلام عليكم أهل الديار من المؤمنين والمسلمين، وإنا إن شاء الله بكم لاحقون، أسأل الله لنا ولكم العافية»</div>
+    <div data-t="visitEn"></div>
+    <small data-t="muslim"></small>
+  </div>
+
+  <div class="box">
+    <h2 data-t="shareH"></h2>
+    <span data-t="shareP"></span>
+    <button class="big inst" id="instBtn"><span style="margin-inline-end:6px">📲</span><span data-t="instBtn"></span></button>
+    <a class="big wa" id="waBtn" target="_blank" rel="noopener" href="#">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="#fff" aria-hidden="true" style="vertical-align:-5px;margin-inline-end:6px"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.3-.5-.5-1-1.1-1.3-1.7-.1-.2 0-.4.1-.5l.4-.4.2-.4v-.4l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.6.6-.9 1.4-.9 2.2.1 1 .5 1.9 1 2.7 1.1 1.6 2.4 2.9 4.1 3.7.5.2.9.4 1.4.5.5.1 1 .1 1.5 0 .6-.1 1.2-.5 1.5-1 .2-.4.2-.8.1-1.1l-.4-.2z"/></svg><span data-t="waBtn"></span>
+    </a>
+  </div>
+</div>
+
+<div class="modal" id="modal" hidden>
+  <div class="sheet">
+    <h2 data-t="instH"></h2>
+    <ol id="steps"></ol>
+    <button class="big" id="closeM" data-t="ok"></button>
+  </div>
+</div>
+
+<footer><span data-t="foot1"></span><br><span data-t="foot2"></span></footer>
+
+<script>
+const T = {
+  ar:{
+    title:"قيراط – جنائز الرياض",
+    sub:"أقرب جامع يُصلّى فيه على الجنائز، وأقرب مقبرة — بضغطة زر",
+    hadith:"قال ﷺ: «من شهد الجنازة حتى يُصلّى عليها فله قيراط، ومن شهدها حتى تُدفن فله قيراطان». قيل: وما القيراطان؟ قال: «مثل الجبلين العظيمين».",
+    agreed:"متفق عليه",
+    near:"📍 أظهر الأقرب لي",
+    mosques:"🕌 الجوامع", graves:"🪦 المقابر",
+    moreM:"🔎 ابحث عن جوامع أخرى في خرائط Google",
+    moreG:"🔎 ابحث عن مقابر أخرى في خرائط Google",
+    whenH:"متى تُصلّى الجنائز؟",
+    when1:"غالبًا بعد صلاة الفريضة (الظهر والعصر أكثر شيء).",
+    when2:"تعال قبل الإقامة بوقت كافٍ.",
+    when3:"صلِّ مع الإمام، ولا تسبقه بالصلاة على الجنازة.",
+    duaH:"دعاء للميت", duaEn:"", visitH:"دعاء زيارة القبور", visitEn:"", muslim:"رواه مسلم",
+    waBtn:"أرسل في الواتساب",
+    instBtn:"أضف إلى شاشة الجوال", instH:"أضف «قيراط» إلى شاشة الجوال", ok:"تمام",
+    iosSteps:["اضغط زر المشاركة ⬆️ أسفل الشاشة في Safari.","اختر «إضافة إلى الشاشة الرئيسية» ➕.","اضغط «إضافة». بيطلع لك تطبيق «قيراط» في الشاشة."],
+    andSteps:["افتح الرابط في متصفح Chrome.","اضغط القائمة ⋮ أعلى الشاشة.","اختر «إضافة إلى الشاشة الرئيسية» أو «تثبيت التطبيق»."],
+    pcSteps:["في Chrome أو Edge: اضغط أيقونة التثبيت 🖥️ في شريط العنوان، أو من القائمة ⋮ اختر «تثبيت قيراط»."],
+    inAppSteps:["أنت فاتح الرابط داخل تطبيق (مثل الواتساب أو إنستقرام).","اضغط ⋮ أو ⋯ واختر «فتح في المتصفح».","بعدها اضغط زر «أضف إلى شاشة الجوال» مرة ثانية."],
+    waMsg:"🕌 قيراط – جنائز الرياض\n\nأقرب جامع يُصلّى فيه على الجنائز، وأقرب مقبرة في الرياض — بضغطة زر.\n\nقال ﷺ: «من شهد الجنازة حتى يُصلّى عليها فله قيراط، ومن شهدها حتى تُدفن فله قيراطان».\n\nالدال على الخير كفاعله 🤍\nhttps://janaez-riyadh.pages.dev",
+    shareH:"شارك الأجر", shareP:"أرسل هذا الرابط لأهلك وأصحابك في الواتساب. الدال على الخير كفاعله.",
+    foot1:"صدقة جارية عن جميع موتى المسلمين — اللهم اغفر لهم وارحمهم.",
+    foot2:"قد تتغير الجوامع أو الأوقات؛ تأكد من الجامع عند الحاجة.",
+    go:"🧭 اذهب", nearest:"الأقرب لك", km:"كم",
+    rating:(r,c)=>`⭐ <b style="color:var(--gold)">${r}</b> في خرائط Google (${c.toLocaleString("ar-SA")} تقييم)`,
+    noRating:"⭐ لا يوجد تقييم بعد",
+    locating:"جاري تحديد موقعك…", sorted:"مرتبة من الأقرب إلى الأبعد:",
+    fail:"ما قدرنا نحدد موقعك. اضغط «اذهب» على أي مكان، وخرائط Google تحسب الطريق من مكانك.",
+    other:"English"
+  },
+  en:{
+    title:"Qirat – Riyadh Funerals",
+    sub:"Find the nearest mosque that holds funeral prayers, and the nearest cemetery — in one tap",
+    hadith:"The Prophet ﷺ said: “Whoever attends the funeral until the prayer is offered gets one qirat, and whoever attends until the burial gets two qirats.” He was asked: “What are the two qirats?” He said: “Like two great mountains.”",
+    agreed:"Bukhari & Muslim",
+    near:"📍 Show the nearest to me",
+    mosques:"🕌 Mosques", graves:"🪦 Cemeteries",
+    moreM:"🔎 Find more mosques on Google Maps",
+    moreG:"🔎 Find more cemeteries on Google Maps",
+    whenH:"When are funeral prayers held?",
+    when1:"Usually right after the obligatory prayer (most often Dhuhr and Asr).",
+    when2:"Arrive early, before the iqamah.",
+    when3:"Pray with the imam — do not pray the funeral prayer before him.",
+    duaH:"Dua for the deceased",
+    duaEn:"“O Allah, forgive him and have mercy on him, give him well-being and pardon him, honor his resting place, widen his entrance, and wash him with water, snow and hail.”",
+    visitH:"Dua when visiting graves",
+    visitEn:"“Peace be upon you, O people of these dwellings, believers and Muslims. We will, Allah willing, join you. I ask Allah for well-being for us and for you.”",
+    muslim:"Narrated by Muslim",
+    waBtn:"Share on WhatsApp",
+    instBtn:"Add to Home Screen", instH:"Add “Qirat” to your home screen", ok:"OK",
+    iosSteps:["Tap the Share button ⬆️ at the bottom of Safari.","Choose “Add to Home Screen” ➕.","Tap “Add”. The “Qirat” app will appear on your screen."],
+    andSteps:["Open the link in Chrome.","Tap the ⋮ menu at the top.","Choose “Add to Home screen” or “Install app”."],
+    pcSteps:["In Chrome or Edge: click the install icon 🖥️ in the address bar, or open the ⋮ menu and choose “Install Qirat”."],
+    inAppSteps:["You opened this link inside an app (like WhatsApp or Instagram).","Tap ⋮ or ⋯ and choose “Open in browser”.","Then tap “Add to Home Screen” again."],
+    waMsg:"🕌 Qirat – Riyadh Funerals\n\nFind the nearest mosque that holds funeral prayers, and the nearest cemetery in Riyadh — in one tap.\n\nThe Prophet ﷺ said: “Whoever attends the funeral until the prayer is offered gets one qirat, and whoever attends until the burial gets two qirats.”\n\nWhoever guides to good gets the same reward 🤍\nhttps://janaez-riyadh.pages.dev/#en",
+    shareH:"Share the reward", shareP:"Send this link to your family and friends on WhatsApp. Whoever guides to good gets the same reward.",
+    foot1:"Ongoing charity for all deceased Muslims — O Allah, forgive them and have mercy on them.",
+    foot2:"Mosques and times may change; check with the mosque when needed.",
+    go:"🧭 Go", nearest:"Nearest to you", km:"km",
+    rating:(r,c)=>`⭐ <b style="color:var(--gold)">${r}</b> on Google Maps (${c.toLocaleString("en-US")} reviews)`,
+    noRating:"⭐ No rating yet",
+    locating:"Finding your location…", sorted:"Sorted from nearest to farthest:",
+    fail:"We could not get your location. Tap “Go” on any place and Google Maps will find the route from where you are.",
+    other:"العربية"
+  }
+};
+
+const M = [
+  {ar:"جامع الراجحي", en:"Al Rajhi Mosque", har:"حي الجزيرة – الدائري الشرقي", hen:"Al Jazirah – Eastern Ring Rd", rt:4.8, rc:52129, lat:24.6772704, lng:46.7788545, id:"ChIJIXt20eQGLz4RoA7wvmjBpJk"},
+  {ar:"جامع إمام الدعوة (الشيخ محمد بن عبدالوهاب)", en:"Imam Al-Dawah Mosque (Sheikh Muhammad bin Abdulwahhab)", har:"حي السلام", hen:"As Salam", rt:4.7, rc:1240, lat:24.7083928, lng:46.8205689, id:"ChIJq5DigFkHLz4RC5MhWxOT5LI"},
+  {ar:"جامع عتيقة (الأمير عبدالله بن محمد)", en:"Atiqah Mosque (Prince Abdullah bin Mohammed)", har:"حي عتيقة", hen:"Utaiqah", rt:4.3, rc:17, lat:24.6041078, lng:46.7101461, id:"ChIJ71q05n8PLz4Rl226zbgl2_Q"},
+  {ar:"جامع الإمام تركي بن عبدالله", en:"Imam Turki bin Abdullah Mosque", har:"حي الديرة", hen:"Ad Dirah", rt:4.7, rc:3743, lat:24.6307815, lng:46.710699, id:"ChIJMQYCCqcFLz4RXRfz64OZvTw"},
+  {ar:"جامع البواردي", en:"Al Bawardi Mosque", har:"حي العزيزية", hen:"Al Aziziyah", rt:4.7, rc:3295, lat:24.5831129, lng:46.7740097, id:"ChIJ-7nymBsJLz4Rfp1BVBiIkR0"},
+  {ar:"جامع الأمير فهد", en:"Prince Fahd Mosque", har:"حي المصانع – طريق الحائر", hen:"Al Masani' – Al Hair Rd", rt:4.7, rc:5681, lat:24.552257, lng:46.7626924, id:"ChIJBaXs91sJLz4RN49q3N1RVLU"},
+  {ar:"جامع أم ماجد (والدة الأمير ماجد)", en:"Umm Majid Mosque (Mother of Prince Majid)", har:"حي العزيزية – طريق الحائر", hen:"Al Aziziyah – Al Hair Rd", rt:4.8, rc:1590, lat:24.5732067, lng:46.7517369, id:"ChIJH517xy0JLz4R0-ldJvKBbdY"},
+  {ar:"جامع أم إبراهيم الذياب", en:"Umm Ibrahim Al-Dhiyab Mosque", har:"حي المنصورة", hen:"Al Mansourah", rt:0, rc:0, lat:24.6186197, lng:46.7485293, id:"ChIJBZQGEAAGLz4R55ZLsPFtny4"},
+  {ar:"جامع الملك خالد", en:"King Khalid Mosque", har:"حي أم الحمام", hen:"Umm Al Hamam", rt:4.8, rc:20376, lat:24.7007409, lng:46.6522065, id:"ChIJUc-ltiEdLz4R8S4q8Ei6zLA"},
+  {ar:"جامع البابطين", en:"Al Babtain Mosque", har:"حي الياسمين", hen:"Al Yasmeen", rt:4.7, rc:5528, lat:24.8193412, lng:46.6184959, id:"ChIJoSbfCULkLj4RnUJMbBhw3bM"},
+  {ar:"جامع المهيني", en:"Al Muhaini Mosque", har:"حي العارض", hen:"Al Aarid", rt:4.9, rc:7315, lat:24.8479121, lng:46.6285392, id:"ChIJq5jZbKnlLj4RUIkqZFFtnao"},
+  {ar:"جامع أم بندر (والدة الأمير بندر)", en:"Umm Bandar Mosque (Mother of Prince Bandar)", har:"حي الندى", hen:"An Nada", rt:4.8, rc:1934, lat:24.7959995, lng:46.6778894, id:"ChIJc-SCAs_8Lj4ReVBdRIVE7V4"}
+];
+const G = [
+  {ar:"مقبرة النسيم (الجنوبية)", en:"An Naseem Cemetery (South)", har:"حي النسيم الغربي – طريق عبدالرحمن بن عوف", hen:"An Nasim Al Gharbi – Abdulrahman bin Awf Rd", rt:4.6, rc:909, lat:24.7094759, lng:46.8239715, id:"ChIJpQ01XuCpLz4R4cY88tJMzuc"},
+  {ar:"مقبرة النسيم (الشمالية)", en:"An Naseem Cemetery (North)", har:"حي النسيم الغربي – شارع الزبير بن العوام", hen:"An Nasim Al Gharbi – Al Zubair bin Al Awwam St", rt:4.5, rc:145, lat:24.715514, lng:46.819098, id:"ChIJXZb_77gHLz4RYgw3ONZFhh4"},
+  {ar:"مقبرة أم الحمام", en:"Umm Al Hamam Cemetery", har:"حي أم الحمام الشرقي", hen:"Umm Al Hamam Al Sharqi", rt:4.6, rc:242, lat:24.6983268, lng:46.652981, id:"ChIJg-_POiAdLz4RQoMfOZko-a0"},
+  {ar:"مقبرة العود", en:"Al Oud Cemetery", har:"حي العود – وسط الرياض", hen:"Al Oud – Central Riyadh", rt:4.5, rc:399, lat:24.6206763, lng:46.7277534, id:"ChIJwUHXJJMFLz4R_G3hdg2Q-P4"},
+  {ar:"مقبرة شمال الرياض", en:"North Riyadh Cemetery", har:"حي العارض – شمال الرياض", hen:"Al Aarid – North Riyadh", rt:4.5, rc:457, lat:24.9388248, lng:46.5924456, id:"ChIJDfTBCfzrLj4R3otK0vOh_hM"},
+  {ar:"مقبرة عرقة", en:"Irqah Cemetery", har:"حي عرقة", hen:"Irqah", rt:5.0, rc:27, lat:24.6873877, lng:46.6097699, id:"ChIJTwQezssdLz4RFE726Xnzqhw"},
+  {ar:"مقبرة منفوحة", en:"Manfouha Cemetery", har:"حي المصانع", hen:"Al Masani'", rt:4.6, rc:10, lat:24.5846881, lng:46.7266965, id:"ChIJq6qqWhYPLz4RJ4FKm5_Gj2E"},
+  {ar:"مقبرة جنوب الرياض", en:"South Riyadh Cemetery", har:"حي المنصورية – جنوب الرياض", hen:"Al Mansuriyah – South Riyadh", rt:4.5, rc:81, lat:24.5153686, lng:46.8037514, id:"ChIJo5nZFRILLz4RiyZRAqyJt_A"}
+];
+
+let me = null, lang = "ar", statusKey = "";
+try { const s = localStorage.getItem("lang"); if (s === "en" || s === "ar") lang = s; } catch(_){}
+if (location.hash === "#en") lang = "en";
+if (location.hash === "#ar") lang = "ar";
+
+const statusEl = document.getElementById("status");
+function km(a,b,c,d){const R=6371,t=x=>x*Math.PI/180,dl=t(c-a),dg=t(d-b);
+  const h=Math.sin(dl/2)**2+Math.cos(t(a))*Math.cos(t(c))*Math.sin(dg/2)**2;return 2*R*Math.asin(Math.sqrt(h));}
+function dirUrl(m){return "https://www.google.com/maps/dir/?api=1&destination="+m.lat+","+m.lng+
+  "&destination_place_id="+m.id+"&travelmode=driving";}
+
+function fill(el, data){
+  const L = T[lang];
+  let rows = data.map(m => ({...m, d: me ? km(me[0],me[1],m.lat,m.lng) : null}));
+  if (me) rows.sort((a,b)=>a.d-b.d);
+  el.innerHTML = rows.map((m,i)=>`
+    <div class="card ${me&&i===0?'first':''}">
+      <div class="info">
+        ${me&&i===0?`<span class="tag">${L.nearest}</span><br>`:''}
+        <h3>${m[lang]}</h3>
+        <div class="meta">📍 ${lang==="ar"?m.har:m.hen}${m.d!=null?`<span class="dist">${m.d.toFixed(1)} ${L.km}</span>`:''}</div>
+        <div class="meta">${m.rt?L.rating(m.rt.toFixed(1), m.rc):L.noRating}</div>
+      </div>
+      <a class="go" href="${dirUrl(m)}" target="_blank" rel="noopener">${L.go}</a>
+    </div>`).join("");
+}
+
+function apply(){
+  const L = T[lang];
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+  document.querySelectorAll("[data-t]").forEach(e => { e.textContent = L[e.dataset.t] || ""; });
+  document.querySelectorAll("[data-t=duaEn],[data-t=visitEn]").forEach(e => e.style.display = lang==="en" ? "block" : "none");
+  document.getElementById("langBtn").textContent = L.other;
+  statusEl.textContent = statusKey ? L[statusKey] : "";
+  document.getElementById("waBtn").href = "https://wa.me/?text=" + encodeURIComponent(L.waMsg);
+  fill(document.getElementById("list"), M);
+  fill(document.getElementById("graves"), G);
+}
+
+document.getElementById("langBtn").addEventListener("click", ()=>{
+  lang = lang === "ar" ? "en" : "ar";
+  try { localStorage.setItem("lang", lang); } catch(_){}
+  apply();
+});
+
+document.getElementById("near").addEventListener("click", ()=>{
+  statusKey = "locating"; apply();
+  const fail = ()=>{ statusKey = "fail"; apply(); };
+  try{
+    if(!navigator.geolocation) throw 0;
+    navigator.geolocation.getCurrentPosition(p=>{
+      me=[p.coords.latitude,p.coords.longitude];
+      statusKey = "sorted"; apply();
+    }, fail, {enableHighAccuracy:true,timeout:8000});
+  }catch(_){ fail(); }
+});
+
+
+// ===== Install as app =====
+let deferred = null;
+const instBtn = document.getElementById("instBtn"), modal = document.getElementById("modal");
+const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+if (standalone) instBtn.style.display = "none";
+addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferred = e; });
+addEventListener("appinstalled", () => { instBtn.style.display = "none"; deferred = null; });
+const ua = navigator.userAgent;
+const isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const inApp = /FBAN|FBAV|Instagram|Line\/|Snapchat|TikTok|Twitter|WhatsApp/i.test(ua);
+const isAndroid = /Android/i.test(ua);
+function showSteps(key){
+  document.getElementById("steps").innerHTML = T[lang][key].map(x=>`<li>${x}</li>`).join("");
+  modal.hidden = false;
+}
+instBtn.addEventListener("click", async ()=>{
+  if (deferred) { deferred.prompt(); try { await deferred.userChoice; } catch(_){} deferred = null; return; }
+  if (inApp) return showSteps("inAppSteps");
+  if (isIOS) return showSteps("iosSteps");
+  if (isAndroid) return showSteps("andSteps");
+  showSteps("pcSteps");
+});
+document.getElementById("closeM").addEventListener("click", ()=> modal.hidden = true);
+modal.addEventListener("click", e => { if (e.target === modal) modal.hidden = true; });
+if ("serviceWorker" in navigator) { try { navigator.serviceWorker.register("/sw.js").catch(()=>{}); } catch(_){} }
+
+apply();
+document.title = lang==="ar" ? "قيراط – جنائز الرياض" : "Qirat – Riyadh Funerals";
+</script>
+<script>
+document.addEventListener("click", e => {
+  const el = e.target.closest("#goNearest,#waBtn,#instBtn,#instTop,#near,.go");
+  if (!el || !window.gtag) return;
+  const name = {goNearest:"nearest_mosque_click", waBtn:"whatsapp_share", instBtn:"install_click", instTop:"install_click", near:"show_nearest_click"}[el.id] || "directions_click";
+  gtag("event", name);
+});
+</script>
+</body>
+</html>
