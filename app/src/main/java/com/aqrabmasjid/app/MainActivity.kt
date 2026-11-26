@@ -41,14 +41,48 @@ class MainActivity : Activity() {
         }
     }
 
-    /** Updates only the ring every second, so the seconds count down smoothly. */
+    /**
+     * Updates the prayer card. Every second only while the countdown ring is showing
+     * (last 30 min before adhan, and adhan to iqama) or the radio is on; otherwise every
+     * 30 seconds, to save battery.
+     */
     private val ringTick = object : Runnable {
         override fun run() {
-            Prefs.location(this@MainActivity)?.let { (lat, lng) -> fillHero(lat, lng, System.currentTimeMillis()) }
-            showRadioBar()
-            handler.postDelayed(this, 1_000)
+            val now = System.currentTimeMillis()
+            var delay = 30_000L
+            Prefs.location(this@MainActivity)?.let { (lat, lng) ->
+                fillHero(lat, lng, now)
+                if (ring.visibility == View.VISIBLE) delay = 1_000L
+                else heroStatus?.let { st ->
+                    // Wake up just when the 30-minute countdown should start
+                    if (!st.isCurrent) {
+                        val untilRing = st.time.adhan - 30 * 60_000L - now
+                        if (untilRing in 1 until delay) delay = untilRing.coerceAtLeast(1_000L)
+                    }
+                }
+            }
+            if (RadioService.current != null) { showRadioBar(); delay = 1_000L }
+            handler.postDelayed(this, delay)
         }
     }
+
+    // Saved prayer status, so the times are not calculated again every second
+    private var heroStatus: Status? = null
+    private var heroStatusAt = 0L
+    private var heroStatusLoc: Pair<Double, Double>? = null
+
+    private fun statusNow(lat: Double, lng: Double, now: Long): Status {
+        val c = heroStatus
+        val stale = c == null || heroStatusLoc != (lat to lng) || now - heroStatusAt > 60_000L ||
+            (!c.isCurrent && now >= c.time.adhan) || (c.isCurrent && now >= c.time.iqama)
+        if (!stale) return c!!
+        val st = PrayerCalc.status(this, lat, lng, now)
+        heroStatus = st; heroStatusAt = now; heroStatusLoc = lat to lng
+        return st
+    }
+
+    /** Sets text only when it changed (avoids redrawing the screen for nothing). */
+    private fun setIf(tv: TextView, s: String) { if (tv.text.toString() != s) tv.text = s }
 
     private lateinit var tvHijri: TextView
     private lateinit var tvWeekday: TextView
@@ -329,6 +363,10 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.rowQirat).visibility = if (riyadh) View.VISIBLE else View.GONE
         tvMethod.text = L.t("طريقة الحساب: ${day.methodName}", "Method: ${day.methodName}")
 
+        // Rebuild the table only when something in it changed (saves battery)
+        val tableKey = L.lang + "|" + st.time.prayer + "|" + day.list.joinToString { "${p(it)}" }
+        if (tableKey == lastTableKey && layoutTimes.childCount > 0) return
+        lastTableKey = tableKey
         layoutTimes.removeAllViews()
         layoutTimes.addView(row(L.t("الصلاة", "Prayer"), L.t("الأذان", "Adhan"), L.t("الإقامة", "Iqama"), header = true, highlight = false))
         for (p in day.list) {
@@ -338,6 +376,9 @@ class MainActivity : Activity() {
             )
         }
     }
+
+    private var lastTableKey = ""
+    private fun p(t: PrayerTime) = "${t.prayer}:${t.adhan}:${t.iqama}"
 
     /**
      * Prayer card: name, adhan and iqama times.
@@ -363,17 +404,19 @@ class MainActivity : Activity() {
     }
 
     private fun fillHero(lat: Double, lng: Double, now: Long) {
-        val st = PrayerCalc.status(this, lat, lng, now)
+        val st = statusNow(lat, lng, now)
         val t = st.time
+        val nameBefore = tvHeroName.text.toString()
+        val ringBefore = ring.visibility
         // Left side: next prayer, then adhan and iqama times (always)
-        tvHeroName.text = t.prayer.ar
+        setIf(tvHeroName, t.prayer.ar)
         heroNameBig = false
-        tvHeroAdhan.text = L.t("الأذان ${PrayerCalc.fmtTime(t.adhan)}", "Adhan ${PrayerCalc.fmtTime(t.adhan)}")
-        tvIqamaLeft.text = L.t("الإقامة ${PrayerCalc.fmtTime(t.iqama)}", "Iqama ${PrayerCalc.fmtTime(t.iqama)}")
+        setIf(tvHeroAdhan, L.t("الأذان ${PrayerCalc.fmtTime(t.adhan)}", "Adhan ${PrayerCalc.fmtTime(t.adhan)}"))
+        setIf(tvIqamaLeft, L.t("الإقامة ${PrayerCalc.fmtTime(t.iqama)}", "Iqama ${PrayerCalc.fmtTime(t.iqama)}"))
         // Right side: countdown ring only in the last 30 min before adhan, and from adhan to iqama
         val w = 30 * 60_000L
         if (!st.isCurrent) {
-            tvHeroLabel.text = L.t("الصلاة القادمة", "Next prayer")
+            setIf(tvHeroLabel, L.t("الصلاة القادمة", "Next prayer"))
             val left = t.adhan - now
             if (left in 1..w) {
                 ring.visibility = View.VISIBLE
@@ -382,16 +425,20 @@ class MainActivity : Activity() {
         } else {
             val left = t.iqama - now
             if (left > 0) {
-                tvHeroLabel.text = L.t("حان وقت الصلاة", "Prayer time now")
+                setIf(tvHeroLabel, L.t("حان وقت الصلاة", "Prayer time now"))
                 ring.visibility = View.VISIBLE
                 ring.update("", "", CountdownRing.clock(left), L.t("متبقية للإقامة", "to iqama"),
                     left.toFloat() / (t.iqama - t.adhan).coerceAtLeast(1L), true)
             } else {
-                tvHeroLabel.text = L.t("أقيمت الصلاة", "Prayer has started")
+                setIf(tvHeroLabel, L.t("أقيمت الصلاة", "Prayer has started"))
                 ring.visibility = View.GONE
             }
         }
-        sizeHeroName()
+        // Measure the big name again only when the name or the ring changed
+        if (nameBefore != tvHeroName.text.toString() || ringBefore != ring.visibility || tvHeroName.tag != "sized") {
+            tvHeroName.tag = "sized"
+            sizeHeroName()
+        }
     }
 
     private fun row(a: String, b: String, c: String, header: Boolean, highlight: Boolean): View {
@@ -967,6 +1014,9 @@ class MainActivity : Activity() {
 
     private fun setMode(drive: Boolean) {
         getSharedPreferences("ui", MODE_PRIVATE).edit().putBoolean("drive", drive).apply()
+        // The card size changes: measure the prayer name again
+        tvHeroName.tag = null
+        tvHeroName.post { sizeHeroName() }
         findViewById<View>(R.id.homeSection).visibility = if (drive) View.GONE else View.VISIBLE
         // The button shows where it will take you: wheel -> driving, house -> full app
         // Main screen = car part only. "More" opens the rest; "Hide" closes it.
