@@ -21,6 +21,7 @@ object Tr {
         "Quran radio" to arrayOf("قرآن ریڈیو", "Radio Al-Quran", "কুরআন রেডিও", "Kuran radyosu"),
         "Holy Quran Radio – Saudi Arabia" to arrayOf("قرآن کریم ریڈیو – سعودی عرب", "Radio Al-Quran – Arab Saudi", "পবিত্র কুরআন রেডিও – সৌদি আরব", "Kuran-ı Kerim Radyosu – Suudi Arabistan"),
         "Sunnah Radio" to arrayOf("سنت ریڈیو", "Radio Sunnah", "সুন্নাহ রেডিও", "Sünnet Radyosu"),
+        "Sunnah Radio – Saudi Arabia" to arrayOf("سنت ریڈیو – سعودی عرب", "Radio Sunnah – Arab Saudi", "সুন্নাহ রেডিও – সৌদি আরব", "Sünnet Radyosu – Suudi Arabistan"),
         "Nidaa Al-Islam – Makkah (official site)" to arrayOf("نداء الاسلام – مکہ (سرکاری ویب سائٹ)", "Nidaa Al-Islam – Makkah (situs resmi)", "নিদা আল-ইসলাম – মক্কা (অফিসিয়াল সাইট)", "Nidaa Al-Islam – Mekke (resmi site)"),
         "Playing: " to arrayOf("چل رہا ہے: ", "Memutar: ", "চলছে: ", "Çalıyor: "),
         "⏹ Stop" to arrayOf("⏹ بند کریں", "⏹ Berhenti", "⏹ বন্ধ", "⏹ Durdur"),
