@@ -381,177 +381,306 @@
 
         </LinearLayout>
 
-        <!-- Radio player card: station name, previous / play-stop / next, live dot -->
-        <LinearLayout
+        <!-- Radio card (modern): header pill, Quran (right) · play/pause (middle) · Sunnah (left),
+             live wave on the station that is really playing, status line, save / my clips -->
+        <FrameLayout
             android:id="@+id/radioBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:background="@drawable/bg_radio_bar"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:paddingStart="14dp"
-            android:paddingEnd="14dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="12dp">
+            android:layout_marginTop="16dp"
+            android:clipChildren="false">
 
-            <!-- Top: "Radio" + live dot -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:layout_marginTop="20dp"
+                android:background="@drawable/bg_radio_card"
+                android:elevation="3dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="30dp"
+                android:paddingBottom="14dp">
 
-                <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:src="@drawable/ic_radio"
-                    android:tint="#F6D46B" />
-
-                <TextView
-                    android:id="@+id/radioLabel"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="6dp"
-                    android:textAlignment="viewStart"
-                    android:text="إذاعة"
-                    android:textColor="#F6D46B"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
-
+                <!-- Status pill: dot + text (ready, connecting, live, lost, error) -->
                 <LinearLayout
                     android:id="@+id/radioStatusRow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/bg_status_pill"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:visibility="gone">
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp">
 
                     <View
                         android:id="@+id/radioDot"
-                        android:layout_width="8dp"
-                        android:layout_height="8dp"
-                        android:layout_marginEnd="6dp"
-                        android:background="@drawable/dot_live" />
+                        android:layout_width="11dp"
+                        android:layout_height="11dp"
+                        android:layout_marginEnd="7dp"
+                        android:background="@drawable/dot_grey" />
 
                     <TextView
                         android:id="@+id/radioStatus"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="#E6F2EC"
-                        android:textSize="12sp"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Stations and play button. Fixed order: Quran on the right, Sunnah on the left -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center_vertical"
+                    android:layoutDirection="rtl"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:id="@+id/radioStQuran"
+                        android:layout_width="0dp"
+                        android:layout_height="132dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_station_sel"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/radioIcQuran"
+                                android:layout_width="46dp"
+                                android:layout_height="46dp"
+                                android:src="@drawable/ic_quran_open"
+                                android:tint="@color/icon" />
+
+                            <TextView
+                                android:id="@+id/radioTxQuran"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:gravity="center"
+                                android:maxLines="2"
+                                android:text="القرآن الكريم"
+                                android:textColor="@color/title_text"
+                                android:textSize="17sp"
+                                android:textStyle="bold" />
+
+                            <ImageView
+                                android:id="@+id/radioWaveQuran"
+                                android:layout_width="44dp"
+                                android:layout_height="20dp"
+                                android:layout_marginTop="4dp"
+                                android:src="@drawable/anim_wave"
+                                android:visibility="invisible" />
+                        </LinearLayout>
+
+                        <View
+                            android:id="@+id/radioLiveQuran"
+                            android:layout_width="13dp"
+                            android:layout_height="13dp"
+                            android:layout_gravity="top|start"
+                            android:layout_margin="10dp"
+                            android:background="@drawable/dot_green"
+                            android:visibility="gone" />
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:layout_width="96dp"
+                        android:layout_height="96dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp">
+
+                        <ProgressBar
+                            android:id="@+id/radioSpin"
+                            android:layout_width="96dp"
+                            android:layout_height="96dp"
+                            android:indeterminate="true"
+                            android:indeterminateTint="#E0B84A"
+                            android:visibility="gone" />
+
+                        <FrameLayout
+                            android:id="@+id/radioPlay"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/bg_play_green"
+                            android:clickable="true"
+                            android:elevation="4dp"
+                            android:focusable="true">
+
+                            <ImageView
+                                android:id="@+id/radioPlayIcon"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_play"
+                                android:tint="#FFFFFF" />
+                        </FrameLayout>
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/radioStSunnah"
+                        android:layout_width="0dp"
+                        android:layout_height="132dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_station_idle"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/radioIcSunnah"
+                                android:layout_width="46dp"
+                                android:layout_height="46dp"
+                                android:src="@drawable/ic_mosque_book"
+                                android:tint="@color/icon" />
+
+                            <TextView
+                                android:id="@+id/radioTxSunnah"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:gravity="center"
+                                android:maxLines="2"
+                                android:text="السنة النبوية"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="17sp"
+                                android:textStyle="bold" />
+
+                            <ImageView
+                                android:id="@+id/radioWaveSunnah"
+                                android:layout_width="44dp"
+                                android:layout_height="20dp"
+                                android:layout_marginTop="4dp"
+                                android:src="@drawable/anim_wave"
+                                android:visibility="invisible" />
+                        </LinearLayout>
+
+                        <View
+                            android:id="@+id/radioLiveSunnah"
+                            android:layout_width="13dp"
+                            android:layout_height="13dp"
+                            android:layout_gravity="top|start"
+                            android:layout_margin="10dp"
+                            android:background="@drawable/dot_green"
+                            android:visibility="gone" />
+                    </FrameLayout>
+                </LinearLayout>
+
+                <!-- Status line: "Holy Quran Radio is playing now" -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1"
+                        android:alpha="0.6"
+                        android:background="@drawable/line_gold" />
+
+                    <TextView
+                        android:id="@+id/radioName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:gravity="center"
+                        android:maxLines="2"
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1"
+                        android:alpha="0.6"
+                        android:background="@drawable/line_gold" />
+                </LinearLayout>
+
+                <!-- Save the last 3 minutes / saved clips -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/radioSave"
+                        android:layout_width="0dp"
+                        android:layout_height="46dp"
+                        android:layout_weight="1.3"
+                        android:background="@drawable/bg_pill_soft"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="⏺ احفظ آخر ٣ دقائق"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/radioRecs"
+                        android:layout_width="0dp"
+                        android:layout_height="46dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_pill_soft"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="🎧 تسجيلاتي"
+                        android:textColor="@color/jami_gold"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Station name, big -->
-            <TextView
-                android:id="@+id/radioName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:gravity="center"
-                android:maxLines="2"
-                android:textColor="#FFFFFF"
-                android:textSize="22sp"
-                android:textStyle="bold" />
-
-            <!-- Controls: previous, play/stop, next -->
+            <!-- Header pill on the top edge: "Choose a station" -->
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_height="40dp"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@drawable/bg_radio_head"
+                android:elevation="5dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <FrameLayout
-                    android:id="@+id/radioPrev"
-                    android:layout_width="52dp"
-                    android:layout_height="52dp"
-                    android:background="@drawable/bg_round_glass"
-                    android:clickable="true"
-                    android:focusable="true">
-
-                    <ImageView
-                        android:layout_width="26dp"
-                        android:layout_height="26dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_chev_prev"
-                        android:tint="#FFFFFF" />
-                </FrameLayout>
-
-                <FrameLayout
-                    android:id="@+id/radioPlay"
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:background="@drawable/bg_play_big"
-                    android:clickable="true"
-                    android:focusable="true">
-
-                    <ImageView
-                        android:id="@+id/radioPlayIcon"
-                        android:layout_width="34dp"
-                        android:layout_height="34dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_play"
-                        android:tint="#0A4A37" />
-                </FrameLayout>
-
-                <FrameLayout
-                    android:id="@+id/radioNext"
-                    android:layout_width="52dp"
-                    android:layout_height="52dp"
-                    android:background="@drawable/bg_round_glass"
-                    android:clickable="true"
-                    android:focusable="true">
-
-                    <ImageView
-                        android:layout_width="26dp"
-                        android:layout_height="26dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_chev_next"
-                        android:tint="#FFFFFF" />
-                </FrameLayout>
-            </LinearLayout>
-
-            <!-- Save the last 3 minutes / saved clips -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingStart="22dp"
+                android:paddingEnd="22dp">
 
                 <TextView
-                    android:id="@+id/radioSave"
-                    android:layout_width="0dp"
-                    android:layout_height="44dp"
-                    android:layout_weight="1.3"
-                    android:background="@drawable/bg_pill_glass"
-                    android:gravity="center"
-                    android:maxLines="1"
-                    android:text="⏺ احفظ آخر ٣ دقائق"
+                    android:id="@+id/radioLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="اختر البث"
                     android:textColor="#FFFFFF"
-                    android:textSize="14sp"
+                    android:textSize="17sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/radioRecs"
-                    android:layout_width="0dp"
-                    android:layout_height="44dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp"
-                    android:background="@drawable/bg_pill_glass"
-                    android:gravity="center"
-                    android:maxLines="1"
-                    android:text="🎧 تسجيلاتي"
-                    android:textColor="#F6D46B"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_marginStart="10dp"
+                    android:src="@drawable/ic_antenna" />
             </LinearLayout>
-        </LinearLayout>
+        </FrameLayout>
         </LinearLayout>
 
         <!-- Part 2: at home / office (hidden in driving mode) -->
@@ -610,22 +739,22 @@
                 android:background="@drawable/bg_tile"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:minHeight="64dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:minHeight="112dp"
                 android:paddingStart="12dp"
                 android:paddingEnd="10dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp">
 
                 <FrameLayout
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="58dp"
+                    android:layout_height="58dp"
                     android:background="@drawable/bg_icon_tile">
 
                     <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_book"
                         android:tint="@color/icon" />
@@ -633,14 +762,14 @@
 
                 <TextView
                     android:id="@+id/tileQuranText"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
                     android:text="القرآن"
                     android:maxLines="2"
                     android:textColor="@color/text_primary"
-                    android:textSize="15sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
             <LinearLayout
@@ -652,22 +781,22 @@
                 android:background="@drawable/bg_tile"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:minHeight="64dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:minHeight="112dp"
                 android:paddingStart="12dp"
                 android:paddingEnd="10dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp">
 
                 <FrameLayout
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="58dp"
+                    android:layout_height="58dp"
                     android:background="@drawable/bg_icon_tile">
 
                     <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_beads"
                         android:tint="@color/icon" />
@@ -675,14 +804,14 @@
 
                 <TextView
                     android:id="@+id/tileAdhkarText"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
                     android:text="الأذكار"
                     android:maxLines="2"
                     android:textColor="@color/text_primary"
-                    android:textSize="15sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
@@ -700,22 +829,22 @@
                 android:background="@drawable/bg_tile"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:minHeight="64dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:minHeight="112dp"
                 android:paddingStart="12dp"
                 android:paddingEnd="10dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp">
 
                 <FrameLayout
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="58dp"
+                    android:layout_height="58dp"
                     android:background="@drawable/bg_icon_tile">
 
                     <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_book"
                         android:tint="@color/icon" />
@@ -723,14 +852,14 @@
 
                 <TextView
                     android:id="@+id/btnTarteelText"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
                     android:text="ترتيل"
                     android:maxLines="2"
                     android:textColor="@color/text_primary"
-                    android:textSize="15sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
             <LinearLayout
@@ -742,22 +871,22 @@
                 android:background="@drawable/bg_tile"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:minHeight="64dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:minHeight="112dp"
                 android:paddingStart="12dp"
                 android:paddingEnd="10dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp">
 
                 <FrameLayout
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="58dp"
+                    android:layout_height="58dp"
                     android:background="@drawable/bg_icon_tile">
 
                     <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_book"
                         android:tint="@color/icon" />
@@ -765,14 +894,14 @@
 
                 <TextView
                     android:id="@+id/btnWahyText"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
                     android:text="وحي"
                     android:maxLines="2"
                     android:textColor="@color/text_primary"
-                    android:textSize="15sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
         <LinearLayout
@@ -789,22 +918,22 @@
                 android:background="@drawable/bg_tile"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:minHeight="64dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:minHeight="112dp"
                 android:paddingStart="12dp"
                 android:paddingEnd="10dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp">
 
                 <FrameLayout
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="58dp"
+                    android:layout_height="58dp"
                     android:background="@drawable/bg_icon_tile">
 
                     <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_radio"
                         android:tint="@color/icon" />
@@ -812,14 +941,14 @@
 
                 <TextView
                     android:id="@+id/tileRadioText"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
                     android:text="إذاعة"
                     android:maxLines="2"
                     android:textColor="@color/text_primary"
-                    android:textSize="15sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
             <View
@@ -853,22 +982,22 @@
                 android:background="@drawable/bg_tile"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:minHeight="64dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:minHeight="112dp"
                 android:paddingStart="12dp"
                 android:paddingEnd="10dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp">
 
                 <FrameLayout
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="58dp"
+                    android:layout_height="58dp"
                     android:background="@drawable/bg_icon_tile">
 
                     <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_pin"
                         android:tint="@color/icon" />
@@ -876,14 +1005,14 @@
 
                 <TextView
                     android:id="@+id/tileNearText"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
                     android:text="مساجد قريبة"
                     android:maxLines="2"
                     android:textColor="@color/text_primary"
-                    android:textSize="15sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
             <LinearLayout
@@ -895,22 +1024,22 @@
                 android:background="@drawable/bg_tile"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:minHeight="64dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:minHeight="112dp"
                 android:paddingStart="12dp"
                 android:paddingEnd="10dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp">
 
                 <FrameLayout
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="58dp"
+                    android:layout_height="58dp"
                     android:background="@drawable/bg_icon_tile">
 
                     <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_plus"
                         android:tint="@color/icon" />
@@ -918,14 +1047,14 @@
 
                 <TextView
                     android:id="@+id/tileAddText"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
                     android:text="أضف مسجد"
                     android:maxLines="2"
                     android:textColor="@color/text_primary"
-                    android:textSize="15sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
@@ -944,22 +1073,22 @@
                 android:background="@drawable/bg_tile"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:minHeight="64dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:minHeight="112dp"
                 android:paddingStart="12dp"
                 android:paddingEnd="10dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp">
 
                 <FrameLayout
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="58dp"
+                    android:layout_height="58dp"
                     android:background="@drawable/bg_icon_tile">
 
                     <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_hands"
                         android:tint="@color/icon" />
@@ -967,14 +1096,14 @@
 
                 <TextView
                     android:id="@+id/tileQiratText"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
                     android:text="قيراط"
                     android:maxLines="2"
                     android:textColor="@color/text_primary"
-                    android:textSize="15sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
             <View
@@ -1007,22 +1136,22 @@
                 android:background="@drawable/bg_tile"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:minHeight="64dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:minHeight="112dp"
                 android:paddingStart="12dp"
                 android:paddingEnd="10dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp">
 
                 <FrameLayout
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="58dp"
+                    android:layout_height="58dp"
                     android:background="@drawable/bg_icon_tile">
 
                     <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_chat"
                         android:tint="@color/icon" />
@@ -1030,14 +1159,14 @@
 
                 <TextView
                     android:id="@+id/tileContactText"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
                     android:text="تواصل معنا"
                     android:maxLines="2"
                     android:textColor="@color/text_primary"
-                    android:textSize="15sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
             <LinearLayout
@@ -1049,22 +1178,22 @@
                 android:background="@drawable/bg_tile"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:minHeight="64dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:minHeight="112dp"
                 android:paddingStart="12dp"
                 android:paddingEnd="10dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp">
 
                 <FrameLayout
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="58dp"
+                    android:layout_height="58dp"
                     android:background="@drawable/bg_icon_tile">
 
                     <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_share"
                         android:tint="@color/icon" />
@@ -1072,14 +1201,14 @@
 
                 <TextView
                     android:id="@+id/tileShareText"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
                     android:text="شارك"
                     android:maxLines="2"
                     android:textColor="@color/text_primary"
-                    android:textSize="15sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>

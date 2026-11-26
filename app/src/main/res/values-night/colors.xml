@@ -17,4 +17,8 @@
     <color name="card_border">#C9A227</color>
     <!-- "Nearest Jami" outline button: gold text and border -->
     <color name="jami_gold">#F6D46B</color>
+    <!-- Radio card: selected / not selected station -->
+    <color name="station_sel_bg">#173A2B</color>
+    <color name="station_sel_stroke">#3FCB7E</color>
+    <color name="station_idle_stroke">#22FFFFFF</color>
 </resources>

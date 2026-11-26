@@ -104,6 +104,11 @@ class MosquesActivity : Activity() {
         load()
     }
 
+    companion object {
+        /** Open from the widget: start navigation to the nearest mosque as soon as it is found. */
+        const val EXTRA_GO_FIRST = "go_first"
+    }
+
     private fun load() {
         status.text = L.t("جاري البحث عن المساجد القريبة...", "Finding nearby mosques...")
         list.removeAllViews()
@@ -126,6 +131,12 @@ class MosquesActivity : Activity() {
                 status.text = ""
                 for (m in result.take(10)) list.addView(row(m))
                 list.addView(mapsButton())
+                // From the home screen widget: one tap = go straight to the nearest mosque.
+                // The list stays open behind Google Maps, so the user can come back and pick another.
+                if (intent.getBooleanExtra(EXTRA_GO_FIRST, false)) {
+                    intent.removeExtra(EXTRA_GO_FIRST)
+                    navigate(result[0])
+                }
             }
         }
     }

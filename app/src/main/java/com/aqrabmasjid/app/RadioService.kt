@@ -33,8 +33,12 @@ class RadioService : Service() {
         val label: String get() = L.t(ar, en)
     }
 
-    /** What the radio is doing now (shown on the main screen). */
-    enum class Status { OFF, LOADING, PLAYING, PAUSED, ERROR }
+    /**
+     * What the radio is doing now (shown on the main screen).
+     * PLAYING only when ExoPlayer has audio and is really playing; LOST when the sound stopped
+     * after it was playing (no data / no internet) and we are trying again.
+     */
+    enum class Status { OFF, LOADING, PLAYING, LOST, PAUSED, ERROR }
 
     companion object {
         const val CHANNEL = "radio_v2"
@@ -86,6 +90,26 @@ class RadioService : Service() {
 
     private var player: ExoPlayer? = null
     private var urlIndex = 0
+    private var everPlayed = false
+    private var retries = 0
+    private val handler = android.os.Handler(android.os.Looper.getMainLooper())
+    private var retryJob: Runnable? = null
+
+    private fun cancelRetry() { retryJob?.let { handler.removeCallbacks(it) }; retryJob = null }
+
+    /** The stream stopped after it was playing: show "lost" and try again (2s, 4s, 8s … up to 6 times). */
+    private fun lost(st: Station) {
+        if (current == null) return
+        status = Status.LOST
+        notifyNow(st)
+        cancelRetry()
+        if (retries >= 6) { releasePlayer(); status = Status.ERROR; notifyNow(st); return }
+        val wait = minOf(2000L shl retries, 15000L)
+        retries++
+        val job = Runnable { if (current == st.id && status == Status.LOST) { urlIndex = 0; startPlayer(st) } }
+        retryJob = job
+        handler.postDelayed(job, wait)
+    }
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -98,7 +122,7 @@ class RadioService : Service() {
                 current = st.id
                 status = Status.LOADING
                 startForegroundNow(st)
-                urlIndex = 0
+                urlIndex = 0; everPlayed = false; retries = 0; cancelRetry()
                 startPlayer(st)
             }
             ACTION_TOGGLE -> {
@@ -106,9 +130,10 @@ class RadioService : Service() {
                 if (paused) {
                     status = Status.LOADING
                     startForegroundNow(st)
-                    urlIndex = 0
+                    urlIndex = 0; everPlayed = false; retries = 0; cancelRetry()
                     startPlayer(st)
                 } else {
+                    cancelRetry()
                     releasePlayer()
                     status = Status.PAUSED
                     notifyNow(st)
@@ -137,16 +162,32 @@ class RadioService : Service() {
             )
             p.setWakeMode(C.WAKE_MODE_NETWORK)
             p.addListener(object : Player.Listener {
+                override fun onIsPlayingChanged(isPlaying: Boolean) {
+                    if (player !== p) return
+                    if (isPlaying) {
+                        // Sound is really coming out
+                        everPlayed = true; retries = 0; cancelRetry()
+                        if (status != Status.PLAYING) { status = Status.PLAYING; notifyNow(st) }
+                    }
+                }
+
                 override fun onPlaybackStateChanged(state: Int) {
-                    if (state == Player.STATE_READY && p.playWhenReady) {
-                        status = Status.PLAYING
-                        notifyNow(st)
-                    } else if (state == Player.STATE_BUFFERING && status != Status.PLAYING) {
-                        status = Status.LOADING
+                    if (player !== p) return
+                    when (state) {
+                        Player.STATE_BUFFERING -> {
+                            // Data stopped while playing: the stream is cut (ExoPlayer keeps waiting)
+                            if (status == Status.PLAYING) { status = Status.LOST; notifyNow(st) }
+                            else if (status != Status.LOST) status = Status.LOADING
+                        }
+                        Player.STATE_ENDED -> if (current != null) lost(st)   // the station closed the stream
+                        else -> {}
                     }
                 }
 
                 override fun onPlayerError(error: PlaybackException) {
+                    if (player !== p) return
+                    // It was playing before: keep trying (internet may come back)
+                    if (everPlayed) { releasePlayer(); lost(st); return }
                     // Try the next address of this station before giving up
                     if (urlIndex + 1 < st.urls.size) {
                         urlIndex++
@@ -171,6 +212,7 @@ class RadioService : Service() {
     private fun statusText(): String = when (status) {
         Status.LOADING -> L.t("جاري التشغيل…", "Starting…")
         Status.PLAYING -> L.t("يعمل الآن", "Playing now")
+        Status.LOST -> L.t("انقطع البث · نحاول من جديد", "Signal lost · retrying")
         Status.PAUSED -> L.t("متوقف مؤقتًا", "Paused")
         Status.ERROR -> L.t("تعذر التشغيل. تأكد من الإنترنت", "Could not play. Check the internet")
         Status.OFF -> ""
@@ -222,6 +264,7 @@ class RadioService : Service() {
     }
 
     private fun stopAll() {
+        cancelRetry()
         releasePlayer()
         current = null
         status = Status.OFF
@@ -230,6 +273,7 @@ class RadioService : Service() {
     }
 
     override fun onDestroy() {
+        cancelRetry()
         releasePlayer()
         current = null
         status = Status.OFF

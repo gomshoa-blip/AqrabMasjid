@@ -8,6 +8,16 @@ package com.aqrabmasjid.app
 object Tr {
     /** Index in each array: 0 = Urdu, 1 = Indonesian, 2 = Bengali, 3 = Turkish. */
     val MAP: Map<String, Array<String>> = mapOf(
+        "Choose a station" to arrayOf("اسٹیشن منتخب کریں", "Pilih siaran", "স্টেশন বেছে নিন", "İstasyon seçin"),
+        "Holy Quran" to arrayOf("قرآن کریم", "Al-Quran", "পবিত্র কুরআন", "Kuran-ı Kerim"),
+        "Prophet's Sunnah" to arrayOf("سنت نبوی", "Sunnah Nabi", "নবীর সুন্নাহ", "Peygamberin Sünneti"),
+        "Ready to play" to arrayOf("چلانے کے لیے تیار", "Siap diputar", "চালানোর জন্য প্রস্তুত", "Çalmaya hazır"),
+        "Connecting…" to arrayOf("جڑ رہا ہے…", "Menghubungkan…", "সংযোগ হচ্ছে…", "Bağlanıyor…"),
+        "Live – on air" to arrayOf("براہِ راست – نشریات جاری", "Langsung – siaran aktif", "সরাসরি – সম্প্রচার চলছে", "Canlı – yayında"),
+        "Signal lost · retrying" to arrayOf("نشریات رک گئی · دوبارہ کوشش", "Siaran terputus · mencoba lagi", "সম্প্রচার বিচ্ছিন্ন · আবার চেষ্টা", "Yayın kesildi · tekrar deneniyor"),
+        "Could not play · tap to retry" to arrayOf("نہیں چل سکا · دوبارہ دبائیں", "Gagal memutar · ketuk untuk coba lagi", "চালানো যায়নি · আবার চাপুন", "Çalınamadı · tekrar dokunun"),
+        "{} is playing now" to arrayOf("{} اب چل رہا ہے", "{} sedang diputar", "{} এখন চলছে", "{} şimdi çalıyor"),
+        "🕌  Take me to nearest mosque" to arrayOf("🕌  قریب ترین مسجد لے چلیں", "🕌  Antar ke masjid terdekat", "🕌  নিকটতম মসজিদে নিয়ে চলুন", "🕌  En yakın camiye götür"),
         "Live" to arrayOf("براہِ راست", "Langsung", "সরাসরি", "Canlı"),
         "Holy Quran Radio" to arrayOf("قرآن کریم ریڈیو", "Radio Al-Quran", "কুরআন রেডিও", "Kuran Radyosu"),
         "Makkah" to arrayOf("مکہ", "Makkah", "মক্কা", "Mekke"),

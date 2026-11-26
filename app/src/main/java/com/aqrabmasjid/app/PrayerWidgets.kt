@@ -7,7 +7,6 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.SystemClock
 import android.view.View
 import android.widget.RemoteViews
@@ -66,10 +65,14 @@ object PrayerWidgets {
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
 
-    /** Google Maps search for mosques near the user (same as the gold button in the app). */
+    /**
+     * One tap: the app finds the nearest mosque from the phone's location now,
+     * then starts Google Maps navigation to it right away.
+     */
     private fun openMosques(c: Context): PendingIntent {
-        val i = Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=" + Uri.encode("مسجد")))
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val i = Intent(c, MosquesActivity::class.java)
+            .putExtra(MosquesActivity.EXTRA_GO_FIRST, true)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         return PendingIntent.getActivity(c, 402, i, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     }
 
@@ -85,11 +88,11 @@ object PrayerWidgets {
         val v = RemoteViews(c.packageName, R.layout.widget_next)
         v.setOnClickPendingIntent(R.id.wRoot, openApp(c))
         v.setOnClickPendingIntent(R.id.wGo, openMosques(c))
-        v.setTextViewText(R.id.wGo, L.t("🕌 أقرب مسجد", "🕌 Nearest mosque"))
+        v.setTextViewText(R.id.wGo, L.t("🕌  خذني لأقرب مسجد", "🕌  Take me to nearest mosque"))
         val n = now(c)
         if (n == null) {
             v.setTextViewText(R.id.wLabel, L.t("أقرب مسجد", "Aqrab Masjid"))
-            v.setTextViewText(R.id.wName, "🕌")
+            v.setTextViewText(R.id.wName, L.t("أقرب مسجد", "Aqrab Masjid"))
             v.setTextViewText(R.id.wTimes, L.t("افتح التطبيق لتحديد موقعك", "Open the app to set your location"))
             v.setViewVisibility(R.id.wLeftRow, View.GONE)
             return v
@@ -116,7 +119,7 @@ object PrayerWidgets {
         val v = RemoteViews(c.packageName, R.layout.widget_day)
         v.setOnClickPendingIntent(R.id.dRoot, openApp(c))
         v.setOnClickPendingIntent(R.id.dGo, openMosques(c))
-        v.setTextViewText(R.id.dGo, L.t("🕌 أقرب مسجد", "🕌 Nearest mosque"))
+        v.setTextViewText(R.id.dGo, L.t("🕌  خذني لأقرب مسجد", "🕌  Take me to nearest mosque"))
         val loc = Prefs.location(c)
         val n = now(c)
         if (loc == null || n == null) {

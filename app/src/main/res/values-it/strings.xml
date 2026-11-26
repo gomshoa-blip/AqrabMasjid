@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Aqrab Masjid</string>
+    <string name="widget_next_name">Prossima preghiera</string>
+    <string name="widget_day_name">Orari di preghiera di oggi</string>
+    <string name="widget_next_desc">Prossima preghiera, tempo rimasto e pulsante moschea più vicina</string>
+    <string name="widget_day_desc">Le cinque preghiere di oggi, la prossima evidenziata</string>
+    <string name="w_label">Prossima preghiera</string>
+    <string name="w_name">Asr</string>
+    <string name="w_times">Adhan 15:15 · Iqama 15:35</string>
+    <string name="w_left">rimasti</string>
+    <string name="w_go">🕌 Moschea più vicina</string>
+</resources>

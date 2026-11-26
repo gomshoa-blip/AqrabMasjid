@@ -168,16 +168,24 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.tileShare).setOnClickListener { share() }
         findViewById<View>(R.id.tileAdd).setOnClickListener { addMosqueDialog() }
         findViewById<View>(R.id.btnPrivacy).setOnClickListener { openUrl(Config.PRIVACY_URL) }
-        findViewById<View>(R.id.tileRadio).setOnClickListener { radioDialog() }
-        // Audio player bar: pick a station, big button plays / stops
-        findViewById<View>(R.id.radioPrev).setOnClickListener { radioStep(-1) }
-        findViewById<View>(R.id.radioNext).setOnClickListener { radioStep(1) }
+        // Radio tile: go to the radio card (it is on the main screen)
+        findViewById<View>(R.id.tileRadio).setOnClickListener {
+            findViewById<android.widget.ScrollView>(R.id.rootScroll).post {
+                val bar = findViewById<View>(R.id.radioBar)
+                val y = bar.top + (bar.parent as View).top
+                findViewById<android.widget.ScrollView>(R.id.rootScroll).smoothScrollTo(0, (y - 24).coerceAtLeast(0))
+            }
+        }
+        // Radio card: Quran (right) and Sunnah (left) select at once; the middle button plays / pauses
+        findViewById<View>(R.id.radioStQuran).setOnClickListener { radioSelect("quran") }
+        findViewById<View>(R.id.radioStSunnah).setOnClickListener { radioSelect("sunnah") }
         findViewById<View>(R.id.radioSave).setOnClickListener { saveRadioClip() }
         findViewById<View>(R.id.radioRecs).setOnClickListener { radioClipsDialog() }
         findViewById<View>(R.id.radioPlay).setOnClickListener {
             if (RadioService.current != null && !RadioService.paused) RadioService.stop(this)
             else RadioService.play(this, radioSel())
             showRadioBar()
+            handler.removeCallbacks(ringTick); handler.post(ringTick)   // refresh the status every second
         }
         findViewById<View>(R.id.btnAbout).setOnClickListener { openUrl(Config.ABOUT_URL) }
         findViewById<View>(R.id.tileNear).setOnClickListener { startActivity(Intent(this, MosquesActivity::class.java)) }
@@ -699,25 +707,81 @@ class MainActivity : Activity() {
     private fun radioSelect(id: String) {
         getSharedPreferences("aqrab", MODE_PRIVATE).edit().putString("radio_sel", id).apply()
         if (RadioService.current != null && RadioService.current != id) RadioService.play(this, id)
+        radioLastShown = ""
         showRadioBar()
     }
 
+    private var radioLastShown = ""
+    private var dotAnim: android.animation.ObjectAnimator? = null
+
+    /**
+     * Radio card. The look follows the REAL player state from RadioService:
+     * ready (grey) · connecting (gold, spinner) · live (green dot + moving wave on the playing station)
+     * · signal lost (red, spinner, retrying) · error (red).
+     */
     private fun showRadioBar() {
         showSaveButton()
         val cur = RadioService.current
         val sel = cur ?: radioSel()
-        findViewById<TextView>(R.id.radioName)?.text = RadioService.station(sel)?.label ?: ""
-        val playing = cur != null && !RadioService.paused
+        val st = if (cur == null) {
+            if (RadioService.status == RadioService.Status.ERROR) RadioService.Status.ERROR else RadioService.Status.OFF
+        } else RadioService.status
+        val key = "$sel|$cur|$st|${L.lang}"
+        if (key == radioLastShown) return      // nothing changed (this runs every second)
+        radioLastShown = key
+        val live = st == RadioService.Status.PLAYING
+        val wantSound = cur != null && !RadioService.paused
+
+        // Stations: the selected one looks pressed, the other is lighter
+        fun station(id: String, box: Int, ic: Int, tx: Int, wave: Int, dot: Int) {
+            val on = id == sel
+            findViewById<View>(box)?.setBackgroundResource(if (on) R.drawable.bg_station_sel else R.drawable.bg_station_idle)
+            findViewById<View>(box)?.alpha = if (on) 1f else 0.75f
+            findViewById<TextView>(tx)?.setTextColor(getColor(if (on) R.color.title_text else R.color.text_secondary))
+            findViewById<android.widget.ImageView>(ic)?.imageTintList =
+                android.content.res.ColorStateList.valueOf(getColor(if (on) R.color.icon else R.color.text_hint))
+            val w = findViewById<android.widget.ImageView>(wave)
+            val ad = w?.drawable as? android.graphics.drawable.AnimationDrawable
+            if (on && live && cur == id) { w?.visibility = View.VISIBLE; ad?.start() }
+            else { ad?.stop(); w?.visibility = View.INVISIBLE }
+            findViewById<View>(dot)?.visibility = if (on && live && cur == id) View.VISIBLE else View.GONE
+        }
+        station("quran", R.id.radioStQuran, R.id.radioIcQuran, R.id.radioTxQuran, R.id.radioWaveQuran, R.id.radioLiveQuran)
+        station("sunnah", R.id.radioStSunnah, R.id.radioIcSunnah, R.id.radioTxSunnah, R.id.radioWaveSunnah, R.id.radioLiveSunnah)
+        findViewById<TextView>(R.id.radioTxQuran)?.text = L.t("القرآن الكريم", "Holy Quran")
+        findViewById<TextView>(R.id.radioTxSunnah)?.text = L.t("السنة النبوية", "Prophet's Sunnah")
+
+        // Middle button: pause while sound is wanted, play otherwise; spinner while connecting / retrying
         findViewById<android.widget.ImageView>(R.id.radioPlayIcon)
-            ?.setImageResource(if (playing) R.drawable.ic_stop else R.drawable.ic_play)
-        val row = findViewById<View>(R.id.radioStatusRow) ?: return
-        val txt = findViewById<TextView>(R.id.radioStatus)
+            ?.setImageResource(if (wantSound) R.drawable.ic_pause else R.drawable.ic_play)
+        findViewById<View>(R.id.radioPlay)?.contentDescription = if (wantSound) L.t("إيقاف", "Pause") else L.t("تشغيل", "Play")
+        val spin = findViewById<android.widget.ProgressBar>(R.id.radioSpin)
+        spin?.visibility = if (st == RadioService.Status.LOADING || st == RadioService.Status.LOST) View.VISIBLE else View.GONE
+        spin?.indeterminateTintList = android.content.res.ColorStateList.valueOf(
+            if (st == RadioService.Status.LOST) 0xFFEF4444.toInt() else 0xFFE0B84A.toInt())
+
+        // Status pill and line
         val dot = findViewById<View>(R.id.radioDot)
-        when (if (cur == null) RadioService.Status.OFF else RadioService.status) {
-            RadioService.Status.PLAYING -> { row.visibility = View.VISIBLE; dot.visibility = View.VISIBLE; txt.text = L.t("مباشر", "Live") }
-            RadioService.Status.LOADING -> { row.visibility = View.VISIBLE; dot.visibility = View.GONE; txt.text = L.t("جاري التشغيل…", "Starting…") }
-            RadioService.Status.ERROR -> { row.visibility = View.VISIBLE; dot.visibility = View.GONE; txt.text = L.t("تعذر التشغيل. تأكد من الإنترنت", "Could not play. Check the internet") }
-            else -> row.visibility = View.GONE
+        val txt = findViewById<TextView>(R.id.radioStatus)
+        val name = RadioService.station(sel)?.label ?: ""
+        dotAnim?.cancel(); dotAnim = null; dot?.alpha = 1f
+        when (st) {
+            RadioService.Status.PLAYING -> {
+                dot?.setBackgroundResource(R.drawable.dot_green)
+                txt?.text = L.t("مباشر – البث يعمل", "Live – on air")
+                dotAnim = android.animation.ObjectAnimator.ofFloat(dot, "alpha", 1f, 0.25f).apply {
+                    duration = 800; repeatMode = android.animation.ValueAnimator.REVERSE
+                    repeatCount = android.animation.ValueAnimator.INFINITE; start()
+                }
+            }
+            RadioService.Status.LOADING -> { dot?.setBackgroundResource(R.drawable.dot_amber); txt?.text = L.t("جاري الاتصال…", "Connecting…") }
+            RadioService.Status.LOST -> { dot?.setBackgroundResource(R.drawable.dot_red); txt?.text = L.t("انقطع البث · نحاول من جديد", "Signal lost · retrying") }
+            RadioService.Status.ERROR -> { dot?.setBackgroundResource(R.drawable.dot_red); txt?.text = L.t("تعذر التشغيل · اضغط للمحاولة", "Could not play · tap to retry") }
+            else -> { dot?.setBackgroundResource(R.drawable.dot_grey); txt?.text = L.t("جاهز للتشغيل", "Ready to play") }
+        }
+        findViewById<TextView>(R.id.radioName)?.text = when (st) {
+            RadioService.Status.PLAYING -> L.t("$name تعمل الآن", "$name is playing now")
+            else -> name
         }
     }
 
@@ -978,7 +1042,7 @@ class MainActivity : Activity() {
         b(R.id.btnPrivacy, "سياسة الخصوصية", "Privacy policy")
         b(R.id.btnAbout, "عن أقرب مسجد", "About Aqrab Masjid")
         b(R.id.tileRadioText, "إذاعة", "Radio")
-        b(R.id.radioLabel, "إذاعة", "Radio")
+        b(R.id.radioLabel, "اختر البث", "Choose a station")
         b(R.id.radioRecs, "🎧 تسجيلاتي", "🎧 My clips")
         b(R.id.tileQuranText, "القرآن", "Quran")
         b(R.id.tileAdhkarText, "الأذكار", "Adhkar")
