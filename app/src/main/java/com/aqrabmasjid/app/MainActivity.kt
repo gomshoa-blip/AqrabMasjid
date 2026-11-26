@@ -154,17 +154,20 @@ class MainActivity : Activity() {
         sw.setOnCheckedChangeListener { _, on ->
             Prefs.setAlerts(this, on)
             Alerts.scheduleNext(this)
+            updateAlertBanner()
+            if (on) {
+                // Turned on again: explain what is missing (if anything) right away
+                getSharedPreferences("ui", MODE_PRIVATE).edit().remove("notifAsked").remove("exactAsked").apply()
+                checkAlerts()
+            }
         }
 
         showTone()
         findViewById<View>(R.id.btnTone).setOnClickListener { toneDialog() }
 
+        // Warning button: opens the settings page for what is missing
         btnExact.setOnClickListener {
-            if (Build.VERSION.SDK_INT >= 31) {
-                startActivity(
-                    Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:$packageName"))
-                )
-            }
+            if (btnExact.tag == "notif") openNotifSettings() else openExactSettings()
         }
 
         askPermissions()
@@ -173,7 +176,9 @@ class MainActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
-        btnExact.visibility = if (Alerts.canExact(this)) View.GONE else View.VISIBLE
+        updateAlertBanner()
+        // Back from Settings (or the app opened again): check the alerts can work
+        if (resumedOnce) checkAlerts()
         handler.post(tick)
         handler.post(ringTick)
         Alerts.scheduleNext(this)
@@ -203,12 +208,90 @@ class MainActivity : Activity() {
         )
         if (Build.VERSION.SDK_INT >= 33) need += Manifest.permission.POST_NOTIFICATIONS
         val missing = need.filter { checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED }
-        if (missing.isEmpty()) refresh() else requestPermissions(missing.toTypedArray(), 1)
+        if (missing.isEmpty()) { refresh(); checkAlerts() } else requestPermissions(missing.toTypedArray(), 1)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         refresh()
+        updateAlertBanner()
+        checkAlerts()
+    }
+
+    // ---- Alerts need: notifications allowed + exact time allowed (Android 12 and newer) ----
+
+    private fun notifOk(): Boolean =
+        try { androidx.core.app.NotificationManagerCompat.from(this).areNotificationsEnabled() } catch (_: Exception) { true }
+
+    /** The button on the main screen shows what is missing, and hides when all is fine. */
+    private fun updateAlertBanner() {
+        val tv = btnExact as? TextView ?: return
+        val on = Prefs.alertsOn(this)
+        when {
+            on && !notifOk() -> {
+                tv.tag = "notif"
+                tv.text = L.t("⚠️ الإشعارات مغلقة، فلن يصلك تنبيه الأذان. اضغط هنا لفتحها",
+                    "⚠️ Notifications are off, so you will not get adhan alerts. Tap here to turn them on")
+                tv.visibility = View.VISIBLE
+            }
+            on && !Alerts.canExact(this) -> {
+                tv.tag = "exact"
+                tv.text = L.t("اسمح بالتنبيه في الوقت الدقيق", "Allow exact-time alerts")
+                tv.visibility = View.VISIBLE
+            }
+            else -> tv.visibility = View.GONE
+        }
+    }
+
+    /** Explain in a short message what is missing. Asks again only after 3 days. */
+    private fun checkAlerts() {
+        if (!Prefs.alertsOn(this) || isFinishing) return
+        val sp = getSharedPreferences("ui", MODE_PRIVATE)
+        val now = System.currentTimeMillis()
+        val wait = 3L * 24 * 60 * 60 * 1000
+        if (!notifOk()) {
+            if (now - sp.getLong("notifAsked", 0) < wait) return
+            sp.edit().putLong("notifAsked", now).apply()
+            AlertDialog.Builder(this)
+                .setTitle(L.t("الإشعارات مغلقة", "Notifications are off"))
+                .setMessage(L.t(
+                    "بدون الإشعارات لن يصلك تنبيه الأذان ولا تنبيه الإقامة.\n\nافتح الإعدادات واسمح بالإشعارات لتطبيق أقرب مسجد.",
+                    "Without notifications you will not get the adhan and iqama alerts.\n\nOpen Settings and allow notifications for Aqrab Masjid."))
+                .setPositiveButton(L.t("افتح الإعدادات", "Open Settings")) { _, _ -> openNotifSettings() }
+                .setNegativeButton(L.t("لاحقاً", "Later"), null)
+                .show()
+            return
+        }
+        if (!Alerts.canExact(this)) {
+            if (now - sp.getLong("exactAsked", 0) < wait) return
+            sp.edit().putLong("exactAsked", now).apply()
+            AlertDialog.Builder(this)
+                .setTitle(L.t("التنبيه في وقته", "Alerts on time"))
+                .setMessage(L.t(
+                    "حتى يصل تنبيه الأذان في وقته بالضبط بدون تأخير، اسمح للتطبيق بـ «المنبّهات والتذكيرات».\n\nفي الصفحة التالية: فعّل الزر، ثم ارجع للتطبيق.",
+                    "So the adhan alert comes exactly on time, with no delay, allow the app to use \"Alarms & reminders\".\n\nOn the next page: turn the switch on, then come back to the app."))
+                .setPositiveButton(L.t("اسمح", "Allow")) { _, _ -> openExactSettings() }
+                .setNegativeButton(L.t("لاحقاً", "Later"), null)
+                .show()
+        }
+    }
+
+    private fun openNotifSettings() {
+        val i = if (Build.VERSION.SDK_INT >= 26)
+            Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+        else Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName"))
+        try { startActivity(i) } catch (_: Exception) {
+            try { startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName"))) } catch (_: Exception) {}
+        }
+    }
+
+    private fun openExactSettings() {
+        if (Build.VERSION.SDK_INT < 31) return
+        try {
+            startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:$packageName")))
+        } catch (_: Exception) {
+            try { startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName"))) } catch (_: Exception) {}
+        }
     }
 
     private fun refresh() {

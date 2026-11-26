@@ -165,5 +165,13 @@ object Tr {
         "Iqama time after adhan" to arrayOf("اذان کے بعد اقامت کا وقت", "Waktu iqamah setelah azan", "আজানের পর ইকামতের সময়", "Ezandan sonra kamet süresi"),
         "Default" to arrayOf("پہلے سے طے شدہ", "Bawaan", "ডিফল্ট", "Varsayılan"),
         "{} (minutes)" to arrayOf("{} (منٹ)", "{} (menit)", "{} (মিনিট)", "{} (dakika)"),
+        "⚠️ Notifications are off, so you will not get adhan alerts. Tap here to turn them on" to arrayOf("⚠️ اطلاعات بند ہیں، اس لیے اذان کی اطلاع نہیں ملے گی۔ کھولنے کے لیے یہاں دبائیں", "⚠️ Notifikasi mati, jadi Anda tidak akan mendapat pengingat azan. Ketuk di sini untuk menyalakan", "⚠️ নোটিফিকেশন বন্ধ, তাই আজানের সতর্কতা পাবেন না। চালু করতে এখানে চাপুন", "⚠️ Bildirimler kapalı, ezan uyarısı gelmez. Açmak için buraya dokunun"),
+        "Notifications are off" to arrayOf("اطلاعات بند ہیں", "Notifikasi mati", "নোটিফিকেশন বন্ধ", "Bildirimler kapalı"),
+        "Without notifications you will not get the adhan and iqama alerts.\n\nOpen Settings and allow notifications for Aqrab Masjid." to arrayOf("اطلاعات کے بغیر اذان اور اقامت کی اطلاع نہیں ملے گی۔\n\nسیٹنگز کھولیں اور اقرب مسجد کے لیے اطلاعات کی اجازت دیں۔", "Tanpa notifikasi Anda tidak akan mendapat pengingat azan dan iqamah.\n\nBuka Pengaturan dan izinkan notifikasi untuk Aqrab Masjid.", "নোটিফিকেশন ছাড়া আজান ও ইকামতের সতর্কতা পাবেন না।\n\nসেটিংস খুলে Aqrab Masjid-এর নোটিফিকেশন চালু করুন।", "Bildirimler olmadan ezan ve kamet uyarıları gelmez.\n\nAyarlar'ı açın ve Aqrab Masjid için bildirimlere izin verin."),
+        "Open Settings" to arrayOf("سیٹنگز کھولیں", "Buka Pengaturan", "সেটিংস খুলুন", "Ayarları aç"),
+        "Later" to arrayOf("بعد میں", "Nanti", "পরে", "Sonra"),
+        "Alerts on time" to arrayOf("وقت پر اطلاع", "Pengingat tepat waktu", "সময়মতো সতর্কতা", "Zamanında uyarı"),
+        "So the adhan alert comes exactly on time, with no delay, allow the app to use \"Alarms & reminders\".\n\nOn the next page: turn the switch on, then come back to the app." to arrayOf("تاکہ اذان کی اطلاع بالکل وقت پر آئے، ایپ کو \"الارم اور یاد دہانیاں\" کی اجازت دیں۔\n\nاگلے صفحے پر: بٹن آن کریں، پھر ایپ پر واپس آئیں۔", "Agar pengingat azan datang tepat waktu tanpa terlambat, izinkan aplikasi memakai \"Alarm & pengingat\".\n\nDi halaman berikutnya: nyalakan tombolnya, lalu kembali ke aplikasi.", "আজানের সতর্কতা যেন ঠিক সময়ে আসে, অ্যাপকে \"অ্যালার্ম ও রিমাইন্ডার\" ব্যবহারের অনুমতি দিন।\n\nপরের পাতায়: সুইচ চালু করুন, তারপর অ্যাপে ফিরে আসুন।", "Ezan uyarısının tam zamanında gelmesi için uygulamaya \"Alarmlar ve hatırlatıcılar\" izni verin.\n\nSonraki sayfada: düğmeyi açın, sonra uygulamaya dönün."),
+        "Allow" to arrayOf("اجازت دیں", "Izinkan", "অনুমতি দিন", "İzin ver"),
     )
 }
