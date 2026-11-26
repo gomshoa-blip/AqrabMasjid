@@ -15,12 +15,20 @@
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);overflow:hidden;font-family:system-ui,sans-serif}
   #page{position:fixed;inset:0;display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top) + 34px) 14px calc(env(safe-area-inset-bottom) + 28px)}
-  #text{flex:1;overflow:hidden;font-family:"Hafs";text-align:justify;text-align-last:center;line-height:2.05;direction:rtl;word-spacing:1px}
+  #text{flex:1;overflow:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;font-family:"Hafs";text-align:justify;text-align-last:center;line-height:2.05;direction:rtl;word-spacing:1px}
   .sh{display:block;text-align:center;border:2px solid var(--gold);border-radius:10px;margin:.15em 0 .1em;padding:0 .4em;color:var(--green);background:#fff8e2;font-size:.95em}
   .bs{display:block;text-align:center;margin:0 0 .05em}
   .top,.bot{position:fixed;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:0 16px;font-size:13px;color:#7a6a3f;pointer-events:none}
   .top{top:calc(env(safe-area-inset-top) + 8px)} .bot{bottom:calc(env(safe-area-inset-bottom) + 6px);justify-content:center}
   .top b{font-family:"Hafs";font-size:17px;font-weight:normal;color:var(--green)}
+  /* Bigger text: the page scrolls up and down */
+  #text.zoom{overflow-y:auto;text-align:right;text-align-last:auto;line-height:2.25;padding-bottom:20px}
+  #text .nextp{display:block;margin:18px auto 6px;border:0;border-radius:14px;padding:14px 22px;font:800 17px system-ui,sans-serif;background:#DCEEE5;color:#0A4A37}
+  /* Text size buttons: always on screen, big for older readers */
+  #zoom{position:fixed;left:10px;bottom:calc(env(safe-area-inset-bottom) + 8px);display:flex;gap:6px;z-index:4}
+  #zoom button{width:52px;height:52px;border-radius:50%;border:1.5px solid var(--gold);background:var(--paper);color:var(--green);font:800 20px system-ui,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+  #zoom button small{font-size:13px}
+  #zlbl{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.7);color:#fff;padding:10px 18px;border-radius:14px;font:800 18px system-ui,sans-serif;z-index:9;display:none}
   /* Menu */
   #bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 12px calc(env(safe-area-inset-bottom) + 10px);display:flex;gap:8px;z-index:5;box-shadow:0 -6px 20px rgba(0,0,0,.12)}
   #bar[hidden],#list[hidden]{display:none}
@@ -48,6 +56,8 @@
 <div class="top"><b id="sura"></b><span id="juz"></span></div>
 <div id="page"><div id="text"></div></div>
 <div class="bot"><span id="pno"></span></div>
+<div id="zoom"><button id="zIn" aria-label="تكبير الخط">أ<small>+</small></button><button id="zOut" aria-label="تصغير الخط">أ<small>−</small></button></div>
+<div id="zlbl"></div>
 
 <div id="bar" hidden>
   <button id="bNext">→ التالية</button>
@@ -68,6 +78,9 @@ const $ = id => document.getElementById(id);
 const AR = n => String(n).replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
 const BASMALA = "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ";
 let D = null, page = 1;
+// Text size: 0 = fit the whole page on the screen; bigger sizes scroll
+const SIZES = [0, 28, 34, 40, 48, 58, 70];
+let zi = 0; try { zi = Math.min(SIZES.length - 1, Math.max(0, +localStorage.getItem("qzoom") || 0)); } catch(_){}
 try { page = Math.min(604, Math.max(1, +localStorage.getItem("qpage") || 1)); } catch(_){}
 const h = location.hash.match(/p(\d+)/); if (h) page = Math.min(604, Math.max(1, +h[1]));
 
@@ -85,8 +98,10 @@ function render(){
     html += esc(t) + " ";
   });
   const box = $("text");
-  box.innerHTML = html;
-  fit();
+  box.innerHTML = html + (SIZES[zi] && page < 604 ? `<button class="nextp" id="nextp">الصفحة التالية ←</button>` : "");
+  box.scrollTop = 0;
+  applyZoom();
+  const nb = $("nextp"); if (nb) nb.onclick = e => { e.stopPropagation(); go(page + 1); };
   $("sura").textContent = D.s[rows[0][0]-1][0];
   $("juz").textContent = "الجزء " + AR(rows[0][3]);
   $("pno").textContent = AR(page);
@@ -104,6 +119,21 @@ function fit(){
   }
   box.style.fontSize = lo + "px";
 }
+function applyZoom(){
+  const box = $("text");
+  if (SIZES[zi]) { box.classList.add("zoom"); box.style.fontSize = SIZES[zi] + "px"; }
+  else { box.classList.remove("zoom"); fit(); }
+}
+function setZoom(d){
+  const z = Math.min(SIZES.length - 1, Math.max(0, zi + d));
+  if (z === zi) return;
+  zi = z; try { localStorage.setItem("qzoom", zi); } catch(_){}
+  render();
+  const l = $("zlbl"); l.textContent = zi ? "حجم الخط " + AR(zi) + " / " + AR(SIZES.length - 1) : "صفحة كاملة";
+  l.style.display = "block"; clearTimeout(setZoom.t); setZoom.t = setTimeout(() => l.style.display = "none", 900);
+}
+$("zIn").onclick = e => { e.stopPropagation(); setZoom(1); };
+$("zOut").onclick = e => { e.stopPropagation(); setZoom(-1); };
 function go(p){ p = Math.min(604, Math.max(1, p)); if (p !== page) { page = p; render(); } }
 
 // Swipe: like a paper mushaf, swipe right for the next page, left for the previous
@@ -123,7 +153,7 @@ $("bNext").onclick = () => go(page + 1);
 $("bPrev").onclick = () => go(page - 1);
 $("bList").onclick = () => { $("list").hidden = false; $("bar").hidden = true; };
 $("close").onclick = () => $("list").hidden = true;
-addEventListener("resize", () => fit());
+addEventListener("resize", () => applyZoom());
 
 fetch("data.json").then(r => r.json()).then(j => {
   D = j;
