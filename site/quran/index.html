@@ -31,6 +31,9 @@
   #sheet{margin:0 auto;direction:rtl;color:var(--ink);position:relative}
   #sheet .ln{display:flex;flex-direction:row;justify-content:center;align-items:center;white-space:nowrap;line-height:1;direction:rtl}
   #sheet .ln.j{justify-content:space-between}
+  #sheet .ln span.mk{background:rgba(201,162,39,.30);box-shadow:0 0 0 2px rgba(201,162,39,.30)}
+  #view.marking #sheet .ln span[data-v]{cursor:pointer}
+  #view.marking{outline:3px dashed var(--gold);outline-offset:-3px}
   #sheet .hd{display:flex;justify-content:center;align-items:center}
   #sheet .hd span{display:flex;align-items:center;justify-content:center;width:100%;height:82%;border:2px solid var(--gold);border-radius:12px;background:var(--frame);color:var(--green)}
   #msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--soft);font-size:18px;text-align:center;padding:20px;line-height:1.8}
@@ -148,7 +151,7 @@ async function render(){
 }
 
 function layout(){
-  const [f, , , lines] = D.p[page-1];
+  const [f, , , lines, vk] = D.p[page-1];
   const view = $("view"), sheet = $("sheet");
   const vw = view.clientWidth, vh = view.clientHeight;
   const pad = Math.min(16, vw * 0.03);
@@ -171,7 +174,7 @@ function layout(){
     if (typeof l === "string") {
       // Full lines are spread to the edges; short lines stay in the middle, as printed
       const full = page > 2 && m.w[i] > nat * 0.85;
-      html += `<div class="ln${full ? " j" : ""}" style="height:${lh}px;font:${page <= 2 ? fs * 0.9 : fs}px ${fam}">${[...l].map(c => "<span>" + c + "</span>").join("")}</div>`;
+      html += `<div class="ln${full ? " j" : ""}" style="height:${lh}px;font:${page <= 2 ? fs * 0.9 : fs}px ${fam}">${(() => { const ch = [...l], out = []; let k = 0; for (const [n, v] of vk[i]) for (let j = 0; j < n; j++) out.push(`<span data-v="${v}">${ch[k++] || ""}</span>`); while (k < ch.length) out.push(`<span>${ch[k++]}</span>`); return out.join(""); })()}</div>`;
     } else if (l[0] === "h") {
       html += `<div class="hd" style="height:${lh}px"><span style="font:${fs * 0.95}px ${HDR}">${String.fromCharCode(0xF100 + l[1] - 1)}</span></div>`;
     } else {
@@ -179,6 +182,7 @@ function layout(){
     }
   });
   sheet.innerHTML = html;
+  showMarks();
   // Wide pages: start from the right side (start of the line)
   view.scrollTop = 0;
   view.scrollLeft = view.scrollWidth;
@@ -215,16 +219,34 @@ function applyTheme(){
 $("bTheme").onclick = () => { theme = theme === "dark" ? "light" : "dark"; store.set("qtheme", theme); applyTheme(); };
 applyTheme();
 
-// ---- Bookmarks ----
+// ---- Bookmarks: on an ayah ----
+// Tap 🔖, then tap the ayah. Tap a marked ayah again (in mark mode) to remove it.
+let marking = false;
 function marks(){ try { return JSON.parse(store.get("qmarks", "[]")) || []; } catch(_) { return []; } }
-function markBtn(){ $("bMark").classList.toggle("on", marks().some(m => m.p === page)); }
-$("bMark").onclick = () => {
-  let m = marks();
-  if (m.some(x => x.p === page)) { m = m.filter(x => x.p !== page); toast("حُذفت العلامة"); }
-  else { m.unshift({p: page, t: Date.now()}); toast("حُفظت العلامة – صفحة " + AR(page)); }
-  store.set("qmarks", JSON.stringify(m.slice(0, 50)));
+function ayaName(v){ const [s, a] = v.split(":"); return "سورة " + D.s[s-1][0] + " – الآية " + AR(a); }
+function markBtn(){ $("bMark").classList.toggle("on", marking || marks().some(m => m.p === page)); }
+function showMarks(){
+  const on = new Set(marks().filter(m => m.p === page && m.v).map(m => m.v));
+  document.querySelectorAll("#sheet span[data-v]").forEach(e => e.classList.toggle("mk", on.has(e.dataset.v)));
   markBtn();
-};
+}
+function setMarking(on){
+  marking = on; $("view").classList.toggle("marking", on); markBtn();
+  if (on) toast("اضغط على الآية لوضع العلامة");
+}
+$("bMark").onclick = () => setMarking(!marking);
+$("view").addEventListener("click", e => {
+  if (!marking) return;
+  const w = e.target.closest("span[data-v]");
+  if (!w) { setMarking(false); return; }
+  const v = w.dataset.v;
+  let m = marks();
+  if (m.some(x => x.v === v)) { m = m.filter(x => x.v !== v); toast("حُذفت العلامة"); }
+  else { m.unshift({p: page, v, t: Date.now()}); toast("🔖 " + ayaName(v)); }
+  store.set("qmarks", JSON.stringify(m.slice(0, 50)));
+  setMarking(false);
+  showMarks();
+});
 
 // ---- Index: surahs, parts, bookmarks ----
 let tab = "s";
@@ -237,15 +259,15 @@ function fillList(){
     html = Object.keys(first).map(j => `<div class="s" data-p="${first[j]}"><span>الجزء ${AR(j)}</span><span>صفحة ${AR(first[j])}</span></div>`).join("");
   } else {
     const m = marks();
-    html = m.length ? m.map(x => `<div class="s" data-p="${x.p}"><span>🔖 سورة ${D.s[D.p[x.p-1][2]-1][0]}</span><span>صفحة ${AR(x.p)} <button class="x" data-del="${x.p}">✕</button></span></div>`).join("")
-      : `<div class="empty">لا توجد علامات.<br>اضغط 🔖 في أعلى الصفحة لحفظ مكان القراءة.</div>`;
+    html = m.length ? m.map(x => `<div class="s" data-p="${x.p}"><span>🔖 ${x.v ? ayaName(x.v) : "سورة " + D.s[D.p[x.p-1][2]-1][0]}</span><span>صفحة ${AR(x.p)} <button class="x" data-del="${x.v || x.p}">✕</button></span></div>`).join("")
+      : `<div class="empty">لا توجد علامات.<br>اضغط 🔖 في أعلى الصفحة، ثم اضغط على الآية.</div>`;
   }
   $("slist").innerHTML = html;
 }
 $("tabs").onclick = e => { const b = e.target.closest("button"); if (b) { tab = b.dataset.t; fillList(); } };
 $("slist").addEventListener("click", e => {
   const d = e.target.closest("[data-del]");
-  if (d) { e.stopPropagation(); store.set("qmarks", JSON.stringify(marks().filter(x => x.p !== +d.dataset.del))); fillList(); markBtn(); return; }
+  if (d) { e.stopPropagation(); const k = d.dataset.del; store.set("qmarks", JSON.stringify(marks().filter(x => (x.v || String(x.p)) !== k))); fillList(); markBtn(); return; }
   const r = e.target.closest(".s"); if (r) { go(+r.dataset.p); $("list").hidden = true; }
 });
 
