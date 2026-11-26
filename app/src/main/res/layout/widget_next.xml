@@ -1,107 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Home screen widget: next prayer (big), adhan + iqama, live countdown, one-tap "nearest mosque".
-     The texts grow and shrink with the widget size (autoSize), so they fill the space. -->
+<!-- Home screen widget, two columns:
+     - first column (right in Arabic, about 60%): next prayer, adhan + iqama, live countdown
+     - second column: clock, day and dates, "nearest mosque" button (opens Google Maps)
+     Texts grow and shrink with the widget size (autoSize). -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/wRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/widget_bg"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:paddingStart="14dp"
-    android:paddingEnd="14dp"
-    android:paddingTop="10dp"
-    android:paddingBottom="12dp">
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
 
-    <TextView
-        android:id="@+id/wLabel"
-        android:text="@string/w_label"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:autoSizeMaxTextSize="20sp"
-        android:autoSizeMinTextSize="11sp"
-        android:autoSizeTextType="uniform"
-        android:gravity="center"
-        android:maxLines="1"
-        android:textColor="#F6D46B"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/wName"
-        android:text="@string/w_name"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2.6"
-        android:autoSizeMaxTextSize="64sp"
-        android:autoSizeMinTextSize="22sp"
-        android:autoSizeTextType="uniform"
-        android:gravity="center"
-        android:includeFontPadding="false"
-        android:maxLines="1"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/wTimes"
-        android:text="@string/w_times"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1.1"
-        android:autoSizeMaxTextSize="22sp"
-        android:autoSizeMinTextSize="11sp"
-        android:autoSizeTextType="uniform"
-        android:gravity="center"
-        android:maxLines="1"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold" />
-
+    <!-- Next prayer -->
     <LinearLayout
-        android:id="@+id/wLeftRow"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1.6"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/wLeftLabel"
-            android:text="@string/w_left"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:id="@+id/wLabel"
+            android:text="@string/w_label"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:autoSizeMaxTextSize="20sp"
+            android:autoSizeMinTextSize="11sp"
+            android:autoSizeTextType="uniform"
+            android:gravity="center"
+            android:maxLines="1"
             android:textColor="#F6D46B"
-            android:textSize="15sp"
             android:textStyle="bold" />
-        <Chronometer
-            android:id="@+id/wChrono"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+
+        <TextView
+            android:id="@+id/wName"
+            android:text="@string/w_name"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2.8"
+            android:autoSizeMaxTextSize="72sp"
+            android:autoSizeMinTextSize="22sp"
+            android:autoSizeTextType="uniform"
             android:gravity="center"
             android:includeFontPadding="false"
-            android:textColor="#F6D46B"
-            android:textSize="30sp"
+            android:maxLines="1"
+            android:textColor="#FFFFFF"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/wTimes"
+            android:text="@string/w_times"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.2"
+            android:autoSizeMaxTextSize="20sp"
+            android:autoSizeMinTextSize="10sp"
+            android:autoSizeTextType="uniform"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/wLeftRow"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.8"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/wLeftLabel"
+                android:text="@string/w_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:textColor="#F6D46B"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Chronometer
+                android:id="@+id/wChrono"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:textColor="#F6D46B"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+        </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/wGo"
-        android:text="@string/w_go"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="6dp"
         android:layout_marginTop="6dp"
-        android:autoSizeMaxTextSize="22sp"
-        android:autoSizeMinTextSize="12sp"
-        android:autoSizeTextType="uniform"
-        android:background="@drawable/widget_pill"
+        android:layout_marginBottom="6dp"
+        android:background="@drawable/widget_divider" />
+
+    <!-- Clock, dates, nearest mosque -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
         android:gravity="center"
-        android:maxLines="1"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:textColor="#0A4A37"
-        android:textStyle="bold" />
+        android:orientation="vertical">
+
+        <TextClock
+            android:id="@+id/wClock"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:autoSizeMaxTextSize="44sp"
+            android:autoSizeMinTextSize="16sp"
+            android:autoSizeTextType="uniform"
+            android:format12Hour="h:mm"
+            android:format24Hour="H:mm"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/wDay"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:autoSizeMaxTextSize="16sp"
+            android:autoSizeMinTextSize="9sp"
+            android:autoSizeTextType="uniform"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textColor="#CFE8DC"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/wHijri"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:autoSizeMaxTextSize="15sp"
+            android:autoSizeMinTextSize="9sp"
+            android:autoSizeTextType="uniform"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textColor="#F6D46B" />
+
+        <TextView
+            android:id="@+id/wGreg"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:autoSizeMaxTextSize="14sp"
+            android:autoSizeMinTextSize="9sp"
+            android:autoSizeTextType="uniform"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textColor="#CFE8DC" />
+
+        <TextView
+            android:id="@+id/wGo"
+            android:text="@string/w_go"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:layout_marginTop="4dp"
+            android:autoSizeMaxTextSize="18sp"
+            android:autoSizeMinTextSize="10sp"
+            android:autoSizeTextType="uniform"
+            android:background="@drawable/widget_pill"
+            android:gravity="center"
+            android:maxLines="1"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:textColor="#0A4A37"
+            android:textStyle="bold" />
+    </LinearLayout>
 </LinearLayout>

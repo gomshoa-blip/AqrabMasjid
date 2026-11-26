@@ -17,6 +17,11 @@
     <!-- Needed for the map list screen in Android Auto -->
     <uses-permission android:name="androidx.car.app.MAP_TEMPLATES" />
 
+    <!-- So the widget can check that Google Maps is installed -->
+    <queries>
+        <package android:name="com.google.android.apps.maps" />
+    </queries>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"

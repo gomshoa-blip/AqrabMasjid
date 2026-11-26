@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Aqrab Masjid app</title>
+<!-- Opened in the background by the Android app, once a day, to count app users in Google Analytics.
+     Nothing personal is sent: only the app language and version. -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5LHD95P9HE"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){ dataLayer.push(arguments); }
+var q = new URLSearchParams(location.search);
+var lang = (q.get("lang") || "ar").replace(/[^a-z]/g, "").slice(0, 3);
+var ver = (q.get("v") || "").replace(/[^0-9.]/g, "").slice(0, 10);
+gtag("js", new Date());
+gtag("config", "G-5LHD95P9HE", { page_title: "android_app", page_path: "/app/ping" });
+gtag("event", "app_open", { app_lang: lang, app_version: ver });
+gtag("event", "app_lang_" + lang);
+</script>
+</head>
+<body></body>
+</html>

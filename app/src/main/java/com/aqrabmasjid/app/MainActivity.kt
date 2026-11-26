@@ -219,6 +219,8 @@ class MainActivity : Activity() {
     override fun onResume() {
         super.onResume()
         updateAlertBanner()
+        // Count app users once a day (Google Analytics, nothing personal)
+        handler.postDelayed({ if (!isFinishing) AppPing.maybeSend(this) }, 3_000)
         // Back from Settings (or the app opened again): check the alerts can work
         if (resumedOnce) checkAlerts()
         handler.post(tick)

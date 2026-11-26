@@ -1487,7 +1487,7 @@ $("langBtn").addEventListener("click", () => {
 $("langList").addEventListener("click", e => {
   const b = e.target.closest("[data-l]"); if (!b) return;
   lang = b.dataset.l; try{ localStorage.setItem("lang", lang); }catch(_){}
-  $("langModal").hidden = true; apply(); track("language", {lang});
+  $("langModal").hidden = true; apply(); track("language", {lang}); track("lang_" + lang);
 });
 $("modeBtn").addEventListener("click", () => {
   const open = document.body.classList.contains("drive");
@@ -1498,6 +1498,7 @@ document.body.classList.add("drive");
 try { if (localStorage.getItem("drive") === "0") document.body.classList.remove("drive"); } catch(_){}
 prayerTimes(RIYADH[0], RIYADH[1], "byRiyadh");
 apply();
+if (lang !== "ar") track("open_lang_" + lang);   // which languages are used (one event per visit)
 locate();
 </script>
 <script>

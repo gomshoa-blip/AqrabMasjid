@@ -3,7 +3,7 @@
 <head>
 <script>/* Old link (pages.dev): go to the new link */(function(){if(/\.pages\.dev$/.test(location.hostname)){var q=location.search;location.replace("https://masjid.gomshoa.com"+location.pathname+(q?q+"&":"?")+"moved=1"+location.hash);}})();</script>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#FBF7EC">
 <title>المصحف – أقرب مسجد</title>
 <link rel="icon" type="image/png" href="/icon-192.png">
@@ -36,24 +36,41 @@
   #nav button{flex:1;border:0;border-radius:14px;font:800 20px system-ui,sans-serif;background:var(--btn);color:var(--btnt);padding:0 4px}
   #nav #bList{flex:.9;background:transparent;border:2px solid var(--gold);color:var(--green);line-height:1.15}
   #nav #bList small{display:block;font-size:15px;font-weight:700;color:var(--soft)}
-  /* Big text: the words wrap to fit the screen (no side scrolling) */
-  #sheet.flow{display:flex;flex-wrap:wrap;justify-content:center;align-content:flex-start;align-items:center;direction:rtl;padding:6px 0 0}
-  #sheet.flow > span{display:block;white-space:nowrap}
-  #sheet.flow .hd,#sheet.flow .bs{flex:0 0 100%;display:flex;justify-content:center;align-items:center}
-  #sheet.flow .mk{background:rgba(201,162,39,.35);border-radius:8px}
+  /* Page turn: the old page is a "leaf" that turns over the new page, like a paper book */
+  #turnbox{position:fixed;z-index:4;pointer-events:none;perspective:1800px;overflow:visible}
+  #leaf{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform}
+  #leaf .face{position:absolute;inset:0;overflow:hidden;background:var(--paper);-webkit-backface-visibility:hidden;backface-visibility:hidden}
+  #leaf .back{transform:rotateY(180deg);background:linear-gradient(90deg,var(--frame),var(--paper))}
+  #leaf .shade{position:absolute;inset:0;pointer-events:none}
+  #under{position:absolute;inset:0;background:#000;opacity:0}
+  /* Bookmark ribbon hanging on a marked page */
+  :is(#sheet,.scopy) .rib{position:absolute;top:-2px;left:-13px;width:12px;height:46px;z-index:2;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3));pointer-events:none}
+  /* Bookmarks sheet */
+  #mpanel[hidden]{display:none}
+  #mpanel{position:fixed;inset:0;z-index:7;background:rgba(0,0,0,.45);display:flex;align-items:flex-end}
+  #mpanel .box{width:100%;max-height:80%;overflow:auto;background:var(--panel);border-radius:22px 22px 0 0;padding:14px 14px calc(env(safe-area-inset-bottom) + 16px);border-top:3px solid var(--gold)}
+  #mpanel h3{margin:4px 0 12px;color:var(--green);font-size:19px;text-align:center}
+  #mpanel .act{display:block;width:100%;border:0;border-radius:14px;padding:15px 12px;margin-bottom:8px;font:800 18px system-ui,sans-serif;background:var(--btn);color:var(--btnt)}
+  #mpanel .act.gold{background:var(--gold);color:#1b1b1b}
+  .bm{display:flex;align-items:center;gap:10px;padding:12px 8px;border-bottom:1px solid var(--line);cursor:pointer}
+  .bm .rb{flex:none;width:14px;height:34px;clip-path:polygon(0 0,100% 0,100% 100%,50% 78%,0 100%)}
+  .bm .tx{flex:1;min-width:0}
+  .bm .tx b{display:block;font-size:17px;color:var(--ink)}
+  .bm .tx small{color:var(--soft);font-size:14px}
+  .bm .x{flex:none;border:0;background:none;color:#c0392b;font-size:22px;padding:4px 8px}
   /* The page area */
   #view{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top) + 54px);bottom:calc(env(safe-area-inset-bottom) + 72px);overflow:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
   #view.scroll{overflow:auto}
-  #sheet{margin:0 auto;direction:rtl;color:var(--ink);position:relative}
-  #sheet .ln{display:flex;flex-direction:row;justify-content:center;align-items:center;white-space:nowrap;line-height:1;direction:rtl}
-  #sheet .ln.j{justify-content:space-between}
-  #sheet .ln{position:relative;z-index:1}
-  #sheet{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-  #sheet .hl{position:absolute;z-index:0;background:rgba(201,162,39,.28);border-radius:8px;pointer-events:none}
-  #view.marking #sheet .ln span[data-v]{cursor:pointer}
+  #sheet,.scopy{margin:0 auto;direction:rtl;color:var(--ink);position:relative}
+  :is(#sheet,.scopy) .ln{display:flex;flex-direction:row;justify-content:center;align-items:center;white-space:nowrap;line-height:1;direction:rtl}
+  :is(#sheet,.scopy) .ln.j{justify-content:space-between}
+  :is(#sheet,.scopy) .ln{position:relative;z-index:1}
+  #sheet,.scopy{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+  :is(#sheet,.scopy) .hl{position:absolute;z-index:0;background:rgba(201,162,39,.32);border-radius:8px;pointer-events:none}
+  #view.marking :is(#sheet,.scopy) .ln span[data-v]{cursor:pointer}
   #view.marking{outline:3px dashed var(--gold);outline-offset:-3px}
-  #sheet .hd{display:flex;justify-content:center;align-items:center}
-  #sheet .hd span{display:flex;align-items:center;justify-content:center;width:100%;height:82%;border:2px solid var(--gold);border-radius:12px;background:var(--frame);color:var(--green)}
+  :is(#sheet,.scopy) .hd{display:flex;justify-content:center;align-items:center}
+  :is(#sheet,.scopy) .hd span{display:flex;align-items:center;justify-content:center;width:100%;height:82%;border:2px solid var(--gold);border-radius:12px;background:var(--frame);color:var(--green)}
   #msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--soft);font-size:18px;text-align:center;padding:20px;line-height:1.8}
   #nextp{display:none;margin:14px auto 30px;border:0;border-radius:14px;padding:14px 26px;font:800 18px system-ui,sans-serif;background:var(--btn);color:var(--btnt)}
   #view.scroll #nextp{display:block}
@@ -89,6 +106,13 @@
   <button id="bNext">التالية ←</button>
 </div>
 <div id="zlbl"></div>
+<div id="mpanel" hidden><div class="box">
+  <h3>🔖 العلامات</h3>
+  <button class="act gold" id="mPage">🔖 ضع علامة على هذه الصفحة</button>
+  <button class="act" id="mAyah">📍 ضع علامة على آية (اضغط على الآية)</button>
+  <div id="mlist"></div>
+  <button class="act" id="mClose" style="margin-top:12px">إغلاق</button>
+</div></div>
 <div id="toast"></div>
 
 <div id="list" hidden>
@@ -96,7 +120,7 @@
   <div id="tabs" style="clear:both;padding-top:8px">
     <button data-t="s" class="on">السور</button>
     <button data-t="j">الأجزاء</button>
-    <button data-t="m">🔖 العلامة</button>
+    <button data-t="m">🔖 العلامات</button>
   </div>
   <div id="slist"></div>
   <div class="credit">مصحف المدينة النبوية – مجمع الملك فهد لطباعة المصحف الشريف<br>رواية حفص عن عاصم – خط عثمان طه</div>
@@ -128,13 +152,12 @@ function loadFont(name){
   return fonts[name];
 }
 
-// ---- Text size ----
-// 0 = whole page as printed. 1+ = big text: words wrap to fit the screen.
-// The number is how many words fit on one row (fewer words = bigger text).
-const ZOOMS = [0, 7, 5.5, 4.5, 3.5, 2.7];
-// New default: big text (good for elderly). Old saved sizes are not used.
-let zi = Math.min(ZOOMS.length - 1, Math.max(0, +store.get("qzoom3", 2)));
-if (isNaN(zi)) zi = 2;
+// ---- Size ----
+// The page always keeps its printed lines (no words move to another line).
+// Size 1 = the whole page fits the screen. Bigger = the whole page grows; move it with the finger
+// to see the rest of a line. Change it with أ+ / أ− or with two fingers (pinch).
+const SMIN = 1, SMAX = 4;
+let scale = Math.min(SMAX, Math.max(SMIN, parseFloat(store.get("qscale", 1)) || 1));
 const RATIO = 1.62;   // page height / page width, like the printed mushaf
 
 let measured = {};    // natural width of each line, per page, at 100px
@@ -150,14 +173,13 @@ function measure(p){
 }
 
 let renderId = 0;
-async function render(){
+async function render(keep){
   if (!D) return;
   const id = ++renderId;
   const [f, juz, sura, lines] = D.p[page-1];
   $("sura").textContent = "سورة " + D.s[sura-1][0];
   $("juz").textContent = "· ج" + AR(juz);
   $("pno").textContent = "صفحة " + AR(page);
-  markBtn();
   store.set("qpage", page);
   history.replaceState(null, "", "#p" + page);
   const need = [loadFont(fontName(f)), loadFont(HDR)];
@@ -166,79 +188,33 @@ async function render(){
   catch(_) { if (id === renderId) { $("sheet").innerHTML = ""; $("msg").style.display = "flex"; $("msg").innerHTML = "تعذر تحميل الصفحة.<br>تأكد من الإنترنت ثم اسحب الصفحة مرة أخرى."; } return; }
   if (id !== renderId) return;
   $("msg").style.display = "none";
-  layout();
+  layout(keep);
   // Get the next pages ready
-  [page + 1, page - 1].forEach(p => { if (p >= 1 && p <= 604) loadFont(fontName(D.p[p-1][0])).catch(() => {}); });
+  [page + 1, page - 1, page + 2].forEach(p => { if (p >= 1 && p <= 604) loadFont(fontName(D.p[p-1][0])).catch(() => {}); });
 }
 
-// Words of one mushaf line, each with its ayah
-function words(l, vk){
-  const ch = [...l], out = []; let k = 0;
-  for (const [n, v] of vk) for (let j = 0; j < n; j++) out.push([ch[k++] || "", v]);
-  while (k < ch.length) out.push([ch[k++], ""]);
-  return out;
-}
-
-// Big text: all words of the page flow and wrap to the screen width
-function layoutFlow(){
-  const [f, , , lines, vk] = D.p[page-1];
-  const view = $("view"), sheet = $("sheet");
-  const vw = view.clientWidth, vh = view.clientHeight;
-  const pad = Math.max(8, Math.min(18, vw * 0.035));
-  const W = vw - pad * 2;
-  // Average word width at 100px, from this page and page 3 (a full page)
-  const avg = p => { const m = measure(p); let w = 0, n = 0; D.p[p-1][3].forEach((l, i) => { if (typeof l === "string") { w += m.w[i]; n += [...l].length; } }); return n ? w / n : 60; };
-  const aw = Math.max(avg(page), avg(3));
-  // Turned phone (wide screen): keep the same text size as a normal phone, more words per row
-  const Wref = Math.min(W, 520);
-  let fs = 100 * Wref / (ZOOMS[zi] * aw * 1.12);
-  fs = Math.min(fs, Math.max(vh, 300) / 4);   // never bigger than a quarter of the screen height
-  const fam = fontName(f), gap = fs * 0.12;
-  view.classList.add("scroll");
-  sheet.className = "flow";
-  sheet.style.cssText = `width:${W}px;margin-top:0;font:${fs}px ${fam};line-height:${fs * 1.75}px;column-gap:${gap}px`;
-  let html = "";
-  lines.forEach((l, i) => {
-    if (typeof l === "string") {
-      html += words(l, vk[i]).map(([c, v]) => v ? `<span data-v="${v}">${c}</span>` : `<span>${c}</span>`).join("");
-    } else if (l[0] === "h") {
-      const hf = Math.min(fs * 1.1, W / 5.5);
-      html += `<div class="hd" style="height:${hf * 1.9}px;margin:${fs * 0.2}px 0"><span style="font:${hf}px ${HDR}">${String.fromCharCode(0xF100 + l[1] - 1)}</span></div>`;
-    } else {
-      html += `<div class="bs" style="line-height:${fs * 1.6}px"><span style="font:${fs}px ${fontName(1)}">${String.fromCharCode(l[1])}</span></div>`;
-    }
-  });
-  sheet.innerHTML = html;
-  // Anything still wider than the screen (like بسم الله at big sizes) is made smaller to fit
-  sheet.querySelectorAll(".bs span, #sheet > span").forEach(el => {
-    const w = el.getBoundingClientRect().width, max = W * (el.parentNode === sheet ? 1 : 0.92);
-    if (w > max) el.style.fontSize = (parseFloat(getComputedStyle(el).fontSize) * max / w) + "px";
-  });
-  showMarks();
-  view.scrollTop = 0;
-  view.scrollLeft = 0;
-  $("nextp").style.visibility = page < 604 ? "visible" : "hidden";
-}
-
-function layout(){
-  if (ZOOMS[zi] !== 0) return layoutFlow();
+// keep = {fx, fy}: keep this point of the page (0..1) under the same place on the screen
+function layout(keep){
   const [f, , , lines, vk] = D.p[page-1];
   const view = $("view"), sheet = $("sheet");
   sheet.className = ""; sheet.style.cssText = "";
   const vw = view.clientWidth, vh = view.clientHeight;
   const pad = Math.min(16, vw * 0.03);
-  let W;
-  if (vw <= vh * 1.1) W = Math.min(vw - pad * 2, (vh - 8) / RATIO);
-  else W = Math.min(vw - pad * 2, 900);
+  const fitAll = vw <= vh * 1.1;
+  let W0;
+  if (fitAll) W0 = Math.min(vw - pad * 2, (vh - 8) / RATIO);
+  else W0 = Math.min(vw - pad * 2, 900);
+  const W = W0 * scale;
   const m = measure(page), nat = page <= 2 ? measure(3).max : Math.max(m.max, measure(3).max);
   const fs = 100 * W / nat;                 // full lines fill the width exactly
-  const rows = page <= 2 ? 15 : lines.length;
   const lh = W * RATIO / 15;
-  const fitAll = vw <= vh * 1.1;
-  view.classList.toggle("scroll", !fitAll);
+  const big = scale > 1.01 || !fitAll;
+  view.classList.toggle("scroll", big);
   sheet.style.width = W + "px";
   sheet.style.padding = (page <= 2 ? lh * 3 : 0) + "px 0";
-  sheet.style.marginTop = fitAll ? Math.max(0, (vh - lh * 15) / 2) + "px" : "8px";
+  sheet.style.marginTop = !big ? Math.max(0, (vh - lh * 15) / 2) + "px" : "8px";
+  // Wider than the screen: leave a little room on both sides
+  if (W + pad * 2 > vw) { sheet.style.marginLeft = pad + "px"; sheet.style.marginRight = pad + "px"; }
   const fam = fontName(f);
   let html = "";
   lines.forEach((l, i) => {
@@ -254,9 +230,17 @@ function layout(){
   });
   sheet.innerHTML = html;
   showMarks();
-  // Wide pages: start from the right side (start of the line)
-  view.scrollTop = 0;
-  view.scrollLeft = view.scrollWidth;
+  if (keep) {
+    // Keep the pinched point in the same place on the screen
+    view.scrollTop = 0; view.scrollLeft = view.scrollWidth;
+    const b = sheet.getBoundingClientRect(), vb = view.getBoundingClientRect();
+    view.scrollLeft += (b.right - keep.fx * b.width) - (vb.right - keep.sx);
+    view.scrollTop += (b.top + keep.fy * b.height) - (vb.top + keep.sy);
+  } else {
+    // A new page starts at the top, on the right side (start of the line)
+    view.scrollTop = 0;
+    view.scrollLeft = view.scrollWidth;
+  }
   $("nextp").style.visibility = page < 604 ? "visible" : "hidden";
 }
 
@@ -268,16 +252,23 @@ function toast(t){
   const l = $("toast"); l.textContent = t; l.style.display = "block";
   clearTimeout(toast.t); toast.t = setTimeout(() => l.style.display = "none", 1600);
 }
-function setZoom(d){
-  const z = Math.min(ZOOMS.length - 1, Math.max(0, zi + d));
-  if (z === zi) return;
-  zi = z; store.set("qzoom3", zi);
-  if (D) layout();
-  showLabel(zi ? "حجم الخط " + AR(zi) + " / " + AR(ZOOMS.length - 1) : "الصفحة كاملة");
+// Where the middle of the screen is on the page (0..1), to keep it there after a size change
+function focusPoint(cx, cy){
+  const v = $("view"), sh = $("sheet"), vb = v.getBoundingClientRect(), b = sh.getBoundingClientRect();
+  if (cx === undefined) { cx = vb.left + vb.width / 2; cy = vb.top + vb.height / 2; }
+  return {fx: (b.right - cx) / b.width, fy: (cy - b.top) / b.height, sx: vb.right - cx, sy: cy - vb.top};
 }
-$("zIn").onclick = e => { e.stopPropagation(); setZoom(1); };
-$("zOut").onclick = e => { e.stopPropagation(); setZoom(-1); };
-$("nextp").onclick = e => { e.stopPropagation(); go(page + 1); };
+function setScale(s2, keep){
+  s2 = Math.min(SMAX, Math.max(SMIN, Math.round(s2 * 100) / 100));
+  if (Math.abs(s2 - scale) < 0.01) { if (D) layout(keep); return; }
+  scale = s2; store.set("qscale", scale);
+  if (D) layout(keep || focusPoint());
+  showLabel(scale <= 1.01 ? "الصفحة كاملة" : "تكبير " + AR(Math.round(scale * 100)) + "٪");
+}
+const STEPS = [1, 1.25, 1.5, 1.75, 2, 2.5, 3, 3.5, 4];
+$("zIn").onclick = e => { e.stopPropagation(); setScale(STEPS.find(x => x > scale + 0.01) || SMAX); };
+$("zOut").onclick = e => { e.stopPropagation(); setScale([...STEPS].reverse().find(x => x < scale - 0.01) || SMIN); };
+$("nextp").onclick = e => { e.stopPropagation(); turn(1); };
 function go(p){ p = Math.min(604, Math.max(1, p)); if (p !== page) { page = p; render(); } }
 
 // ---- Night mode ----
@@ -290,21 +281,36 @@ function applyTheme(){
 $("bTheme").onclick = () => { theme = theme === "dark" ? "light" : "dark"; store.set("qtheme", theme); applyTheme(); };
 applyTheme();
 
-// ---- Bookmarks: on an ayah ----
-// Tap 🔖, then tap the ayah. Tap a marked ayah again (in mark mode) to remove it.
+// ---- Bookmarks ----
+// 🔖 opens the bookmarks panel: mark this page in one tap, or mark an ayah, and see all saved marks.
+// Press and hold on an ayah also marks it. A marked page shows a red ribbon; a marked ayah is highlighted.
+// Up to 10 marks, newest first. Each mark has its own ribbon color.
+const COLORS = ["#C0392B", "#0F6B4F", "#C9A227", "#2E6DB4", "#8E44AD"];
 let marking = false;
-function marks(){ try { return JSON.parse(store.get("qmarks", "[]")) || []; } catch(_) { return []; } }
+function marks(){ try { return (JSON.parse(store.get("qmarks", "[]")) || []).filter(x => x && x.p); } catch(_) { return []; } }
+function saveMarks(m){ store.set("qmarks", JSON.stringify(m.slice(0, 10))); }
 function ayaName(v){ const [s, a] = v.split(":"); return "سورة " + D.s[s-1][0] + " – الآية " + AR(a); }
-function markBtn(){ const m = marks()[0]; $("bMark").classList.toggle("on", marking || (!!m && m.p === page)); }
+function markName(x){ return x.v ? ayaName(x.v) : "سورة " + D.s[D.p[x.p-1][2]-1][0]; }
+function ago(t){
+  if (!t) return "";
+  const m = Math.round((Date.now() - t) / 60000);
+  if (m < 1) return "الآن"; if (m < 60) return "قبل " + AR(m) + " د";
+  const h = Math.round(m / 60); if (h < 24) return "قبل " + AR(h) + " س";
+  return "قبل " + AR(Math.round(h / 24)) + " يوم";
+}
+function markBtn(){ $("bMark").classList.toggle("on", marking || marks().some(x => x.p === page)); }
 function showMarks(){
   const sheet = $("sheet");
   sheet.querySelectorAll(".hl").forEach(e => e.remove());
-  sheet.querySelectorAll(".mk").forEach(e => e.classList.remove("mk"));
-  const m = marks()[0];
-  if (m && m.p === page && m.v && sheet.classList.contains("flow")) {
-    sheet.querySelectorAll(`span[data-v="${m.v}"]`).forEach(w => w.classList.add("mk"));
-  } else if (m && m.p === page && m.v) {
-    const base = sheet.getBoundingClientRect();
+  const mine = marks().filter(x => x.p === page);
+  // Ribbon hanging on the page (color of the newest mark on this page)
+  sheet.querySelectorAll(".rib").forEach(e => e.remove());
+  if (mine.length) {
+    const c = COLORS[(mine[0].c || 0) % COLORS.length];
+    sheet.insertAdjacentHTML("beforeend", `<svg class="rib" viewBox="0 0 26 58" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0h26v58l-13-10L0 58z" fill="${c}"/><path d="M5 0h16v49l-8-6-8 6z" fill="rgba(255,255,255,.18)"/></svg>`);
+  }
+  const base = sheet.getBoundingClientRect();
+  mine.filter(x => x.v).forEach(m => {
     sheet.querySelectorAll(".ln").forEach(ln => {
       const ws = [...ln.querySelectorAll(`span[data-v="${m.v}"]`)];
       if (!ws.length) return;
@@ -315,36 +321,52 @@ function showMarks(){
       d.style.cssText = `left:${l - base.left - 3}px;width:${r - l + 6}px;top:${ln.offsetTop + h * 0.08}px;height:${h * 0.84}px`;
       sheet.appendChild(d);
     });
-  }
+  });
   markBtn();
+}
+function nextColor(){ const m = marks(); return m.length ? ((m[0].c || 0) + 1) % COLORS.length : 0; }
+function addMark(v){
+  let m = marks();
+  const same = m.find(x => x.p === page && (x.v || "") === (v || ""));
+  if (same) { saveMarks(m.filter(x => x !== same)); toast("حُذفت العلامة"); }
+  else { m.unshift({p: page, v: v || "", t: Date.now(), c: nextColor()}); saveMarks(m); toast("🔖 " + (v ? ayaName(v) : "صفحة " + AR(page))); }
+  showMarks();
 }
 function setMarking(on){
   marking = on; $("view").classList.toggle("marking", on); markBtn();
-  if (on) toast("اضغط على الآية التي وقفت عندها");
+  if (on) toast("اضغط على الآية");
 }
-$("bMark").onclick = () => setMarking(!marking);
-function setMark(v){
-  // One bookmark, like the ribbon of a paper mushaf: it moves to the new ayah
-  const old = marks()[0];
-  if (old && old.v === v) { store.set("qmarks", "[]"); toast("حُذفت العلامة"); }
-  else { store.set("qmarks", JSON.stringify([{p: page, v, t: Date.now()}])); toast("🔖 " + ayaName(v)); }
-  setMarking(false);
-  showMarks();
+function fillMarks(el){
+  const m = marks();
+  el.innerHTML = m.length ? m.map((x, i) => `<div class="bm" data-p="${x.p}"><span class="rb" style="background:${COLORS[(x.c || 0) % COLORS.length]}"></span><span class="tx"><b>${markName(x)}</b><small>صفحة ${AR(x.p)} · ج${AR(D.p[x.p-1][1])} · ${ago(x.t)}</small></span><button class="x" data-del="${i}" aria-label="حذف">✕</button></div>`).join("")
+    : `<div class="empty" style="color:#888;text-align:center;padding:18px 8px;line-height:1.8">لا توجد علامات بعد.<br>اضغط «ضع علامة على هذه الصفحة»، أو اضغط مطولاً على الآية.</div>`;
 }
-// Tap 🔖 then the ayah, or just press and hold on the ayah
+function openMarks(){ fillMarks($("mlist")); $("mpanel").hidden = false; }
+$("bMark").onclick = () => { if (marking) { setMarking(false); return; } openMarks(); };
+$("mClose").onclick = () => $("mpanel").hidden = true;
+$("mpanel").addEventListener("click", e => {
+  if (e.target.id === "mpanel") { $("mpanel").hidden = true; return; }
+  const d = e.target.closest("[data-del]");
+  if (d) { e.stopPropagation(); const m = marks(); m.splice(+d.dataset.del, 1); saveMarks(m); fillMarks($("mlist")); showMarks(); return; }
+  const row = e.target.closest(".bm"); if (row) { $("mpanel").hidden = true; go(+row.dataset.p); }
+});
+$("mPage").onclick = () => { $("mpanel").hidden = true; addMark(""); };
+$("mAyah").onclick = () => { $("mpanel").hidden = true; setMarking(true); };
+// Mark mode: tap the ayah
 $("view").addEventListener("click", e => {
   if (!marking) return;
   const w = e.target.closest("span[data-v]");
-  if (!w) { setMarking(false); return; }
-  setMark(w.dataset.v);
+  setMarking(false);
+  if (w) addMark(w.dataset.v);
 });
+// Or press and hold on the ayah
 let holdT = null, hx = 0, hy = 0;
 $("view").addEventListener("touchstart", e => {
   const w = e.target.closest("span[data-v]");
   clearTimeout(holdT);
   if (!w || e.touches.length > 1) return;
   hx = e.touches[0].clientX; hy = e.touches[0].clientY;
-  holdT = setTimeout(() => { holdT = null; try { navigator.vibrate && navigator.vibrate(30); } catch(_){} marking = false; setMark(w.dataset.v); }, 550);
+  holdT = setTimeout(() => { holdT = null; try { navigator.vibrate && navigator.vibrate(30); } catch(_){} marking = false; addMark(w.dataset.v); }, 550);
 }, {passive:true});
 $("view").addEventListener("touchmove", e => { if (holdT && Math.hypot(e.touches[0].clientX - hx, e.touches[0].clientY - hy) > 10) { clearTimeout(holdT); holdT = null; } }, {passive:true});
 $("view").addEventListener("touchend", () => { clearTimeout(holdT); holdT = null; }, {passive:true});
@@ -359,35 +381,152 @@ function fillList(){
   else if (tab === "j") {
     const first = {}; D.p.forEach((x, i) => { if (!first[x[1]]) first[x[1]] = i + 1; });
     html = Object.keys(first).map(j => `<div class="s" data-p="${first[j]}"><span>الجزء ${AR(j)}</span><span>صفحة ${AR(first[j])}</span></div>`).join("");
-  } else {
-    const m = marks().slice(0, 1);
-    html = m.length ? m.map(x => `<div class="s" data-p="${x.p}"><span>🔖 ${x.v ? ayaName(x.v) : "سورة " + D.s[D.p[x.p-1][2]-1][0]}</span><span>صفحة ${AR(x.p)} <button class="x" data-del="${x.v || x.p}">✕</button></span></div>`).join("")
-      : `<div class="empty">لا توجد علامة.<br>اضغط مطولاً على الآية التي وقفت عندها،<br>أو اضغط 🔖 ثم اضغط على الآية.</div>`;
-  }
+  } else { fillMarks($("slist")); return; }
   $("slist").innerHTML = html;
 }
 $("tabs").onclick = e => { const b = e.target.closest("button"); if (b) { tab = b.dataset.t; fillList(); } };
 $("slist").addEventListener("click", e => {
   const d = e.target.closest("[data-del]");
-  if (d) { e.stopPropagation(); const k = d.dataset.del; store.set("qmarks", JSON.stringify(marks().filter(x => (x.v || String(x.p)) !== k))); fillList(); showMarks(); return; }
-  const r = e.target.closest(".s"); if (r) { go(+r.dataset.p); $("list").hidden = true; }
+  if (d) { e.stopPropagation(); const m = marks(); m.splice(+d.dataset.del, 1); saveMarks(m); fillList(); showMarks(); return; }
+  const r = e.target.closest(".s,.bm"); if (r) { go(+r.dataset.p); $("list").hidden = true; }
 });
 
-// ---- Turning pages ----
-// Swipe right for the next page, left for the previous, like a paper mushaf
-let x0 = null, y0 = null, moved = false;
-addEventListener("touchstart", e => { if (e.touches.length > 1) { x0 = null; return; } x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; moved = false; }, {passive:true});
-addEventListener("touchmove", () => { moved = true; }, {passive:true});
+// ---- Turning pages, like a paper book ----
+// Swipe right = next page (the page lifts from its left edge and turns over to the right),
+// swipe left = previous page. The page follows the finger; let go early and it falls back.
+// When the page is zoomed, the finger first moves the page; at its edge, the next swipe turns it.
+// Two fingers = zoom in / out (the lines never break).
+const view = $("view");
+let T = null;   // current touch: {x0, y0, mode: "?"|"turn"|"pan"|"pinch", ...}
+function edge(){
+  // At which side the zoomed page is fully shown (RTL scroll: 0 = right edge)
+  const max = view.scrollWidth - view.clientWidth;
+  if (max <= 2) return {left: true, right: true};
+  const sl = Math.abs(view.scrollLeft);
+  return {right: sl <= 2, left: sl >= max - 2};
+}
+function makeLeaf(dir){
+  // A picture of the page now on screen, put over it
+  const vb = view.getBoundingClientRect(), sb = $("sheet").getBoundingClientRect();
+  const box = document.createElement("div"); box.id = "turnbox";
+  box.style.cssText = `left:${vb.left}px;top:${vb.top}px;width:${view.clientWidth}px;height:${view.clientHeight}px`;
+  const leaf = document.createElement("div"); leaf.id = "leaf";
+  leaf.style.transformOrigin = dir > 0 ? "right center" : "left center";
+  const front = document.createElement("div"); front.className = "face";
+  // The real page moves into the leaf (not a copy): the finger's touch stays on it while the
+  // new page is drawn in a fresh sheet under it
+  const copy = $("sheet"); copy.removeAttribute("id"); copy.className = "scopy";
+  const fresh = document.createElement("div"); fresh.id = "sheet";
+  view.insertBefore(fresh, $("nextp"));
+  copy.style.position = "absolute"; copy.style.margin = "0";
+  copy.style.left = (sb.left - vb.left) + "px"; copy.style.top = (sb.top - vb.top) + "px";
+  front.appendChild(copy);
+  const shade = document.createElement("div"); shade.className = "shade"; front.appendChild(shade);
+  const back = document.createElement("div"); back.className = "face back";
+  leaf.appendChild(front); leaf.appendChild(back);
+  const under = document.createElement("div"); under.id = "under";
+  box.appendChild(under); box.appendChild(leaf);
+  document.body.appendChild(box);
+  return {leaf, shade, under, box};
+}
+function setTurn(t, p){
+  // p: 0 (flat) .. 1 (turned over)
+  const a = Math.max(0, Math.min(1, p)) * 180 * t.dir;
+  t.el.leaf.style.transform = `rotateY(${a}deg)`;
+  const k = Math.sin(Math.min(1, p) * Math.PI);
+  t.el.shade.style.background = `linear-gradient(${t.dir > 0 ? 270 : 90}deg, rgba(0,0,0,${0.35 * k}), rgba(0,0,0,0) 60%)`;
+  t.el.under.style.opacity = String(0.25 * (1 - Math.min(1, p)));
+}
+let lastTurn = null;
+function endTurn(t, done){
+  if (t.ending) return; t.ending = true;
+  const from = t.p, to = done ? 1 : 0, start = performance.now(), dur = 260 * Math.abs(to - from) + 60;
+  const step = now => {
+    const k = Math.min(1, (now - start) / dur), e = 1 - Math.pow(1 - k, 3);
+    setTurn(t, from + (to - from) * e);
+    if (k < 1) return requestAnimationFrame(step);
+    if (!done) { page = t.from; render(); }
+    t.el.box.remove();
+  };
+  requestAnimationFrame(step);
+}
+function startTurn(dir){
+  const to = page + dir;
+  if (to < 1 || to > 604) return null;
+  const el = makeLeaf(dir);
+  const t = {dir, from: page, el, p: 0};
+  lastTurn = t;
+  page = to; render();
+  return t;
+}
+// Buttons and arrow keys also turn the page
+function turn(dir){
+  if (lastTurn && !lastTurn.ending) endTurn(lastTurn, true);
+  const t = startTurn(dir); if (t) endTurn(t, true);
+}
+view.addEventListener("touchstart", e => {
+  // A turn left half-way (touch lost): finish it now
+  if (lastTurn && !lastTurn.ending && !(T && T.mode === "turn")) endTurn(lastTurn, lastTurn.p > 0.25);
+  if (!$("list").hidden || marking) { T = null; return; }
+  if (e.touches.length === 2) {
+    const [a, b] = e.touches;
+    const cx = (a.clientX + b.clientX) / 2, cy = (a.clientY + b.clientY) / 2;
+    T = {mode: "pinch", d0: Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY), s0: scale, keep: focusPoint(cx, cy), cx, cy};
+    $("sheet").style.transformOrigin = `${cx - $("sheet").getBoundingClientRect().left}px ${cy - $("sheet").getBoundingClientRect().top}px`;
+    return;
+  }
+  if (e.touches.length > 2) { T = null; return; }
+  T = {mode: "?", x0: e.touches[0].clientX, y0: e.touches[0].clientY, ed: edge()};
+}, {passive: true});
+// Move and end are listened on the whole window: the page under the finger is redrawn while turning
+addEventListener("touchmove", e => {
+  if (!T) return;
+  if (T.mode === "pinch") {
+    if (e.touches.length < 2) return;
+    e.preventDefault();
+    const [a, b] = e.touches;
+    const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+    T.s = Math.min(SMAX, Math.max(SMIN, T.s0 * d / T.d0));
+    $("sheet").style.transform = `scale(${T.s / T.s0})`;
+    return;
+  }
+  const x = e.touches[0].clientX, y = e.touches[0].clientY, dx = x - T.x0, dy = y - T.y0;
+  if (T.mode === "?") {
+    if (Math.hypot(dx, dy) < 12) return;
+    const horiz = Math.abs(dx) > Math.abs(dy) * 1.3;
+    const dir = dx > 0 ? 1 : -1;
+    // Zoomed: turn only from the edge of the page, else the finger moves the page
+    const atEdge = dir > 0 ? T.ed.left : T.ed.right;
+    if (horiz && atEdge && !(lastTurn && !lastTurn.ending)) {
+      const t = startTurn(dir);
+      if (!t) { T.mode = "pan"; return; }
+      T.mode = "turn"; T.t = t; T.x0 = x;
+    } else { T.mode = "pan"; return; }
+  }
+  if (T.mode === "turn") {
+    e.preventDefault();
+    T.t.p = Math.max(0, Math.min(1, (x - T.x0) * T.t.dir / (view.clientWidth * 0.9)));
+    setTurn(T.t, T.t.p);
+  }
+}, {passive: false});
 addEventListener("touchend", e => {
-  if (x0 === null) return;
-  const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
-  const v = $("view"), wide = v.scrollWidth > v.clientWidth + 2;
-  if ($("list").hidden && !wide && Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) { go(page + (dx > 0 ? 1 : -1)); }
-  x0 = null;
+  if (!T) return;
+  if (T.mode === "pinch") {
+    if (e.touches.length) return;
+    $("sheet").style.transform = ""; $("sheet").style.transformOrigin = "";
+    if (T.s) setScale(T.s, T.keep);
+    T = null; return;
+  }
+  if (T.mode === "turn") {
+    const dx = e.changedTouches[0].clientX - T.x0;
+    endTurn(T.t, T.t.p > 0.25 || Math.abs(dx) > 90);
+  }
+  T = null;
 });
-addEventListener("keydown", e => { if (e.key === "ArrowLeft") go(page + 1); if (e.key === "ArrowRight") go(page - 1); });
-$("bNext").onclick = () => go(page + 1);
-$("bPrev").onclick = () => go(page - 1);
+addEventListener("touchcancel", () => { if (T && T.mode === "turn") endTurn(T.t, T.t.p > 0.5); if (T && T.mode === "pinch") { $("sheet").style.transform = ""; } T = null; });
+addEventListener("keydown", e => { if (e.key === "ArrowLeft") turn(1); if (e.key === "ArrowRight") turn(-1); });
+$("bNext").onclick = () => turn(1);
+$("bPrev").onclick = () => turn(-1);
 $("bList").onclick = () => { fillList(); $("list").hidden = false; };
 $("close").onclick = () => $("list").hidden = true;
 // Turning the phone: redraw to fit the new screen

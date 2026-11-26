@@ -130,6 +130,24 @@ object Alerts {
         c.getSharedPreferences("aqrab", Context.MODE_PRIVATE).edit().putString("tone", t.name).apply()
 
     /**
+     * Notification body like the "Al-Moazin" app: Hijri date on top, a big live countdown
+     * next to the prayer and its adhan time, and the iqama (or a note) under it.
+     * [target] is the time the countdown goes to; [left] says what it counts to.
+     */
+    private fun countdownViews(c: Context, prayer: Prayer, adhan: Long, target: Long, left: String, sub: String): android.widget.RemoteViews {
+        val v = android.widget.RemoteViews(c.packageName, R.layout.notif_countdown)
+        val now = System.currentTimeMillis()
+        val day = java.text.SimpleDateFormat("EEEE", L.locale).format(java.util.Date(now))
+        v.setTextViewText(R.id.nDate, "$day ${PrayerCalc.hijriText(now)}  ·  $left")
+        v.setTextViewText(R.id.nPrayer, L.t("${prayer.ar} ${PrayerCalc.fmtTime(adhan)}", "${prayer.ar} ${PrayerCalc.fmtTime(adhan)}"))
+        v.setTextViewText(R.id.nSub, sub)
+        val base = android.os.SystemClock.elapsedRealtime() + (target - now)
+        v.setChronometer(R.id.nChrono, base, null, true)
+        v.setChronometerCountDown(R.id.nChrono, true)
+        return v
+    }
+
+    /**
      * 30 minutes before adhan: a quiet notification with a live countdown to the adhan.
      * At adhan it is replaced by the adhan alert, whose countdown goes on to the iqama.
      */
@@ -156,6 +174,13 @@ object Alerts {
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setContentIntent(open)
             .setTimeoutAfter(adhan - now + 60_000)
+            .apply {
+                val v = countdownViews(c, prayer, adhan, adhan, L.t("متبقي للأذان", "to adhan"),
+                    L.t("الإقامة ${PrayerCalc.fmtTime(iqama)}", "Iqama ${PrayerCalc.fmtTime(iqama)}"))
+                setStyle(NotificationCompat.DecoratedCustomViewStyle())
+                setCustomContentView(v)
+                setCustomBigContentView(v)
+            }
             .build()
         try { NotificationManagerCompat.from(c).notify(300, n) } catch (_: SecurityException) {}
     }
@@ -314,6 +339,17 @@ object Alerts {
                 .setUsesChronometer(true)
                 .setChronometerCountDown(true)
                 .setSubText(L.t("متبقي للإقامة", "to iqama"))
+                .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+                .also {
+                    val v = countdownViews(c, prayer, adhan, iqama, L.t("متبقي للإقامة", "to iqama"),
+                        L.t("الإقامة ${PrayerCalc.fmtTime(iqama)}", "Iqama ${PrayerCalc.fmtTime(iqama)}") +
+                            (if (nearest != null) "  ·  🕌 " + nearest.name else ""))
+                    it.setCustomContentView(v)
+                    // Expanded: same countdown, with the short reminder for this prayer under it
+                    val big = countdownViews(c, prayer, adhan, iqama, L.t("متبقي للإقامة", "to iqama"), phoneText ?: text)
+                    big.setInt(R.id.nSub, "setMaxLines", 6)
+                    it.setCustomBigContentView(big)
+                }
                 // Remove the alert a few minutes after iqama
                 .setTimeoutAfter(iqama - now + 5 * MIN)
         } else {
