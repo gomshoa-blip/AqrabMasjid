@@ -62,6 +62,8 @@ class RadioService : Service() {
         fun station(id: String?): Station? = STATIONS.firstOrNull { it.id == id }
 
         fun play(c: Context, id: String) {
+            // Phone radio starts: stop the car-screen radio so both don't play
+            runCatching { RadioCarService.pauseCar() }
             current = id
             status = Status.LOADING
             val i = Intent(c, RadioService::class.java).setAction(ACTION_PLAY).putExtra("id", id)
