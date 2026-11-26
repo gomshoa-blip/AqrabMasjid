@@ -292,7 +292,7 @@
                 android:layout_height="76dp"
                 android:layout_marginStart="10dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_tile"
+                android:background="@drawable/bg_btn_jami_outline"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center_vertical"
@@ -303,14 +303,14 @@
                 <FrameLayout
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:background="@drawable/bg_icon_tile">
+                    android:background="@drawable/bg_icon_jami">
 
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_dome"
-                        android:tint="@color/icon" />
+                        android:tint="@color/jami_gold" />
                 </FrameLayout>
 
                 <TextView
@@ -320,7 +320,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:text="أقرب جامع"
-                    android:textColor="@color/text_primary"
+                    android:textColor="@color/jami_gold"
                     android:textSize="17sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -381,111 +381,139 @@
 
         </LinearLayout>
 
-        <!-- Audio player bar (radio): two stations + big Play/Stop, live dot -->
+        <!-- Radio player card: station name, previous / play-stop / next, live dot -->
         <LinearLayout
             android:id="@+id/radioBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
             android:background="@drawable/bg_radio_bar"
+            android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
             android:paddingTop="10dp"
-            android:paddingBottom="10dp">
+            android:paddingBottom="12dp">
 
+            <!-- Top: "Radio" + live dot -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <LinearLayout
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_radio"
+                    android:tint="#F6D46B" />
+
+                <TextView
+                    android:id="@+id/radioLabel"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="horizontal">
+                    android:layout_marginStart="6dp"
+                    android:text="إذاعة"
+                    android:textColor="#F6D46B"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/radioStatusRow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <View
+                        android:id="@+id/radioDot"
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:layout_marginEnd="6dp"
+                        android:background="@drawable/dot_live" />
 
                     <TextView
-                        android:id="@+id/radioMakkah"
-                        android:layout_width="0dp"
-                        android:layout_height="56dp"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="8dp"
-                        android:background="@drawable/bg_station_off"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center"
-                        android:maxLines="2"
-                        android:paddingStart="6dp"
-                        android:paddingEnd="6dp"
-                        android:text="إذاعة القرآن الكريم"
-                        android:textColor="#FFFFFF"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-                    <TextView
-                        android:id="@+id/radioMadinah"
-                        android:layout_width="0dp"
-                        android:layout_height="56dp"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="8dp"
-                        android:background="@drawable/bg_station_off"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center"
-                        android:maxLines="2"
-                        android:paddingStart="6dp"
-                        android:paddingEnd="6dp"
-                        android:text="إذاعة السنة"
-                        android:textColor="#FFFFFF"
-                        android:textSize="14sp"
+                        android:id="@+id/radioStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#E6F2EC"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
                 </LinearLayout>
+            </LinearLayout>
 
-                <!-- Big Play / Stop -->
+            <!-- Station name, big -->
+            <TextView
+                android:id="@+id/radioName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:maxLines="2"
+                android:textColor="#FFFFFF"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <!-- Controls: previous, play/stop, next -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <FrameLayout
+                    android:id="@+id/radioPrev"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_round_glass"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_chev_prev"
+                        android:tint="#FFFFFF" />
+                </FrameLayout>
+
                 <FrameLayout
                     android:id="@+id/radioPlay"
-                    android:layout_width="68dp"
-                    android:layout_height="68dp"
-                    android:layout_marginStart="4dp"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
                     android:background="@drawable/bg_play_big"
                     android:clickable="true"
                     android:focusable="true">
 
                     <ImageView
                         android:id="@+id/radioPlayIcon"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_play"
                         android:tint="#0A4A37" />
                 </FrameLayout>
-            </LinearLayout>
 
-            <!-- Status: red dot + "Live" while playing -->
-            <LinearLayout
-                android:id="@+id/radioStatusRow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:visibility="gone">
+                <FrameLayout
+                    android:id="@+id/radioNext"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_round_glass"
+                    android:clickable="true"
+                    android:focusable="true">
 
-                <View
-                    android:id="@+id/radioDot"
-                    android:layout_width="8dp"
-                    android:layout_height="8dp"
-                    android:layout_marginEnd="6dp"
-                    android:background="@drawable/dot_live" />
-
-                <TextView
-                    android:id="@+id/radioStatus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#E6F2EC"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
+                    <ImageView
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_chev_next"
+                        android:tint="#FFFFFF" />
+                </FrameLayout>
             </LinearLayout>
         </LinearLayout>
         </LinearLayout>

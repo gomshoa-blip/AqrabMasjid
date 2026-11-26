@@ -15,4 +15,6 @@
     <color name="icon">#7FD3AE</color>
     <color name="car_panel">#111B16</color>
     <color name="card_border">#C9A227</color>
+    <!-- "Nearest Jami" outline button: gold text and border -->
+    <color name="jami_gold">#F6D46B</color>
 </resources>

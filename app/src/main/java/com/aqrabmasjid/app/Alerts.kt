@@ -26,21 +26,24 @@ import com.aqrabmasjid.app.car.MasjidCarAppService
  */
 object Alerts {
     // New channel id: Android does not allow changing the sound of an existing channel
-    const val CHANNEL = "prayer_alerts_v2"
+    const val CHANNEL = "prayer_soft_v3"
+    const val PRE_CHANNEL = "prayer_pre_v1"
     private const val OLD_CHANNEL = "prayer_alerts"
     const val ACTION_SHOW_MOSQUES = "com.aqrabmasjid.app.SHOW_MOSQUES"
     private const val MIN = 60_000L
+    /** Minutes before adhan when the countdown notification appears. */
+    const val PRE_MIN = 30
 
     /** Alert sound the user picks. Android fixes the sound per channel, so each choice has its own channel. */
     enum class Tone(val channel: String, val ar: String, val en: String, val raw: Int?) {
-        SOFT("prayer_alerts_v2", "نغمة هادئة", "Soft chime", R.raw.prayer_chime),
-        BELL("prayer_bell_v1", "جرس (نغمتين)", "Bell (two notes)", R.raw.prayer_bell),
-        BELL1("prayer_bell1_v1", "جرس واحد", "Single bell", R.raw.tone_bell1),
-        CHIME3("prayer_chime3_v1", "ثلاث نغمات صاعدة", "Three rising chimes", R.raw.tone_chime3),
-        WOOD("prayer_wood_v1", "نغمة خشبية", "Wooden tones", R.raw.tone_wood),
-        DIGITAL("prayer_digital_v1", "تنبيه رقمي", "Digital beep", R.raw.tone_digital),
-        VIBRATE("prayer_vibrate_v1", "اهتزاز فقط", "Vibrate only", null),
-        SILENT("prayer_silent_v1", "صامت (بدون صوت واهتزاز)", "Silent", null),
+        SOFT("prayer_soft_v3", "نغمة هادئة", "Soft chime", R.raw.prayer_chime),
+        BELL("prayer_bell_v3", "جرس (نغمتين)", "Bell (two notes)", R.raw.prayer_bell),
+        BELL1("prayer_bell1_v3", "جرس واحد", "Single bell", R.raw.tone_bell1),
+        CHIME3("prayer_chime3_v3", "ثلاث نغمات صاعدة", "Three rising chimes", R.raw.tone_chime3),
+        WOOD("prayer_wood_v3", "نغمة خشبية", "Wooden tones", R.raw.tone_wood),
+        DIGITAL("prayer_digital_v3", "تنبيه رقمي", "Digital beep", R.raw.tone_digital),
+        VIBRATE("prayer_vibrate_v3", "اهتزاز فقط", "Vibrate only", null),
+        SILENT("prayer_silent_v3", "صامت (بدون صوت واهتزاز)", "Silent", null),
         // A sound the user picked from the phone. Its channel id changes with each new sound.
         CUSTOM("", "نغمة من جهازي", "From my phone", null);
         val label: String get() = L.t(ar, en)
@@ -49,16 +52,28 @@ object Alerts {
     fun createChannel(c: Context) {
         val nm = c.getSystemService(NotificationManager::class.java)
         nm.deleteNotificationChannel(OLD_CHANNEL)
-        nm.deleteNotificationChannel("prayer_gong_v1")
+        // Old channels (they showed a number on the app icon)
+        for (old in listOf("prayer_gong_v1", "prayer_alerts_v2", "prayer_bell_v1", "prayer_bell1_v1", "prayer_chime3_v1",
+                "prayer_wood_v1", "prayer_digital_v1", "prayer_vibrate_v1", "prayer_silent_v1"))
+            nm.deleteNotificationChannel(old)
+        // Quiet channel for the "adhan soon" countdown (30 minutes before adhan)
+        nm.createNotificationChannel(NotificationChannel(PRE_CHANNEL, L.t("العد التنازلي للأذان", "Countdown to adhan"),
+            NotificationManager.IMPORTANCE_LOW).apply { setSound(null, null); enableVibration(false); setShowBadge(false) })
         val attrs = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_NOTIFICATION)
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
             .build()
         // The user's own sound
         val cu = customUri(c)
-        val cid = sp(c).getString("custom_ch", null)
+        var cid = sp(c).getString("custom_ch", null)
+        if (cid != null && !cid.endsWith("_nb")) {   // made before badges were turned off
+            nm.deleteNotificationChannel(cid)
+            cid = "prayer_custom_" + System.currentTimeMillis() + "_nb"
+            sp(c).edit().putString("custom_ch", cid).apply()
+        }
         if (cu != null && cid != null) {
             val ch = NotificationChannel(cid, L.t("تنبيه الصلاة - نغمة من جهازي", "Prayer alerts - my sound"), NotificationManager.IMPORTANCE_HIGH)
+            ch.setShowBadge(false)
             ch.setSound(cu, attrs)
             ch.enableVibration(true)
             ch.vibrationPattern = longArrayOf(0, 250, 150, 250)
@@ -69,6 +84,7 @@ object Alerts {
             val ch = NotificationChannel(t.channel, L.t("تنبيه الصلاة - ${t.ar}", "Prayer alerts - ${t.en}"),
                 if (t == Tone.SILENT) NotificationManager.IMPORTANCE_DEFAULT else NotificationManager.IMPORTANCE_HIGH)
             ch.description = L.t("تنبيه عند الأذان، وبعده بـ 10 دقائق للإقامة", "Alert at adhan, and 10 minutes later for iqama")
+            ch.setShowBadge(false)
             if (t.raw != null) ch.setSound(soundUri(c, t.raw), attrs) else ch.setSound(null, null)
             ch.enableVibration(t != Tone.SILENT)
             if (t != Tone.SILENT) ch.vibrationPattern = longArrayOf(0, 250, 150, 250)
@@ -88,7 +104,7 @@ object Alerts {
         sp(c).edit()
             .putString("custom_uri", uri.toString())
             .putString("custom_name", name)
-            .putString("custom_ch", "prayer_custom_" + System.currentTimeMillis())
+            .putString("custom_ch", "prayer_custom_" + System.currentTimeMillis() + "_nb")
             .putString("tone", Tone.CUSTOM.name)
             .apply()
         createChannel(c)
@@ -112,6 +128,37 @@ object Alerts {
 
     fun setTone(c: Context, t: Tone) =
         c.getSharedPreferences("aqrab", Context.MODE_PRIVATE).edit().putString("tone", t.name).apply()
+
+    /**
+     * 30 minutes before adhan: a quiet notification with a live countdown to the adhan.
+     * At adhan it is replaced by the adhan alert, whose countdown goes on to the iqama.
+     */
+    private fun showPre(c: Context, prayer: Prayer, adhan: Long, iqama: Long) {
+        val now = System.currentTimeMillis()
+        if (adhan <= now) return
+        val open = PendingIntent.getActivity(
+            c, 202, Intent(c, MainActivity::class.java),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val n = NotificationCompat.Builder(c, PRE_CHANNEL)
+            .setSmallIcon(R.drawable.ic_stat_mosque)
+            .setContentTitle(L.t("${prayer.ar} · الأذان ${PrayerCalc.fmtTime(adhan)}", "${prayer.ar} · Adhan ${PrayerCalc.fmtTime(adhan)}"))
+            .setContentText(L.t("الإقامة ${PrayerCalc.fmtTime(iqama)}", "Iqama ${PrayerCalc.fmtTime(iqama)}"))
+            .setSubText(L.t("متبقي للأذان", "to adhan"))
+            .setWhen(adhan)
+            .setShowWhen(true)
+            .setUsesChronometer(true)
+            .setChronometerCountDown(true)
+            .setOnlyAlertOnce(true)
+            .setSilent(true)
+            .setNumber(0)
+            .setBadgeIconType(NotificationCompat.BADGE_ICON_NONE)
+            .setCategory(NotificationCompat.CATEGORY_REMINDER)
+            .setContentIntent(open)
+            .setTimeoutAfter(adhan - now + 60_000)
+            .build()
+        try { NotificationManagerCompat.from(c).notify(300, n) } catch (_: SecurityException) {}
+    }
 
     /** Friday Dhuhr = Jumuah: there is a khutbah, so no iqama alert. */
     private fun isJumuah(t: PrayerTime): Boolean {
@@ -137,9 +184,13 @@ object Alerts {
         val now = System.currentTimeMillis()
         data class Ev(val at: Long, val type: String, val t: PrayerTime)
         val events = PrayerCalc.upcoming(app, lat, lng, now).flatMap {
-            val evs = mutableListOf(Ev(it.adhan, "adhan", it))
+            val evs = mutableListOf(Ev(it.adhan - PRE_MIN * MIN, "pre", it), Ev(it.adhan, "adhan", it))
             if (!isJumuah(it)) evs += Ev(it.adhan + Config.IQAMA_ALERT_AFTER_MIN * MIN, "iqama", it)
             evs
+        }
+        // Already inside the 30 minutes before adhan (app just opened): show the countdown now
+        events.firstOrNull { it.type == "pre" && now >= it.at && now < it.t.adhan }?.let {
+            L.init(app); createChannel(app); showPre(app, it.t.prayer, it.t.adhan, it.t.iqama)
         }
         val next = events.filter { it.at > now + 5_000 }.minByOrNull { it.at } ?: return
 
@@ -161,6 +212,7 @@ object Alerts {
         ) return
         L.init(c)
         createChannel(c)
+        if (type == "pre") { showPre(c, prayer, adhan, iqama); return }
 
         val title = if (type == "iqama") {
             val left = ((iqama - System.currentTimeMillis()) / MIN).toInt()
@@ -207,6 +259,7 @@ object Alerts {
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setContentIntent(phonePending)
             .setAutoCancel(true)
+            .setBadgeIconType(NotificationCompat.BADGE_ICON_NONE)
             .extend(car)
 
         // Live countdown to iqama (the clock in the alert counts down by itself).

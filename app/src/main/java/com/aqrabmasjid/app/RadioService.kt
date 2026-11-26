@@ -32,7 +32,7 @@ class RadioService : Service() {
     enum class Status { OFF, LOADING, PLAYING, PAUSED, ERROR }
 
     companion object {
-        const val CHANNEL = "radio_v1"
+        const val CHANNEL = "radio_v2"
         private const val NOTIF_ID = 500
         const val ACTION_PLAY = "com.aqrabmasjid.app.RADIO_PLAY"
         const val ACTION_STOP = "com.aqrabmasjid.app.RADIO_STOP"
@@ -168,6 +168,8 @@ class RadioService : Service() {
         if (nm.getNotificationChannel(CHANNEL) == null) {
             val ch = NotificationChannel(CHANNEL, L.t("الإذاعة", "Radio"), NotificationManager.IMPORTANCE_LOW)
             ch.setSound(null, null)
+            ch.setShowBadge(false)
+            nm.deleteNotificationChannel("radio_v1")
             nm.createNotificationChannel(ch)
         }
         fun svc(action: String, code: Int) = PendingIntent.getService(

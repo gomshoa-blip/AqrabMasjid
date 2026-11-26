@@ -136,8 +136,8 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.btnPrivacy).setOnClickListener { openUrl(Config.PRIVACY_URL) }
         findViewById<View>(R.id.tileRadio).setOnClickListener { radioDialog() }
         // Audio player bar: pick a station, big button plays / stops
-        findViewById<View>(R.id.radioMakkah).setOnClickListener { radioSelect("quran") }
-        findViewById<View>(R.id.radioMadinah).setOnClickListener { radioSelect("sunnah") }
+        findViewById<View>(R.id.radioPrev).setOnClickListener { radioStep(-1) }
+        findViewById<View>(R.id.radioNext).setOnClickListener { radioStep(1) }
         findViewById<View>(R.id.radioPlay).setOnClickListener {
             if (RadioService.current != null && !RadioService.paused) RadioService.stop(this)
             else RadioService.play(this, radioSel())
@@ -551,7 +551,14 @@ class MainActivity : Activity() {
     /** Station chosen in the player bar (saved). */
     private fun radioSel(): String = getSharedPreferences("aqrab", MODE_PRIVATE).getString("radio_sel", "quran") ?: "quran"
 
-    /** Tap a station: select it; if the radio is on, switch to it right away. */
+    /** Previous / next station; if the radio is on, switch to it right away. */
+    private fun radioStep(d: Int) {
+        val list = RadioService.STATIONS
+        val cur = list.indexOfFirst { it.id == (RadioService.current ?: radioSel()) }.coerceAtLeast(0)
+        radioSelect(list[(cur + d + list.size) % list.size].id)
+    }
+
+    /** Select a station; if the radio is on, switch to it right away. */
     private fun radioSelect(id: String) {
         getSharedPreferences("aqrab", MODE_PRIVATE).edit().putString("radio_sel", id).apply()
         if (RadioService.current != null && RadioService.current != id) RadioService.play(this, id)
@@ -561,14 +568,7 @@ class MainActivity : Activity() {
     private fun showRadioBar() {
         val cur = RadioService.current
         val sel = cur ?: radioSel()
-        fun station(viewId: Int, id: String) {
-            val v = findViewById<TextView>(viewId) ?: return
-            val active = sel == id
-            v.setBackgroundResource(if (active) R.drawable.bg_station_on else R.drawable.bg_station_off)
-            v.setTextColor(android.graphics.Color.parseColor(if (active) "#0A4A37" else "#FFFFFF"))
-        }
-        station(R.id.radioMakkah, "quran")
-        station(R.id.radioMadinah, "sunnah")
+        findViewById<TextView>(R.id.radioName)?.text = RadioService.station(sel)?.label ?: ""
         val playing = cur != null && !RadioService.paused
         findViewById<android.widget.ImageView>(R.id.radioPlayIcon)
             ?.setImageResource(if (playing) R.drawable.ic_stop else R.drawable.ic_play)
@@ -680,8 +680,7 @@ class MainActivity : Activity() {
         b(R.id.btnPrivacy, "سياسة الخصوصية", "Privacy policy")
         b(R.id.btnAbout, "عن أقرب مسجد", "About Aqrab Masjid")
         b(R.id.tileRadioText, "إذاعة", "Radio")
-        b(R.id.radioMakkah, "إذاعة القرآن الكريم", "Holy Quran Radio")
-        b(R.id.radioMadinah, "إذاعة السنة", "Sunnah Radio")
+        b(R.id.radioLabel, "إذاعة", "Radio")
         b(R.id.tileQuranText, "القرآن", "Quran")
         b(R.id.tileAdhkarText, "الأذكار", "Adhkar")
         b(R.id.tileQiratText, "قيراط", "Qirat")
