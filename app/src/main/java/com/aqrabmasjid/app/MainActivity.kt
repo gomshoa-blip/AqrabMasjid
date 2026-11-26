@@ -627,7 +627,7 @@ class MainActivity : Activity() {
             setPadding(dp(18), dp(16), dp(18), dp(14))
             background = android.graphics.drawable.GradientDrawable().apply {
                 cornerRadius = dp(24).toFloat()
-                colors = intArrayOf(Color.parseColor("#0F5A43"), Color.parseColor("#08372A"))
+                colors = intArrayOf(Color.parseColor("#2B3A67"), Color.parseColor("#151D3B"))  // night blue: the clips page
                 setStroke(dp(1), Color.parseColor("#66F6D46B"))
             }
         }
@@ -637,7 +637,7 @@ class MainActivity : Activity() {
         }
         val sub = TextView(this).apply {
             text = L.t("آخر ٥ تسجيلات – محفوظة في جوالك فقط", "Last 5 clips – saved on your phone only")
-            setTextColor(Color.parseColor("#B8D8CA")); textSize = 13f
+            setTextColor(Color.parseColor("#C3CBE6")); textSize = 13f
         }
         root.addView(title); root.addView(sub)
         val list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
@@ -645,7 +645,7 @@ class MainActivity : Activity() {
         root.addView(scroll, LinearLayout.LayoutParams(-1, -2).also { it.topMargin = dp(12) })
         val close = TextView(this).apply {
             text = L.t("إغلاق", "Close"); gravity = Gravity.CENTER
-            setTextColor(Color.parseColor("#0A4A37")); textSize = 16f; setTypeface(typeface, Typeface.BOLD)
+            setTextColor(Color.parseColor("#151D3B")); textSize = 16f; setTypeface(typeface, Typeface.BOLD)
             background = android.graphics.drawable.GradientDrawable().apply { cornerRadius = dp(22).toFloat(); setColor(Color.parseColor("#F6D46B")) }
             setOnClickListener { d.dismiss() }
         }
@@ -669,25 +669,29 @@ class MainActivity : Activity() {
                     setPadding(dp(12), dp(10), dp(10), dp(10))
                     background = android.graphics.drawable.GradientDrawable().apply {
                         cornerRadius = dp(16).toFloat()
-                        setColor(Color.parseColor(if (f == clipPlaying) "#33F6D46B" else "#1FFFFFFF"))
+                        setColor(Color.parseColor(if (f == clipPlaying) "#40F6D46B" else "#1AFFFFFF"))
                     }
                 }
                 val txt = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
                 txt.addView(TextView(this).apply {
-                    text = "📻 " + (RadioService.station(RadioRecorder.stationId(f))?.label ?: L.t("إذاعة", "Radio"))
+                    text = RadioService.station(RadioRecorder.stationId(f))?.label ?: L.t("إذاعة", "Radio")
                     setTextColor(Color.WHITE); textSize = 15f; setTypeface(typeface, Typeface.BOLD); maxLines = 2
                 })
                 txt.addView(TextView(this).apply {
-                    text = fmt.format(java.util.Date(f.lastModified())) + "  ·  ⏱ " + mmss(RadioRecorder.seconds(f))
-                    setTextColor(Color.parseColor("#B8D8CA")); textSize = 13f
+                    text = fmt.format(java.util.Date(f.lastModified()))
+                    setTextColor(Color.parseColor("#C3CBE6")); textSize = 13f
+                })
+                txt.addView(TextView(this).apply {
+                    text = L.t("المدة ", "Length ") + mmss(RadioRecorder.seconds(f))
+                    setTextColor(Color.parseColor("#F6D46B")); textSize = 13f; setTypeface(typeface, Typeface.BOLD)
                 })
                 row.addView(txt, LinearLayout.LayoutParams(0, -2, 1f))
                 fun btn(label: String, gold: Boolean, onClick: () -> Unit) = TextView(this).apply {
                     text = label; gravity = Gravity.CENTER; textSize = 18f
-                    setTextColor(Color.parseColor(if (gold) "#0A4A37" else "#FFFFFF"))
+                    setTextColor(Color.parseColor(if (gold) "#151D3B" else "#FFFFFF"))
                     background = android.graphics.drawable.GradientDrawable().apply {
                         shape = android.graphics.drawable.GradientDrawable.OVAL
-                        setColor(Color.parseColor(if (gold) "#F6D46B" else "#26FFFFFF"))
+                        setColor(Color.parseColor(if (gold) "#F6D46B" else "#2EFFFFFF"))
                     }
                     setOnClickListener { onClick() }
                 }.also { row.addView(it, LinearLayout.LayoutParams(dp(44), dp(44)).also { lp -> lp.marginStart = dp(6) }) }
