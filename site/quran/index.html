@@ -18,9 +18,15 @@
   .top .sp{flex:1}
   .top button{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--gold);background:var(--paper);color:var(--green);font-size:19px;padding:0;line-height:1}
   .top button.on{background:var(--gold)}
-  .bot{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 6px);text-align:center;font-size:14px;color:var(--soft);pointer-events:none;z-index:2}
+  .top a{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--gold);color:var(--green);display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:18px;font-weight:800}
+  .top .z{font:800 17px system-ui,sans-serif}
+  /* Bottom: previous on the right, next on the left, like a paper mushaf */
+  #nav{position:fixed;left:0;right:0;bottom:0;height:calc(env(safe-area-inset-bottom) + 62px);padding:7px 8px calc(env(safe-area-inset-bottom) + 7px);display:flex;gap:7px;background:var(--panel);border-top:1px solid var(--line);z-index:3}
+  #nav button{flex:1;border:0;border-radius:12px;font:800 17px system-ui,sans-serif;background:var(--btn);color:var(--btnt);padding:0 4px}
+  #nav #bList{flex:.9;background:transparent;border:1.5px solid var(--gold);color:var(--green);line-height:1.15}
+  #nav #bList small{display:block;font-size:13px;font-weight:700;color:var(--soft)}
   /* The page area */
-  #view{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top) + 44px);bottom:calc(env(safe-area-inset-bottom) + 26px);overflow:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+  #view{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top) + 44px);bottom:calc(env(safe-area-inset-bottom) + 62px);overflow:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
   #view.scroll{overflow:auto}
   #sheet{margin:0 auto;direction:rtl;color:var(--ink);position:relative}
   #sheet .ln{display:flex;flex-direction:row;justify-content:center;align-items:center;white-space:nowrap;line-height:1;direction:rtl}
@@ -30,15 +36,8 @@
   #msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--soft);font-size:18px;text-align:center;padding:20px;line-height:1.8}
   #nextp{display:none;margin:14px auto 30px;border:0;border-radius:14px;padding:14px 26px;font:800 18px system-ui,sans-serif;background:var(--btn);color:var(--btnt)}
   #view.scroll #nextp{display:block}
-  /* Text size buttons: always on screen, big for older readers */
-  #zoom{position:fixed;left:10px;bottom:calc(env(safe-area-inset-bottom) + 8px);display:flex;gap:6px;z-index:4}
-  #zoom button{width:52px;height:52px;border-radius:50%;border:1.5px solid var(--gold);background:var(--paper);color:var(--green);font:800 20px system-ui,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.15)}
-  #zoom button small{font-size:13px}
   #zlbl{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.75);color:#fff;padding:12px 20px;border-radius:14px;font:800 18px system-ui,sans-serif;z-index:9;display:none}
-  /* Menu */
-  #bar{position:fixed;left:0;right:0;bottom:0;background:var(--panel);border-top:1px solid var(--line);padding:10px 12px calc(env(safe-area-inset-bottom) + 10px);display:flex;gap:8px;z-index:5;box-shadow:0 -6px 20px rgba(0,0,0,.12)}
-  #bar[hidden],#list[hidden]{display:none}
-  #bar button,#bar a{flex:1;border:0;border-radius:12px;padding:13px 6px;font:inherit;font-weight:800;font-size:16px;background:var(--btn);color:var(--btnt);text-align:center;text-decoration:none}
+  #list[hidden]{display:none}
   #list{position:fixed;inset:0;background:var(--panel);z-index:6;overflow:auto;padding:calc(env(safe-area-inset-top) + 10px) 12px 20px}
   #list h2{margin:16px 0 8px;color:var(--green);font-size:18px}
   #tabs{display:flex;gap:6px;margin:4px 0 6px}
@@ -56,21 +55,20 @@
 <body>
 <div class="top">
   <b id="sura"></b><span id="juz"></span><span class="sp"></span>
+  <button id="zIn" class="z" aria-label="تكبير">أ+</button>
+  <button id="zOut" class="z" aria-label="تصغير">أ−</button>
   <button id="bMark" aria-label="علامة">🔖</button>
   <button id="bTheme" aria-label="الوضع الليلي">🌙</button>
+  <a href="/" aria-label="رجوع">✕</a>
 </div>
 <div id="view"><div id="sheet"></div><button id="nextp">الصفحة التالية ←</button><div id="msg">جاري التحميل…</div></div>
-<div class="bot"><span id="pno"></span></div>
-<div id="zoom"><button id="zIn" aria-label="تكبير">أ<small>+</small></button><button id="zOut" aria-label="تصغير">أ<small>−</small></button></div>
+<div id="nav">
+  <button id="bPrev">→ السابقة</button>
+  <button id="bList">☰ الفهرس<small id="pno"></small></button>
+  <button id="bNext">التالية ←</button>
+</div>
 <div id="zlbl"></div>
 <div id="toast"></div>
-
-<div id="bar" hidden>
-  <button id="bNext">→ التالية</button>
-  <button id="bList">☰ الفهرس</button>
-  <button id="bPrev">السابقة ←</button>
-  <a href="/" id="bHome">✕</a>
-</div>
 
 <div id="list" hidden>
   <button id="close">✕</button>
@@ -134,7 +132,7 @@ async function render(){
   const [f, juz, sura, lines] = D.p[page-1];
   $("sura").textContent = "سورة " + D.s[sura-1][0];
   $("juz").textContent = "· الجزء " + AR(juz);
-  $("pno").textContent = AR(page);
+  $("pno").textContent = "صفحة " + AR(page);
   markBtn();
   store.set("qpage", page);
   history.replaceState(null, "", "#p" + page);
@@ -155,16 +153,18 @@ function layout(){
   const vw = view.clientWidth, vh = view.clientHeight;
   const pad = Math.min(16, vw * 0.03);
   let W;
-  if (ZOOMS[zi] === 0) W = Math.min(vw - pad * 2, (vh - 8) / RATIO);
+  if (ZOOMS[zi] === 0 && vw <= vh * 1.1) W = Math.min(vw - pad * 2, (vh - 8) / RATIO);
+  else if (ZOOMS[zi] === 0) W = Math.min(vw - pad * 2, 900);
   else W = (vw - pad * 2) * ZOOMS[zi];
   const m = measure(page), nat = page <= 2 ? measure(3).max : Math.max(m.max, measure(3).max);
   const fs = 100 * W / nat;                 // full lines fill the width exactly
   const rows = page <= 2 ? 15 : lines.length;
   const lh = W * RATIO / 15;
-  view.classList.toggle("scroll", ZOOMS[zi] !== 0);
+  const fitAll = ZOOMS[zi] === 0 && vw <= vh * 1.1;
+  view.classList.toggle("scroll", !fitAll);
   sheet.style.width = W + "px";
   sheet.style.padding = (page <= 2 ? lh * 3 : 0) + "px 0";
-  sheet.style.marginTop = ZOOMS[zi] === 0 ? Math.max(0, (vh - lh * 15) / 2) + "px" : "8px";
+  sheet.style.marginTop = fitAll ? Math.max(0, (vh - lh * 15) / 2) + "px" : "8px";
   const fam = fontName(f);
   let html = "";
   lines.forEach((l, i) => {
@@ -258,14 +258,13 @@ addEventListener("touchend", e => {
   if (x0 === null) return;
   const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
   const v = $("view"), wide = v.scrollWidth > v.clientWidth + 2;
-  if ($("list").hidden && !wide && Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) { go(page + (dx > 0 ? 1 : -1)); $("bar").hidden = true; }
+  if ($("list").hidden && !wide && Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) { go(page + (dx > 0 ? 1 : -1)); }
   x0 = null;
 });
-$("view").addEventListener("click", () => { if (!moved) $("bar").hidden = !$("bar").hidden; });
 addEventListener("keydown", e => { if (e.key === "ArrowLeft") go(page + 1); if (e.key === "ArrowRight") go(page - 1); });
 $("bNext").onclick = () => go(page + 1);
 $("bPrev").onclick = () => go(page - 1);
-$("bList").onclick = () => { fillList(); $("list").hidden = false; $("bar").hidden = true; };
+$("bList").onclick = () => { fillList(); $("list").hidden = false; };
 $("close").onclick = () => $("list").hidden = true;
 let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { if (D && $("msg").style.display === "none") layout(); }, 120); });
 
