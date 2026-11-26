@@ -33,6 +33,7 @@
   #sheet .ln{display:flex;flex-direction:row;justify-content:center;align-items:center;white-space:nowrap;line-height:1;direction:rtl}
   #sheet .ln.j{justify-content:space-between}
   #sheet .ln{position:relative;z-index:1}
+  #sheet{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
   #sheet .hl{position:absolute;z-index:0;background:rgba(201,162,39,.28);border-radius:8px;pointer-events:none}
   #view.marking #sheet .ln span[data-v]{cursor:pointer}
   #view.marking{outline:3px dashed var(--gold);outline-offset:-3px}
@@ -251,18 +252,32 @@ function setMarking(on){
   if (on) toast("اضغط على الآية التي وقفت عندها");
 }
 $("bMark").onclick = () => setMarking(!marking);
-$("view").addEventListener("click", e => {
-  if (!marking) return;
-  const w = e.target.closest("span[data-v]");
-  if (!w) { setMarking(false); return; }
-  const v = w.dataset.v;
+function setMark(v){
   // One bookmark, like the ribbon of a paper mushaf: it moves to the new ayah
   const old = marks()[0];
   if (old && old.v === v) { store.set("qmarks", "[]"); toast("حُذفت العلامة"); }
   else { store.set("qmarks", JSON.stringify([{p: page, v, t: Date.now()}])); toast("🔖 " + ayaName(v)); }
   setMarking(false);
   showMarks();
+}
+// Tap 🔖 then the ayah, or just press and hold on the ayah
+$("view").addEventListener("click", e => {
+  if (!marking) return;
+  const w = e.target.closest("span[data-v]");
+  if (!w) { setMarking(false); return; }
+  setMark(w.dataset.v);
 });
+let holdT = null, hx = 0, hy = 0;
+$("view").addEventListener("touchstart", e => {
+  const w = e.target.closest("span[data-v]");
+  clearTimeout(holdT);
+  if (!w || e.touches.length > 1) return;
+  hx = e.touches[0].clientX; hy = e.touches[0].clientY;
+  holdT = setTimeout(() => { holdT = null; try { navigator.vibrate && navigator.vibrate(30); } catch(_){} marking = false; setMark(w.dataset.v); }, 550);
+}, {passive:true});
+$("view").addEventListener("touchmove", e => { if (holdT && Math.hypot(e.touches[0].clientX - hx, e.touches[0].clientY - hy) > 10) { clearTimeout(holdT); holdT = null; } }, {passive:true});
+$("view").addEventListener("touchend", () => { clearTimeout(holdT); holdT = null; }, {passive:true});
+$("view").addEventListener("contextmenu", e => e.preventDefault());
 
 // ---- Index: surahs, parts, bookmarks ----
 let tab = "s";
@@ -276,7 +291,7 @@ function fillList(){
   } else {
     const m = marks().slice(0, 1);
     html = m.length ? m.map(x => `<div class="s" data-p="${x.p}"><span>🔖 ${x.v ? ayaName(x.v) : "سورة " + D.s[D.p[x.p-1][2]-1][0]}</span><span>صفحة ${AR(x.p)} <button class="x" data-del="${x.v || x.p}">✕</button></span></div>`).join("")
-      : `<div class="empty">لا توجد علامات.<br>اضغط 🔖 في أعلى الصفحة، ثم اضغط على الآية.</div>`;
+      : `<div class="empty">لا توجد علامة.<br>اضغط مطولاً على الآية التي وقفت عندها،<br>أو اضغط 🔖 ثم اضغط على الآية.</div>`;
   }
   $("slist").innerHTML = html;
 }
