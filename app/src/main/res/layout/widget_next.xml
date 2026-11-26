@@ -95,7 +95,8 @@
         </LinearLayout>
     </LinearLayout>
 
-    <View
+    <!-- Divider. Widgets only allow some view types: FrameLayout is allowed, a plain View is not -->
+    <FrameLayout
         android:layout_width="1dp"
         android:layout_height="match_parent"
         android:layout_marginStart="6dp"
