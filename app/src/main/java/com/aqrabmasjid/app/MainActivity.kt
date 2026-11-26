@@ -374,10 +374,20 @@ class MainActivity : Activity() {
         tvMethod.text = L.t("طريقة الحساب: ${day.methodName}", "Method: ${day.methodName}")
 
         // Rebuild the table only when something in it changed (saves battery)
-        val tableKey = L.lang + "|" + st.time.prayer + "|" + day.list.joinToString { "${p(it)}" }
+        val city = Prefs.city(this, lat, lng)
+        val tableKey = L.lang + "|" + city + "|" + st.time.prayer + "|" + day.list.joinToString { "${p(it)}" }
         if (tableKey == lastTableKey && layoutTimes.childCount > 0) return
         lastTableKey = tableKey
         layoutTimes.removeAllViews()
+        // Title: the city the times are for
+        if (city != null) layoutTimes.addView(TextView(this).apply {
+            text = "📍 " + city
+            textSize = 19f
+            setTypeface(typeface, android.graphics.Typeface.BOLD)
+            setTextColor(getColor(R.color.title_text))
+            gravity = android.view.Gravity.CENTER
+            setPadding(0, 0, 0, dp(8))
+        })
         layoutTimes.addView(row(L.t("الصلاة", "Prayer"), L.t("الأذان", "Adhan"), L.t("الإقامة", "Iqama"), header = true, highlight = false))
         for (p in day.list) {
             layoutTimes.addView(

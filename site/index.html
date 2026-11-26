@@ -257,6 +257,7 @@
   .card2{background:var(--sf);border:1.5px solid var(--bd);border-radius:20px;padding:10px;margin-top:10px}
   .times2 .r{display:grid;grid-template-columns:1fr 1fr 1fr;text-align:center;padding:10px 4px;border-radius:12px;font-size:1.05rem}
   .times2 .h{font-size:.82rem;color:var(--mu);font-weight:800}
+  .times2 .city{text-align:center;font-weight:800;font-size:1.1rem;color:var(--ic);padding:2px 4px 8px}
   .times2 .on{background:var(--tonal);color:var(--ic);font-weight:800}
   .secT{margin:22px 4px 2px;color:var(--mu);font-size:.85rem;font-weight:800}.secT.small{margin-top:14px}
   .wideBtn{width:100%;margin-top:10px;background:var(--sf);border:1.5px solid var(--bd);border-radius:18px;padding:14px;font:inherit;font-weight:800;color:var(--tx);cursor:pointer}
@@ -830,6 +831,40 @@ function setMode(drive){
   fitName();
 }
 let ptTimer = null;
+// City name for the prayer table: Riyadh by default; for the user's place, looked up once and saved
+const RIYADH_NAME = {ar:"الرياض", en:"Riyadh", ur:"ریاض", id:"Riyadh", bn:"রিয়াদ", tr:"Riyad", fr:"Riyad", it:"Riad", es:"Riad"};
+let cityCache = {}; try { cityCache = JSON.parse(localStorage.getItem("cityCache") || "{}") || {}; } catch(_){}
+const cityKey = (la, lo) => la.toFixed(2) + "," + lo.toFixed(2) + "," + lang;
+function cityName(la, lo, labelKey){
+  if (labelKey !== "byLoc") return RIYADH_NAME[lang] || "Riyadh";
+  const k = cityKey(la, lo);
+  if (cityCache[k]) return cityCache[k];
+  lookupCity(la, lo, k);
+  return "";
+}
+let cityBusy = "";
+async function lookupCity(la, lo, k){
+  if (cityBusy === k) return; cityBusy = k;
+  let name = "";
+  try {
+    // Free service made for websites (no key); OpenStreetMap as a backup
+    const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 6000);
+    const r = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${la}&longitude=${lo}&localityLanguage=${lang}`, {signal: ctl.signal});
+    clearTimeout(tm);
+    const j = await r.json();
+    name = j.city || j.locality || j.principalSubdivision || "";
+  } catch(_) {}
+  if (!name) try {
+    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&lat=${la}&lon=${lo}`, {headers: {"Accept-Language": lang}});
+    const j = await r.json(), a = (j && j.address) || {};
+    name = a.city || a.town || a.village || a.county || a.state || "";
+  } catch(_) {}
+  cityBusy = "";
+  if (!name) return;
+  cityCache[k] = name;
+  try { localStorage.setItem("cityCache", JSON.stringify(cityCache)); } catch(_){}
+  if (ptArgs) prayerTimes(...ptArgs);
+}
 function prayerTimes(lat, lng, labelKey){
   if (!window.adhan) return;
   ptArgs = [lat, lng, labelKey];
@@ -899,7 +934,7 @@ function prayerTimes(lat, lng, labelKey){
     }
     fitName();
     $("ayah").textContent = AYAH[hl] || "";
-    $("times").innerHTML = `<div class="r h"><span>${L().prayerH}</span><span>${L().adhanH}</span><span>${L().iqamaH}</span></div>` +
+    $("times").innerHTML = (cityName(lat, lng, labelKey) ? `<div class="city">📍 ${cityName(lat, lng, labelKey)}</div>` : "") + `<div class="r h"><span>${L().prayerH}</span><span>${L().adhanH}</span><span>${L().iqamaH}</span></div>` +
       ORDER.map(k => `<div class="r ${k===hl ? 'on':''}"><span>${nameOf(k)}</span><span>${fmt(today[k])}</span><span>${isJ(k) ? L().khutba : fmt(plus(today[k], k))}</span></div>`).join("");
     $("dDay").textContent = n.toLocaleDateString(L().locale, {weekday:"long"});
     $("dClock").textContent = fmt(n);

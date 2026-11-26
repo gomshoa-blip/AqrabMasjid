@@ -54,6 +54,12 @@ object LocationHelper {
                 val list = Geocoder(c, Locale.ENGLISH).getFromLocation(lat, lng, 1)
                 val code = list?.firstOrNull()?.countryCode
                 if (!code.isNullOrBlank()) Prefs.saveCountry(c, code.uppercase(Locale.US))
+                // City name for the prayer table, in Arabic and English
+                val en = list?.firstOrNull()?.let { it.locality ?: it.subAdminArea ?: it.adminArea }
+                @Suppress("DEPRECATION")
+                val ar = Geocoder(c, Locale("ar")).getFromLocation(lat, lng, 1)?.firstOrNull()
+                    ?.let { it.locality ?: it.subAdminArea ?: it.adminArea }
+                if (!en.isNullOrBlank() || !ar.isNullOrBlank()) Prefs.saveCity(c, ar ?: en ?: "", en ?: ar ?: "", lat, lng)
             } catch (_: Exception) {
             }
         }

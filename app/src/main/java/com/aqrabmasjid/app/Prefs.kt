@@ -18,6 +18,22 @@ object Prefs {
 
     /** ISO country code like "SA", "EG". Null if not known yet. */
     fun country(c: Context): String? = p(c).getString("country", null)
+
+    /** City of the last location (Arabic and English names), for the prayer table title. */
+    fun saveCity(c: Context, ar: String, en: String, lat: Double, lng: Double) {
+        p(c).edit().putString("city_ar", ar).putString("city_en", en)
+            .putString("city_lat", lat.toString()).putString("city_lng", lng.toString()).apply()
+    }
+
+    /** City name in the app language, only if it was found near the place used now (about 30 km). */
+    fun city(c: Context, lat: Double, lng: Double): String? {
+        val sp = p(c)
+        val la = sp.getString("city_lat", null)?.toDoubleOrNull() ?: return null
+        val lo = sp.getString("city_lng", null)?.toDoubleOrNull() ?: return null
+        if (MosqueRepo.distanceKm(lat, lng, la, lo) > 30) return null
+        val ar = sp.getString("city_ar", null); val en = sp.getString("city_en", null)
+        return L.t(ar ?: en ?: return null, en ?: ar ?: return null).takeIf { it.isNotBlank() }
+    }
     fun saveCountry(c: Context, code: String) = p(c).edit().putString("country", code).apply()
 
     /** User iqama minutes for a prayer, or -1 if not set. */

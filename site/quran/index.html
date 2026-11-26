@@ -427,7 +427,7 @@ let lastTurn = null;
 function endTurn(t, done){
   if (t.ending) return; t.ending = true;
   const from = t.p, to = done ? 1 : 0, start = performance.now(), dur = 700 * Math.abs(to - from) + 140;
-  if (done) paperSound(0.9);
+  if (done && !t.sounded) paperSound(0.9);
   const step = now => {
     const k = Math.min(1, (now - start) / dur);
     const e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;   // slow start and slow end
@@ -450,23 +450,27 @@ function audio(){
   } catch(_) { return null; }
 }
 function paperSound(v){
+  // One soft sheet of paper: a gentle "swish" (smooth noise, a filter that sweeps up then down), no crackle
   const ac = audio(); if (!ac) return;
   try {
-    const t0 = ac.currentTime, len = 0.55, n = Math.floor(ac.sampleRate * len);
+    const t0 = ac.currentTime, len = 0.42, n = Math.floor(ac.sampleRate * len);
     const buf = ac.createBuffer(1, n, ac.sampleRate), d = buf.getChannelData(0);
-    // Rustle: noise with small crackles, getting louder then fading out
-    let last = 0;
+    let b0 = 0, b1 = 0;
     for (let i = 0; i < n; i++) {
-      const x = i / n, env = Math.pow(Math.sin(Math.PI * Math.min(1, x * 1.15)), 1.6);
-      const crack = Math.random() < 0.004 ? (Math.random() * 2 - 1) * 2.2 : 0;
-      last = last * 0.55 + (Math.random() * 2 - 1) * 0.45;
-      d[i] = (last + crack) * env;
+      // Soft (pink-like) noise
+      const w = Math.random() * 2 - 1;
+      b0 = 0.97 * b0 + 0.03 * w; b1 = 0.6 * b1 + 0.4 * w;
+      const x = i / n, env = Math.pow(Math.sin(Math.PI * x), 2.2);   // smooth rise and fall
+      d[i] = (b0 * 3 + b1 * 0.35) * env;
     }
     const src = ac.createBufferSource(); src.buffer = buf;
-    const bp = ac.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 2600; bp.Q.value = 0.7;
-    const hp = ac.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 500;
-    const g = ac.createGain(); g.gain.value = 0.35 * (v || 1);
-    src.connect(bp); bp.connect(hp); hp.connect(g); g.connect(ac.destination);
+    const lp = ac.createBiquadFilter(); lp.type = "lowpass"; lp.Q.value = 0.4;
+    lp.frequency.setValueAtTime(900, t0);
+    lp.frequency.linearRampToValueAtTime(2600, t0 + len * 0.45);
+    lp.frequency.linearRampToValueAtTime(1100, t0 + len);
+    const hp = ac.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 250;
+    const g = ac.createGain(); g.gain.value = 0.22 * (v || 1);
+    src.connect(lp); lp.connect(hp); hp.connect(g); g.connect(ac.destination);
     src.start(t0);
   } catch(_) {}
 }
@@ -523,7 +527,7 @@ addEventListener("touchmove", e => {
       const t = startTurn(dir);
       if (!t) { T.mode = "pan"; return; }
       T.mode = "turn"; T.t = t; T.x0 = x;
-      paperSound(0.45);
+      paperSound(0.9); t.sounded = true;
     } else { T.mode = "pan"; return; }
   }
   if (T.mode === "turn") {
