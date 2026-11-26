@@ -8,7 +8,7 @@ enum Config {
     /// Donate opens the official Ehsan platform only. The app collects no money.
     static let donateURL = URL(string: "https://ehsan.sa")!
     /// قيراط: Riyadh funeral prayers and cemeteries (shown in Riyadh only).
-    static let qiratURL = URL(string: "https://janaez-riyadh.netlify.app")!
+    static let qiratURL = URL(string: "https://janaez-riyadh.pages.dev")!
     /// Mosques you reviewed and added yourself. Format: [{"name":"مسجد ...","lat":24.7,"lng":46.6}]
     static let customMosquesURL = URL(string: "https://aqrab-masjid.netlify.app/mosques.json")!
 
