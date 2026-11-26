@@ -22,7 +22,7 @@ object MosqueSubmit {
         val la = String.format(Locale.US, "%.6f", lat)
         val lo = String.format(Locale.US, "%.6f", lng)
         val fields = linkedMapOf(
-            "_subject" to "أضف مسجداً – add-mosque",
+            "_subject" to "طلب إضافة مسجد – أقرب مسجد",
             "_template" to "table",
             "_captcha" to "false",
             "mosque_name" to name.ifBlank { "مسجد" },
