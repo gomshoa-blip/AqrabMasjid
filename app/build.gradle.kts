@@ -32,7 +32,9 @@ android {
                 storeFile = file(ksFile)
                 storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
                 keyAlias = System.getenv("ANDROID_KEY_ALIAS")
-                keyPassword = System.getenv("ANDROID_KEY_PASSWORD")
+                // Our key uses the same password as the keystore, so this secret is optional
+                keyPassword = System.getenv("ANDROID_KEY_PASSWORD")?.takeIf { it.isNotEmpty() }
+                    ?: System.getenv("ANDROID_KEYSTORE_PASSWORD")
             }
         }
     }
