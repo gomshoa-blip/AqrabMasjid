@@ -414,6 +414,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="6dp"
+                    android:textAlignment="viewStart"
                     android:text="إذاعة"
                     android:textColor="#F6D46B"
                     android:textSize="13sp"

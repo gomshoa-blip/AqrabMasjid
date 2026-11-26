@@ -615,49 +615,111 @@ class MainActivity : Activity() {
         toast(L.t("تم الحفظ ✅ في «تسجيلاتي» (", "Saved ✅ in My clips (") + mmss(RadioRecorder.seconds(f)) + ")")
     }
 
-    private fun radioClipsDialog() {
-        val files = RadioRecorder.list(this)
-        if (files.isEmpty()) {
-            AlertDialog.Builder(this)
-                .setTitle(L.t("🎧 تسجيلاتي", "🎧 My clips"))
-                .setMessage(L.t("لا توجد تسجيلات.\nأثناء تشغيل الإذاعة اضغط «احفظ آخر ٣ دقائق» ليُحفظ ما سمعته الآن.\nنحتفظ بآخر ٥ تسجيلات في جوالك.",
-                    "No clips yet.\nWhile the radio plays, press \"Save last 3 min\" to keep what you just heard.\nThe last 5 clips stay on your phone."))
-                .setPositiveButton(L.t("حسناً", "OK"), null).show()
-            return
-        }
-        val fmt = java.text.SimpleDateFormat("EEEE d MMM · h:mm a", L.locale)
-        val items = files.map { f ->
-            val st = RadioService.station(RadioRecorder.stationId(f))?.label ?: L.t("إذاعة", "Radio")
-            "📻 $st\n${fmt.format(java.util.Date(f.lastModified()))} · ${mmss(RadioRecorder.seconds(f))}"
-        }
-        AlertDialog.Builder(this)
-            .setTitle(L.t("🎧 تسجيلاتي (آخر ٥)", "🎧 My clips (last 5)"))
-            .setItems(items.toTypedArray()) { _, i -> clipActions(files[i]) }
-            .setNegativeButton(L.t("إغلاق", "Close"), null)
-            .show()
-    }
+    private var clipPlaying: java.io.File? = null
 
-    private fun clipActions(f: java.io.File) {
-        val opts = arrayOf(L.t("▶ تشغيل", "▶ Play"), L.t("📤 مشاركة", "📤 Share"), L.t("🗑 حذف", "🗑 Delete"))
-        AlertDialog.Builder(this)
-            .setItems(opts) { _, i ->
-                when (i) {
-                    0 -> playClip(f)
-                    1 -> shareClip(f)
-                    else -> AlertDialog.Builder(this)
+    /** "My clips": dark green panel like the radio card; each clip has Play, Share, Delete. */
+    private fun radioClipsDialog() {
+        val d = android.app.Dialog(this)
+        d.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE)
+        val root = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            layoutDirection = View.LAYOUT_DIRECTION_RTL
+            setPadding(dp(18), dp(16), dp(18), dp(14))
+            background = android.graphics.drawable.GradientDrawable().apply {
+                cornerRadius = dp(24).toFloat()
+                colors = intArrayOf(Color.parseColor("#0F5A43"), Color.parseColor("#08372A"))
+                setStroke(dp(1), Color.parseColor("#66F6D46B"))
+            }
+        }
+        val title = TextView(this).apply {
+            text = L.t("🎧 تسجيلاتي", "🎧 My clips")
+            setTextColor(Color.parseColor("#F6D46B")); textSize = 20f; setTypeface(typeface, Typeface.BOLD)
+        }
+        val sub = TextView(this).apply {
+            text = L.t("آخر ٥ تسجيلات – محفوظة في جوالك فقط", "Last 5 clips – saved on your phone only")
+            setTextColor(Color.parseColor("#B8D8CA")); textSize = 13f
+        }
+        root.addView(title); root.addView(sub)
+        val list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        val scroll = android.widget.ScrollView(this).apply { addView(list) }
+        root.addView(scroll, LinearLayout.LayoutParams(-1, -2).also { it.topMargin = dp(12) })
+        val close = TextView(this).apply {
+            text = L.t("إغلاق", "Close"); gravity = Gravity.CENTER
+            setTextColor(Color.parseColor("#0A4A37")); textSize = 16f; setTypeface(typeface, Typeface.BOLD)
+            background = android.graphics.drawable.GradientDrawable().apply { cornerRadius = dp(22).toFloat(); setColor(Color.parseColor("#F6D46B")) }
+            setOnClickListener { d.dismiss() }
+        }
+        root.addView(close, LinearLayout.LayoutParams(-1, dp(48)).also { it.topMargin = dp(14) })
+
+        fun fill() {
+            list.removeAllViews()
+            val files = RadioRecorder.list(this)
+            if (files.isEmpty()) {
+                list.addView(TextView(this).apply {
+                    text = L.t("لا توجد تسجيلات.\nأثناء تشغيل الإذاعة اضغط «⏺ احفظ آخر ٣ دقائق» ليُحفظ ما سمعته الآن.",
+                        "No clips yet.\nWhile the radio plays, press \"⏺ Save last 3 min\" to keep what you just heard.")
+                    setTextColor(Color.WHITE); textSize = 15f; gravity = Gravity.CENTER; setPadding(dp(8), dp(24), dp(8), dp(24))
+                })
+                return
+            }
+            val fmt = java.text.SimpleDateFormat("EEEE d MMM · h:mm a", L.locale)
+            for (f in files) {
+                val row = LinearLayout(this).apply {
+                    orientation = LinearLayout.HORIZONTAL; gravity = Gravity.CENTER_VERTICAL
+                    setPadding(dp(12), dp(10), dp(10), dp(10))
+                    background = android.graphics.drawable.GradientDrawable().apply {
+                        cornerRadius = dp(16).toFloat()
+                        setColor(Color.parseColor(if (f == clipPlaying) "#33F6D46B" else "#1FFFFFFF"))
+                    }
+                }
+                val txt = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+                txt.addView(TextView(this).apply {
+                    text = "📻 " + (RadioService.station(RadioRecorder.stationId(f))?.label ?: L.t("إذاعة", "Radio"))
+                    setTextColor(Color.WHITE); textSize = 15f; setTypeface(typeface, Typeface.BOLD); maxLines = 2
+                })
+                txt.addView(TextView(this).apply {
+                    text = fmt.format(java.util.Date(f.lastModified())) + "  ·  ⏱ " + mmss(RadioRecorder.seconds(f))
+                    setTextColor(Color.parseColor("#B8D8CA")); textSize = 13f
+                })
+                row.addView(txt, LinearLayout.LayoutParams(0, -2, 1f))
+                fun btn(label: String, gold: Boolean, onClick: () -> Unit) = TextView(this).apply {
+                    text = label; gravity = Gravity.CENTER; textSize = 18f
+                    setTextColor(Color.parseColor(if (gold) "#0A4A37" else "#FFFFFF"))
+                    background = android.graphics.drawable.GradientDrawable().apply {
+                        shape = android.graphics.drawable.GradientDrawable.OVAL
+                        setColor(Color.parseColor(if (gold) "#F6D46B" else "#26FFFFFF"))
+                    }
+                    setOnClickListener { onClick() }
+                }.also { row.addView(it, LinearLayout.LayoutParams(dp(44), dp(44)).also { lp -> lp.marginStart = dp(6) }) }
+                btn(if (f == clipPlaying) "⏹" else "▶", true) {
+                    if (f == clipPlaying) stopClip() else playClip(f) { fill() }
+                    fill()
+                }
+                btn("📤", false) { shareClip(f) }
+                btn("🗑", false) {
+                    AlertDialog.Builder(this)
                         .setMessage(L.t("حذف هذا التسجيل؟", "Delete this clip?"))
-                        .setPositiveButton(L.t("حذف", "Delete")) { _, _ -> f.delete(); radioClipsDialog() }
+                        .setPositiveButton(L.t("حذف", "Delete")) { _, _ -> if (f == clipPlaying) stopClip(); f.delete(); fill() }
                         .setNegativeButton(L.t("إلغاء", "Cancel"), null).show()
                 }
-            }.show()
+                list.addView(row, LinearLayout.LayoutParams(-1, -2).also { it.bottomMargin = dp(8) })
+            }
+        }
+        fill()
+        d.setContentView(root)
+        d.setOnDismissListener { stopClip() }
+        d.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(Color.TRANSPARENT))
+        d.show()
+        d.window?.setLayout((resources.displayMetrics.widthPixels * 0.92).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     private fun stopClip() {
         try { clipPlayer?.release() } catch (_: Exception) {}
         clipPlayer = null
+        clipPlaying = null
     }
 
-    private fun playClip(f: java.io.File) {
+    private fun playClip(f: java.io.File, onEnd: () -> Unit) {
         stopClip()
         // The live radio stops while the clip plays
         if (RadioService.current != null && !RadioService.paused) RadioService.toggle(this)
@@ -670,14 +732,8 @@ class MainActivity : Activity() {
             mp.release(); toast(L.t("تعذر تشغيل التسجيل", "Could not play the clip")); return
         }
         clipPlayer = mp
-        val d = AlertDialog.Builder(this)
-            .setTitle(L.t("🎧 يعمل التسجيل", "🎧 Playing clip"))
-            .setMessage(RadioService.station(RadioRecorder.stationId(f))?.label ?: "")
-            .setPositiveButton(L.t("⏹ إيقاف", "⏹ Stop"), null)
-            .setNeutralButton(L.t("📤 مشاركة", "📤 Share")) { _, _ -> shareClip(f) }
-            .setOnDismissListener { stopClip() }
-            .show()
-        mp.setOnCompletionListener { if (d.isShowing) d.dismiss() }
+        clipPlaying = f
+        mp.setOnCompletionListener { stopClip(); onEnd() }
     }
 
     private fun shareClip(f: java.io.File) {
