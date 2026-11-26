@@ -29,7 +29,7 @@ object Config {
         "تطبيق مجاني يذكرك بالصلاة ويدلك على أقرب مسجد وأنت تسوق. شاركه والدال على الخير كفاعله\n$SITE_URL"
 
     /** قيراط: Riyadh funeral prayers and cemeteries (shown in Riyadh only). */
-    const val QIRAT_URL = "https://janaez-riyadh.netlify.app"
+    const val QIRAT_URL = "https://janaez-riyadh.pages.dev"
 
     /** Privacy policy page (needed for Google Play and App Store). */
     const val PRIVACY_URL = "https://aqrab-masjid.pages.dev/privacy/"
