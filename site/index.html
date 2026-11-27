@@ -418,6 +418,10 @@
       <input type="hidden" name="source" id="fSrc" value="site">
       <label for="fName" data-t="fName"></label>
       <input id="fName" name="mosque_name" maxlength="120" autocomplete="off">
+      <label for="fWomen" data-t="fWomen"></label>
+      <select id="fWomen" name="women_section"><option value="غير محدد" data-t="fUnk"></option><option value="نعم" data-t="fYes"></option><option value="لا" data-t="fNo"></option></select>
+      <label for="fPark" data-t="fPark"></label>
+      <select id="fPark" name="parking"><option value="غير محدد" data-t="fUnk"></option><option value="نعم" data-t="fYes"></option><option value="لا" data-t="fNo"></option></select>
       <input type="hidden" name="page_lang" id="fLang">
       <div class="msg" id="fMsg"></div>
       <div class="two">
@@ -504,7 +508,7 @@ const T = {
   iqShort:"إقامة", iqSet:"⚙️ غيّر وقت الإقامة", iqH:"وقت الإقامة بعد الأذان", iqP:"اختر كم دقيقة بين الأذان والإقامة في مسجدك. إذا ما اخترت، نحسبها 20 دقيقة.",
   min:"د", save:"حفظ", cancel:"إلغاء", close:"إغلاق", saved:"تم الحفظ ✓",
   gmH:"أضف مسجدًا في خرائط Google", gmP:"بعد موافقة Google يظهر المسجد للجميع في «أقرب مسجد».", gmGo:"افتح خرائط Google", gmSteps:["افتح خرائط Google من الزر بالأسفل.","اضغط مطوّلًا على مكان المسجد بالضبط حتى يظهر الدبوس الأحمر 📍.","اسحب البطاقة للأعلى واختر «إضافة مكان ناقص».","اكتب اسم المسجد، واختر الفئة «مسجد»، ثم أرسل."], addH:"مسجد غير موجود في القائمة؟", addP:"إذا تعرف مسجد أو مصلى ما ظهر هنا، أرسله لنا ونضيفه بعد المراجعة. ولك الأجر بإذن الله.", addBtn:"➕ أضف مسجداً",
-  formH:"أضف مسجداً أو مصلى", formP:"لا تحتاج حساب. نراجع الطلب ونضيفه في التطبيق.", fName:"اسم المسجد (اختياري)", fKind:"النوع",
+  fWomen:"👩 مصلى نساء", fPark:"🅿️ مواقف سيارات", fUnk:"لا أعرف", fYes:"نعم", fNo:"لا", formH:"أضف مسجداً أو مصلى", formP:"لا تحتاج حساب. نراجع الطلب ونضيفه في التطبيق.", fName:"اسم المسجد (اختياري)", fKind:"النوع",
   kinds:{"مسجد":"مسجد","جامع":"جامع","مصلى":"مصلى","مصلى محطة":"مصلى محطة وقود"},
   fLocL:"موقع المسجد", fPinOk:"✓ تم تحديد مكان المسجد", fMapL:"أو حرّك الخريطة حتى يكون الدبوس 📍 فوق المسجد", fSatOn:"🛰️ قمر صناعي", fSatOff:"🗺️ خريطة", fNeedPin:"حدّد مكان المسجد على الخريطة أولاً.", fOutSA:"المكان المحدد برا السعودية. نستقبل المساجد داخل السعودية فقط.", fChecking:"جاري التحقق من الموقع…", iosTip:"📲 للتثبيت على الآيفون: اضغط «مشاركة» ⬆️ ← «إضافة إلى الشاشة الرئيسية» ➕", appTip:"📲 للتثبيت: افتح الرابط في المتصفح أولاً (⋯ ← فتح في Safari أو Chrome)", tipOk:"تمام", fLoc:"📍 أنا عند المسجد الآن — خذ موقعي", fLocWait:"جاري تحديد موقعك…", fLocOk:"✓ تم أخذ موقعك",
   fLocFail:"ما قدرنا نحدد موقعك. حدّد مكان المسجد على الخريطة.", fMaps:"رابط المسجد في خرائط Google (اختياري)",
@@ -545,7 +549,7 @@ const T = {
   iqShort:"Iqama", iqSet:"⚙️ Change iqama times", iqH:"Iqama time after adhan", iqP:"Choose how many minutes your mosque waits between adhan and iqama. If you do not choose, we use 20 minutes.",
   min:"min", save:"Save", cancel:"Cancel", close:"Close", saved:"Saved ✓",
   gmH:"Add a mosque on Google Maps", gmP:"After Google approves it, the mosque shows for everyone in Nearest Mosque.", gmGo:"Open Google Maps", gmSteps:["Open Google Maps with the button below.","Long-press the exact place of the mosque until the red pin 📍 shows.","Swipe the card up and choose “Add a missing place”.","Type the mosque name, pick the category “Mosque”, then send."], addH:"Mosque not on the list?", addP:"If you know a mosque or prayer room that does not show here, send it to us. We add it after review.", addBtn:"➕ Add a mosque",
-  formH:"Add a mosque or prayer room", formP:"No account needed. We review it and add it to the app.", fName:"Mosque name (optional)", fKind:"Type",
+  fWomen:"👩 Women's prayer area", fPark:"🅿️ Car parking", fUnk:"Don't know", fYes:"Yes", fNo:"No", formH:"Add a mosque or prayer room", formP:"No account needed. We review it and add it to the app.", fName:"Mosque name (optional)", fKind:"Type",
   kinds:{"مسجد":"Mosque","جامع":"Friday mosque (Jami)","مصلى":"Prayer room","مصلى محطة":"Gas station prayer room"},
   fLocL:"Mosque location", fPinOk:"✓ Mosque location set", fMapL:"Or move the map until the pin 📍 is on the mosque", fSatOn:"🛰️ Satellite", fSatOff:"🗺️ Map", fNeedPin:"Please mark the mosque on the map first.", fOutSA:"This point is outside Saudi Arabia. We only accept mosques inside Saudi Arabia.", fChecking:"Checking the location…", iosTip:"📲 To install on iPhone: tap Share ⬆️ → «Add to Home Screen» ➕", appTip:"📲 To install: open the link in your browser first (⋯ → Open in Safari or Chrome)", tipOk:"OK", fLoc:"📍 I am at the mosque now — use my location", fLocWait:"Finding your location…", fLocOk:"✓ Location added",
   fLocFail:"We could not get your location. Mark the mosque on the map.", fMaps:"Google Maps link (optional)",
@@ -1375,7 +1379,7 @@ $("wahy").href = isIOS ? "https://apps.apple.com/sa/app/id1615454207" : "https:/
 
 function apply(){
   document.documentElement.lang = lang; document.documentElement.dir = "rtl"; // same layout in every language
-  document.querySelectorAll("[data-t]").forEach(e => e.textContent = L()[e.dataset.t]);
+  document.querySelectorAll("[data-t]").forEach(e => e.textContent = L()[e.dataset.t] ?? T.en[e.dataset.t]);
   $("langBtn").textContent = "🌐 " + lang.toUpperCase();
   if ($("modeBtn")) setMode(document.body.classList.contains("drive"));
   document.title = lang==="ar" ? "أقرب مسجد – ومواقيت الصلاة" : L().title + " – " + (lang==="en" ? "Prayer Times" : L().prayerH);

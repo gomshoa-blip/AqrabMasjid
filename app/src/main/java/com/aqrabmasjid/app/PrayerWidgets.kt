@@ -24,6 +24,8 @@ import android.widget.RemoteViews
 object PrayerWidgets {
     const val ACTION_TICK = "com.aqrabmasjid.app.WIDGET_TICK"
     private const val MIN = 60_000L
+    /** Friday: minutes before the Jumuah adhan when the khutbah counter starts. */
+    private const val JUMUAH_MIN = 60L
 
     fun updateAll(c: Context) {
         val app = c.applicationContext
@@ -58,8 +60,10 @@ object PrayerWidgets {
         val st = PrayerCalc.status(c, lat, lng, now)
         val t = st.time
         return if (!st.isCurrent) {
+            // Friday: the khutbah starts with the Jumuah adhan
             Now(L.t("الصلاة القادمة", "Next prayer"), t.pname, t.adhan, t.iqama,
-                t.adhan, L.t("متبقي للأذان", "to adhan"), t.prayer, t.adhan)
+                t.adhan, if (t.isJumuah) L.t("متبقي للخطبة", "to khutbah") else L.t("متبقي للأذان", "to adhan"),
+                t.prayer, t.adhan)
         } else if (t.iqama > now) {
             Now(L.t("حان وقت الصلاة", "Prayer time now"), t.pname, t.adhan, t.iqama,
                 t.iqama, L.t("متبقي للإقامة", "to iqama"), t.prayer, t.iqama)
@@ -179,15 +183,20 @@ object PrayerWidgets {
         val red = 0xFFFF6B6B.toInt(); val green = 0xFF3BE37F.toInt(); val gold = 0xFFF6D46B.toInt()
         val base = SystemClock.elapsedRealtime() + (t.adhan - now)
         if (!st.isCurrent) {
-            val soon = t.adhan - now <= 30 * MIN
-            v.setTextViewText(label, if (soon) L.t("باقي على دخول صلاة", "Time left to") else L.t("الصلاة القادمة", "Next prayer"))
+            // Friday: the red counter starts 1 hour before, and counts to the start of the khutbah
+            val soon = t.adhan - now <= (if (t.isJumuah) JUMUAH_MIN else 30L) * MIN
+            v.setTextViewText(label, when {
+                soon && t.isJumuah -> L.t("باقي على الخطبة", "Time left to khutbah")
+                soon -> L.t("باقي على دخول صلاة", "Time left to")
+                else -> L.t("الصلاة القادمة", "Next prayer")
+            })
             v.setChronometer(chrono, base, null, true)
             v.setChronometerCountDown(chrono, true)
             v.setTextColor(chrono, if (soon) red else gold)
             v.setTextColor(label, if (soon) red else gold)
             v.setTextViewText(time, L.t("الأذان ${PrayerCalc.fmtTime(t.adhan)}", "Adhan ${PrayerCalc.fmtTime(t.adhan)}"))
         } else if (now - t.adhan < 30 * MIN) {
-            v.setTextViewText(label, L.t("وقت صلاة", "It is now time for"))
+            v.setTextViewText(label, if (t.isJumuah) L.t("بدأت الخطبة", "Khutbah started") else L.t("وقت صلاة", "It is now time for"))
             v.setChronometer(chrono, base, null, true)
             v.setChronometerCountDown(chrono, false)
             v.setTextColor(chrono, green)
@@ -239,7 +248,8 @@ object PrayerWidgets {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         val nowMs = System.currentTimeMillis()
-        val red = n.adhan - 30 * MIN
+        val jumuah = PrayerTime(n.prayer, n.adhan, n.iqama).isJumuah
+        val red = n.adhan - (if (jumuah) JUMUAH_MIN else 30L) * MIN
         val change = if (red > nowMs && red < n.nextChange) red else n.nextChange
         val at = maxOf(change + 2_000, nowMs + 60_000)
         try {

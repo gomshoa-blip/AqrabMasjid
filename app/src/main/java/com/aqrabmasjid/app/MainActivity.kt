@@ -199,6 +199,21 @@ class MainActivity : Activity() {
         showTone()
         findViewById<View>(R.id.btnTone).setOnClickListener { toneDialog() }
 
+        // Car: riding dua and morning/evening adhkar when the phone connects to the car (Bluetooth)
+        val swDua = findViewById<Switch>(R.id.switchCarDua)
+        val swAdhkar = findViewById<Switch>(R.id.switchCarAdhkar)
+        swDua.text = L.t("🚗 دعاء الركوب عند الاتصال بالسيارة", "🚗 Riding dua when the car connects")
+        swAdhkar.text = L.t("🌅 أذكار الصباح والمساء عند الاتصال ببلوتوث السيارة", "🌅 Morning/evening adhkar when car Bluetooth connects")
+        swDua.isChecked = CarVoice.duaOn(this) && CarVoice.hasBtPermission(this)
+        swAdhkar.isChecked = CarVoice.adhkarOn(this) && CarVoice.hasBtPermission(this)
+        val carListener = android.widget.CompoundButton.OnCheckedChangeListener { b, on ->
+            if (b.id == R.id.switchCarDua) CarVoice.setDua(this, on) else CarVoice.setAdhkar(this, on)
+            if (on && !CarVoice.hasBtPermission(this) && Build.VERSION.SDK_INT >= 31)
+                requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_CONNECT), 2)
+        }
+        swDua.setOnCheckedChangeListener(carListener)
+        swAdhkar.setOnCheckedChangeListener(carListener)
+
         // Warning button: opens the settings page for what is missing
         btnExact.setOnClickListener {
             if (btnExact.tag == "notif") openNotifSettings() else openExactSettings()
@@ -249,6 +264,16 @@ class MainActivity : Activity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 2) {
+            // "Nearby devices" refused: the car features can't work, so show them off
+            if (!CarVoice.hasBtPermission(this)) {
+                findViewById<Switch>(R.id.switchCarDua).isChecked = false
+                findViewById<Switch>(R.id.switchCarAdhkar).isChecked = false
+                Toast.makeText(this, L.t("نحتاج إذن «الأجهزة القريبة» لنعرف أن الجوال اتصل بالسيارة",
+                    "We need the \"Nearby devices\" permission to know the phone connected to the car"), Toast.LENGTH_LONG).show()
+            }
+            return
+        }
         refresh()
         updateAlertBanner()
         checkAlerts()
@@ -530,17 +555,31 @@ class MainActivity : Activity() {
         name.hint = L.t("اسم المسجد (اختياري)", "Mosque name (optional)")
         name.isSingleLine = true
         box.addView(name, LinearLayout.LayoutParams(-1, -2).also { it.topMargin = dp(12) })
+        // Women's prayer area and parking (we show them in the mosques list after review)
+        val women = android.widget.CheckBox(this)
+        women.text = L.t("👩 يوجد مصلى نساء", "👩 Has a women's prayer area")
+        women.textSize = 15f
+        women.setTextColor(getColor(R.color.text_primary))
+        box.addView(women, LinearLayout.LayoutParams(-1, -2).also { it.topMargin = dp(8) })
+        val parking = android.widget.CheckBox(this)
+        parking.text = L.t("🅿️ يوجد مواقف سيارات", "🅿️ Has car parking")
+        parking.textSize = 15f
+        parking.setTextColor(getColor(R.color.text_primary))
+        box.addView(parking, LinearLayout.LayoutParams(-1, -2))
 
         AlertDialog.Builder(this)
             .setTitle(L.t("أضف مسجدًا", "Add a mosque"))
             .setView(box)
-            .setPositiveButton(L.t("📍 أنا عند المسجد", "📍 I am at the mosque")) { _, _ -> sendMosqueHere(name.text.toString().trim()) }
+            .setPositiveButton(L.t("📍 أنا عند المسجد", "📍 I am at the mosque")) { _, _ ->
+                sendMosqueHere(name.text.toString().trim(),
+                    if (women.isChecked) "نعم" else "غير محدد", if (parking.isChecked) "نعم" else "غير محدد")
+            }
             .setNeutralButton(L.t("حدد على الخريطة", "Pick on the map")) { _, _ -> openUrl(Config.ADD_MOSQUE_URL) }
             .setNegativeButton(L.t("إلغاء", "Cancel"), null)
             .show()
     }
 
-    private fun sendMosqueHere(name: String) {
+    private fun sendMosqueHere(name: String, women: String = "غير محدد", parking: String = "غير محدد") {
         Toast.makeText(this, L.t("جاري أخذ موقعك…", "Getting your location…"), Toast.LENGTH_SHORT).show()
         LocationHelper.get(this) { loc ->
             if (loc == null) {
@@ -548,7 +587,7 @@ class MainActivity : Activity() {
                 openUrl(Config.ADD_MOSQUE_URL)
                 return@get
             }
-            MosqueSubmit.send(this, name, loc.first, loc.second) { ok ->
+            MosqueSubmit.send(this, name, loc.first, loc.second, women, parking) { ok ->
                 Toast.makeText(this,
                     if (ok) L.t("جزاك الله خيرًا! وصلنا المسجد، ونضيفه بعد المراجعة.", "Thank you! We received it and will add it after review.")
                     else L.t("ما قدرنا نرسل الآن. تأكد من الإنترنت وحاول مرة ثانية.", "Could not send now. Check the internet and try again."),

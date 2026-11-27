@@ -1181,6 +1181,26 @@
             android:textColor="@color/text_primary"
             android:textSize="14sp" />
 
+        <Switch
+            android:id="@+id/switchCarDua"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_surface"
+            android:padding="16dp"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp" />
+
+        <Switch
+            android:id="@+id/switchCarAdhkar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_surface"
+            android:padding="16dp"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp" />
+
         <TextView
             android:id="@+id/btnTone"
             android:layout_width="match_parent"

@@ -50,7 +50,10 @@
 - `DONATE_URL`: منصة إحسان.
 - `CUSTOM_MOSQUES_URL`: ملف `mosques.json` في موقعك، فيه المساجد التي راجعتها وأضفتها:
   ```json
-  [{"name":"مسجد ...","lat":24.71,"lng":46.67}]
+  [{"name":"مسجد ...","lat":24.71,"lng":46.67,"women":true,"parking":true}]
+  ```
+  `women` = يوجد مصلى نساء، `parking` = توجد مواقف (اختياري: true أو false، أو احذفه إذا لا تعرف).
+  ```
   ```
 
 ## قبل النشر في Google Play

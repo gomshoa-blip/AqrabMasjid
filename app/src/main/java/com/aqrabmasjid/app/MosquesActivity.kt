@@ -157,7 +157,7 @@ class MosquesActivity : Activity() {
         name.setTypeface(null, Typeface.BOLD)
         name.setTextColor(getColor(R.color.text_primary))
         val dist = TextView(this)
-        dist.text = MosqueRepo.fmtDistance(m.distKm)
+        dist.text = MosqueRepo.fmtDistance(m.distKm) + m.extras().let { if (it.isEmpty()) "" else "  ·  $it" }
         dist.textSize = 15f
         dist.setTextColor(getColor(R.color.text_secondary))
         text.addView(name)

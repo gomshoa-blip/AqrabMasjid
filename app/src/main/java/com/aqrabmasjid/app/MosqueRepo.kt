@@ -14,7 +14,17 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-data class Mosque(val name: String, val lat: Double, val lng: Double, val distKm: Double)
+data class Mosque(
+    val name: String, val lat: Double, val lng: Double, val distKm: Double,
+    /** Women's prayer area / parking: true, false, or null (not known). From our reviewed list. */
+    val women: Boolean? = null, val parking: Boolean? = null
+) {
+    /** Short line like "👩 مصلى نساء · 🅿️ مواقف", or "" if nothing is known. */
+    fun extras(): String = listOfNotNull(
+        if (women == true) L.t("👩 مصلى نساء", "👩 Women's area") else null,
+        if (parking == true) L.t("🅿️ مواقف", "🅿️ Parking") else null
+    ).joinToString(" · ")
+}
 
 /**
  * Finds mosques from OpenStreetMap by place type (not only by name),
@@ -210,16 +220,19 @@ object MosqueRepo {
             val lo = o.getDouble("lng")
             val d = distanceKm(lat, lng, la, lo)
             val name = o.optString("name").takeIf { !o.isNull("name") && it.isNotBlank() } ?: "مسجد"
-            if (d <= 15) out += Mosque(name, la, lo, d)
+            fun flag(k: String): Boolean? = if (o.has(k) && !o.isNull(k)) o.optBoolean(k) else null
+            if (d <= 15) out += Mosque(name, la, lo, d, flag("women"), flag("parking"))
         }
         return out
     }
 
-    /** Same place listed twice (within ~40 m) -> keep one, prefer a real name. */
+    /** Same place listed twice (within ~40 m) -> keep one, prefer a real name, keep women/parking info. */
     private fun dedupe(list: List<Mosque>): List<Mosque> {
         val out = ArrayList<Mosque>()
         for (m in list.sortedBy { if (it.name == "مسجد") 1 else 0 }) {
-            if (out.none { distanceKm(it.lat, it.lng, m.lat, m.lng) < 0.04 }) out += m
+            val i = out.indexOfFirst { distanceKm(it.lat, it.lng, m.lat, m.lng) < 0.04 }
+            if (i < 0) out += m
+            else out[i] = out[i].copy(women = out[i].women ?: m.women, parking = out[i].parking ?: m.parking)
         }
         return out
     }

@@ -18,7 +18,7 @@ object MosqueSubmit {
     private val main = Handler(Looper.getMainLooper())
 
     /** cb(true) when the form was received. Runs cb on the main thread. */
-    fun send(c: Context, name: String, lat: Double, lng: Double, cb: (Boolean) -> Unit) {
+    fun send(c: Context, name: String, lat: Double, lng: Double, women: String, parking: String, cb: (Boolean) -> Unit) {
         val la = String.format(Locale.US, "%.6f", lat)
         val lo = String.format(Locale.US, "%.6f", lng)
         val fields = linkedMapOf(
@@ -27,6 +27,8 @@ object MosqueSubmit {
             "_captcha" to "false",
             "mosque_name" to name.ifBlank { "مسجد" },
             "type" to "مسجد",
+            "women_section" to women,
+            "parking" to parking,
             "lat" to la,
             "lng" to lo,
             "location_link" to "https://maps.google.com/?q=$la,$lo",

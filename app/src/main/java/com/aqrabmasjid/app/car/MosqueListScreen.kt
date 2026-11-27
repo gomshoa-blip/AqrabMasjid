@@ -69,7 +69,7 @@ class MosqueListScreen(carContext: CarContext) : Screen(carContext) {
                 list.addItem(
                     Row.Builder()
                         .setTitle(mo.name)
-                        .addText(MosqueRepo.fmtDistance(mo.distKm))
+                        .addText(MosqueRepo.fmtDistance(mo.distKm) + mo.extras().let { if (it.isEmpty()) "" else " · $it" })
                         .setMetadata(Metadata.Builder().setPlace(place).build())
                         .setOnClickListener { navigate(mo) }
                         .build()

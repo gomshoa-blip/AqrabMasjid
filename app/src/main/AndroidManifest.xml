@@ -14,6 +14,9 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Know when the phone connects to the car (riding dua, morning/evening adhkar) -->
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <!-- Needed for the map list screen in Android Auto -->
     <uses-permission android:name="androidx.car.app.MAP_TEMPLATES" />
 
@@ -162,6 +165,19 @@
         <receiver
             android:name=".AlarmReceiver"
             android:exported="false" />
+
+        <!-- Car connected (Bluetooth): riding dua + morning/evening adhkar -->
+        <receiver
+            android:name=".CarVoiceReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name=".CarVoiceService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
 
         <!-- Share saved radio clips (WhatsApp, etc.) -->
         <provider
