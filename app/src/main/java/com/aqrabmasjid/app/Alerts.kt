@@ -83,7 +83,7 @@ object Alerts {
             if (t == Tone.CUSTOM) continue
             val ch = NotificationChannel(t.channel, L.t("تنبيه الصلاة - ${t.ar}", "Prayer alerts - ${t.en}"),
                 if (t == Tone.SILENT) NotificationManager.IMPORTANCE_DEFAULT else NotificationManager.IMPORTANCE_HIGH)
-            ch.description = L.t("تنبيه عند الأذان، وبعده بـ 10 دقائق للإقامة", "Alert at adhan, and 10 minutes later for iqama")
+            ch.description = L.t("تنبيه قبل الأذان، وعند الأذان، وبعده بـ 7 دقائق، وعند الإقامة", "Alert before adhan, at adhan, 7 minutes later, and at iqama")
             ch.setShowBadge(false)
             if (t.raw != null) ch.setSound(soundUri(c, t.raw), attrs) else ch.setSound(null, null)
             ch.enableVibration(t != Tone.SILENT)
@@ -151,14 +151,15 @@ object Alerts {
      * 30 minutes before adhan: a quiet notification with a live countdown to the adhan.
      * At adhan it is replaced by the adhan alert, whose countdown goes on to the iqama.
      */
-    private fun showPre(c: Context, prayer: Prayer, adhan: Long, iqama: Long) {
+    private fun showPre(c: Context, prayer: Prayer, adhan: Long, iqama: Long, sound: Boolean = true) {
         val now = System.currentTimeMillis()
         if (adhan <= now) return
         val open = PendingIntent.getActivity(
             c, 202, Intent(c, MainActivity::class.java),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        val n = NotificationCompat.Builder(c, PRE_CHANNEL)
+        // At the chosen time it rings once with the user's tone; opened later (app start) it stays quiet
+        val n = NotificationCompat.Builder(c, if (sound) channelFor(c) else PRE_CHANNEL)
             .setSmallIcon(R.drawable.ic_stat_mosque)
             .setContentTitle(L.t("${pn(prayer, adhan)} · الأذان ${PrayerCalc.fmtTime(adhan)}", "${pn(prayer, adhan)} · Adhan ${PrayerCalc.fmtTime(adhan)}"))
             .setContentText(L.t("الإقامة ${PrayerCalc.fmtTime(iqama)}", "Iqama ${PrayerCalc.fmtTime(iqama)}"))
@@ -168,7 +169,7 @@ object Alerts {
             .setUsesChronometer(true)
             .setChronometerCountDown(true)
             .setOnlyAlertOnce(true)
-            .setSilent(true)
+            .setSilent(!sound)
             .setNumber(0)
             .setBadgeIconType(NotificationCompat.BADGE_ICON_NONE)
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
@@ -212,8 +213,12 @@ object Alerts {
         val now = System.currentTimeMillis()
         data class Ev(val at: Long, val type: String, val t: PrayerTime)
         val events = PrayerCalc.upcoming(app, lat, lng, now).flatMap {
-            val evs = mutableListOf(Ev(it.adhan - PRE_MIN * MIN, "pre", it), Ev(it.adhan, "adhan", it))
-            if (!isJumuah(it)) evs += Ev(it.adhan + Config.IQAMA_ALERT_AFTER_MIN * MIN, "iqama", it)
+            val evs = mutableListOf(Ev(it.adhan - Prefs.preMin(app) * MIN, "pre", it), Ev(it.adhan, "adhan", it))
+            // 7 min after adhan: "iqama in X min"; then at the iqama time
+            if (!isJumuah(it)) {
+                evs += Ev(it.adhan + Config.IQAMA_ALERT_AFTER_MIN * MIN, "iqama", it)
+                if (it.iqama > it.adhan + (Config.IQAMA_ALERT_AFTER_MIN + 1) * MIN) evs += Ev(it.iqama, "iqama", it)
+            }
             // Friday: read Surat Al-Kahf (9:00 AM), and go early for the khutbah (1 hour before adhan)
             if (isJumuah(it)) {
                 val nine = java.util.Calendar.getInstance().apply {
@@ -228,7 +233,7 @@ object Alerts {
         }
         // Already inside the 30 minutes before adhan (app just opened): show the countdown now
         events.firstOrNull { it.type == "pre" && now >= it.at && now < it.t.adhan }?.let {
-            L.init(app); createChannel(app); showPre(app, it.t.prayer, it.t.adhan, it.t.iqama)
+            L.init(app); createChannel(app); showPre(app, it.t.prayer, it.t.adhan, it.t.iqama, sound = false)
         }
         val next = events.filter { it.at > now + 5_000 }.minByOrNull { it.at } ?: return
 

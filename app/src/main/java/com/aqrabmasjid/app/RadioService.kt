@@ -31,6 +31,18 @@ class RadioService : Service() {
 
     data class Station(val id: String, val ar: String, val en: String, val urls: List<String>) {
         val label: String get() = L.t(ar, en)
+        /** Short name for the favorite buttons on the radio card. */
+        val short: String get() = when (id) {
+            "quran" -> L.t("القرآن الكريم", "Holy Quran")
+            "sunnah" -> L.t("السنة النبوية", "Prophet's Sunnah")
+            "qasim" -> L.t("الشيخ القاسم", "Sheikh Al-Qasim")
+            "sabah" -> L.t("أذكار الصباح", "Morning adhkar")
+            "masa" -> L.t("أذكار المساء", "Evening adhkar")
+            "urdu" -> L.t("ترجمة أوردو", "Urdu translation")
+            "spanish" -> L.t("ترجمة إسبانية", "Spanish translation")
+            "french" -> L.t("ترجمة فرنسية", "French translation")
+            else -> label
+        }
     }
 
     /**

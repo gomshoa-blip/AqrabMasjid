@@ -127,10 +127,12 @@ object LocationHelper {
                 val code = list?.firstOrNull()?.countryCode
                 if (!code.isNullOrBlank()) Prefs.saveCountry(c, code.uppercase(Locale.US))
                 // City name for the prayer table, in Arabic and English
-                val en = list?.firstOrNull()?.let { it.locality ?: it.subAdminArea ?: it.adminArea }
+                val name = { a: android.location.Address -> listOfNotNull(a.subLocality?.takeIf { it.isNotBlank() },
+                    (a.locality ?: a.subAdminArea ?: a.adminArea)?.takeIf { it.isNotBlank() }).distinct() }
+                val en = list?.firstOrNull()?.let { name(it).joinToString(", ") }?.takeIf { it.isNotBlank() }
                 @Suppress("DEPRECATION")
                 val ar = Geocoder(c, Locale("ar")).getFromLocation(lat, lng, 1)?.firstOrNull()
-                    ?.let { it.locality ?: it.subAdminArea ?: it.adminArea }
+                    ?.let { name(it).joinToString("، ") }?.takeIf { it.isNotBlank() }
                 if (!en.isNullOrBlank() || !ar.isNullOrBlank()) Prefs.saveCity(c, ar ?: en ?: "", en ?: ar ?: "", lat, lng)
             } catch (_: Exception) {
             }

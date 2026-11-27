@@ -25,12 +25,12 @@ object Prefs {
             .putString("city_lat", lat.toString()).putString("city_lng", lng.toString()).apply()
     }
 
-    /** City name in the app language, only if it was found near the place used now (about 30 km). */
+    /** Place name (district, city) in the app language, only if it was found near the place used now (about 3 km). */
     fun city(c: Context, lat: Double, lng: Double): String? {
         val sp = p(c)
         val la = sp.getString("city_lat", null)?.toDoubleOrNull() ?: return null
         val lo = sp.getString("city_lng", null)?.toDoubleOrNull() ?: return null
-        if (MosqueRepo.distanceKm(lat, lng, la, lo) > 30) return null
+        if (MosqueRepo.distanceKm(lat, lng, la, lo) > 3) return null
         val ar = sp.getString("city_ar", null); val en = sp.getString("city_en", null)
         return L.t(ar ?: en ?: return null, en ?: ar ?: return null).takeIf { it.isNotBlank() }
     }
@@ -43,6 +43,19 @@ object Prefs {
 
     fun alertsOn(c: Context): Boolean = p(c).getBoolean("alerts", true)
     fun setAlerts(c: Context, on: Boolean) = p(c).edit().putBoolean("alerts", on).apply()
+
+    /** Minutes before adhan for the "adhan soon" alert: 5, 10, 15 or 20. */
+    fun preMin(c: Context): Int = p(c).getInt("pre_min", 15)
+    fun setPreMin(c: Context, m: Int) = p(c).edit().putInt("pre_min", m).apply()
+
+    /** Look: "auto" (follow the phone), "day" or "night". */
+    fun theme(c: Context): String = p(c).getString("theme", "auto") ?: "auto"
+    fun setTheme(c: Context, t: String) = p(c).edit().putString("theme", t).apply()
+
+    /** The two favorite radio stations on the radio card. */
+    fun favRadio(c: Context, slot: Int): String =
+        p(c).getString("fav_radio_$slot", null) ?: if (slot == 0) "quran" else "sunnah"
+    fun setFavRadio(c: Context, slot: Int, id: String) = p(c).edit().putString("fav_radio_$slot", id).apply()
 
     fun saveNearest(c: Context, m: Mosque) {
         p(c).edit()

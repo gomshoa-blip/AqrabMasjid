@@ -3,6 +3,7 @@ package com.aqrabmasjid.app
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -100,7 +101,12 @@ class MainActivity : Activity() {
 
     private var nearest: Mosque? = null
 
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(Look.wrap(base))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        Look.apply(this)
         super.onCreate(savedInstanceState)
         CrashLog.install(this)
         L.init(this)
@@ -168,9 +174,21 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.tileShare).setOnClickListener { share() }
         findViewById<View>(R.id.tileAdd).setOnClickListener { addMosqueDialog() }
         findViewById<View>(R.id.btnPrivacy).setOnClickListener { openUrl(Config.PRIVACY_URL) }
-        // Radio card: Quran (right) and Sunnah (left) select at once; the middle button plays / pauses
-        findViewById<View>(R.id.radioStQuran).setOnClickListener { radioSelect("quran") }
-        findViewById<View>(R.id.radioStSunnah).setOnClickListener { radioSelect("sunnah") }
+        // Radio card: the two favorite stations select at once; the middle button plays / pauses.
+        // Long press on a favorite button: choose another station for it
+        findViewById<View>(R.id.radioStQuran).setOnClickListener { radioSelect(Prefs.favRadio(this, 0)) }
+        findViewById<View>(R.id.radioStSunnah).setOnClickListener { radioSelect(Prefs.favRadio(this, 1)) }
+        findViewById<View>(R.id.radioStQuran).setOnLongClickListener { favRadioDialog(0); true }
+        findViewById<View>(R.id.radioStSunnah).setOnLongClickListener { favRadioDialog(1); true }
+        // Suggest a feature / report a problem: WhatsApp with a ready message
+        findViewById<View>(R.id.btnSuggest).setOnClickListener {
+            openUrl(Config.WHATSAPP_URL + "?text=" + Uri.encode(L.t("💡 اقتراح ميزة لتطبيق أقرب مسجد:\n", "💡 Feature idea for Aqrab Masjid:\n")))
+        }
+        findViewById<View>(R.id.btnBug).setOnClickListener {
+            val info = "\n\n(" + Build.MANUFACTURER + " " + Build.MODEL + " · Android " + Build.VERSION.RELEASE + " · " +
+                runCatching { packageManager.getPackageInfo(packageName, 0).versionName }.getOrDefault("") + ")"
+            openUrl(Config.WHATSAPP_URL + "?text=" + Uri.encode(L.t("⚠️ بلاغ عن خطأ في تطبيق أقرب مسجد:\n", "⚠️ Problem report for Aqrab Masjid:\n") + info))
+        }
         findViewById<View>(R.id.radioMore)?.setOnClickListener { radioDialog() }
         findViewById<View>(R.id.radioSave).setOnClickListener { saveRadioClip() }
         findViewById<View>(R.id.radioRecs).setOnClickListener { radioClipsDialog() }
@@ -199,6 +217,8 @@ class MainActivity : Activity() {
 
         showTone()
         findViewById<View>(R.id.btnTone).setOnClickListener { toneDialog() }
+        findViewById<View>(R.id.btnPreMin).setOnClickListener { preMinDialog() }
+        findViewById<View>(R.id.btnTheme).setOnClickListener { themeDialog() }
 
         // Car: riding dua and morning/evening adhkar when the phone connects to the car (Bluetooth)
         val swDua = findViewById<Switch>(R.id.switchCarDua)
@@ -401,8 +421,9 @@ class MainActivity : Activity() {
         lastTableKey = tableKey
         layoutTimes.removeAllViews()
         // Title: the city the times are for
-        if (city != null) layoutTimes.addView(TextView(this).apply {
-            text = "📍 " + city
+        layoutTimes.addView(TextView(this).apply {
+            text = if (city != null) "📍 " + city
+                else L.t("📍 لم نعرف اسم مكانك. تأكد من الإنترنت والموقع (GPS)", "📍 We could not find your place name. Check the internet and location (GPS)")
             textSize = 19f
             setTypeface(typeface, android.graphics.Typeface.BOLD)
             setTextColor(getColor(R.color.title_text))
@@ -557,6 +578,13 @@ class MainActivity : Activity() {
         msg.textSize = 16f
         msg.setTextColor(getColor(R.color.text_primary))
         box.addView(msg)
+        // What is it: a mosque, or a women's prayer room only (mall, hospital, office…)
+        val kind = android.widget.RadioGroup(this)
+        kind.orientation = LinearLayout.HORIZONTAL
+        val kMosque = android.widget.RadioButton(this).apply { id = View.generateViewId(); text = L.t("🕌 مسجد", "🕌 Mosque"); textSize = 15f; isChecked = true; setTextColor(getColor(R.color.text_primary)) }
+        val kWomen = android.widget.RadioButton(this).apply { id = View.generateViewId(); text = L.t("👩 مصلى نساء", "👩 Women's prayer room"); textSize = 15f; setTextColor(getColor(R.color.text_primary)) }
+        kind.addView(kMosque); kind.addView(kWomen)
+        box.addView(kind, LinearLayout.LayoutParams(-1, -2).also { it.topMargin = dp(10) })
         val name = android.widget.EditText(this)
         name.hint = L.t("اسم المسجد (اختياري)", "Mosque name (optional)")
         name.isSingleLine = true
@@ -572,20 +600,27 @@ class MainActivity : Activity() {
         parking.textSize = 15f
         parking.setTextColor(getColor(R.color.text_primary))
         box.addView(parking, LinearLayout.LayoutParams(-1, -2))
+        kind.setOnCheckedChangeListener { _, _ ->
+            val w = kWomen.isChecked
+            name.hint = if (w) L.t("اسم المكان (مثلاً: مصلى نساء مول …)", "Place name (e.g. mall women's room)") else L.t("اسم المسجد (اختياري)", "Mosque name (optional)")
+            women.visibility = if (w) View.GONE else View.VISIBLE
+        }
 
         AlertDialog.Builder(this)
             .setTitle(L.t("أضف مسجدًا", "Add a mosque"))
             .setView(box)
             .setPositiveButton(L.t("📍 أنا عند المسجد", "📍 I am at the mosque")) { _, _ ->
+                val w = kWomen.isChecked
                 sendMosqueHere(name.text.toString().trim(),
-                    if (women.isChecked) "نعم" else "غير محدد", if (parking.isChecked) "نعم" else "غير محدد")
+                    if (w || women.isChecked) "نعم" else "غير محدد", if (parking.isChecked) "نعم" else "غير محدد",
+                    if (w) "مصلى نساء" else "مسجد")
             }
             .setNeutralButton(L.t("حدد على الخريطة", "Pick on the map")) { _, _ -> openUrl(Config.ADD_MOSQUE_URL) }
             .setNegativeButton(L.t("إلغاء", "Cancel"), null)
             .show()
     }
 
-    private fun sendMosqueHere(name: String, women: String = "غير محدد", parking: String = "غير محدد") {
+    private fun sendMosqueHere(name: String, women: String = "غير محدد", parking: String = "غير محدد", type: String = "مسجد") {
         Toast.makeText(this, L.t("جاري أخذ موقعك…", "Getting your location…"), Toast.LENGTH_SHORT).show()
         LocationHelper.get(this) { loc ->
             if (loc == null) {
@@ -593,7 +628,7 @@ class MainActivity : Activity() {
                 openUrl(Config.ADD_MOSQUE_URL)
                 return@get
             }
-            MosqueSubmit.send(this, name, loc.first, loc.second, women, parking) { ok ->
+            MosqueSubmit.send(this, name, loc.first, loc.second, women, parking, type) { ok ->
                 Toast.makeText(this,
                     if (ok) L.t("جزاك الله خيرًا! وصلنا المسجد، ونضيفه بعد المراجعة.", "Thank you! We received it and will add it after review.")
                     else L.t("ما قدرنا نرسل الآن. تأكد من الإنترنت وحاول مرة ثانية.", "Could not send now. Check the internet and try again."),
@@ -606,6 +641,11 @@ class MainActivity : Activity() {
         val t = Alerts.tone(this)
         val name = if (t == Alerts.Tone.CUSTOM) (Alerts.customName(this) ?: t.label) else t.label
         findViewById<TextView>(R.id.btnTone).text = L.t("🔔 نغمة التنبيه: ", "🔔 Alert sound: ") + name + "  ›"
+        val m = Prefs.preMin(this)
+        findViewById<TextView>(R.id.btnPreMin)?.text = L.t("⏰ التنبيه قبل الأذان: $m دقائق", "⏰ Alert before adhan: $m minutes") + "  ›"
+        findViewById<TextView>(R.id.btnTheme)?.text = L.t("🎨 المظهر: ", "🎨 Look: ") + Look.label(Prefs.theme(this)) + "  ›"
+        findViewById<TextView>(R.id.btnSuggest)?.text = L.t("💡 اقترح ميزة", "💡 Suggest a feature")
+        findViewById<TextView>(R.id.btnBug)?.text = L.t("⚠️ بلّغ عن خطأ", "⚠️ Report a problem")
     }
 
     private var playing: android.media.Ringtone? = null
@@ -801,10 +841,11 @@ class MainActivity : Activity() {
             else { ad?.stop(); w?.visibility = View.INVISIBLE }
             findViewById<View>(dot)?.visibility = if (on && live && cur == id) View.VISIBLE else View.GONE
         }
-        station("quran", R.id.radioStQuran, R.id.radioIcQuran, R.id.radioTxQuran, R.id.radioWaveQuran, R.id.radioLiveQuran)
-        station("sunnah", R.id.radioStSunnah, R.id.radioIcSunnah, R.id.radioTxSunnah, R.id.radioWaveSunnah, R.id.radioLiveSunnah)
-        findViewById<TextView>(R.id.radioTxQuran)?.text = L.t("القرآن الكريم", "Holy Quran")
-        findViewById<TextView>(R.id.radioTxSunnah)?.text = L.t("السنة النبوية", "Prophet's Sunnah")
+        val fav0 = Prefs.favRadio(this, 0); val fav1 = Prefs.favRadio(this, 1)
+        station(fav0, R.id.radioStQuran, R.id.radioIcQuran, R.id.radioTxQuran, R.id.radioWaveQuran, R.id.radioLiveQuran)
+        station(fav1, R.id.radioStSunnah, R.id.radioIcSunnah, R.id.radioTxSunnah, R.id.radioWaveSunnah, R.id.radioLiveSunnah)
+        findViewById<TextView>(R.id.radioTxQuran)?.text = RadioService.station(fav0)?.short ?: ""
+        findViewById<TextView>(R.id.radioTxSunnah)?.text = RadioService.station(fav1)?.short ?: ""
         findViewById<TextView>(R.id.radioMore)?.text = "📻  " + L.t("إذاعات أخرى", "More stations")
 
         // Middle button: pause while sound is wanted, play otherwise; spinner while connecting / retrying
@@ -1014,8 +1055,72 @@ class MainActivity : Activity() {
                 showRadioBar()
             }
             .setNegativeButton(L.t("إغلاق", "Close"), null)
+            .setNeutralButton(L.t("⭐ المفضلة", "⭐ Favorites")) { _, _ -> favSlotDialog() }
         if (now != null) b.setPositiveButton(L.t("⏹ إيقاف", "⏹ Stop")) { _, _ -> RadioService.stop(this) }
         b.show()
+    }
+
+    /** Which favorite button to change (the two buttons on the radio card). */
+    private fun favSlotDialog() {
+        val names = (0..1).map { (if (it == 0) "1️⃣ " else "2️⃣ ") + (RadioService.station(Prefs.favRadio(this, it))?.label ?: "") }
+        AlertDialog.Builder(this)
+            .setTitle(L.t("اختر الزر الذي تريد تغييره", "Choose the button to change"))
+            .setItems(names.toTypedArray()) { _, i -> favRadioDialog(i) }
+            .setNegativeButton(L.t("إغلاق", "Close"), null)
+            .show()
+    }
+
+    /** Put a station on favorite button [slot] (0 or 1). */
+    private fun favRadioDialog(slot: Int) {
+        val st = RadioService.STATIONS
+        val cur = Prefs.favRadio(this, slot)
+        val items = st.map { (if (it.id == cur) "⭐ " else "📻 ") + it.label }
+        AlertDialog.Builder(this)
+            .setTitle(L.t("اختر إذاعة للزر ${slot + 1}", "Choose a station for button ${slot + 1}"))
+            .setItems(items.toTypedArray()) { _, i ->
+                val other = Prefs.favRadio(this, 1 - slot)
+                // Same station on both buttons: swap them
+                if (st[i].id == other) Prefs.setFavRadio(this, 1 - slot, cur)
+                Prefs.setFavRadio(this, slot, st[i].id)
+                radioLastShown = ""
+                showRadioBar()
+                toast(L.t("تم الحفظ ⭐ ", "Saved ⭐ ") + st[i].short)
+            }
+            .setNegativeButton(L.t("إلغاء", "Cancel"), null)
+            .show()
+    }
+
+    /** Minutes before adhan for the "adhan soon" alert. */
+    private fun preMinDialog() {
+        val opts = intArrayOf(5, 10, 15, 20)
+        val cur = Prefs.preMin(this)
+        AlertDialog.Builder(this)
+            .setTitle(L.t("التنبيه قبل الأذان", "Alert before adhan"))
+            .setSingleChoiceItems(opts.map { L.t("$it دقائق", "$it minutes") }.toTypedArray(), opts.indexOf(cur).coerceAtLeast(0)) { d, i ->
+                Prefs.setPreMin(this, opts[i])
+                Alerts.scheduleNext(this)
+                showTone()
+                d.dismiss()
+            }
+            .setNegativeButton(L.t("إلغاء", "Cancel"), null)
+            .show()
+    }
+
+    /** Day / night / auto look. */
+    private fun themeDialog() {
+        val opts = arrayOf("auto", "day", "night")
+        val cur = Prefs.theme(this)
+        AlertDialog.Builder(this)
+            .setTitle(L.t("المظهر", "Look"))
+            .setSingleChoiceItems(opts.map { Look.label(it) }.toTypedArray(), opts.indexOf(cur).coerceAtLeast(0)) { d, i ->
+                d.dismiss()
+                if (opts[i] == cur) return@setSingleChoiceItems
+                Prefs.setTheme(this, opts[i])
+                Look.apply(this)
+                recreate()
+            }
+            .setNegativeButton(L.t("إلغاء", "Cancel"), null)
+            .show()
     }
 
     private fun share() {
@@ -1114,7 +1219,7 @@ class MainActivity : Activity() {
         b(R.id.tileAddText, "أضف مسجد", "Add a mosque")
         b(R.id.tileNearText, "مساجد قريبة", "Nearby mosques")
         b(R.id.tvMore, "المزيد", "More")
-        b(R.id.switchAlerts, "تنبيه عند الأذان، وبعده بـ 10 دقائق للإقامة", "Alert at adhan, and 10 minutes later for iqama")
+        b(R.id.switchAlerts, "تنبيه قبل الأذان، وعند الأذان، وبعده بـ 7 دقائق، وعند الإقامة", "Alert before adhan, at adhan, 7 minutes later, and at iqama")
         b(R.id.btnExact, "اسمح بالتنبيه في الوقت الدقيق", "Allow exact-time alerts")
         b(R.id.btnTarteelText, "ترتيل", "Tarteel")
         b(R.id.btnWahyText, "وحي", "Wahy")

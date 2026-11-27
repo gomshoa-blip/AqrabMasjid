@@ -48,5 +48,5 @@ object Config {
     const val WAHY_PKG = "com.logicdev.quran_reader"
 
     /** Minutes after adhan for the iqama alert. */
-    const val IQAMA_ALERT_AFTER_MIN = 10
+    const val IQAMA_ALERT_AFTER_MIN = 7
 }

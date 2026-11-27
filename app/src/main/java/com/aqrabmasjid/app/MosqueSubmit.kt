@@ -18,15 +18,19 @@ object MosqueSubmit {
     private val main = Handler(Looper.getMainLooper())
 
     /** cb(true) when the form was received. Runs cb on the main thread. */
-    fun send(c: Context, name: String, lat: Double, lng: Double, women: String, parking: String, cb: (Boolean) -> Unit) {
+    fun send(c: Context, name: String, lat: Double, lng: Double, women: String, parking: String, cb: (Boolean) -> Unit) =
+        send(c, name, lat, lng, women, parking, "مسجد", cb)
+
+    /** [type]: "مسجد" or "مصلى نساء". */
+    fun send(c: Context, name: String, lat: Double, lng: Double, women: String, parking: String, type: String, cb: (Boolean) -> Unit) {
         val la = String.format(Locale.US, "%.6f", lat)
         val lo = String.format(Locale.US, "%.6f", lng)
         val fields = linkedMapOf(
-            "_subject" to "طلب إضافة مسجد – أقرب مسجد",
+            "_subject" to (if (type == "مسجد") "طلب إضافة مسجد – أقرب مسجد" else "طلب إضافة $type – أقرب مسجد"),
             "_template" to "table",
             "_captcha" to "false",
-            "mosque_name" to name.ifBlank { "مسجد" },
-            "type" to "مسجد",
+            "mosque_name" to name.ifBlank { type },
+            "type" to type,
             "women_section" to women,
             "parking" to parking,
             "lat" to la,
