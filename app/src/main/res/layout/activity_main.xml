@@ -118,8 +118,8 @@
                         android:id="@+id/tvHeroLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="#CCFFFFFF"
-                        android:textSize="14sp"
+                        android:textColor="#E6FFFFFF"
+                        android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -227,7 +227,7 @@
             android:id="@+id/ctaRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="16dp"
             android:baselineAligned="false"
             android:orientation="horizontal">
 
@@ -332,7 +332,7 @@
             android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="16dp"
             android:gravity="center"
             android:lineSpacingMultiplier="1.35"
             android:textColor="@color/text_primary"
@@ -688,7 +688,7 @@
             android:id="@+id/btnMode"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/bg_more_btn"
             android:clickable="true"
             android:focusable="true"
@@ -760,16 +760,16 @@
             android:id="@+id/tvServices"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="24dp"
             android:layout_marginStart="4dp"
             android:text="القرآن والذكر"
-            android:textColor="@color/text_hint"
-            android:textSize="14sp"
+            android:textColor="@color/text_secondary"
+            android:textSize="17sp"
             android:textStyle="bold" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             android:baselineAligned="false"
             android:orientation="horizontal">
             <LinearLayout
@@ -860,16 +860,16 @@
             android:id="@+id/tvGrpMosques"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="24dp"
             android:layout_marginStart="4dp"
             android:text="المساجد"
-            android:textColor="@color/text_hint"
-            android:textSize="14sp"
+            android:textColor="@color/text_secondary"
+            android:textSize="17sp"
             android:textStyle="bold" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             android:baselineAligned="false"
             android:orientation="horizontal">
             <LinearLayout
@@ -961,16 +961,16 @@
             android:id="@+id/tvRecommended"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="24dp"
             android:layout_marginStart="4dp"
             android:text="تطبيقات ومواقع ننصح بها"
-            android:textColor="@color/text_hint"
-            android:textSize="14sp"
+            android:textColor="@color/text_secondary"
+            android:textSize="17sp"
             android:textStyle="bold" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             android:baselineAligned="false"
             android:orientation="horizontal">
             <LinearLayout
@@ -1104,16 +1104,16 @@
             android:id="@+id/tvGrpContact"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="24dp"
             android:layout_marginStart="4dp"
             android:text="تواصل"
-            android:textColor="@color/text_hint"
-            android:textSize="14sp"
+            android:textColor="@color/text_secondary"
+            android:textSize="17sp"
             android:textStyle="bold" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             android:baselineAligned="false"
             android:orientation="horizontal">
             <LinearLayout
@@ -1249,8 +1249,8 @@
             android:layout_marginTop="24dp"
             android:layout_marginStart="4dp"
             android:text="المزيد"
-            android:textColor="@color/text_hint"
-            android:textSize="13sp"
+            android:textColor="@color/text_secondary"
+            android:textSize="17sp"
             android:textStyle="bold" />
 
 <Switch

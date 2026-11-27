@@ -49,8 +49,9 @@ class CountdownRing @JvmOverloads constructor(
     }
     private val dot = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
     private val smallText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#DDEFE7")
+        color = Color.parseColor("#F2FFF8")
         textAlign = Paint.Align.CENTER
+        typeface = Typeface.DEFAULT_BOLD
     }
     private val titleText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.WHITE
