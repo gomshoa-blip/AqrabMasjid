@@ -228,6 +228,9 @@
   .rBar{margin-top:14px;background:linear-gradient(135deg,#1E9A72,#0F6B4F 55%,#083D2D);border:1.5px solid var(--bd);border-radius:24px;padding:10px 12px}
   .rHead{display:flex;justify-content:space-between;align-items:center}
   .rLbl{color:#F6D46B;font-weight:800;font-size:.85rem}
+  .optRow{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--sf);color:var(--tx);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-top:10px;font-weight:700}
+  .optRow select{font:inherit;font-weight:800;padding:8px 10px;border-radius:12px;border:1.5px solid #C9A227;background:var(--sf);color:var(--tx);max-width:62%}
+  .favBox{margin-top:12px}.favH{font-weight:800;margin-bottom:2px}
   .rMore{display:block;width:100%;margin-top:10px;min-height:46px;border-radius:999px;background:rgba(255,255,255,.14);border:1.5px solid rgba(246,212,107,.7);color:#fff;font-weight:800;font-size:1.05rem;cursor:pointer}
   .rName{color:#fff;font-weight:800;font-size:1.35rem;text-align:center;margin:6px 0 10px;line-height:1.4}
   .rCtl{display:flex;justify-content:center;align-items:center;gap:12px;direction:ltr}
@@ -339,7 +342,7 @@
     <a class="go2 plainB" id="goJami" href="https://www.google.com/maps/search/?api=1&query=%D8%AC%D8%A7%D9%85%D8%B9" target="_blank" rel="noopener"><span class="gi"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11a7 7 0 0 1 14 0v9"/><path d="M3 20h18"/><path d="M12 4V2"/><path d="M10 20v-4a2 2 0 0 1 4 0v4"/></svg></span><span class="tx"><b data-t="jamiT"></b></span></a>
   </div>
   <div class="ayah2" id="ayah" hidden></div>
-  <div class="rBar st-idle" id="radioBar"><div class="rHead"><span class="rLbl">📻 <span data-t="radioT"></span></span><span class="rStatus" id="rStatus" role="status" aria-live="polite"><span class="dot"></span><span id="rStTxt"></span></span></div><div class="rName" id="rName"></div><div class="rCtl"><button type="button" class="rSt" id="rSt1" aria-pressed="false"><span class="rStN" data-t="rSs"></span><span class="rWave" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button><button type="button" class="rPlay" id="rPlay" aria-label="play/pause"></button><button type="button" class="rSt" id="rSt0" aria-pressed="true"><span class="rStN" data-t="rQs"></span><span class="rWave" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button></div><button type="button" class="rMore" id="rMore" data-t="rMore"></button></div>
+  <div class="rBar st-idle" id="radioBar"><div class="rHead"><span class="rLbl">📻 <span data-t="radioT"></span></span><span class="rStatus" id="rStatus" role="status" aria-live="polite"><span class="dot"></span><span id="rStTxt"></span></span></div><div class="rName" id="rName"></div><div class="rCtl"><button type="button" class="rSt" id="rSt1" aria-pressed="false"><span class="rStN" id="rStN1"></span><span class="rWave" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button><button type="button" class="rPlay" id="rPlay" aria-label="play/pause"></button><button type="button" class="rSt" id="rSt0" aria-pressed="true"><span class="rStN" id="rStN0"></span><span class="rWave" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button></div><button type="button" class="rMore" id="rMore" data-t="rMore"></button></div>
   <div class="modeRow"><button class="modeBtn" id="modeBtn" type="button"></button></div>
 </div></div>
 
@@ -369,6 +372,8 @@
   <div class="tiles2">
     <a class="tile tl" id="waContact" href="https://wa.me/966556512678" target="_blank" rel="noopener"><span class="ti"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg></span><span data-t="contactT"></span></a>
     <button class="tile tl" id="shareBtn" type="button"><span class="ti"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><path d="M8 11l8-4M8 13l8 4"/></svg></span><span data-t="shareT"></span></button>
+    <a class="tile tl" id="suggestBtn" href="https://wa.me/966556512678" target="_blank" rel="noopener"><span class="ti">💡</span><span data-t="suggestT"></span></a>
+    <a class="tile tl" id="bugBtn" href="https://wa.me/966556512678" target="_blank" rel="noopener"><span class="ti">⚠️</span><span data-t="bugT"></span></a>
   </div>
   <div class="card2">
     <div class="times2" id="times"></div>
@@ -378,6 +383,8 @@
 
   <div class="secT" data-t="moreT"></div>
   <button class="wideBtn" id="notifBtn" type="button"></button>
+  <label class="optRow"><span data-t="preL"></span><select id="preSel"><option value="5"></option><option value="10"></option><option value="15"></option><option value="20"></option></select></label>
+  <label class="optRow"><span data-t="lookL"></span><select id="lookSel"><option value="auto" data-t="lookAuto"></option><option value="day" data-t="lookDay"></option><option value="night" data-t="lookNight"></option></select></label>
   <div class="tiles">
     <a class="tile" id="waBtn" target="_blank" rel="noopener"><span class="ti"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.3-4A8 8 0 1 1 8 19z"/></svg></span><span data-t="waShareT"></span></a>
     <button class="tile" id="qrBtn" type="button"><span class="ti"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2v2h-2zM18 18h2v2h-2zM14 18h2"/></svg></span><span data-t="qrT"></span></button>
@@ -416,7 +423,8 @@
       <input type="hidden" name="lat" id="fLat"><input type="hidden" name="lng" id="fLng">
       <input type="hidden" name="location_link" id="fGeo">
       <input type="hidden" name="country" id="fCountry">
-      <input type="hidden" name="type" value="مسجد">
+      <label for="fType" data-t="fType"></label>
+      <select id="fType" name="type"><option value="مسجد" data-t="fTypeM"></option><option value="مصلى نساء" data-t="fTypeW"></option></select>
       <input type="hidden" name="source" id="fSrc" value="site">
       <label for="fName" data-t="fName"></label>
       <input id="fName" name="mosque_name" maxlength="120" autocomplete="off">
@@ -461,6 +469,9 @@
   <div class="sheet">
     <h2 data-t="radioT"></h2>
     <div id="radioList" style="display:grid;gap:8px"></div>
+    <div class="favBox"><div class="favH" data-t="favH"></div>
+      <label class="optRow"><span>1️⃣</span><select id="fav0"></select></label>
+      <label class="optRow"><span>2️⃣</span><select id="fav1"></select></label></div>
     <audio id="radioAudio" preload="none"></audio>
     <div class="msg" id="radioMsg"></div>
     <div class="two"><button type="button" class="big alt" id="radioStop" data-t="radioStop"></button><button type="button" class="big alt" id="radioClose" data-t="close"></button></div>
@@ -496,7 +507,7 @@
 <script src="adhan.js"></script>
 <script>
 const T = {
- ar:{title:"أقرب مسجد", recT:"تطبيقات ومواقع ننصح بها", soonLbl:"باقي على دخول صلاة", nowT:"دخل وقت صلاة", sinceAdhan:"منذ الأذان", iqIn:t=>"تبقى على الإقامة " + t, rQs:"القرآن الكريم", rSs:"السنة النبوية", stIdle:"جاهز للتشغيل", stConn:"جاري الاتصال…", stSlow:"الاتصال بطيء، ننتظر…", stLive:"مباشر – البث يعمل", stLost:"انقطع البث · نحاول من جديد", stOff:"لا يوجد إنترنت · ننتظر عودته", stErr:"تعذر التشغيل · اضغط للمحاولة", soonT:"قريباً:", soonS:"جاري رفع التطبيق على متجر جوجل بلاي وآب ستور.", soonC:"أرسل لنا مقترحاتك أو أي أخطاء 💬",  other:"English", nextLbl:"الصلاة القادمة", curLbl:"حان الآن وقت صلاة", donate:"💚 تبرّع عبر منصة إحسان", mosqueT:"أقرب مسجد", jamiT:"أقرب جامع", mapsSub:"يفتح خرائط Google", quranT:"القرآن", adhkarT:"الأذكار", qiratT:"قيراط", ehsanT:"إحسان", contactT:"تواصل معنا", shareT:"شارك", addT:"أضف مسجد", moreT:"المزيد", qiblaT:"القبلة", hideT:"إخفاء", tarteel2:"ترتيل", wahy2:"وحي", waShareT:"واتساب", qrT:"رمز QR", instT:"تثبيت", prayerH:"الصلاة", adhanH:"الأذان", iqamaH:"الإقامة", toAdhan:"تبقى على الأذان", toIqama:"تبقى على الإقامة", nowLbl:"حان وقت الصلاة", startedLbl:"أقيمت الصلاة", driveL:"وضع القيادة", fullL:"التطبيق الكامل", adhkar:"📿 الأذكار", quran:"📖 القرآن الكريم", waContact:"💬 تواصل معنا عبر واتساب", quranH:"تطبيقات قرآن ننصح بها", grpQuran:"القرآن والذكر", privT:"سياسة الخصوصية", playW:"تشغيل", pauseW:"إيقاف", rMakkahT:"إذاعة القرآن الكريم", rMadinahT:"إذاعة السنة – المملكة العربية السعودية", liveT:"مباشر", radioT:"إذاعة", radioStop:"⏹ إيقاف", radioQ:"إذاعة القرآن الكريم – السعودية", radioS:"إذاعة السنة – المملكة العربية السعودية", rQasim:"تلاوات الشيخ عبدالمحسن القاسم", rSabah:"أذكار الصباح", rMasa:"أذكار المساء", rUrdu:"ترجمة معاني القرآن بالأوردية", rEs:"ترجمة معاني القرآن بالإسبانية", rFr:"ترجمة معاني القرآن بالفرنسية", rMore:"📻 إذاعات أخرى", radioPlaying:"يعمل الآن ▶️", radioErr:"تعذر التشغيل. تأكد من الإنترنت", aboutT:"عن أقرب مسجد", grpMosques:"المساجد", grpContact:"تواصل", tarteel:"📖 ترتيل", wahy:"📖 وحي", adhanAt:t=>"الأذان " + t, iqAt:t=>"الإقامة " + t, leftTo:"بقي على صلاة", adhanDone:"أذّن · بقي على الإقامة", iqStarted:"أقيمت الصلاة", stOk:"", donNote:"منصة إحسان الرسمية للعمل الخيري. الموقع لا يجمع أي تبرعات.", nOn:"🔔 نبّهني عند الأذان والإقامة", nIq:(p,m)=>"🕌 إقامة " + p + " بعد " + m + " د", nIqNow:p=>"🕌 حان وقت إقامة " + p, nOff:"🔕 إيقاف تنبيه الصلاة", nPre:(p,m)=>"🕌 أذان " + p + " بعد " + m + " د", nNow:p=>"🕌 حان الآن وقت صلاة " + p, nBody:"اضغط لفتح «أقرب مسجد» والذهاب لأقرب مسجد", nNo:"التنبيه غير مدعوم هنا. في الآيفون: أضف الموقع إلى الشاشة الرئيسية أولاً، ثم افتحه من الأيقونة", nDenied:"التنبيهات مقفلة. فعّلها من إعدادات المتصفح للموقع", nDone:"✅ تم تفعيل التنبيه: عند الأذان، وبعده بـ 10 دقائق للإقامة", nHint:"التنبيه يعمل والموقع مفتوح أو مثبّت على الجوال", qirat:"🤲 قيراط – مواقع الجنائز والمقابر في الرياض", tblH:"🕰️ مواقيت الصلاة اليوم", since:c=>"أُذّن قبل " + c, iqDone:p=>"أُقيمت صلاة " + p,
+ ar:{title:"أقرب مسجد", recT:"تطبيقات ومواقع ننصح بها", soonLbl:"باقي على دخول صلاة", nowT:"دخل وقت صلاة", sinceAdhan:"منذ الأذان", iqIn:t=>"تبقى على الإقامة " + t, rQs:"القرآن الكريم", rSs:"السنة النبوية", stIdle:"جاهز للتشغيل", stConn:"جاري الاتصال…", stSlow:"الاتصال بطيء، ننتظر…", stLive:"مباشر – البث يعمل", stLost:"انقطع البث · نحاول من جديد", stOff:"لا يوجد إنترنت · ننتظر عودته", stErr:"تعذر التشغيل · اضغط للمحاولة", soonT:"قريباً:", soonS:"جاري رفع التطبيق على متجر جوجل بلاي وآب ستور.", soonC:"أرسل لنا مقترحاتك أو أي أخطاء 💬",  other:"English", nextLbl:"الصلاة القادمة", curLbl:"حان الآن وقت صلاة", donate:"💚 تبرّع عبر منصة إحسان", mosqueT:"أقرب مسجد", jamiT:"أقرب جامع", mapsSub:"يفتح خرائط Google", quranT:"القرآن", adhkarT:"الأذكار", qiratT:"قيراط", ehsanT:"إحسان", contactT:"تواصل معنا", shareT:"شارك", addT:"أضف مسجد", moreT:"المزيد", qiblaT:"القبلة", hideT:"إخفاء", tarteel2:"ترتيل", wahy2:"وحي", waShareT:"واتساب", qrT:"رمز QR", instT:"تثبيت", prayerH:"الصلاة", adhanH:"الأذان", iqamaH:"الإقامة", toAdhan:"تبقى على الأذان", toIqama:"تبقى على الإقامة", nowLbl:"حان وقت الصلاة", startedLbl:"أقيمت الصلاة", driveL:"وضع القيادة", fullL:"التطبيق الكامل", adhkar:"📿 الأذكار", quran:"📖 القرآن الكريم", waContact:"💬 تواصل معنا عبر واتساب", quranH:"تطبيقات قرآن ننصح بها", grpQuran:"القرآن والذكر", privT:"سياسة الخصوصية", playW:"تشغيل", pauseW:"إيقاف", rMakkahT:"إذاعة القرآن الكريم", rMadinahT:"إذاعة السنة – المملكة العربية السعودية", liveT:"مباشر", radioT:"إذاعة", radioStop:"⏹ إيقاف", radioQ:"إذاعة القرآن الكريم – السعودية", radioS:"إذاعة السنة – المملكة العربية السعودية", rQasim:"تلاوات الشيخ عبدالمحسن القاسم", rSabah:"أذكار الصباح", rMasa:"أذكار المساء", rUrdu:"ترجمة معاني القرآن بالأوردية", rEs:"ترجمة معاني القرآن بالإسبانية", rFr:"ترجمة معاني القرآن بالفرنسية", rMore:"📻 إذاعات أخرى", suggestT:"اقترح ميزة", bugT:"بلّغ عن خطأ", preL:"⏰ التنبيه قبل الأذان", lookL:"🎨 المظهر", lookAuto:"📱 تلقائي", lookDay:"☀️ نهاري", lookNight:"🌙 ليلي", favH:"⭐ اختر إذاعتين للزرين في البطاقة", fType:"نوع المكان", fTypeM:"🕌 مسجد", fTypeW:"👩 مصلى نساء (مول، مستشفى، عمل…)", sugMsg:"💡 اقتراح ميزة لموقع أقرب مسجد:\n", bugMsg:"⚠️ بلاغ عن خطأ في موقع أقرب مسجد:\n", cityUnk:"📍 لم نعرف اسم مكانك. تأكد من الإنترنت ثم اضغط «حدّث موقعي»", minW:"دقائق", radioPlaying:"يعمل الآن ▶️", radioErr:"تعذر التشغيل. تأكد من الإنترنت", aboutT:"عن أقرب مسجد", grpMosques:"المساجد", grpContact:"تواصل", tarteel:"📖 ترتيل", wahy:"📖 وحي", adhanAt:t=>"الأذان " + t, iqAt:t=>"الإقامة " + t, leftTo:"بقي على صلاة", adhanDone:"أذّن · بقي على الإقامة", iqStarted:"أقيمت الصلاة", stOk:"", donNote:"منصة إحسان الرسمية للعمل الخيري. الموقع لا يجمع أي تبرعات.", nOn:"🔔 نبّهني عند الأذان والإقامة", nIq:(p,m)=>"🕌 إقامة " + p + " بعد " + m + " د", nIqNow:p=>"🕌 حان وقت إقامة " + p, nOff:"🔕 إيقاف تنبيه الصلاة", nPre:(p,m)=>"🕌 أذان " + p + " بعد " + m + " د", nNow:p=>"🕌 حان الآن وقت صلاة " + p, nBody:"اضغط لفتح «أقرب مسجد» والذهاب لأقرب مسجد", nNo:"التنبيه غير مدعوم هنا. في الآيفون: أضف الموقع إلى الشاشة الرئيسية أولاً، ثم افتحه من الأيقونة", nDenied:"التنبيهات مقفلة. فعّلها من إعدادات المتصفح للموقع", nDone:"✅ تم تفعيل التنبيه: قبل الأذان، وعند الأذان، وبعده بـ 7 دقائق، وعند الإقامة", nHint:"التنبيه يعمل والموقع مفتوح أو مثبّت على الجوال", qirat:"🤲 قيراط – مواقع الجنائز والمقابر في الرياض", tblH:"🕰️ مواقيت الصلاة اليوم", since:c=>"أُذّن قبل " + c, iqDone:p=>"أُقيمت صلاة " + p,
   jumua:"الجمعة", khutba:"خطبة", jumuaNext:t=>"🕌 صلاة الجمعة " + t + " — بكّر بالحضور", jumuaNow:"🕌 خطبة الجمعة الآن",
   names:{fajr:"الفجر", sunrise:"الشروق", dhuhr:"الظهر", asr:"العصر", maghrib:"المغرب", isha:"العشاء"},
   left:c=>"باقي على الأذان " + c,
@@ -537,7 +548,7 @@ const T = {
    and:["افتح الرابط في متصفح Chrome.","اضغط القائمة ⋮ أعلى الشاشة.","اختر «إضافة إلى الشاشة الرئيسية» أو «تثبيت التطبيق»."],
    app:["أنت فاتح الرابط داخل تطبيق (مثل الواتساب).","اضغط ⋮ أو ⋯ واختر «فتح في المتصفح».","بعدها اضغط «أضف إلى شاشة الجوال» مرة ثانية."],
    pc:["في Chrome أو Edge: اضغط أيقونة التثبيت 🖥️ في شريط العنوان، أو من القائمة ⋮ اختر «تثبيت»."]}},
- en:{title:"Aqrab Masjid", recT:"Recommended apps and sites", soonLbl:"Time left to", nowT:"It is now time for", sinceAdhan:"since adhan", iqIn:t=>"Iqama in " + t, rQs:"Holy Quran", rSs:"Sunnah", stIdle:"Ready to play", stConn:"Connecting…", stSlow:"Slow connection, waiting…", stLive:"Live – on air", stLost:"Signal lost · retrying", stOff:"No internet · waiting", stErr:"Could not play · tap to retry", soonT:"Coming soon:", soonS:"The Aqrab Masjid app is being published on Google Play and the App Store.", soonC:"Send us your ideas or any errors 💬",  other:"العربية", nextLbl:"Next prayer", curLbl:"It is now time for", donate:"💚 Donate via Ehsan", mosqueT:"Nearest mosque", jamiT:"Nearest Jami", mapsSub:"Opens Google Maps", quranT:"Quran", adhkarT:"Adhkar", qiratT:"Qirat", ehsanT:"Ehsan", contactT:"Contact us", shareT:"Share", addT:"Add a mosque", moreT:"More", qiblaT:"Qibla", hideT:"Hide", tarteel2:"Tarteel", wahy2:"Wahy", waShareT:"WhatsApp", qrT:"QR code", instT:"Install", prayerH:"Prayer", adhanH:"Adhan", iqamaH:"Iqama", toAdhan:"to adhan", toIqama:"to iqama", nowLbl:"Prayer time now", startedLbl:"Prayer has started", driveL:"Driving mode", fullL:"Full app", adhkar:"📿 Adhkar", quran:"📖 Holy Quran", waContact:"💬 Contact us on WhatsApp", quranH:"Recommended Quran apps", grpQuran:"Quran & Dhikr", privT:"Privacy policy", playW:"Play", pauseW:"Pause", rMakkahT:"Holy Quran Radio", rMadinahT:"Sunnah Radio – Saudi Arabia", liveT:"Live", radioT:"Radio", radioStop:"⏹ Stop", radioQ:"Holy Quran Radio – Saudi Arabia", radioS:"Sunnah Radio – Saudi Arabia", rQasim:"Sheikh Abdulmohsen Al-Qasim", rSabah:"Morning adhkar", rMasa:"Evening adhkar", rUrdu:"Quran translation in Urdu", rEs:"Quran translation in Spanish", rFr:"Quran translation in French", rMore:"📻 More stations", radioPlaying:"Playing now ▶️", radioErr:"Could not play. Check the internet", aboutT:"About Aqrab Masjid", grpMosques:"Mosques", grpContact:"Contact", tarteel:"📖 Tarteel", wahy:"📖 Wahy", adhanAt:t=>"Adhan " + t, iqAt:t=>"Iqama " + t, leftTo:"Time left to", adhanDone:"Adhan done · Iqama in", iqStarted:"Prayer started", stOk:"", donNote:"Ehsan is the official Saudi charity platform. This site does not collect any money.", nOn:"🔔 Alert me at adhan and iqama", nIq:(p,m)=>"🕌 " + p + " iqama in " + m + " min", nIqNow:p=>"🕌 " + p + " iqama now", nOff:"🔕 Turn off prayer alerts", nPre:(p,m)=>"🕌 " + p + " adhan in " + m + " min", nNow:p=>"🕌 It is now time for " + p, nBody:"Tap to open Nearest Mosque", nNo:"Alerts are not supported here. On iPhone: add the site to your Home Screen first, then open it from the icon", nDenied:"Notifications are blocked. Allow them in the browser site settings", nDone:"✅ Alerts on: at adhan, and 10 minutes later for iqama", nHint:"Alerts work while the site is open or installed", qirat:"🤲 Qirat – Riyadh funerals & cemeteries", tblH:"🕰️ Today's prayer times", since:c=>"Adhan was " + c + " ago", iqDone:p=>p + " iqama has started",
+ en:{title:"Aqrab Masjid", recT:"Recommended apps and sites", soonLbl:"Time left to", nowT:"It is now time for", sinceAdhan:"since adhan", iqIn:t=>"Iqama in " + t, rQs:"Holy Quran", rSs:"Sunnah", stIdle:"Ready to play", stConn:"Connecting…", stSlow:"Slow connection, waiting…", stLive:"Live – on air", stLost:"Signal lost · retrying", stOff:"No internet · waiting", stErr:"Could not play · tap to retry", soonT:"Coming soon:", soonS:"The Aqrab Masjid app is being published on Google Play and the App Store.", soonC:"Send us your ideas or any errors 💬",  other:"العربية", nextLbl:"Next prayer", curLbl:"It is now time for", donate:"💚 Donate via Ehsan", mosqueT:"Nearest mosque", jamiT:"Nearest Jami", mapsSub:"Opens Google Maps", quranT:"Quran", adhkarT:"Adhkar", qiratT:"Qirat", ehsanT:"Ehsan", contactT:"Contact us", shareT:"Share", addT:"Add a mosque", moreT:"More", qiblaT:"Qibla", hideT:"Hide", tarteel2:"Tarteel", wahy2:"Wahy", waShareT:"WhatsApp", qrT:"QR code", instT:"Install", prayerH:"Prayer", adhanH:"Adhan", iqamaH:"Iqama", toAdhan:"to adhan", toIqama:"to iqama", nowLbl:"Prayer time now", startedLbl:"Prayer has started", driveL:"Driving mode", fullL:"Full app", adhkar:"📿 Adhkar", quran:"📖 Holy Quran", waContact:"💬 Contact us on WhatsApp", quranH:"Recommended Quran apps", grpQuran:"Quran & Dhikr", privT:"Privacy policy", playW:"Play", pauseW:"Pause", rMakkahT:"Holy Quran Radio", rMadinahT:"Sunnah Radio – Saudi Arabia", liveT:"Live", radioT:"Radio", radioStop:"⏹ Stop", radioQ:"Holy Quran Radio – Saudi Arabia", radioS:"Sunnah Radio – Saudi Arabia", rQasim:"Sheikh Abdulmohsen Al-Qasim", rSabah:"Morning adhkar", rMasa:"Evening adhkar", rUrdu:"Quran translation in Urdu", rEs:"Quran translation in Spanish", rFr:"Quran translation in French", rMore:"📻 More stations", suggestT:"Suggest a feature", bugT:"Report a problem", preL:"⏰ Alert before adhan", lookL:"🎨 Look", lookAuto:"📱 Auto", lookDay:"☀️ Day", lookNight:"🌙 Night", favH:"⭐ Choose two stations for the card buttons", fType:"Place type", fTypeM:"🕌 Mosque", fTypeW:"👩 Women's prayer room (mall, hospital, work…)", sugMsg:"💡 Feature idea for Aqrab Masjid:\n", bugMsg:"⚠️ Problem report for Aqrab Masjid:\n", cityUnk:"📍 We could not find your place name. Check the internet, then tap “Update my location”", minW:"min", radioPlaying:"Playing now ▶️", radioErr:"Could not play. Check the internet", aboutT:"About Aqrab Masjid", grpMosques:"Mosques", grpContact:"Contact", tarteel:"📖 Tarteel", wahy:"📖 Wahy", adhanAt:t=>"Adhan " + t, iqAt:t=>"Iqama " + t, leftTo:"Time left to", adhanDone:"Adhan done · Iqama in", iqStarted:"Prayer started", stOk:"", donNote:"Ehsan is the official Saudi charity platform. This site does not collect any money.", nOn:"🔔 Alert me at adhan and iqama", nIq:(p,m)=>"🕌 " + p + " iqama in " + m + " min", nIqNow:p=>"🕌 " + p + " iqama now", nOff:"🔕 Turn off prayer alerts", nPre:(p,m)=>"🕌 " + p + " adhan in " + m + " min", nNow:p=>"🕌 It is now time for " + p, nBody:"Tap to open Nearest Mosque", nNo:"Alerts are not supported here. On iPhone: add the site to your Home Screen first, then open it from the icon", nDenied:"Notifications are blocked. Allow them in the browser site settings", nDone:"✅ Alerts on: before adhan, at adhan, 7 minutes later, and at iqama", nHint:"Alerts work while the site is open or installed", qirat:"🤲 Qirat – Riyadh funerals & cemeteries", tblH:"🕰️ Today's prayer times", since:c=>"Adhan was " + c + " ago", iqDone:p=>p + " iqama has started",
   jumua:"Jumuah", khutba:"Khutbah", jumuaNext:t=>"🕌 Jumuah " + t + " — come early", jumuaNow:"🕌 Jumuah khutbah now",
   names:{fajr:"Fajr", sunrise:"Sunrise", dhuhr:"Dhuhr", asr:"Asr", maghrib:"Maghrib", isha:"Isha"},
   left:c=>"Adhan in " + c,
@@ -589,7 +600,7 @@ T.ur = Object.assign({}, T.en, {
   quranT:"قرآن", adhkarT:"اذکار", qiratT:"قیراط", contactT:"ہم سے رابطہ", shareT:"شیئر کریں", addT:"مسجد شامل کریں", moreT:"مزید", qiblaT:"قبلہ", hideT:"چھپائیں",
   tarteel2:"ترتیل", wahy2:"وحی", waShareT:"واٹس ایپ", qrT:"کیو آر کوڈ", instT:"انسٹال",
   prayerH:"نماز", adhanH:"اذان", iqamaH:"اقامت", toAdhan:"اذان میں باقی", toIqama:"اقامت میں باقی", nowLbl:"نماز کا وقت ہو گیا", startedLbl:"نماز شروع ہو گئی",
-  grpQuran:"قرآن اور اذکار", grpMosques:"مساجد", grpContact:"رابطہ", privT:"رازداری کی پالیسی", playW:"چلائیں", pauseW:"روکیں", rMakkahT:"قرآن کریم ریڈیو", rMadinahT:"سنت ریڈیو – سعودی عرب", liveT:"براہِ راست", radioT:"ریڈیو", radioStop:"⏹ بند کریں", radioQ:"قرآن کریم ریڈیو – سعودی عرب", radioS:"سنت ریڈیو – سعودی عرب", rQasim:"شیخ عبدالمحسن القاسم کی تلاوت", rSabah:"صبح کے اذکار", rMasa:"شام کے اذکار", rUrdu:"قرآن مجید کا اردو ترجمہ", rEs:"قرآن مجید کا ہسپانوی ترجمہ", rFr:"قرآن مجید کا فرانسیسی ترجمہ", rMore:"📻 مزید ریڈیو", radioPlaying:"اب چل رہا ہے ▶️", radioErr:"نہیں چل سکا۔ انٹرنیٹ چیک کریں", aboutT:"اقرب مسجد کے بارے میں",
+  grpQuran:"قرآن اور اذکار", grpMosques:"مساجد", grpContact:"رابطہ", privT:"رازداری کی پالیسی", playW:"چلائیں", pauseW:"روکیں", rMakkahT:"قرآن کریم ریڈیو", rMadinahT:"سنت ریڈیو – سعودی عرب", liveT:"براہِ راست", radioT:"ریڈیو", radioStop:"⏹ بند کریں", radioQ:"قرآن کریم ریڈیو – سعودی عرب", radioS:"سنت ریڈیو – سعودی عرب", rQasim:"شیخ عبدالمحسن القاسم کی تلاوت", rSabah:"صبح کے اذکار", rMasa:"شام کے اذکار", rUrdu:"قرآن مجید کا اردو ترجمہ", rEs:"قرآن مجید کا ہسپانوی ترجمہ", rFr:"قرآن مجید کا فرانسیسی ترجمہ", rMore:"📻 مزید ریڈیو", suggestT:"سہولت تجویز کریں", bugT:"خرابی بتائیں", preL:"⏰ اذان سے پہلے اطلاع", lookL:"🎨 ظاہری انداز", lookAuto:"📱 خودکار", lookDay:"☀️ دن", lookNight:"🌙 رات", favH:"⭐ کارڈ کے بٹنوں کے لیے دو ریڈیو چنیں", fType:"جگہ کی قسم", fTypeM:"🕌 مسجد", fTypeW:"👩 خواتین کی نماز گاہ", minW:"منٹ", radioPlaying:"اب چل رہا ہے ▶️", radioErr:"نہیں چل سکا۔ انٹرنیٹ چیک کریں", aboutT:"اقرب مسجد کے بارے میں",
   adhanAt:t=>"اذان " + t, iqAt:t=>"اقامت " + t,
   jumua:"جمعہ", khutba:"خطبہ", jumuaNext:t=>"🕌 جمعہ " + t + " — جلدی آئیں", jumuaNow:"🕌 جمعہ کا خطبہ ہو رہا ہے",
   names:{fajr:"فجر", sunrise:"طلوع آفتاب", dhuhr:"ظہر", asr:"عصر", maghrib:"مغرب", isha:"عشاء"},
@@ -616,7 +627,7 @@ T.id = Object.assign({}, T.en, {
   quranT:"Al-Quran", adhkarT:"Dzikir", qiratT:"Qirat", contactT:"Hubungi kami", shareT:"Bagikan", addT:"Tambah masjid", moreT:"Lainnya", qiblaT:"Kiblat", hideT:"Sembunyikan",
   tarteel2:"Tarteel", wahy2:"Wahy", waShareT:"WhatsApp", qrT:"Kode QR", instT:"Pasang",
   prayerH:"Sholat", adhanH:"Azan", iqamaH:"Iqamah", toAdhan:"menuju azan", toIqama:"menuju iqamah", nowLbl:"Waktunya sholat", startedLbl:"Sholat sudah dimulai",
-  grpQuran:"Al-Quran & Dzikir", grpMosques:"Masjid", grpContact:"Kontak", privT:"Kebijakan privasi", playW:"Putar", pauseW:"Jeda", rMakkahT:"Radio Al-Quran", rMadinahT:"Radio Sunnah – Arab Saudi", liveT:"Langsung", radioT:"Radio", radioStop:"⏹ Berhenti", radioQ:"Radio Al-Quran – Arab Saudi", radioS:"Radio Sunnah – Arab Saudi", rQasim:"Syaikh Abdulmohsen Al-Qasim", rSabah:"Dzikir pagi", rMasa:"Dzikir petang", rUrdu:"Terjemahan Al-Quran bahasa Urdu", rEs:"Terjemahan Al-Quran bahasa Spanyol", rFr:"Terjemahan Al-Quran bahasa Prancis", rMore:"📻 Radio lainnya", radioPlaying:"Sedang diputar ▶️", radioErr:"Gagal memutar. Periksa internet", aboutT:"Tentang Aqrab Masjid",
+  grpQuran:"Al-Quran & Dzikir", grpMosques:"Masjid", grpContact:"Kontak", privT:"Kebijakan privasi", playW:"Putar", pauseW:"Jeda", rMakkahT:"Radio Al-Quran", rMadinahT:"Radio Sunnah – Arab Saudi", liveT:"Langsung", radioT:"Radio", radioStop:"⏹ Berhenti", radioQ:"Radio Al-Quran – Arab Saudi", radioS:"Radio Sunnah – Arab Saudi", rQasim:"Syaikh Abdulmohsen Al-Qasim", rSabah:"Dzikir pagi", rMasa:"Dzikir petang", rUrdu:"Terjemahan Al-Quran bahasa Urdu", rEs:"Terjemahan Al-Quran bahasa Spanyol", rFr:"Terjemahan Al-Quran bahasa Prancis", rMore:"📻 Radio lainnya", suggestT:"Usulkan fitur", bugT:"Laporkan masalah", preL:"⏰ Pengingat sebelum adzan", lookL:"🎨 Tampilan", lookAuto:"📱 Otomatis", lookDay:"☀️ Siang", lookNight:"🌙 Malam", favH:"⭐ Pilih dua radio untuk tombol", fType:"Jenis tempat", fTypeM:"🕌 Masjid", fTypeW:"👩 Musala wanita", minW:"menit", radioPlaying:"Sedang diputar ▶️", radioErr:"Gagal memutar. Periksa internet", aboutT:"Tentang Aqrab Masjid",
   adhanAt:t=>"Azan " + t, iqAt:t=>"Iqamah " + t,
   jumua:"Jumat", khutba:"Khutbah", jumuaNext:t=>"🕌 Jumat " + t + " — datang lebih awal", jumuaNow:"🕌 Khutbah Jumat sedang berlangsung",
   names:{fajr:"Subuh", sunrise:"Terbit", dhuhr:"Dzuhur", asr:"Ashar", maghrib:"Maghrib", isha:"Isya"},
@@ -643,7 +654,7 @@ T.bn = Object.assign({}, T.en, {
   quranT:"কুরআন", adhkarT:"জিকির", qiratT:"কিরাত", contactT:"যোগাযোগ করুন", shareT:"শেয়ার করুন", addT:"মসজিদ যোগ করুন", moreT:"আরও", qiblaT:"কিবলা", hideT:"লুকান",
   tarteel2:"তারতিল", wahy2:"ওহী", waShareT:"হোয়াটসঅ্যাপ", qrT:"কিউআর কোড", instT:"ইনস্টল",
   prayerH:"নামাজ", adhanH:"আজান", iqamaH:"ইকামত", toAdhan:"আজান পর্যন্ত বাকি", toIqama:"ইকামত পর্যন্ত বাকি", nowLbl:"নামাজের সময় হয়েছে", startedLbl:"নামাজ শুরু হয়েছে",
-  grpQuran:"কুরআন ও জিকির", grpMosques:"মসজিদ", grpContact:"যোগাযোগ", privT:"গোপনীয়তা নীতি", playW:"চালান", pauseW:"বিরতি", rMakkahT:"কুরআন রেডিও", rMadinahT:"সুন্নাহ রেডিও – সৌদি আরব", liveT:"সরাসরি", radioT:"রেডিও", radioStop:"⏹ বন্ধ", radioQ:"পবিত্র কুরআন রেডিও – সৌদি আরব", radioS:"সুন্নাহ রেডিও – সৌদি আরব", rQasim:"শাইখ আব্দুল মুহসিন আল-কাসিম", rSabah:"সকালের জিকির", rMasa:"সন্ধ্যার জিকির", rUrdu:"উর্দুতে কুরআনের অনুবাদ", rEs:"স্প্যানিশে কুরআনের অনুবাদ", rFr:"ফরাসিতে কুরআনের অনুবাদ", rMore:"📻 আরও রেডিও", radioPlaying:"এখন চলছে ▶️", radioErr:"চালানো যায়নি। ইন্টারনেট দেখুন", aboutT:"Aqrab Masjid সম্পর্কে",
+  grpQuran:"কুরআন ও জিকির", grpMosques:"মসজিদ", grpContact:"যোগাযোগ", privT:"গোপনীয়তা নীতি", playW:"চালান", pauseW:"বিরতি", rMakkahT:"কুরআন রেডিও", rMadinahT:"সুন্নাহ রেডিও – সৌদি আরব", liveT:"সরাসরি", radioT:"রেডিও", radioStop:"⏹ বন্ধ", radioQ:"পবিত্র কুরআন রেডিও – সৌদি আরব", radioS:"সুন্নাহ রেডিও – সৌদি আরব", rQasim:"শাইখ আব্দুল মুহসিন আল-কাসিম", rSabah:"সকালের জিকির", rMasa:"সন্ধ্যার জিকির", rUrdu:"উর্দুতে কুরআনের অনুবাদ", rEs:"স্প্যানিশে কুরআনের অনুবাদ", rFr:"ফরাসিতে কুরআনের অনুবাদ", rMore:"📻 আরও রেডিও", suggestT:"সুবিধা প্রস্তাব", bugT:"সমস্যা জানান", preL:"⏰ আজানের আগে সতর্কতা", lookL:"🎨 চেহারা", lookAuto:"📱 স্বয়ংক্রিয়", lookDay:"☀️ দিন", lookNight:"🌙 রাত", favH:"⭐ বোতামের জন্য দুটি রেডিও বেছে নিন", fType:"জায়গার ধরন", fTypeM:"🕌 মসজিদ", fTypeW:"👩 মহিলাদের নামাজের স্থান", minW:"মিনিট", radioPlaying:"এখন চলছে ▶️", radioErr:"চালানো যায়নি। ইন্টারনেট দেখুন", aboutT:"Aqrab Masjid সম্পর্কে",
   adhanAt:t=>"আজান " + t, iqAt:t=>"ইকামত " + t,
   jumua:"জুমা", khutba:"খুতবা", jumuaNext:t=>"🕌 জুমা " + t + " — আগে আসুন", jumuaNow:"🕌 এখন জুমার খুতবা চলছে",
   names:{fajr:"ফজর", sunrise:"সূর্যোদয়", dhuhr:"যোহর", asr:"আসর", maghrib:"মাগরিব", isha:"এশা"},
@@ -670,7 +681,7 @@ T.tr = Object.assign({}, T.en, {
   quranT:"Kuran", adhkarT:"Zikirler", qiratT:"Kırat", contactT:"Bize ulaşın", shareT:"Paylaş", addT:"Cami ekle", moreT:"Daha fazla", qiblaT:"Kıble", hideT:"Gizle",
   tarteel2:"Tarteel", wahy2:"Wahy", waShareT:"WhatsApp", qrT:"QR kod", instT:"Yükle",
   prayerH:"Namaz", adhanH:"Ezan", iqamaH:"Kamet", toAdhan:"ezana kalan", toIqama:"kamete kalan", nowLbl:"Namaz vakti girdi", startedLbl:"Namaz başladı",
-  grpQuran:"Kuran ve Zikir", grpMosques:"Camiler", grpContact:"İletişim", privT:"Gizlilik politikası", playW:"Çal", pauseW:"Duraklat", rMakkahT:"Kuran Radyosu", rMadinahT:"Sünnet Radyosu – Suudi Arabistan", liveT:"Canlı", radioT:"Radyo", radioStop:"⏹ Durdur", radioQ:"Kuran-ı Kerim Radyosu – Suudi Arabistan", radioS:"Sünnet Radyosu – Suudi Arabistan", rQasim:"Şeyh Abdulmuhsin el-Kasım", rSabah:"Sabah zikirleri", rMasa:"Akşam zikirleri", rUrdu:"Kuran'ın Urduca meali", rEs:"Kuran'ın İspanyolca meali", rFr:"Kuran'ın Fransızca meali", rMore:"📻 Diğer radyolar", radioPlaying:"Şimdi çalıyor ▶️", radioErr:"Çalınamadı. İnterneti kontrol edin", aboutT:"Aqrab Masjid hakkında",
+  grpQuran:"Kuran ve Zikir", grpMosques:"Camiler", grpContact:"İletişim", privT:"Gizlilik politikası", playW:"Çal", pauseW:"Duraklat", rMakkahT:"Kuran Radyosu", rMadinahT:"Sünnet Radyosu – Suudi Arabistan", liveT:"Canlı", radioT:"Radyo", radioStop:"⏹ Durdur", radioQ:"Kuran-ı Kerim Radyosu – Suudi Arabistan", radioS:"Sünnet Radyosu – Suudi Arabistan", rQasim:"Şeyh Abdulmuhsin el-Kasım", rSabah:"Sabah zikirleri", rMasa:"Akşam zikirleri", rUrdu:"Kuran'ın Urduca meali", rEs:"Kuran'ın İspanyolca meali", rFr:"Kuran'ın Fransızca meali", rMore:"📻 Diğer radyolar", suggestT:"Özellik öner", bugT:"Sorun bildir", preL:"⏰ Ezandan önce uyarı", lookL:"🎨 Görünüm", lookAuto:"📱 Otomatik", lookDay:"☀️ Gündüz", lookNight:"🌙 Gece", favH:"⭐ Düğmeler için iki radyo seçin", fType:"Yer türü", fTypeM:"🕌 Cami", fTypeW:"👩 Kadınlar mescidi", minW:"dk", radioPlaying:"Şimdi çalıyor ▶️", radioErr:"Çalınamadı. İnterneti kontrol edin", aboutT:"Aqrab Masjid hakkında",
   adhanAt:t=>"Ezan " + t, iqAt:t=>"Kamet " + t,
   jumua:"Cuma", khutba:"Hutbe", jumuaNext:t=>"🕌 Cuma " + t + " — erken gelin", jumuaNow:"🕌 Cuma hutbesi okunuyor",
   names:{fajr:"Sabah", sunrise:"Güneş", dhuhr:"Öğle", asr:"İkindi", maghrib:"Akşam", isha:"Yatsı"},
@@ -697,7 +708,7 @@ T.fr = Object.assign({}, T.en, {
   quranT:"Coran", adhkarT:"Adhkar", qiratT:"Qirat", contactT:"Nous contacter", shareT:"Partager", addT:"Ajouter une mosquée", moreT:"Plus", qiblaT:"Qibla", hideT:"Masquer",
   tarteel2:"Tarteel", wahy2:"Wahy", waShareT:"WhatsApp", qrT:"Code QR", instT:"Installer",
   prayerH:"Prière", adhanH:"Adhan", iqamaH:"Iqama", toAdhan:"avant l'adhan", toIqama:"avant l'iqama", nowLbl:"C'est l'heure de la prière", startedLbl:"La prière a commencé",
-  grpQuran:"Coran et Dhikr", grpMosques:"Mosquées", grpContact:"Contact", privT:"Politique de confidentialité", playW:"Lire", pauseW:"Pause", rMakkahT:"Radio du Saint Coran", rMadinahT:"Radio Sunna – Arabie saoudite", liveT:"En direct", radioT:"Radio", radioStop:"⏹ Arrêter", radioQ:"Radio du Saint Coran – Arabie saoudite", radioS:"Radio Sunna – Arabie saoudite", rQasim:"Cheikh Abdulmohsen Al-Qasim", rSabah:"Adhkar du matin", rMasa:"Adhkar du soir", rUrdu:"Traduction du Coran en ourdou", rEs:"Traduction du Coran en espagnol", rFr:"Traduction du Coran en français", rMore:"📻 Autres radios", radioPlaying:"En cours de lecture ▶️", radioErr:"Lecture impossible. Vérifiez Internet", aboutT:"À propos d'Aqrab Masjid",
+  grpQuran:"Coran et Dhikr", grpMosques:"Mosquées", grpContact:"Contact", privT:"Politique de confidentialité", playW:"Lire", pauseW:"Pause", rMakkahT:"Radio du Saint Coran", rMadinahT:"Radio Sunna – Arabie saoudite", liveT:"En direct", radioT:"Radio", radioStop:"⏹ Arrêter", radioQ:"Radio du Saint Coran – Arabie saoudite", radioS:"Radio Sunna – Arabie saoudite", rQasim:"Cheikh Abdulmohsen Al-Qasim", rSabah:"Adhkar du matin", rMasa:"Adhkar du soir", rUrdu:"Traduction du Coran en ourdou", rEs:"Traduction du Coran en espagnol", rFr:"Traduction du Coran en français", rMore:"📻 Autres radios", suggestT:"Proposer une idée", bugT:"Signaler un problème", preL:"⏰ Alerte avant l'adhan", lookL:"🎨 Apparence", lookAuto:"📱 Auto", lookDay:"☀️ Jour", lookNight:"🌙 Nuit", favH:"⭐ Choisissez deux radios pour les boutons", fType:"Type de lieu", fTypeM:"🕌 Mosquée", fTypeW:"👩 Salle de prière pour femmes", minW:"min", radioPlaying:"En cours de lecture ▶️", radioErr:"Lecture impossible. Vérifiez Internet", aboutT:"À propos d'Aqrab Masjid",
   adhanAt:t=>"Adhan " + t, iqAt:t=>"Iqama " + t,
   jumua:"Joumouaa", khutba:"Khoutba", jumuaNext:t=>"🕌 Joumouaa " + t + " — venez tôt", jumuaNow:"🕌 La khoutba du vendredi a lieu maintenant",
   names:{fajr:"Fajr", sunrise:"Lever du soleil", dhuhr:"Dhuhr", asr:"Asr", maghrib:"Maghrib", isha:"Isha"},
@@ -724,7 +735,7 @@ T.it = Object.assign({}, T.en, {
   quranT:"Corano", adhkarT:"Adhkar", qiratT:"Qirat", contactT:"Contattaci", shareT:"Condividi", addT:"Aggiungi una moschea", moreT:"Altro", qiblaT:"Qibla", hideT:"Nascondi",
   tarteel2:"Tarteel", wahy2:"Wahy", waShareT:"WhatsApp", qrT:"Codice QR", instT:"Installa",
   prayerH:"Preghiera", adhanH:"Adhan", iqamaH:"Iqama", toAdhan:"all'adhan", toIqama:"all'iqama", nowLbl:"È l'ora della preghiera", startedLbl:"La preghiera è iniziata",
-  grpQuran:"Corano e Dhikr", grpMosques:"Moschee", grpContact:"Contatti", privT:"Informativa sulla privacy", playW:"Riproduci", pauseW:"Pausa", rMakkahT:"Radio del Sacro Corano", rMadinahT:"Radio Sunna – Arabia Saudita", liveT:"In diretta", radioT:"Radio", radioStop:"⏹ Ferma", radioQ:"Radio del Sacro Corano – Arabia Saudita", radioS:"Radio Sunna – Arabia Saudita", rQasim:"Sceicco Abdulmohsen Al-Qasim", rSabah:"Adhkar del mattino", rMasa:"Adhkar della sera", rUrdu:"Traduzione del Corano in urdu", rEs:"Traduzione del Corano in spagnolo", rFr:"Traduzione del Corano in francese", rMore:"📻 Altre radio", radioPlaying:"In riproduzione ▶️", radioErr:"Impossibile riprodurre. Controlla internet", aboutT:"Informazioni su Aqrab Masjid",
+  grpQuran:"Corano e Dhikr", grpMosques:"Moschee", grpContact:"Contatti", privT:"Informativa sulla privacy", playW:"Riproduci", pauseW:"Pausa", rMakkahT:"Radio del Sacro Corano", rMadinahT:"Radio Sunna – Arabia Saudita", liveT:"In diretta", radioT:"Radio", radioStop:"⏹ Ferma", radioQ:"Radio del Sacro Corano – Arabia Saudita", radioS:"Radio Sunna – Arabia Saudita", rQasim:"Sceicco Abdulmohsen Al-Qasim", rSabah:"Adhkar del mattino", rMasa:"Adhkar della sera", rUrdu:"Traduzione del Corano in urdu", rEs:"Traduzione del Corano in spagnolo", rFr:"Traduzione del Corano in francese", rMore:"📻 Altre radio", suggestT:"Suggerisci un'idea", bugT:"Segnala un problema", preL:"⏰ Avviso prima dell'adhan", lookL:"🎨 Aspetto", lookAuto:"📱 Auto", lookDay:"☀️ Giorno", lookNight:"🌙 Notte", favH:"⭐ Scegli due radio per i pulsanti", fType:"Tipo di luogo", fTypeM:"🕌 Moschea", fTypeW:"👩 Sala di preghiera per donne", minW:"min", radioPlaying:"In riproduzione ▶️", radioErr:"Impossibile riprodurre. Controlla internet", aboutT:"Informazioni su Aqrab Masjid",
   adhanAt:t=>"Adhan " + t, iqAt:t=>"Iqama " + t,
   jumua:"Jumu'a", khutba:"Khutba", jumuaNext:t=>"🕌 Jumu'a " + t + " — vieni presto", jumuaNow:"🕌 È in corso la khutba del venerdì",
   names:{fajr:"Fajr", sunrise:"Alba", dhuhr:"Dhuhr", asr:"Asr", maghrib:"Maghrib", isha:"Isha"},
@@ -751,7 +762,7 @@ T.es = Object.assign({}, T.en, {
   quranT:"Corán", adhkarT:"Adhkar", qiratT:"Qirat", contactT:"Contáctanos", shareT:"Compartir", addT:"Añadir una mezquita", moreT:"Más", qiblaT:"Qibla", hideT:"Ocultar",
   tarteel2:"Tarteel", wahy2:"Wahy", waShareT:"WhatsApp", qrT:"Código QR", instT:"Instalar",
   prayerH:"Oración", adhanH:"Adhan", iqamaH:"Iqama", toAdhan:"para el adhan", toIqama:"para la iqama", nowLbl:"Es la hora de la oración", startedLbl:"La oración ha comenzado",
-  grpQuran:"Corán y Dhikr", grpMosques:"Mezquitas", grpContact:"Contacto", privT:"Política de privacidad", playW:"Reproducir", pauseW:"Pausa", rMakkahT:"Radio del Sagrado Corán", rMadinahT:"Radio Sunna – Arabia Saudí", liveT:"En directo", radioT:"Radio", radioStop:"⏹ Detener", radioQ:"Radio del Sagrado Corán – Arabia Saudí", radioS:"Radio Sunna – Arabia Saudí", rQasim:"Jeque Abdulmohsen Al-Qasim", rSabah:"Adhkar de la mañana", rMasa:"Adhkar de la tarde", rUrdu:"Traducción del Corán al urdu", rEs:"Traducción del Corán al español", rFr:"Traducción del Corán al francés", rMore:"📻 Más emisoras", radioPlaying:"Reproduciendo ▶️", radioErr:"No se pudo reproducir. Revisa internet", aboutT:"Acerca de Aqrab Masjid",
+  grpQuran:"Corán y Dhikr", grpMosques:"Mezquitas", grpContact:"Contacto", privT:"Política de privacidad", playW:"Reproducir", pauseW:"Pausa", rMakkahT:"Radio del Sagrado Corán", rMadinahT:"Radio Sunna – Arabia Saudí", liveT:"En directo", radioT:"Radio", radioStop:"⏹ Detener", radioQ:"Radio del Sagrado Corán – Arabia Saudí", radioS:"Radio Sunna – Arabia Saudí", rQasim:"Jeque Abdulmohsen Al-Qasim", rSabah:"Adhkar de la mañana", rMasa:"Adhkar de la tarde", rUrdu:"Traducción del Corán al urdu", rEs:"Traducción del Corán al español", rFr:"Traducción del Corán al francés", rMore:"📻 Más emisoras", suggestT:"Sugerir una función", bugT:"Informar de un problema", preL:"⏰ Aviso antes del adhan", lookL:"🎨 Apariencia", lookAuto:"📱 Automático", lookDay:"☀️ Día", lookNight:"🌙 Noche", favH:"⭐ Elige dos emisoras para los botones", fType:"Tipo de lugar", fTypeM:"🕌 Mezquita", fTypeW:"👩 Sala de oración para mujeres", minW:"min", radioPlaying:"Reproduciendo ▶️", radioErr:"No se pudo reproducir. Revisa internet", aboutT:"Acerca de Aqrab Masjid",
   adhanAt:t=>"Adhan " + t, iqAt:t=>"Iqama " + t,
   jumua:"Yumu'a", khutba:"Jutba", jumuaNext:t=>"🕌 Yumu'a " + t + " — ve temprano", jumuaNow:"🕌 Ahora es la jutba del viernes",
   names:{fajr:"Fajr", sunrise:"Amanecer", dhuhr:"Dhuhr", asr:"Asr", maghrib:"Maghrib", isha:"Isha"},
@@ -868,7 +879,7 @@ function cityName(la, lo, labelKey){
   lookupCity(la, lo, k);
   return "";
 }
-let cityBusy = "";
+let cityBusy = "", cityFail = {};
 async function lookupCity(la, lo, k){
   if (cityBusy === k) return; cityBusy = k;
   let name = "";
@@ -878,15 +889,16 @@ async function lookupCity(la, lo, k){
     const r = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${la}&longitude=${lo}&localityLanguage=${lang}`, {signal: ctl.signal});
     clearTimeout(tm);
     const j = await r.json();
-    name = j.city || j.locality || j.principalSubdivision || "";
+    name = [...new Set([j.locality, j.city || j.principalSubdivision].filter(Boolean))].join(lang === "ar" || lang === "ur" ? "، " : ", ");
   } catch(_) {}
   if (!name) try {
-    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&lat=${la}&lon=${lo}`, {headers: {"Accept-Language": lang}});
+    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=16&lat=${la}&lon=${lo}`, {headers: {"Accept-Language": lang}});
     const j = await r.json(), a = (j && j.address) || {};
-    name = a.city || a.town || a.village || a.county || a.state || "";
+    name = [...new Set([a.suburb || a.neighbourhood || a.quarter, a.city || a.town || a.village || a.county || a.state].filter(Boolean))].join(lang === "ar" || lang === "ur" ? "، " : ", ");
   } catch(_) {}
   cityBusy = "";
-  if (!name) return;
+  if (!name) { cityFail[k] = true; if (ptArgs) prayerTimes(...ptArgs); return; }
+  delete cityFail[k];
   cityCache[k] = name;
   try { localStorage.setItem("cityCache", JSON.stringify(cityCache)); } catch(_){}
   if (ptArgs) prayerTimes(...ptArgs);
@@ -964,7 +976,8 @@ function prayerTimes(lat, lng, labelKey){
     }
     fitName();
     $("ayah").textContent = AYAH[hl] || "";
-    $("times").innerHTML = (cityName(lat, lng, labelKey) ? `<div class="city">📍 ${cityName(lat, lng, labelKey)}</div>` : "") + `<div class="r h"><span>${L().prayerH}</span><span>${L().adhanH}</span><span>${L().iqamaH}</span></div>` +
+    const cn = cityName(lat, lng, labelKey), cfail = labelKey === "byLoc" && !cn && cityFail[cityKey(lat, lng)];
+    $("times").innerHTML = (cn ? `<div class="city">📍 ${cn}</div>` : cfail ? `<div class="city">${L().cityUnk}</div>` : "") + `<div class="r h"><span>${L().prayerH}</span><span>${L().adhanH}</span><span>${L().iqamaH}</span></div>` +
       ORDER.map(k => `<div class="r ${k===hl ? 'on':''}"><span>${nameOf(k)}</span><span>${fmt(today[k])}</span><span>${isJ(k) ? L().khutba : fmt(plus(today[k], k))}</span></div>`).join("");
     $("dDay").textContent = n.toLocaleDateString(L().locale, {weekday:"long"});
     $("dClock").textContent = fmt(n);
@@ -1166,20 +1179,28 @@ function sendOnce(id, title, body){
   try { localStorage.setItem("notifSent", JSON.stringify(notifSent)); } catch(_){}
   showNotif(title, id, body);
 }
+function preMin(){ let m = 15; try { m = +(localStorage.getItem("preMin") || 15); } catch(_){} return [5,10,15,20].includes(m) ? m : 15; }
 function notifTick(key, t, cur, curT, n, nameOf){
   notifBtnText();
   if (!notifOn || !notifOK() || Notification.permission !== "granted") return;
   const left = t - n;
+  // 0) the chosen minutes before adhan
+  const pm = preMin();
+  if (!cur && left > 0 && left <= pm*60000 && left > (pm-3)*60000)
+    sendOnce("pre-" + key + "-" + t.toDateString(), L().nPre(nameOf(key), Math.max(1, Math.round(left/60000))));
   if (cur && curT) {
     const since = n - curT;
     // 1) at adhan
     if (since >= 0 && since < 5*60000) sendOnce("now-" + cur + "-" + curT.toDateString(), L().nNow(nameOf(cur)), lang === "ar" && REMIND[cur] ? REMIND[cur][new Date().getDate() % REMIND[cur].length] : "");
-    // 2) 10 minutes after adhan: iqama reminder (not for Jumuah)
+    // 2) 7 minutes after adhan: iqama reminder; 3) at the iqama (not for Jumuah)
     const jumuah = n.getDay() === 5 && cur === "dhuhr";
-    if (!jumuah && since >= 10*60000 && since < 15*60000) {
-      const m = iqDelay(cur) - 10;
+    const iqm = iqDelay(cur);
+    if (!jumuah && since >= 7*60000 && since < 12*60000 && since < iqm*60000) {
+      const m = iqm - 7;
       sendOnce("iq-" + cur + "-" + curT.toDateString(), m > 0 ? L().nIq(nameOf(cur), m) : L().nIqNow(nameOf(cur)));
     }
+    if (!jumuah && iqm > 8 && since >= iqm*60000 && since < (iqm+5)*60000)
+      sendOnce("iqnow-" + cur + "-" + curT.toDateString(), L().nIqNow(nameOf(cur)));
   }
 }
 async function toggleNotif(){
@@ -1196,6 +1217,25 @@ async function toggleNotif(){
   try { if (window.gtag) gtag("event", "prayer_alert_on"); } catch(_){}
 }
 if ($("notifBtn")) $("notifBtn").addEventListener("click", toggleNotif);
+function waLinks(){
+  const W = "https://wa.me/966556512678?text=";
+  $("suggestBtn").href = W + encodeURIComponent(L().sugMsg);
+  $("bugBtn").href = W + encodeURIComponent(L().bugMsg + "\n\n(" + navigator.userAgent.slice(0, 120) + ")");
+}
+function applyLook(v){
+  for (const sh of document.styleSheets) { let rules; try { rules = sh.cssRules; } catch(_) { continue; }
+    for (const ru of rules) { if (!ru.media) continue;
+      const m = ru.media.mediaText;
+      if (!ru._dk) { if (!/prefers-color-scheme:\s*dark/.test(m)) continue; ru._dk = m; }
+      try { ru.media.mediaText = v === "night" ? "all" : v === "day" ? "not all" : ru._dk; } catch(_){} } }
+  document.documentElement.style.colorScheme = v === "night" ? "dark" : v === "day" ? "light" : "";
+}
+let look = "auto"; try { look = localStorage.getItem("look") || "auto"; } catch(_){}
+applyLook(look);
+$("lookSel").value = look;
+$("lookSel").addEventListener("change", e => { look = e.target.value; try { localStorage.setItem("look", look); } catch(_){} applyLook(look); });
+$("preSel").value = String(preMin());
+$("preSel").addEventListener("change", e => { try { localStorage.setItem("preMin", e.target.value); } catch(_){} });
 
 if ("serviceWorker" in navigator) { try { navigator.serviceWorker.register("/sw.js").catch(()=>{}); } catch(_){} }
 
@@ -1393,6 +1433,7 @@ $("wahy").href = isIOS ? "https://apps.apple.com/sa/app/id1615454207" : "https:/
 function apply(){
   document.documentElement.lang = lang; document.documentElement.dir = "rtl"; // same layout in every language
   document.querySelectorAll("[data-t]").forEach(e => e.textContent = L()[e.dataset.t] ?? T.en[e.dataset.t]);
+  try { waLinks(); [...$("preSel").options].forEach(o => o.textContent = o.value + " " + L().minW); if (!$("radioModal").hidden) drawFav(); } catch(_){}
   $("langBtn").textContent = "🌐 " + lang.toUpperCase();
   if ($("modeBtn")) setMode(document.body.classList.contains("drive"));
   document.title = lang==="ar" ? "أقرب مسجد – ومواقيت الصلاة" : L().title + " – " + (lang==="en" ? "Prayer Times" : L().prayerH);
@@ -1413,6 +1454,7 @@ const R_PAUSE = '<svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="tr
 const R_STALL = 3500, R_SLOW = 7000, R_TIMEOUT = 25000, R_RETRY_TIMEOUT = 12000, R_MAX_TRY = 6;
 let radioOn = null;                       // station index while the user wants sound, else null
 let radioSel = 0; try { radioSel = +(localStorage.getItem("radioSel") || 0) || 0; } catch(_){}
+let radioFav = [0, 1]; try { const f = JSON.parse(localStorage.getItem("radioFav") || "null"); if (Array.isArray(f) && f.length === 2 && f.every(i => Number.isInteger(i) && i >= 0 && i < 8)) radioFav = f; } catch(_){}
 if (!RADIOS[radioSel]) radioSel = 0;
 let rState = "idle", rSlow = false, rOffline = false, rBusy = false, rLiveOnce = false;
 let rGen = 0, rTry = 0, rStartAt = 0, rLastT = 0, rLastProg = 0, rTimer = null, rRetry = null;
@@ -1422,7 +1464,10 @@ function drawRadioBar(){
   const t = L(), sel = radioOn !== null ? radioOn : radioSel;
   bar.className = "rBar st-" + rState;
   $("rName").textContent = t[RADIOS[sel].k];
-  RADIOS.forEach((r, i) => { const b = $("rSt" + i); if (!b) return; b.setAttribute("aria-pressed", i === sel ? "true" : "false"); b.classList.toggle("on", i === sel); });
+  radioFav.forEach((fi, i) => { const b = $("rSt" + i); if (!b || !RADIOS[fi]) return; const on = fi === sel;
+    b.setAttribute("aria-pressed", on ? "true" : "false"); b.classList.toggle("on", on);
+    const nm = fi === 0 ? t.rQs : fi === 1 ? t.rSs : t[RADIOS[fi].k];
+    $("rStN" + i).textContent = nm; $("rStN" + i).style.fontSize = nm.length > 16 ? ".72rem" : ""; });
   const want = radioOn !== null;
   $("rPlay").innerHTML = want ? R_PAUSE : R_PLAY;
   $("rPlay").setAttribute("aria-label", want ? t.pauseW : t.playW);
@@ -1545,10 +1590,22 @@ function radioSelect(i){
   addEventListener("online", () => { if (radioOn !== null && rState === "lost") { rOffline = false; rTry = 0; rConnect("lost"); } });
   document.addEventListener("visibilitychange", () => { if (!document.hidden && rState === "live") rLastProg = Date.now(); });
 })();
-$("rSt0").addEventListener("click", () => radioSelect(0));
-$("rSt1").addEventListener("click", () => radioSelect(1));
+$("rSt0").addEventListener("click", () => radioSelect(radioFav[0]));
+$("rSt1").addEventListener("click", () => radioSelect(radioFav[1]));
+function drawFav(){
+  const t = L();
+  [0,1].forEach(i => { const el = $("fav" + i);
+    el.innerHTML = RADIOS.map((r, j) => `<option value="${j}">${t[r.k]}</option>`).join(""); el.value = String(radioFav[i]); });
+}
+[0,1].forEach(i => $("fav" + i).addEventListener("change", e => {
+  const v = +e.target.value, o = 1 - i;
+  if (radioFav[o] === v) radioFav[o] = radioFav[i];   // same station on both: swap
+  radioFav[i] = v;
+  try { localStorage.setItem("radioFav", JSON.stringify(radioFav)); } catch(_){}
+  drawFav(); drawRadioBar();
+}));
 $("rPlay").addEventListener("click", () => { if (radioOn !== null) radioClose(); else radioPlay(radioSel); });
-$("rMore").addEventListener("click", () => { drawRadio(); $("radioModal").hidden = false; });
+$("rMore").addEventListener("click", () => { drawRadio(); drawFav(); $("radioModal").hidden = false; });
 $("radioClose").addEventListener("click", () => $("radioModal").hidden = true);
 $("radioStop").addEventListener("click", radioClose);
 $("radioList").addEventListener("click", e => {
