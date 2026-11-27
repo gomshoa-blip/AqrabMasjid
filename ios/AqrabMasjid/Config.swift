@@ -2,15 +2,15 @@ import Foundation
 
 /// Change these links in one place (same as the Android app).
 enum Config {
-    static let siteURL = URL(string: "https://aqrab-masjid.netlify.app")!
+    static let siteURL = URL(string: "https://masjid.gomshoa.com")!
     /// Page where people suggest a missing mosque.
-    static let addMosqueURL = URL(string: "https://aqrab-masjid.netlify.app/#add")!
+    static let addMosqueURL = URL(string: "https://masjid.gomshoa.com/#add")!
     /// Donate opens the official Ehsan platform only. The app collects no money.
     static let donateURL = URL(string: "https://ehsan.sa")!
     /// قيراط: Riyadh funeral prayers and cemeteries (shown in Riyadh only).
     static let qiratURL = URL(string: "https://qirat.gomshoa.com")!
     /// Mosques you reviewed and added yourself. Format: [{"name":"مسجد ...","lat":24.7,"lng":46.6}]
-    static let customMosquesURL = URL(string: "https://aqrab-masjid.netlify.app/mosques.json")!
+    static let customMosquesURL = URL(string: "https://masjid.gomshoa.com/mosques.json")!
 
     static let overpassURLs = [
         "https://overpass-api.de/api/interpreter",
