@@ -360,10 +360,14 @@ class MainActivity : Activity() {
         tvStatus.text = L.t("جاري تحديد موقعك...", "Finding your location...")
         LocationHelper.get(this) { loc ->
             if (loc == null) {
-                tvStatus.text = L.t("اسمح للتطبيق بالموقع من الإعدادات", "Allow location for the app in Settings")
+                // No default city: the user picks the place on the map
+                tvStatus.text = L.t("ما قدرنا نحدد موقعك. فعّل الموقع (GPS)، أو اضغط هنا لتحديده على الخريطة 📍",
+                    "We could not get your location. Turn on location (GPS), or tap here to choose it on the map 📍")
+                tvStatus.setOnClickListener { startActivity(MapPickActivity.intent(this)) }
                 return@get
             }
             tvStatus.text = ""
+            tvStatus.setOnClickListener(null)
             renderTimes()
             Alerts.scheduleNext(this)
             PrayerWidgets.updateAll(this)
@@ -372,10 +376,12 @@ class MainActivity : Activity() {
 
     private fun renderTimes() {
         val (lat, lng) = Prefs.location(this) ?: run {
-            tvHeroLabel.text = L.t("حدّث موقعك لعرض المواقيت", "Allow location to see prayer times")
+            tvHeroLabel.text = L.t("حدد موقعك لعرض المواقيت 📍", "Choose your location to see prayer times 📍")
+            tvHeroLabel.setOnClickListener { startActivity(MapPickActivity.intent(this)) }
             ring.visibility = View.GONE
             return
         }
+        tvHeroLabel.setOnClickListener(null)
         val now = System.currentTimeMillis()
         val day = PrayerCalc.day(this, lat, lng, now)
         val st = PrayerCalc.status(this, lat, lng, now)
@@ -1022,7 +1028,12 @@ class MainActivity : Activity() {
 
     /** User can change iqama minutes for each prayer. */
     private fun iqamaDialog() {
-        val loc = Prefs.location(this) ?: (24.7136 to 46.6753)
+        val loc = Prefs.location(this) ?: run {
+            // Iqama times depend on the country: we need the user's place first
+            Toast.makeText(this, L.t("حدد موقعك أولًا", "Choose your location first"), Toast.LENGTH_LONG).show()
+            startActivity(MapPickActivity.intent(this))
+            return
+        }
         val box = LinearLayout(this)
         box.orientation = LinearLayout.VERTICAL
         box.setPadding(40, 20, 40, 0)

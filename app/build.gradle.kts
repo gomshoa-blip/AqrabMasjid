@@ -61,6 +61,11 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer:1.4.1")
     // Quran radio on the car screen (Android Auto)
     implementation("androidx.media3:media3-session:1.4.1")
+    // Qibla camera (CameraX works on more phones than the old camera API, e.g. Honor)
+    implementation("androidx.activity:activity:1.10.1")
+    implementation("androidx.camera:camera-camera2:1.4.2")
+    implementation("androidx.camera:camera-lifecycle:1.4.2")
+    implementation("androidx.camera:camera-view:1.4.2")
     // Prayer times (Umm Al-Qura and other methods)
     implementation("com.batoulapps.adhan:adhan:1.2.1")
 }

@@ -526,7 +526,7 @@ const T = {
   netFail:"ما قدرنا نجيب المساجد الحين. اضغط «خذني لأقرب مسجد» وبيفتح لك خرائط Google.",
   none:"ما لقينا مساجد قريبة في البيانات. اضغط «خذني لأقرب مسجد» وبيفتح لك خرائط Google.",
   nearest:(n,d)=>"أقرب مسجد: " + n + " — " + d, nearestTag:"الأقرب لك", go:"🧭 اذهب",
-  locFail:"ما قدرنا نحدد موقعك. فعّل الموقع (GPS) واضغط «حدّث موقعي»، أو استخدم زر خرائط Google.",
+  locFail:"ما قدرنا نحدد موقعك. فعّل الموقع (GPS)، أو حدد موقعك على الخريطة.", pickMap:"📍 حدد موقعك على الخريطة", needLoc:"حدد موقعك لعرض مواقيت الصلاة واتجاه القبلة", locSaved:"نعرض حسب آخر موقع محفوظ. فعّل الموقع (GPS) لتحديثه.",
   byLoc:"حسب موقعك الحالي", byRiyadh:"حسب مدينة الرياض", byRiyadhHint:"حسب مدينة الرياض (فعّل الموقع لمواقيت أدق)",
   m:"م", km:"كم", mosque:"مسجد", locale:"ar-SA", method:"طريقة:",
   methods:{UmmAlQura:"أم القرى", Egyptian:"الهيئة المصرية", Dubai:"دبي", Kuwait:"الكويت", Qatar:"قطر", Turkey:"تركيا (ديانت)",
@@ -567,7 +567,7 @@ const T = {
   netFail:"We could not load mosques right now. Tap “Take me to the nearest mosque” to open Google Maps.",
   none:"No nearby mosques found in the data. Tap “Take me to the nearest mosque” to open Google Maps.",
   nearest:(n,d)=>"Nearest mosque: " + n + " — " + d, nearestTag:"Nearest to you", go:"🧭 Go",
-  locFail:"We could not get your location. Turn on location (GPS) and tap “Update my location”, or use the Google Maps button.",
+  locFail:"We could not get your location. Turn on location (GPS), or choose your location on the map.", pickMap:"📍 Choose your location on the map", needLoc:"Choose your location to see prayer times and the Qibla", locSaved:"Showing your last saved location. Turn on location (GPS) to update it.",
   byLoc:"For your current location", byRiyadh:"For Riyadh", byRiyadhHint:"For Riyadh (turn on location for exact times)",
   m:"m", km:"km", mosque:"Mosque", locale:"en-US", method:"Method:",
   methods:{UmmAlQura:"Umm Al-Qura", Egyptian:"Egyptian Authority", Dubai:"Dubai", Kuwait:"Kuwait", Qatar:"Qatar", Turkey:"Turkey (Diyanet)",
@@ -1067,6 +1067,15 @@ function draw(fit){
     </div>`).join("");
 }
 
+// Saved location (from the phone or picked on the map). We never use a default city.
+function savedLoc(){ try { const s = JSON.parse(localStorage.getItem("myLoc") || "null"); if (s && isFinite(s.lat) && isFinite(s.lng)) return s; } catch(_){} return null; }
+function pickUrl(){ return "/pick/?back=/&lang=" + (lang === "ar" ? "ar" : "en") + (me ? "&lat=" + me[0].toFixed(4) + "&lng=" + me[1].toFixed(4) : ""); }
+function showNeedLoc(waiting){
+  ptArgs = null; clearInterval(ptTimer);
+  $("times").innerHTML = `<div class="city">${waiting ? L().locating : L().needLoc}</div>` +
+    (waiting ? "" : `<a href="${pickUrl()}" style="display:block;text-align:center;margin:8px auto 4px;padding:12px 16px;border-radius:12px;background:var(--ic,#C79A22);color:#fff;font-weight:800;text-decoration:none">${L().pickMap}</a>`);
+  $("ptMeta").textContent = "";
+}
 function locate(){
   setStatus("locating");
   const q = new URLSearchParams(location.search);
@@ -1084,14 +1093,16 @@ function got(lat, lng){
   $("goJami").href = `https://www.google.com/maps/search/%D8%AC%D8%A7%D9%85%D8%B9/@${lat},${lng},14z`;
   prayerTimes(lat, lng, "byLoc");
   setStatus("stOk");
+  try { const s = savedLoc(); if (!s || Math.abs(s.lat - lat) > 1e-4 || Math.abs(s.lng - lng) > 1e-4) localStorage.setItem("myLoc", JSON.stringify({lat, lng, t: Date.now()})); } catch(_){}
   $("qiblaBtn").href = `/qibla/?lat=${lat.toFixed(4)}&lng=${lng.toFixed(4)}`;
 }
 // Update the location by itself when the page comes back (no button needed)
 document.addEventListener("visibilitychange", () => { if (!document.hidden && me) locate(); });
 function fail(err){
   try { if (window.gtag) gtag("event", err && err.code === 1 ? "location_denied" : "location_failed", {error_code: (err && err.code) || 0}); } catch(_){}
-  setStatus("locFail");
-  prayerTimes(RIYADH[0], RIYADH[1], "byRiyadhHint");
+  const s = savedLoc();
+  if (s) { got(s.lat, s.lng); setStatus("locSaved"); }
+  else { setStatus("locFail"); showNeedLoc(false); }
 }
 $("retry").addEventListener("click", locate);
 
@@ -1386,7 +1397,7 @@ function apply(){
   document.title = lang==="ar" ? "أقرب مسجد – ومواقيت الصلاة" : L().title + " – " + (lang==="en" ? "Prayer Times" : L().prayerH);
   $("waBtn").href = "https://wa.me/?text=" + encodeURIComponent(L().waMsg);
   if (Array.isArray(statusKey)) setStatus(...statusKey); else setStatus(statusKey);
-  if (ptArgs) prayerTimes(...ptArgs);
+  if (ptArgs) prayerTimes(...ptArgs); else if ($("times").innerHTML) showNeedLoc((Array.isArray(statusKey) ? statusKey[0] : statusKey) === "locating");
   if (typeof drawRadioBar === "function") drawRadioBar();
 }
 // Quran radio (live audio; keeps playing while the site is open)
@@ -1562,7 +1573,7 @@ $("modeBtn").addEventListener("click", () => {
 });
 document.body.classList.add("drive");
 try { if (localStorage.getItem("drive") === "0") document.body.classList.remove("drive"); } catch(_){}
-prayerTimes(RIYADH[0], RIYADH[1], "byRiyadh");
+{ const s = savedLoc(); if (s) prayerTimes(s.lat, s.lng, "byLoc"); else showNeedLoc(true); }
 apply();
 if (lang !== "ar") track("open_lang_" + lang);   // which languages are used (one event per visit)
 locate();

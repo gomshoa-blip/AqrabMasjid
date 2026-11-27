@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B100D">
+<meta name="robots" content="noindex">
+<title>حدد موقعك – أقرب مسجد</title>
+<link rel="icon" type="image/png" href="/icon-192.png">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  html,body{margin:0;height:100%;background:#0B100D;color:#fff;font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
+  #map{position:fixed;inset:0;background:#dfe6e0}
+  .top{position:fixed;top:0;left:0;right:0;z-index:1000;padding:calc(env(safe-area-inset-top) + 10px) 12px 10px;background:rgba(11,16,13,.92)}
+  .top h1{margin:0 0 4px;font-size:1.15rem}
+  .top p{margin:0 0 10px;font-size:.92rem;opacity:.85;line-height:1.6}
+  .row{display:flex;gap:8px}
+  #q{flex:1;min-width:0;border:0;border-radius:12px;padding:12px;font:inherit;font-size:1rem}
+  button{border:0;border-radius:12px;font:inherit;font-weight:800;cursor:pointer}
+  #find{padding:0 16px;background:#2ECC8A;color:#06140d}
+  #res{margin-top:8px;background:#fff;color:#111;border-radius:12px;overflow:hidden}
+  #res div{padding:11px 12px;border-bottom:1px solid #eee;font-size:.95rem}
+  #res div:last-child{border-bottom:0}
+  #pin{position:fixed;left:50%;top:50%;z-index:900;transform:translate(-50%,-100%);font-size:44px;line-height:1;pointer-events:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}
+  .bottom{position:fixed;bottom:0;left:0;right:0;z-index:1000;padding:12px 12px calc(env(safe-area-inset-bottom) + 12px);background:rgba(11,16,13,.92);display:flex;flex-direction:column;gap:8px}
+  #msg{font-size:.92rem;text-align:center;min-height:1.2em;opacity:.9}
+  #ok{padding:15px;font-size:1.1rem;background:linear-gradient(135deg,#E2BE4E,#C79A22);color:#1B1606}
+  #me{padding:12px;background:rgba(255,255,255,.14);color:#fff}
+  #close{position:fixed;top:calc(env(safe-area-inset-top) + 12px);inset-inline-end:12px;z-index:1001;background:rgba(255,255,255,.15);color:#fff;padding:6px 12px;border-radius:999px;text-decoration:none;font-weight:800}
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div id="pin">📍</div>
+<div class="top">
+  <h1 id="tTitle"></h1>
+  <p id="tHelp"></p>
+  <div class="row"><input id="q" type="search" enterkeyhint="search"><button id="find" type="button"></button></div>
+  <div id="res" hidden></div>
+</div>
+<a id="close" href="/">✕</a>
+<div class="bottom">
+  <div id="msg"></div>
+  <button id="me" type="button"></button>
+  <button id="ok" type="button"></button>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// Pick a place on the map. Used by the site (qibla, prayer times) and by the Android app.
+// The app gives us a bridge called AqrabApp; the site gets the place back in localStorage "myLoc".
+const q = new URLSearchParams(location.search);
+const lang = q.get("lang") === "en" ? "en" : "ar";
+const T = {
+  ar:{title:"حدد موقعك على الخريطة", help:"حرّك الخريطة حتى يكون الدبوس 📍 على مكانك، أو ابحث عن مدينتك. نستخدم الموقع لاتجاه القبلة ومواقيت الصلاة.", ph:"اكتب اسم المدينة أو الحي", find:"بحث", ok:"✓ تأكيد هذا الموقع", me:"📍 استخدم موقع جوالي", meWait:"جاري تحديد موقعك…", meFail:"ما قدرنا نحدد موقعك. حرّك الخريطة يدويًا.", none:"لا توجد نتائج. جرّب اسمًا آخر.", net:"تأكد من الإنترنت ثم حاول مرة ثانية.", zoom:"قرّب الخريطة أكثر حتى يكون الموقع دقيقًا", saved:"تم حفظ الموقع ✓"},
+  en:{title:"Choose your location on the map", help:"Move the map until the pin 📍 is on your place, or search for your city. We use it for the Qibla and prayer times.", ph:"City or area name", find:"Search", ok:"✓ Use this location", me:"📍 Use my phone location", meWait:"Finding your location…", meFail:"Could not get your location. Move the map by hand.", none:"No results. Try another name.", net:"Check the internet and try again.", zoom:"Zoom in more so the place is exact", saved:"Location saved ✓"}
+}[lang];
+if (lang === "en") { document.documentElement.lang = "en"; document.documentElement.dir = "ltr"; }
+const $ = id => document.getElementById(id);
+$("tTitle").textContent = T.title; $("tHelp").textContent = T.help; $("q").placeholder = T.ph;
+$("find").textContent = T.find; $("ok").textContent = T.ok; $("me").textContent = T.me;
+document.title = T.title;
+
+// Where to go back (site only). Only paths on this site are allowed.
+const back = (q.get("back") || "/").startsWith("/") && !(q.get("back") || "").startsWith("//") ? (q.get("back") || "/") : "/";
+$("close").href = back;
+const inApp = !!window.AqrabApp;
+if (inApp) $("close").addEventListener("click", e => { e.preventDefault(); try { AqrabApp.cancel(); } catch(_){} });
+
+let start = null;
+const la = parseFloat(q.get("lat")), lo = parseFloat(q.get("lng"));
+if (isFinite(la) && isFinite(lo)) start = [la, lo];
+else { try { const s = JSON.parse(localStorage.getItem("myLoc") || "null"); if (s && isFinite(s.lat)) start = [s.lat, s.lng]; } catch(_){} }
+
+const map = L.map("map", {zoomControl:false, attributionControl:true}).setView(start || [21.4225, 39.8262], start ? 14 : 3);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom:19, attribution:"© OpenStreetMap"}).addTo(map);
+
+function say(t){ $("msg").textContent = t || ""; }
+map.on("moveend", () => { if (map.getZoom() < 10) say(T.zoom); else if ($("msg").textContent === T.zoom) say(""); });
+if (!start) say(T.zoom);
+
+function myLocation(){
+  if (!navigator.geolocation) { say(T.meFail); return; }
+  say(T.meWait);
+  navigator.geolocation.getCurrentPosition(p => {
+    map.setView([p.coords.latitude, p.coords.longitude], 16); say("");
+  }, () => say(T.meFail), {enableHighAccuracy:true, timeout:12000, maximumAge:60000});
+}
+$("me").addEventListener("click", myLocation);
+if (!start) myLocation();
+
+// Search (OpenStreetMap Nominatim): only when the user taps Search
+async function search(){
+  const text = $("q").value.trim();
+  const box = $("res");
+  if (!text) return;
+  box.hidden = true; box.innerHTML = "";
+  try {
+    const r = await fetch("https://nominatim.openstreetmap.org/search?format=json&limit=5&accept-language=" + lang + "&q=" + encodeURIComponent(text));
+    const list = await r.json();
+    if (!list.length) { say(T.none); return; }
+    say("");
+    list.forEach(it => {
+      const d = document.createElement("div");
+      d.textContent = it.display_name;
+      d.addEventListener("click", () => { map.setView([+it.lat, +it.lon], 14); box.hidden = true; $("q").blur(); });
+      box.appendChild(d);
+    });
+    box.hidden = false;
+  } catch(_) { say(T.net); }
+}
+$("find").addEventListener("click", search);
+$("q").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); search(); } });
+
+$("ok").addEventListener("click", () => {
+  if (map.getZoom() < 10) { say(T.zoom); return; }
+  const c = map.getCenter();
+  const lat = +c.lat.toFixed(5), lng = +((c.lng + 540) % 360 - 180).toFixed(5);
+  if (inApp) { try { AqrabApp.pick(lat, lng); } catch(_){} return; }
+  try { localStorage.setItem("myLoc", JSON.stringify({lat, lng, manual:true, t:Date.now()})); } catch(_){}
+  say(T.saved);
+  const sep = back.includes("?") ? "&" : "?";
+  location.href = back.split("#")[0] + sep + "lat=" + lat + "&lng=" + lng + (back.includes("#") ? "#" + back.split("#")[1] : "");
+});
+</script>
+</body>
+</html>

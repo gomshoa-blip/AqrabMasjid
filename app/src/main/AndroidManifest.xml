@@ -56,6 +56,12 @@
             android:exported="false"
             android:label="وضع القيادة" />
 
+        <!-- Pick your place on the map (when the phone cannot find it) -->
+        <activity
+            android:name=".MapPickActivity"
+            android:exported="false"
+            android:label="حدد موقعك" />
+
         <!-- Qibla with the camera (augmented reality) -->
         <activity
             android:name=".QiblaActivity"

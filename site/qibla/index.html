@@ -14,22 +14,45 @@
   #start h1{margin:0;font-size:1.6rem}
   #start p{margin:0;opacity:.8;line-height:1.7}
   #go{border:0;border-radius:16px;padding:16px 28px;font:inherit;font-size:1.15rem;font-weight:800;background:linear-gradient(135deg,#E2BE4E,#C79A22);color:#1B1606}
-  #close{position:fixed;top:calc(env(safe-area-inset-top) + 12px);inset-inline-start:12px;z-index:4;border:0;border-radius:999px;background:rgba(0,0,0,.45);color:#fff;font:inherit;font-weight:800;padding:8px 14px;text-decoration:none}
+  #close{position:fixed;top:calc(env(safe-area-inset-top) + 12px);inset-inline-start:12px;z-index:6;border:0;border-radius:999px;background:rgba(0,0,0,.45);color:#fff;font:inherit;font-weight:800;padding:8px 14px;text-decoration:none}
+  #locBtn{position:fixed;top:calc(env(safe-area-inset-top) + 12px);inset-inline-end:12px;z-index:4;border:0;border-radius:999px;background:rgba(0,0,0,.45);color:#fff;font:inherit;font-size:.85rem;font-weight:700;padding:8px 12px;text-decoration:none}
+  .warn{background:#3a2a06;border:1px solid #C79A22;border-radius:14px;padding:12px 14px;line-height:1.7;max-width:420px}
+  .warn b{display:block;margin-bottom:4px;color:#F6D46B}
+  .warn .btns{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+  .btn{border:0;border-radius:12px;padding:11px 16px;font:inherit;font-weight:800;text-decoration:none;display:inline-block;cursor:pointer}
+  .btn.gold{background:linear-gradient(135deg,#E2BE4E,#C79A22);color:#1B1606}
+  .btn.soft{background:rgba(255,255,255,.14);color:#fff}
+  #card{position:fixed;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.55)}
+  #card[hidden]{display:none}
+  #card .box{background:#122019;border:1px solid rgba(246,212,107,.5);border-radius:18px;padding:20px;max-width:400px;width:100%;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+  #card h2{margin:0 0 8px;font-size:1.25rem;color:#F6D46B}
+  #card p{margin:0 0 6px;line-height:1.75;font-size:1rem}
+  #card .btns{display:flex;flex-direction:column;gap:8px;margin-top:14px}
 </style>
 </head>
 <body>
 <video id="v" playsinline muted autoplay></video>
 <canvas id="c"></canvas>
 <a id="close" href="/">✕</a>
+<a id="locBtn" href="/pick/?back=/qibla/">📍 تغيير الموقع</a>
 <div id="start">
   <h1>🕋 القبلة</h1>
   <p>نستخدم الكاميرا والبوصلة لنريك اتجاه القبلة أمامك.<br>امسك الجوال واقفًا، وابتعد عن المعادن.</p>
+  <div class="warn" id="inapp" hidden></div>
   <button id="go">ابدأ</button>
 </div>
+<div id="card" hidden><div class="box"><h2 id="cardT"></h2><div id="cardB"></div><div class="btns" id="cardBtns"></div></div></div>
 <script>
 const KLAT = 21.422487, KLNG = 39.826206, R = Math.PI/180;
-let qibla = 0, heading = null, smooth = null, fov = 60, camOk = false, buzzed = false;
+let qibla = null, heading = null, smooth = null, fov = 60, camOk = false, buzzed = false, dec = 0;
+let cardKind = null, started = false, gotRelative = false, compassTimer = 0, locBusy = false, camDenied = false;
 const q = new URLSearchParams(location.search);
+const $ = id => document.getElementById(id);
+const ua = navigator.userAgent || "";
+const isIOS = /iPhone|iPad|iPod/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+// Links opened inside WhatsApp, Instagram, Facebook, Snapchat, TikTok… often block the camera and compass
+const inAppBrowser = /WhatsApp|FBAN|FBAV|FB_IAB|FBIOS|Instagram|Snapchat|musical_ly|TikTok|BytedanceWebview|Line\/|Twitter/i.test(ua);
+
 function bearing(lat, lng){
   const p = lat*R, dL = (KLNG - lng)*R;
   const y = Math.sin(dL), x = Math.cos(p)*Math.tan(KLAT*R) - Math.sin(p)*Math.cos(dL);
@@ -41,10 +64,78 @@ function decl(lat, lng){
   if (lat < 15 || lat > 34 || lng < 33 || lng > 57) return 0;
   return 8.67899 - 0.167623*lat - 0.12231*lng + 0.004944*lat*lng + 0.001861*lat*lat - 0.001167*lng*lng;
 }
-let dec = 0;
-{ const la = +(q.get("lat") || 24.7136), lo = +(q.get("lng") || 46.6753); qibla = bearing(la, lo); dec = decl(la, lo); }
-if (navigator.geolocation) navigator.geolocation.getCurrentPosition(p => { qibla = bearing(p.coords.latitude, p.coords.longitude); dec = decl(p.coords.latitude, p.coords.longitude); }, () => {}, {enableHighAccuracy:true, timeout:8000, maximumAge:300000});
 
+// ---------- Location: from the phone, or picked by the user on the map. Never a default city. ----------
+function setLoc(lat, lng, save, manual){
+  qibla = bearing(lat, lng); dec = decl(lat, lng);
+  if (save) { try { localStorage.setItem("myLoc", JSON.stringify({lat, lng, manual: !!manual, t: Date.now()})); } catch(_){} }
+  if (cardKind === "noLoc") hideCard();
+}
+{
+  const la = parseFloat(q.get("lat")), lo = parseFloat(q.get("lng"));
+  if (isFinite(la) && isFinite(lo)) setLoc(la, lo, true, false);
+  else { try { const s = JSON.parse(localStorage.getItem("myLoc") || "null"); if (s && isFinite(s.lat) && isFinite(s.lng)) setLoc(s.lat, s.lng, false); } catch(_){} }
+}
+function locate(){
+  if (!navigator.geolocation) { if (qibla == null) showCard("noLoc"); return; }
+  locBusy = true;
+  navigator.geolocation.getCurrentPosition(p => {
+    locBusy = false; setLoc(p.coords.latitude, p.coords.longitude, true, false);
+  }, () => {
+    locBusy = false; if (qibla == null) showCard("noLoc");
+  }, {enableHighAccuracy:true, timeout:10000, maximumAge:300000});
+}
+locate();
+
+// ---------- Clear messages for the user ----------
+const STEPS_IOS = {
+  motion: "أغلق Safari تمامًا، ثم افتح الرابط مرة ثانية واضغط «سماح».<br>أو افتح: الإعدادات ← Safari ← الحركة والاتجاه ← تشغيل.",
+  cam: "لتشغيل الكاميرا: الإعدادات ← Safari ← الكاميرا ← سماح."
+};
+const STEPS_ANDROID = {
+  motion: "اضغط القفل 🔒 بجانب الرابط في أعلى المتصفح ← الأذونات ← أجهزة الاستشعار ← سماح، ثم اضغط «حاول مرة ثانية».",
+  cam: "لتشغيل الكاميرا: اضغط القفل 🔒 بجانب الرابط ← الأذونات ← الكاميرا ← سماح."
+};
+const STEPS = isIOS ? STEPS_IOS : STEPS_ANDROID;
+const CARDS = {
+  noLoc: () => ({t:"لم نعرف موقعك", b:"نحتاج موقعك لنحدد اتجاه القبلة بدقة.<br>تأكد أن الموقع (GPS) شغّال واضغط «حاول مرة ثانية»، أو حدد موقعك على الخريطة.",
+    btns:[["حاول مرة ثانية", "gold", () => { hideCard(); locate(); }], ["📍 حدد موقعك على الخريطة", "soft", pickOnMap]]}),
+  motion: () => ({t:"البوصلة متوقفة", b:STEPS.motion,
+    btns:[["حاول مرة ثانية", "gold", () => { hideCard(); askMotion().then(listen); }]]}),
+  noCompass: () => ({t:"البوصلة لا تستجيب", b:"حرّك الجوال على شكل رقم 8، وابتعد عن الحديد والمغناطيس." + (gotRelative && !isIOS ? "<br>إذا استمرت المشكلة افتح الرابط في متصفح Chrome." : ""),
+    btns:[["حاول مرة ثانية", "gold", () => { hideCard(); askMotion().then(listen); }]]}),
+  camDenied: () => ({t:"الكاميرا متوقفة", b:"القبلة تعمل كبوصلة فقط.<br>" + STEPS.cam,
+    btns:[["حاول مرة ثانية", "gold", () => { hideCard(); startCamera(); }], ["متابعة بدون كاميرا", "soft", hideCard]]})
+};
+const PRIORITY = ["noLoc", "motion", "noCompass", "camDenied"];
+function showCard(kind){
+  if (cardKind && PRIORITY.indexOf(cardKind) < PRIORITY.indexOf(kind)) return;   // a more important message is open
+  cardKind = kind;
+  const c = CARDS[kind]();
+  $("cardT").textContent = c.t;
+  $("cardB").innerHTML = "<p>" + c.b + "</p>";
+  const box = $("cardBtns"); box.innerHTML = "";
+  c.btns.forEach(([label, style, fn]) => { const b = document.createElement("button"); b.className = "btn " + style; b.textContent = label; b.addEventListener("click", fn); box.appendChild(b); });
+  $("card").hidden = false;
+}
+function hideCard(){ $("card").hidden = true; cardKind = null; }
+function pickOnMap(){ location.href = "/pick/?back=/qibla/" + (qibla != null && q.get("lat") ? "&lat=" + q.get("lat") + "&lng=" + q.get("lng") : ""); }
+
+// Inside WhatsApp / Instagram: tell the user to open the link in the browser
+if (inAppBrowser) {
+  const w = $("inapp"); w.hidden = false;
+  const here = location.href;
+  w.innerHTML = "<b>القبلة لا تعمل داخل واتساب أو إنستقرام</b>" +
+    (isIOS ? "اضغط ⋯ أو زر المشاركة، ثم اختر «فتح في Safari»." : "اضغط ⋮ في الأعلى، ثم اختر «فتح في المتصفح» أو «فتح في Chrome».") +
+    '<div class="btns">' + (isIOS ? "" : '<a class="btn gold" id="openBr">فتح في المتصفح</a>') + '<button class="btn soft" id="copyL" type="button">نسخ الرابط</button></div>';
+  if (!isIOS) $("openBr").href = "intent://" + location.host + location.pathname + location.search + "#Intent;scheme=https;end";
+  $("copyL").addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(here); $("copyL").textContent = "تم النسخ ✓ الصقه في المتصفح"; }
+    catch(_) { prompt("انسخ الرابط:", here); }
+  });
+}
+
+// ---------- Compass ----------
 // Heading of the back camera (phone held upright)
 function camHeading(a, b, g){
   a*=R; b*=R; g*=R;
@@ -55,31 +146,62 @@ function camHeading(a, b, g){
 }
 function onOri(e){
   let h = null;
-  if (typeof e.webkitCompassHeading === "number") h = e.webkitCompassHeading;
+  if (typeof e.webkitCompassHeading === "number" && e.webkitCompassHeading >= 0) h = e.webkitCompassHeading;
   else if (e.absolute && e.alpha != null) h = camHeading(e.alpha, e.beta, e.gamma);
+  else if (e.alpha != null) gotRelative = true;   // moves, but does not know where north is
   if (h == null) return;
   h = (h + dec + 360) % 360;
   smooth = smooth == null ? h : (smooth + ((((h - smooth) + 540) % 360) - 180)*0.15 + 360) % 360;
   heading = smooth;
+  if (cardKind === "noCompass" || cardKind === "motion") hideCard();
 }
-async function start(){
+let motionState = "granted";
+async function askMotion(){
+  motionState = "granted";
   try {
     if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
-      await DeviceOrientationEvent.requestPermission();
+      motionState = await DeviceOrientationEvent.requestPermission();
     }
-  } catch(_){}
-  if ("ondeviceorientationabsolute" in window) addEventListener("deviceorientationabsolute", onOri);
-  else addEventListener("deviceorientation", onOri);
+  } catch(_) { motionState = "denied"; }
+}
+let listening = false;
+function listen(){
+  if (motionState !== "granted") { showCard("motion"); return; }
+  if (!listening) {
+    listening = true;
+    if ("ondeviceorientationabsolute" in window) addEventListener("deviceorientationabsolute", onOri);
+    addEventListener("deviceorientation", onOri);
+  }
+  // No reading after 5 seconds: tell the user what to do
+  clearTimeout(compassTimer);
+  compassTimer = setTimeout(() => { if (heading == null) showCard("noCompass"); }, 5000);
+}
+
+// ---------- Camera ----------
+async function startCamera(){
+  if (camOk) return;
   try {
     const s = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}}, audio:false});
-    document.getElementById("v").srcObject = s; camOk = true;
-  } catch(_) { camOk = false; }
-  document.getElementById("start").remove();
-  requestAnimationFrame(draw);
+    $("v").srcObject = s; camOk = true; camDenied = false;
+    try { await $("v").play(); } catch(_){}
+  } catch(e) {
+    camOk = false;
+    if (e && (e.name === "NotAllowedError" || e.name === "SecurityError")) { camDenied = true; showCard("camDenied"); }
+  }
 }
-document.getElementById("go").addEventListener("click", start);
 
-const cv = document.getElementById("c"), ctx = cv.getContext("2d");
+async function start(){
+  await askMotion();        // must be first, inside the tap (iPhone rule)
+  listen();
+  $("start").remove();
+  started = true;
+  requestAnimationFrame(draw);
+  if (qibla == null && !locBusy) showCard("noLoc");
+  startCamera();
+}
+$("go").addEventListener("click", start);
+
+const cv = $("c"), ctx = cv.getContext("2d");
 function draw(){
   const d = devicePixelRatio || 1, w = innerWidth, h = innerHeight;
   if (cv.width !== w*d) { cv.width = w*d; cv.height = h*d; }
@@ -92,7 +214,9 @@ function draw(){
   ctx.strokeStyle = "rgba(255,255,255,.6)"; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(cx, cy-120); ctx.lineTo(cx, cy+120); ctx.stroke();
   let msg, col = "#F6D46B";
-  if (heading == null) {
+  if (qibla == null) {
+    msg = locBusy ? "جاري تحديد موقعك…" : "حدد موقعك أولًا";
+  } else if (heading == null) {
     msg = "جاري قراءة البوصلة… حرّك الجوال قليلًا";
   } else {
     const diff = ((qibla - heading + 540) % 360) - 180, half = fov/2, ok = Math.abs(diff) < 4;
@@ -114,7 +238,8 @@ function draw(){
     buzzed = ok;
   }
   ctx.fillStyle = col; ctx.font = "800 26px system-ui"; ctx.fillText(msg, cx, h-104);
-  ctx.fillStyle = "#fff"; ctx.font = "15px system-ui"; ctx.fillText("اتجاه القبلة " + Math.round(qibla) + "° من الشمال", cx, h-72);
+  ctx.fillStyle = "#fff"; ctx.font = "15px system-ui";
+  if (qibla != null) ctx.fillText("اتجاه القبلة " + Math.round(qibla) + "° من الشمال", cx, h-72);
   ctx.font = "13px system-ui"; ctx.fillText(camOk ? "ابتعد عن المعادن · حرّك الجوال على شكل 8 للمعايرة" : "الكاميرا غير متاحة — يعمل كبوصلة", cx, h-44);
   requestAnimationFrame(draw);
 }
