@@ -140,19 +140,43 @@
   /* Recitation: current ayah colored green, and a player bar above the buttons */
   :is(#sheet,.scopy) .pl{position:absolute;z-index:0;background:rgba(15,107,79,.22);border-radius:8px;pointer-events:none}
   html[data-theme=dark] :is(#sheet,.scopy) .pl{background:rgba(143,217,182,.22)}
-  #abar{position:fixed;left:8px;right:8px;bottom:calc(env(safe-area-inset-bottom) + 80px);z-index:5;display:flex;flex-direction:column;gap:6px;padding:8px 10px;background:var(--panel);border:2px solid var(--gold);border-radius:16px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+  /* Recitation player: paper card with a double gold frame, an 8-point star (۞) play button */
+  #abar{position:fixed;left:10px;right:10px;bottom:calc(env(safe-area-inset-bottom) + 80px);z-index:5;display:flex;flex-direction:column;gap:4px;padding:12px 12px 10px;
+    background:var(--panel);border:1.5px solid var(--gold);border-radius:22px;box-shadow:inset 0 0 0 4px var(--panel),inset 0 0 0 5px rgba(201,162,39,.45),0 8px 24px rgba(0,0,0,.22)}
   #abar[hidden]{display:none}
-  #abar button{width:46px;height:46px;flex:none;border:0;border-radius:50%;background:var(--btn);color:var(--btnt);font-size:20px;padding:0}
-  #abar button.on{background:var(--gold);color:#fff}
-  #abar .arow{display:flex;align-items:center;gap:8px}
-  #abar .aseek{display:flex;align-items:center;gap:8px;direction:ltr;font:700 13px system-ui,sans-serif;color:var(--soft)}
-  #abar .aseek input{flex:1;accent-color:#C9A227;height:28px}
-  #abar .actl{display:flex;align-items:center;justify-content:space-between;direction:ltr;gap:4px}
-  #abar .actl button{width:auto;flex:1;height:54px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
-  #abar .actl button b{font-size:20px;line-height:1}#abar .actl button small{font:800 12px system-ui,sans-serif}
-  #abar .actl button.big{flex:1.3;height:58px;border-radius:18px;background:var(--gold);color:#fff;font-size:26px}
-  #abar #aInfo{flex:1;min-width:0;font:700 15px system-ui,sans-serif;color:var(--green);line-height:1.35}
-  #abar #aInfo small{display:block;color:var(--soft);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #abar .orn{position:absolute;top:-11px;left:50%;width:22px;height:22px;transform:translateX(-50%) rotate(45deg);background:var(--panel);border:1.5px solid var(--gold);border-radius:3px}
+  #abar .orn::after{content:"";position:absolute;inset:4px;background:var(--gold);transform:rotate(45deg);border-radius:1px}
+  #abar button{border:0;background:none;padding:0;color:var(--green);cursor:pointer;-webkit-tap-highlight-color:transparent}
+  #abar svg{width:24px;height:24px;display:block}
+  #abar .ic{width:40px;height:40px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center}
+  #abar .ic svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;width:22px;height:22px}
+  #abar .ic.on{background:var(--gold);color:#fff}
+  #abar .arow{display:flex;align-items:center;gap:4px}
+  #abar #aInfo{flex:1;min-width:0;text-align:center;font:800 16px system-ui,sans-serif;color:var(--green);line-height:1.35}
+  #abar #aInfo small{display:block;color:var(--soft);font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #abar .aseek{display:flex;align-items:center;gap:10px;direction:ltr;font:700 12px system-ui,sans-serif;color:var(--soft);padding:0 4px}
+  #abar .aseek input{flex:1;-webkit-appearance:none;appearance:none;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--gold) var(--p,0%),var(--line) var(--p,0%));outline:none}
+  #abar .aseek input::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--panel);border:3px solid var(--gold)}
+  #abar .aseek input::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--panel);border:3px solid var(--gold)}
+  #abar .actl{display:flex;align-items:center;justify-content:space-around;direction:rtl}
+  #abar .sk{width:54px;height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-radius:14px}
+  #abar .sk svg{fill:currentColor;width:22px;height:22px}
+  #abar .sk small{font:800 11px system-ui,sans-serif;color:var(--soft)}
+  #abar .sk:active{background:var(--btn)}
+  /* The play button: an 8-point star, like the ۞ sign in the mushaf */
+  #abar .star{width:70px;height:70px;position:relative;display:flex;align-items:center;justify-content:center;color:#fff}
+  #abar .star::before,#abar .star::after{content:"";position:absolute;inset:9px;border-radius:6px;background:linear-gradient(135deg,#E2BE4E,#B8901C)}
+  #abar .star::after{transform:rotate(45deg)}
+  #abar .star svg{position:relative;z-index:1;width:26px;height:26px;fill:#fff}
+  #abar .star:active{transform:scale(.94)}
+  /* Small player: one line, so the page is not covered */
+  #abar.mini{flex-direction:row;align-items:center;padding:6px 10px;gap:8px}
+  #abar.mini .aseek,#abar.mini .actl,#abar.mini .orn,#abar.mini #aRep{display:none}
+  #abar.mini .arow{flex:1}
+  #abar.mini #aMin svg{transform:rotate(180deg)}
+  #abar #aPlay2{display:none}
+  #abar.mini #aPlay2{display:flex;width:46px;height:46px}
+  #abar.mini #aPlay2 svg{width:20px;height:20px}
   @media (max-height:500px){#abar{bottom:calc(env(safe-area-inset-bottom) + 58px)}}
   #list .s.on{background:var(--btn);border-radius:10px}
   #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:rgba(0,0,0,.8);color:#fff;padding:11px 18px;border-radius:12px;font-weight:700;z-index:9;display:none;white-space:nowrap}
@@ -196,14 +220,21 @@
 <button id="gomark" hidden></button>
 <div id="toast"></div>
 <div id="abar" hidden>
-  <div class="arow"><span id="aInfo"></span><button id="aRep" aria-label="تكرار الآية">🔁</button><button id="aStop" aria-label="إيقاف">✕</button></div>
+  <span class="orn" aria-hidden="true"></span>
+  <div class="arow">
+    <button id="aRep" class="ic" aria-label="تكرار الآية"><svg viewBox="0 0 24 24"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg></button>
+    <button id="aPlay2" class="star" aria-label="تشغيل"></button>
+    <div id="aInfo"></div>
+    <button id="aMin" class="ic" aria-label="تصغير"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+    <button id="aStop" class="ic" aria-label="إيقاف"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
   <div class="aseek"><span id="aT1">0:00</span><input id="aSeek" type="range" min="0" max="100" step="0.1" value="0" aria-label="تمرير"><span id="aT2">0:00</span></div>
   <div class="actl">
-    <button id="aPrevS" aria-label="السورة السابقة"><b>⏮</b><small>سورة</small></button>
-    <button id="aPrevA" aria-label="الآية السابقة"><b>⏪</b><small>آية</small></button>
-    <button id="aPlay" class="big" aria-label="تشغيل">⏸</button>
-    <button id="aNextA" aria-label="الآية التالية"><b>⏩</b><small>آية</small></button>
-    <button id="aNextS" aria-label="السورة التالية"><b>⏭</b><small>سورة</small></button>
+    <button id="aPrevS" class="sk" aria-label="السورة السابقة"><svg viewBox="0 0 24 24"><path d="M5 6l7 6-7 6zM12 6l7 6-7 6z"/><rect x="19.5" y="5" width="2" height="14" rx="1"/></svg><small>سورة</small></button>
+    <button id="aPrevA" class="sk" aria-label="الآية السابقة"><svg viewBox="0 0 24 24"><path d="M4 6l8 6-8 6zM12 6l8 6-8 6z"/></svg><small>آية</small></button>
+    <button id="aPlay" class="star" aria-label="تشغيل"></button>
+    <button id="aNextA" class="sk" aria-label="الآية التالية"><svg viewBox="0 0 24 24"><path d="M20 6l-8 6 8 6zM12 6l-8 6 8 6z"/></svg><small>آية</small></button>
+    <button id="aNextS" class="sk" aria-label="السورة التالية"><svg viewBox="0 0 24 24"><path d="M19 6l-7 6 7 6zM12 6l-7 6 7 6z"/><rect x="2.5" y="5" width="2" height="14" rx="1"/></svg><small>سورة</small></button>
   </div>
 </div>
 
@@ -264,7 +295,11 @@ function measure(p){
   document.body.appendChild(s);
   const w = lines.map(l => { if (typeof l !== "string") return 0; s.textContent = l; return s.getBoundingClientRect().width; });
   s.remove();
-  return measured[p] = {w, max: Math.max(1, ...w)};
+  const res = {w, max: Math.max(1, ...w)};
+  // Keep the size only when the page font is really loaded (else the text would come out too big)
+  let ok = true; try { ok = document.fonts.check(`100px ${fontName(f)}`); } catch(_){}
+  if (ok) measured[p] = res;
+  return res;
 }
 
 let renderId = 0;
@@ -279,7 +314,8 @@ async function render(keep){
   $("bind").className = page % 2 ? "r" : "l";
   store.set("qpage", page);
   history.replaceState(null, "", "#p" + page);
-  const need = [loadFont(fontName(f)), loadFont(HDR)];
+  // Every page is sized like page 3 (a full page), so its font is needed too
+  const need = [loadFont(fontName(f)), loadFont(HDR), loadFont(fontName(D.p[2][0]))];
   if (lines.some(l => l[0] === "b")) need.push(loadFont(fontName(1)));
   try { await Promise.all(need); }
   catch(_) { if (id === renderId) { $("sheet").innerHTML = ""; $("msg").style.display = "flex"; $("msg").innerHTML = "تعذر تحميل الصفحة.<br>تأكد من الإنترنت ثم اسحب الصفحة مرة أخرى."; } return; }
@@ -957,7 +993,8 @@ function showPlaying(){
 function barInfo(){
   $("aInfo").innerHTML = (cur ? (surahMode() ? "سورة " + D.s[+cur.split(":")[0] - 1][0] + " – تلاوة كاملة" : ayaName(cur)) : "") + `<small>🎧 ${recName()}</small>`;
   document.querySelectorAll("#aPrevA small,#aNextA small").forEach((e, i) => e.textContent = surahMode() ? "١٥ ث" : "آية");
-  $("aPlay").textContent = player.paused ? "▶" : "⏸";
+  const ico = player.paused ? '<svg viewBox="0 0 24 24"><path d="M7 5v14l12-7z"/></svg>' : '<svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>';
+  $("aPlay").innerHTML = ico; $("aPlay2").innerHTML = ico;
   $("aRep").classList.toggle("on", repeat);
   $("bPlay").classList.toggle("on", active);
 }
@@ -1032,6 +1069,10 @@ $("bPlay").onclick = () => {
 };
 $("aPlay").onclick = () => { if (player.paused) { if (!player.getAttribute("src") && cur) playAyah(cur); else player.play().catch(() => {}); } else player.pause(); };
 $("aStop").onclick = stopAudio;
+$("aPlay2").onclick = () => $("aPlay").click();
+let aMini = store.get("qamini", "0") === "1";
+$("abar").classList.toggle("mini", aMini);
+$("aMin").onclick = () => { aMini = !aMini; store.set("qamini", aMini ? "1" : "0"); $("abar").classList.toggle("mini", aMini); };
 $("aPrevA").onclick = () => { if (surahMode()) { player.currentTime = Math.max(0, player.currentTime - 15); return; } const v = stepAyah(-1); if (v) goAyah(v); else toast("هذه أول آية"); };
 $("aNextA").onclick = () => { if (surahMode()) { player.currentTime = Math.min(player.duration || 0, player.currentTime + 15); return; } const v = stepAyah(1); if (v) goAyah(v); else toast("هذه آخر آية"); };
 $("aPrevS").onclick = () => {
@@ -1047,9 +1088,10 @@ player.addEventListener("timeupdate", () => {
   if (seeking) return;
   const d = player.duration || 0;
   $("aSeek").value = d ? (player.currentTime / d * 100) : 0;
+  $("aSeek").style.setProperty("--p", $("aSeek").value + "%");
   $("aT1").textContent = mmss(player.currentTime); $("aT2").textContent = mmss(d);
 });
-$("aSeek").addEventListener("input", () => { seeking = true; const d = player.duration || 0; $("aT1").textContent = mmss(d * $("aSeek").value / 100); });
+$("aSeek").addEventListener("input", () => { seeking = true; $("aSeek").style.setProperty("--p", $("aSeek").value + "%"); const d = player.duration || 0; $("aT1").textContent = mmss(d * $("aSeek").value / 100); });
 $("aSeek").addEventListener("change", () => { const d = player.duration || 0; if (d) player.currentTime = d * $("aSeek").value / 100; seeking = false; });
 $("aRep").onclick = () => { repeat = !repeat; toast(repeat ? "🔁 تكرار الآية: يعمل" : "تكرار الآية: متوقف"); barInfo(); };
 // While reciting: tap any ayah to start from it
