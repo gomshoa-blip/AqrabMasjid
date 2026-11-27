@@ -32,7 +32,7 @@ class CountdownRing @JvmOverloads constructor(
     /** false = waiting for adhan (gold), true = after adhan (green). */
     var afterAdhan = false
 
-    /** true = more than 30 min to adhan: no ring, just "الصلاة القادمة". */
+    /** true = more than 60 min to adhan: no ring, just "الصلاة القادمة". */
     var plain = false
         set(v) { if (field != v) { field = v; requestLayout() } }
 
@@ -87,7 +87,7 @@ class CountdownRing @JvmOverloads constructor(
 
         track.strokeWidth = stroke
         arc.strokeWidth = stroke
-        val color = if (afterAdhan) Color.parseColor("#3BE37F") else Color.parseColor("#FF5A5A")
+        val color = Color.parseColor("#FFD43B")
         arc.color = color
         dot.color = color
 
@@ -118,7 +118,7 @@ class CountdownRing @JvmOverloads constructor(
         box.set(pad, pad, size - pad, size - pad)
         track.strokeWidth = stroke
         arc.strokeWidth = stroke
-        val color = if (afterAdhan) Color.parseColor("#3BE37F") else Color.parseColor("#FF5A5A")
+        val color = Color.parseColor("#FFD43B")
         arc.color = color
         track.color = Color.parseColor("#26FFFFFF")
         canvas.drawArc(box, 0f, 360f, false, track)
@@ -141,7 +141,7 @@ class CountdownRing @JvmOverloads constructor(
         smallText.textSize = s * 0.075f
         titleText.textSize = s * 0.15f
         bigPaint.textSize = fitSize(bigText, s * 0.17f, s * 0.95f)
-        bigPaint.color = Color.parseColor("#C9A227")
+        bigPaint.color = Color.parseColor("#FFD43B")
         canvas.drawText(topLabel, cx, h * 0.20f, smallText)
         canvas.drawText(title, cx, h * 0.52f, titleText)
         canvas.drawText(bigText, cx, h * 0.86f, bigPaint)

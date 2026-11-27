@@ -188,7 +188,8 @@
   .hero2{position:relative;overflow:hidden;border-radius:28px;border:1.5px solid var(--bd);color:#fff;
     background:linear-gradient(135deg,#1E9A72,#0F6B4F 50%,#083D2D)}
   .hero2:before{content:"";position:absolute;inset:0;opacity:.11;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cg fill='none' stroke='white' stroke-width='1'%3E%3Cpath d='M22 2l6 14 14 6-14 6-6 14-6-14-14-6 14-6z'/%3E%3C/g%3E%3C/svg%3E")}
-  .langP{position:absolute;top:12px;inset-inline-end:12px;z-index:2;background:rgba(255,255,255,.18);color:#fff;border:0;border-radius:999px;padding:6px 14px;font:inherit;font-size:.85rem;font-weight:800;cursor:pointer}
+  #pAdhan{color:#FFD43B;font-size:1.2rem;font-weight:800}
+  .langP{position:absolute;top:12px;inset-inline-end:12px;z-index:2;background:rgba(255,255,255,.18);color:#fff;border:2px solid #F6D46B;border-radius:999px;padding:5px 13px;font:inherit;font-size:.85rem;font-weight:800;cursor:pointer}
   .heroRow{position:relative;display:flex;align-items:center;gap:12px;padding:46px 20px 20px;min-height:150px}
   .info{flex:1;min-width:0;text-align:center;display:flex;flex-direction:column;align-items:center}
   .info .lbl{font-size:.95rem;font-weight:700;opacity:.85}
@@ -199,10 +200,10 @@
   .info{order:2}
   .ring2 svg{width:100%;height:100%;transform:rotate(-90deg)}
   .ring2 .trk{fill:none;stroke:rgba(255,255,255,.15);stroke-width:6}
-  .ring2 .arc{fill:none;stroke:#F6D46B;stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .9s linear}
-  .ring2.after .arc{stroke:#7FD3AE}
+  .ring2 .arc{fill:none;stroke:#FFD43B;stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .9s linear}
+  .ring2.after .arc{stroke:#FFD43B}
   .ring2 .rt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-  .ring2 .c{font-size:1.9rem;font-weight:800;color:#F6D46B}.ring2.after .c{color:#7FD3AE}
+  .ring2 .c{font-size:1.9rem;font-weight:800;color:#FFD43B}.ring2.after .c{color:#FFD43B}
   .ring2 .c .clk{font-size:1em;margin:0}
   .ring2 .d{font-size:.75rem;opacity:.85}
   .cta2{display:flex;gap:10px;margin-top:14px}
@@ -289,7 +290,7 @@
   body.drive .hdate{margin-top:auto}
   body.drive .hd{font-size:1.45rem}
   body.drive .hd2{font-size:1.2rem}
-  .qiblaP{position:absolute;top:12px;inset-inline-start:12px;z-index:2;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:6px 14px;font-size:.85rem;font-weight:800;text-decoration:none}
+  .qiblaP{position:absolute;top:12px;inset-inline-start:12px;z-index:2;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.18);color:#fff;border:2px solid #F6D46B;border-radius:999px;padding:4px 12px;font-size:.85rem;font-weight:800;text-decoration:none}
   .qiblaP svg.i{width:18px;height:18px}
   /* "More" under the radio card: wide gold-outline pill */
   .modeBtn{width:100%;height:60px;border-radius:999px;background:var(--sf);color:var(--tx);border:2px solid #C9A227;box-shadow:0 4px 14px rgba(0,0,0,.12);font-size:1.15rem;justify-content:center;gap:12px;padding:0 18px}
@@ -298,10 +299,10 @@
   .tiles3 .tile.tl{flex-direction:column;justify-content:center;text-align:center;padding:12px 4px}
   /* Big counter: red before adhan, green after adhan */
   .ring2{width:160px;height:160px}
-  .ring2 .arc{stroke:#FF5A5A}.ring2 .c{color:#FF6B6B;font-size:2.2rem}
-  .ring2.after .arc{stroke:#3BE37F}.ring2.after .c{color:#3BE37F}
+  .ring2 .arc{stroke:#FFD43B}.ring2 .c{color:#FFD43B;font-size:2.2rem}
+  .ring2.after .arc{stroke:#FFD43B}.ring2.after .c{color:#FFD43B}
   .ring2:not([hidden]) ~ .info .ln{white-space:normal;font-size:1rem;line-height:1.4}
-  .info .lbl.soon2{color:#FFB4B4;opacity:1}.info .lbl.now2{color:#8DF0B4;opacity:1}
+  .info .lbl.soon2{color:#FFD43B;opacity:1}.info .lbl.now2{color:#FFD43B;opacity:1}
   .soon{display:block;background:#0A4A37;color:#fff;padding:8px 12px;font-size:.88rem;text-align:center;border-bottom:2px solid #C9A227}
   .soon b{color:#F3D77A}
   .soon a{color:#fff;font-weight:800;text-decoration:underline;white-space:nowrap}
@@ -495,7 +496,7 @@
 <script src="adhan.js"></script>
 <script>
 const T = {
- ar:{title:"أقرب مسجد", recT:"تطبيقات ومواقع ننصح بها", soonLbl:"باقي على دخول صلاة", nowT:"وقت صلاة", sinceAdhan:"منذ الأذان", iqIn:t=>"الإقامة بعد " + t, rQs:"القرآن الكريم", rSs:"السنة النبوية", stIdle:"جاهز للتشغيل", stConn:"جاري الاتصال…", stSlow:"الاتصال بطيء، ننتظر…", stLive:"مباشر – البث يعمل", stLost:"انقطع البث · نحاول من جديد", stOff:"لا يوجد إنترنت · ننتظر عودته", stErr:"تعذر التشغيل · اضغط للمحاولة", soonT:"قريباً:", soonS:"جاري رفع التطبيق على متجر جوجل بلاي وآب ستور.", soonC:"أرسل لنا مقترحاتك أو أي أخطاء 💬",  other:"English", nextLbl:"الصلاة القادمة", curLbl:"حان الآن وقت صلاة", donate:"💚 تبرّع عبر منصة إحسان", mosqueT:"أقرب مسجد", jamiT:"أقرب جامع", mapsSub:"يفتح خرائط Google", quranT:"القرآن", adhkarT:"الأذكار", qiratT:"قيراط", ehsanT:"إحسان", contactT:"تواصل معنا", shareT:"شارك", addT:"أضف مسجد", moreT:"المزيد", qiblaT:"القبلة", hideT:"إخفاء", tarteel2:"ترتيل", wahy2:"وحي", waShareT:"واتساب", qrT:"رمز QR", instT:"تثبيت", prayerH:"الصلاة", adhanH:"الأذان", iqamaH:"الإقامة", toAdhan:"متبقية للأذان", toIqama:"متبقية للإقامة", nowLbl:"حان وقت الصلاة", startedLbl:"أقيمت الصلاة", driveL:"وضع القيادة", fullL:"التطبيق الكامل", adhkar:"📿 الأذكار", quran:"📖 القرآن الكريم", waContact:"💬 تواصل معنا عبر واتساب", quranH:"تطبيقات قرآن ننصح بها", grpQuran:"القرآن والذكر", privT:"سياسة الخصوصية", playW:"تشغيل", pauseW:"إيقاف", rMakkahT:"إذاعة القرآن الكريم", rMadinahT:"إذاعة السنة – المملكة العربية السعودية", liveT:"مباشر", radioT:"إذاعة", radioStop:"⏹ إيقاف", radioQ:"إذاعة القرآن الكريم – السعودية", radioS:"إذاعة السنة – المملكة العربية السعودية", rQasim:"تلاوات الشيخ عبدالمحسن القاسم", rSabah:"أذكار الصباح", rMasa:"أذكار المساء", rUrdu:"ترجمة معاني القرآن بالأوردية", rEs:"ترجمة معاني القرآن بالإسبانية", rFr:"ترجمة معاني القرآن بالفرنسية", rMore:"📻 إذاعات أخرى", radioPlaying:"يعمل الآن ▶️", radioErr:"تعذر التشغيل. تأكد من الإنترنت", aboutT:"عن أقرب مسجد", grpMosques:"المساجد", grpContact:"تواصل", tarteel:"📖 ترتيل", wahy:"📖 وحي", adhanAt:t=>"الأذان " + t, iqAt:t=>"الإقامة " + t, leftTo:"بقي على صلاة", adhanDone:"أذّن · بقي على الإقامة", iqStarted:"أقيمت الصلاة", stOk:"", donNote:"منصة إحسان الرسمية للعمل الخيري. الموقع لا يجمع أي تبرعات.", nOn:"🔔 نبّهني عند الأذان والإقامة", nIq:(p,m)=>"🕌 إقامة " + p + " بعد " + m + " د", nIqNow:p=>"🕌 حان وقت إقامة " + p, nOff:"🔕 إيقاف تنبيه الصلاة", nPre:(p,m)=>"🕌 أذان " + p + " بعد " + m + " د", nNow:p=>"🕌 حان الآن وقت صلاة " + p, nBody:"اضغط لفتح «أقرب مسجد» والذهاب لأقرب مسجد", nNo:"التنبيه غير مدعوم هنا. في الآيفون: أضف الموقع إلى الشاشة الرئيسية أولاً، ثم افتحه من الأيقونة", nDenied:"التنبيهات مقفلة. فعّلها من إعدادات المتصفح للموقع", nDone:"✅ تم تفعيل التنبيه: عند الأذان، وبعده بـ 10 دقائق للإقامة", nHint:"التنبيه يعمل والموقع مفتوح أو مثبّت على الجوال", qirat:"🤲 قيراط – مواقع الجنائز والمقابر في الرياض", tblH:"🕰️ مواقيت الصلاة اليوم", since:c=>"أُذّن قبل " + c, iqDone:p=>"أُقيمت صلاة " + p,
+ ar:{title:"أقرب مسجد", recT:"تطبيقات ومواقع ننصح بها", soonLbl:"باقي على دخول صلاة", nowT:"دخل وقت صلاة", sinceAdhan:"منذ الأذان", iqIn:t=>"تبقى على الإقامة " + t, rQs:"القرآن الكريم", rSs:"السنة النبوية", stIdle:"جاهز للتشغيل", stConn:"جاري الاتصال…", stSlow:"الاتصال بطيء، ننتظر…", stLive:"مباشر – البث يعمل", stLost:"انقطع البث · نحاول من جديد", stOff:"لا يوجد إنترنت · ننتظر عودته", stErr:"تعذر التشغيل · اضغط للمحاولة", soonT:"قريباً:", soonS:"جاري رفع التطبيق على متجر جوجل بلاي وآب ستور.", soonC:"أرسل لنا مقترحاتك أو أي أخطاء 💬",  other:"English", nextLbl:"الصلاة القادمة", curLbl:"حان الآن وقت صلاة", donate:"💚 تبرّع عبر منصة إحسان", mosqueT:"أقرب مسجد", jamiT:"أقرب جامع", mapsSub:"يفتح خرائط Google", quranT:"القرآن", adhkarT:"الأذكار", qiratT:"قيراط", ehsanT:"إحسان", contactT:"تواصل معنا", shareT:"شارك", addT:"أضف مسجد", moreT:"المزيد", qiblaT:"القبلة", hideT:"إخفاء", tarteel2:"ترتيل", wahy2:"وحي", waShareT:"واتساب", qrT:"رمز QR", instT:"تثبيت", prayerH:"الصلاة", adhanH:"الأذان", iqamaH:"الإقامة", toAdhan:"تبقى على الأذان", toIqama:"تبقى على الإقامة", nowLbl:"حان وقت الصلاة", startedLbl:"أقيمت الصلاة", driveL:"وضع القيادة", fullL:"التطبيق الكامل", adhkar:"📿 الأذكار", quran:"📖 القرآن الكريم", waContact:"💬 تواصل معنا عبر واتساب", quranH:"تطبيقات قرآن ننصح بها", grpQuran:"القرآن والذكر", privT:"سياسة الخصوصية", playW:"تشغيل", pauseW:"إيقاف", rMakkahT:"إذاعة القرآن الكريم", rMadinahT:"إذاعة السنة – المملكة العربية السعودية", liveT:"مباشر", radioT:"إذاعة", radioStop:"⏹ إيقاف", radioQ:"إذاعة القرآن الكريم – السعودية", radioS:"إذاعة السنة – المملكة العربية السعودية", rQasim:"تلاوات الشيخ عبدالمحسن القاسم", rSabah:"أذكار الصباح", rMasa:"أذكار المساء", rUrdu:"ترجمة معاني القرآن بالأوردية", rEs:"ترجمة معاني القرآن بالإسبانية", rFr:"ترجمة معاني القرآن بالفرنسية", rMore:"📻 إذاعات أخرى", radioPlaying:"يعمل الآن ▶️", radioErr:"تعذر التشغيل. تأكد من الإنترنت", aboutT:"عن أقرب مسجد", grpMosques:"المساجد", grpContact:"تواصل", tarteel:"📖 ترتيل", wahy:"📖 وحي", adhanAt:t=>"الأذان " + t, iqAt:t=>"الإقامة " + t, leftTo:"بقي على صلاة", adhanDone:"أذّن · بقي على الإقامة", iqStarted:"أقيمت الصلاة", stOk:"", donNote:"منصة إحسان الرسمية للعمل الخيري. الموقع لا يجمع أي تبرعات.", nOn:"🔔 نبّهني عند الأذان والإقامة", nIq:(p,m)=>"🕌 إقامة " + p + " بعد " + m + " د", nIqNow:p=>"🕌 حان وقت إقامة " + p, nOff:"🔕 إيقاف تنبيه الصلاة", nPre:(p,m)=>"🕌 أذان " + p + " بعد " + m + " د", nNow:p=>"🕌 حان الآن وقت صلاة " + p, nBody:"اضغط لفتح «أقرب مسجد» والذهاب لأقرب مسجد", nNo:"التنبيه غير مدعوم هنا. في الآيفون: أضف الموقع إلى الشاشة الرئيسية أولاً، ثم افتحه من الأيقونة", nDenied:"التنبيهات مقفلة. فعّلها من إعدادات المتصفح للموقع", nDone:"✅ تم تفعيل التنبيه: عند الأذان، وبعده بـ 10 دقائق للإقامة", nHint:"التنبيه يعمل والموقع مفتوح أو مثبّت على الجوال", qirat:"🤲 قيراط – مواقع الجنائز والمقابر في الرياض", tblH:"🕰️ مواقيت الصلاة اليوم", since:c=>"أُذّن قبل " + c, iqDone:p=>"أُقيمت صلاة " + p,
   jumua:"الجمعة", khutba:"خطبة", jumuaNext:t=>"🕌 صلاة الجمعة " + t + " — بكّر بالحضور", jumuaNow:"🕌 خطبة الجمعة الآن",
   names:{fajr:"الفجر", sunrise:"الشروق", dhuhr:"الظهر", asr:"العصر", maghrib:"المغرب", isha:"العشاء"},
   left:c=>"باقي على الأذان " + c,
@@ -924,14 +925,14 @@ function prayerTimes(lat, lng, labelKey){
     const fri = n.getDay() === 5;                       // Friday: Dhuhr becomes Jumuah
     const nameOf = k => (fri && k === "dhuhr") ? L().jumua : L().names[k];
     const isJ = k => fri && k === "dhuhr";
-    // Current prayer: from adhan until 30 min after adhan (or 5 min after iqama if later)
+    // Current prayer: from adhan until 10 min after iqama ("أقيمت الصلاة"), then the next prayer
     const curT = (cur && cur !== "sunrise" && today[cur] instanceof Date) ? today[cur] : null;
     const since = curT ? (n - curT) : -1;
     const curIq = curT ? plus(curT, cur) : null;
-    const nowMode = since >= 0 && (since < 30*60000 || n < curIq.getTime() + 5*60000);
+    const nowMode = since >= 0 && n < Math.max(curT.getTime(), curIq.getTime()) + 10*60000;
     const hl = nowMode ? cur : key;
     notifTick(key, t, nowMode ? cur : null, curT, n, nameOf);
-    const W = 30*60000, C = 339.3;
+    const W = 60*60000, C = 339.3;
     const ring = (big, sub, prog, after) => {
       $("ringWrap").hidden = false; $("ringWrap").classList.toggle("after", after);
       $("r3").innerHTML = big; $("r4").textContent = sub;
@@ -945,8 +946,8 @@ function prayerTimes(lat, lng, labelKey){
       $("pName").textContent = nameOf(cur);
       $("pAdhan").textContent = L().adhanAt(fmt(curT));
       const ls = curIq - n;
-      // Green: counts up for 30 min from the adhan
-      if (since < W) { $("heroLbl").textContent = L().nowT; $("heroLbl").className = "lbl now2"; ring(hms(since), L().sinceAdhan, since/W, true); }
+      // After adhan: counts down to the iqama, then "أقيمت الصلاة" for 10 min
+      if (ls > 0) { $("heroLbl").textContent = L().nowT; $("heroLbl").className = "lbl now2"; ring(hms(ls), isJ(cur) ? L().jumuaNow : L().toIqama, ls/Math.max(1, curIq - curT), true); }
       else $("heroLbl").textContent = L().startedLbl;
       if (isJ(cur)) { iq.textContent = L().jumuaNow; iq.className = "ln iqNow"; }
       else if (ls > 0) iq.innerHTML = L().iqIn(hms(ls));
@@ -958,8 +959,8 @@ function prayerTimes(lat, lng, labelKey){
       $("pName").textContent = (isJ(key) && today2) ? L().jumua : L().names[key];
       $("pAdhan").textContent = L().adhanAt(fmt(t));
       iq.textContent = (isJ(key) && today2) ? L().jumuaNext(fmt(t)) : L().iqAt(fmt(new Date(t.getTime() + iqDelay(key)*60000)));
-      // Red: last 30 min before adhan, counts down
-      if (left <= W) { $("heroLbl").textContent = L().soonLbl; $("heroLbl").className = "lbl soon2"; ring(hms(left), L().toAdhan, left/W, false); }
+      // Last 60 min before adhan: counts down to the adhan
+      if (left <= W) { $("heroLbl").className = "lbl soon2"; ring(hms(left), L().toAdhan, left/W, false); }
     }
     fitName();
     $("ayah").textContent = AYAH[hl] || "";

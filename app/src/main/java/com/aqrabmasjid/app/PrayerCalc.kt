@@ -119,8 +119,8 @@ object PrayerCalc {
 
     fun status(c: Context, lat: Double, lng: Double, now: Long = System.currentTimeMillis()): Status {
         val all = day(c, lat, lng, now - DAY).list + upcoming(c, lat, lng, now)
-        // Stay on the current prayer 30 min after adhan, or until 5 min after iqama if later
-        val current = all.lastOrNull { now >= it.adhan && now < maxOf(it.adhan + 30 * MIN, it.iqama + 5 * MIN) }
+        // Stay on the current prayer until 10 min after iqama ("أقيمت الصلاة"), then the next prayer
+        val current = all.lastOrNull { now >= it.adhan && now < maxOf(it.adhan, it.iqama) + 10 * MIN }
         if (current != null) return Status(current, true)
         return Status(all.first { it.adhan > now }, false)
     }

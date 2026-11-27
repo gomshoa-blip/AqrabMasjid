@@ -65,11 +65,11 @@ object PrayerWidgets {
                 t.adhan, if (t.isJumuah) L.t("متبقي للخطبة", "to khutbah") else L.t("متبقي للأذان", "to adhan"),
                 t.prayer, t.adhan)
         } else if (t.iqama > now) {
-            Now(L.t("حان وقت الصلاة", "Prayer time now"), t.pname, t.adhan, t.iqama,
-                t.iqama, L.t("متبقي للإقامة", "to iqama"), t.prayer, t.iqama)
+            Now(L.t("دخل وقت صلاة", "It is now time for"), t.pname, t.adhan, t.iqama,
+                t.iqama, L.t("تبقى على الإقامة", "to iqama"), t.prayer, t.iqama)
         } else {
             Now(L.t("أقيمت الصلاة", "Prayer has started"), t.pname, t.adhan, t.iqama,
-                null, "", t.prayer, maxOf(t.adhan + 30 * MIN, t.iqama + 5 * MIN))
+                null, "", t.prayer, maxOf(t.adhan, t.iqama) + 10 * MIN)
         }
     }
 
@@ -180,14 +180,13 @@ object PrayerWidgets {
         val t = st.time
         v.setTextViewText(name, t.pname)
         v.setViewVisibility(chrono, View.VISIBLE)
-        val red = 0xFFFF6B6B.toInt(); val green = 0xFF3BE37F.toInt(); val gold = 0xFFF6D46B.toInt()
+        val yellow = 0xFFFFD43B.toInt(); val red = yellow; val green = yellow; val gold = yellow
         val base = SystemClock.elapsedRealtime() + (t.adhan - now)
         if (!st.isCurrent) {
-            // Friday: the red counter starts 1 hour before, and counts to the start of the khutbah
-            val soon = t.adhan - now <= (if (t.isJumuah) JUMUAH_MIN else 30L) * MIN
+            // The counter starts 60 min before adhan (Friday: counts to the start of the khutbah)
+            val soon = t.adhan - now <= 60L * MIN
             v.setTextViewText(label, when {
                 soon && t.isJumuah -> L.t("باقي على الخطبة", "Time left to khutbah")
-                soon -> L.t("باقي على دخول صلاة", "Time left to")
                 else -> L.t("الصلاة القادمة", "Next prayer")
             })
             v.setChronometer(chrono, base, null, true)
@@ -195,10 +194,11 @@ object PrayerWidgets {
             v.setTextColor(chrono, if (soon) red else gold)
             v.setTextColor(label, if (soon) red else gold)
             v.setTextViewText(time, L.t("الأذان ${PrayerCalc.fmtTime(t.adhan)}", "Adhan ${PrayerCalc.fmtTime(t.adhan)}"))
-        } else if (now - t.adhan < 30 * MIN) {
-            v.setTextViewText(label, if (t.isJumuah) L.t("بدأت الخطبة", "Khutbah started") else L.t("وقت صلاة", "It is now time for"))
-            v.setChronometer(chrono, base, null, true)
-            v.setChronometerCountDown(chrono, false)
+        } else if (t.iqama > now) {
+            // After adhan: counts down to the iqama
+            v.setTextViewText(label, if (t.isJumuah) L.t("بدأت الخطبة", "Khutbah started") else L.t("دخل وقت صلاة", "It is now time for"))
+            v.setChronometer(chrono, SystemClock.elapsedRealtime() + (t.iqama - now), null, true)
+            v.setChronometerCountDown(chrono, true)
             v.setTextColor(chrono, green)
             v.setTextColor(label, green)
             v.setTextViewText(time, if (t.isJumuah) L.t("خطبة الجمعة", "Jumuah khutbah")
@@ -249,7 +249,7 @@ object PrayerWidgets {
         )
         val nowMs = System.currentTimeMillis()
         val jumuah = PrayerTime(n.prayer, n.adhan, n.iqama).isJumuah
-        val red = n.adhan - (if (jumuah) JUMUAH_MIN else 30L) * MIN
+        val red = n.adhan - 60L * MIN
         val change = if (red > nowMs && red < n.nextChange) red else n.nextChange
         val at = maxOf(change + 2_000, nowMs + 60_000)
         try {

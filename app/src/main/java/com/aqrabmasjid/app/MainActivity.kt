@@ -56,7 +56,7 @@ class MainActivity : Activity() {
                 else heroStatus?.let { st ->
                     // Wake up just when the 30-minute countdown should start
                     if (!st.isCurrent) {
-                        val untilRing = st.time.adhan - 30 * 60_000L - now
+                        val untilRing = st.time.adhan - 60 * 60_000L - now
                         if (untilRing in 1 until delay) delay = untilRing.coerceAtLeast(1_000L)
                     }
                 }
@@ -455,33 +455,32 @@ class MainActivity : Activity() {
         setIf(tvHeroAdhan, L.t("الأذان ${PrayerCalc.fmtTime(t.adhan)}", "Adhan ${PrayerCalc.fmtTime(t.adhan)}"))
         if (!st.isCurrent) setIf(tvIqamaLeft, if (t.isJumuah) L.t("خطبة الجمعة · بكّر بالحضور", "Jumuah khutbah · go early")
             else L.t("الإقامة ${PrayerCalc.fmtTime(t.iqama)}", "Iqama ${PrayerCalc.fmtTime(t.iqama)}"))
-        // Big counter: red in the last 30 min before adhan (counts down),
-        // then green for 30 min after adhan (counts up from the adhan)
-        val w = 30 * 60_000L
+        // Big yellow counter: 60 min before adhan it counts down to the adhan,
+        // after adhan it counts down to the iqama, then "أقيمت الصلاة" for 10 min
+        val w = 60 * 60_000L
         if (!st.isCurrent) {
             val left = t.adhan - now
+            setIf(tvHeroLabel, L.t("الصلاة القادمة", "Next prayer"))
             if (left in 1..w) {
-                setIf(tvHeroLabel, L.t("باقي على دخول صلاة", "Time left to"))
                 ring.visibility = View.VISIBLE
-                ring.update("", "", CountdownRing.clock(left), L.t("متبقية للأذان", "to adhan"), left.toFloat() / w, false)
-            } else {
-                setIf(tvHeroLabel, L.t("الصلاة القادمة", "Next prayer"))
-                ring.visibility = View.GONE
-            }
+                ring.update("", "", CountdownRing.clock(left), L.t("تبقى على الأذان", "to adhan"), left.toFloat() / w, false)
+            } else ring.visibility = View.GONE
         } else {
-            val since = now - t.adhan
-            if (since in 0 until w) {
-                setIf(tvHeroLabel, L.t("وقت صلاة", "It is now time for"))
+            val toIq = t.iqama - now
+            if (toIq > 0) {
+                setIf(tvHeroLabel, L.t("دخل وقت صلاة", "It is now time for"))
                 ring.visibility = View.VISIBLE
-                ring.update("", "", CountdownRing.clock(since), L.t("منذ الأذان", "since adhan"), since.toFloat() / w, true)
+                val span = (t.iqama - t.adhan).coerceAtLeast(1L)
+                ring.update("", "", CountdownRing.clock(toIq),
+                    if (t.isJumuah) L.t("خطبة الجمعة", "Jumuah khutbah") else L.t("تبقى على الإقامة", "to iqama"),
+                    toIq.toFloat() / span, true)
             } else {
                 setIf(tvHeroLabel, L.t("أقيمت الصلاة", "Prayer has started"))
                 ring.visibility = View.GONE
             }
             // Under the name: live time left to iqama (not for Jumuah: there is a khutbah)
-            val toIq = t.iqama - now
             if (t.isJumuah) setIf(tvIqamaLeft, L.t("خطبة الجمعة", "Jumuah khutbah"))
-            else if (toIq > 0) setIf(tvIqamaLeft, L.t("الإقامة بعد ${CountdownRing.clock(toIq)}", "Iqama in ${CountdownRing.clock(toIq)}"))
+            else if (toIq > 0) setIf(tvIqamaLeft, L.t("تبقى على الإقامة ${CountdownRing.clock(toIq)}", "Iqama in ${CountdownRing.clock(toIq)}"))
             else setIf(tvIqamaLeft, L.t("أقيمت الصلاة", "Prayer has started"))
         }
         // Measure the big name again only when the name or the ring changed

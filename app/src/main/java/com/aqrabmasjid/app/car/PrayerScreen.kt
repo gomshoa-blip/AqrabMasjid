@@ -61,7 +61,7 @@ class PrayerScreen(carContext: CarContext) : Screen(carContext), DefaultLifecycl
 
             val head = if (st.isCurrent) {
                 val left = st.time.iqama - now
-                if (left > 0) L.t("${st.time.pname}: الإقامة بعد ${PrayerCalc.fmtLeft(left)}", "${st.time.pname}: iqama in ${PrayerCalc.fmtLeft(left)}")
+                if (left > 0) L.t("${st.time.pname}: تبقى على الإقامة ${PrayerCalc.fmtLeft(left)}", "${st.time.pname}: iqama in ${PrayerCalc.fmtLeft(left)}")
                 else L.t("الصلاة الحالية: ${st.time.pname}", "Current prayer: ${st.time.pname}")
             } else {
                 L.t("${st.time.pname} بعد ${PrayerCalc.fmtLeft(st.time.adhan - now)}", "${st.time.pname} in ${PrayerCalc.fmtLeft(st.time.adhan - now)}")

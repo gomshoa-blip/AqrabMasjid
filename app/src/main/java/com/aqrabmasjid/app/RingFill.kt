@@ -4,7 +4,7 @@ import android.content.Context
 
 /** Fills the countdown ring from the prayer times. Shared by the main screen and driving mode. */
 object RingFill {
-    private const val WINDOW = 30 * 60_000L
+    private const val WINDOW = 60 * 60_000L
 
     fun fill(c: Context, ring: CountdownRing, lat: Double, lng: Double, now: Long = System.currentTimeMillis()) {
         val st = PrayerCalc.status(c, lat, lng, now)
@@ -15,7 +15,7 @@ object RingFill {
             // Waiting for adhan: ring shrinks from the previous adhan to the next one
             val left = t.adhan - now
             if (left > WINDOW) {
-                // More than 30 min: no ring, just the next prayer and its time
+                // More than 60 min: no ring, just the next prayer and its time
                 ring.update(
                     L.t("الصلاة القادمة", "Next prayer"),
                     name,
@@ -24,10 +24,10 @@ object RingFill {
                 )
                 return
             }
-            // Last 30 min: ring shrinks to zero at adhan
+            // Last 60 min: ring shrinks to zero at adhan
             val total = WINDOW
             ring.update(
-                L.t("باقي على دخول صلاة", "Time left to"),
+                L.t("الصلاة القادمة", "Next prayer"),
                 name,
                 CountdownRing.clock(left),
                 L.t("الأذان ${PrayerCalc.fmtTime(t.adhan)}", "Adhan ${PrayerCalc.fmtTime(t.adhan)}"),
@@ -35,14 +35,13 @@ object RingFill {
                 false
             )
         } else {
-            // After adhan: green, counts up for 30 min from the adhan
-            val since = now - t.adhan
-            val iq = if (t.isJumuah) L.t("خطبة الجمعة", "Jumuah khutbah")
-                else if (t.iqama > now) L.t("الإقامة بعد ${CountdownRing.clock(t.iqama - now)}", "Iqama in ${CountdownRing.clock(t.iqama - now)}")
-                else L.t("أقيمت الصلاة", "Prayer started")
-            if (since in 0 until WINDOW) {
-                ring.update(L.t("وقت صلاة", "It is now time for"), name, CountdownRing.clock(since), iq,
-                    since.toFloat() / WINDOW, true)
+            // After adhan: counts down to the iqama, then "أقيمت الصلاة" for 10 min
+            val toIq = t.iqama - now
+            if (toIq > 0) {
+                val span = (t.iqama - t.adhan).coerceAtLeast(1L)
+                ring.update(L.t("دخل وقت صلاة", "It is now time for"), name, CountdownRing.clock(toIq),
+                    if (t.isJumuah) L.t("خطبة الجمعة", "Jumuah khutbah") else L.t("تبقى على الإقامة", "to iqama"),
+                    toIq.toFloat() / span, true)
             } else {
                 ring.update("", name, L.t("أقيمت الصلاة", "Prayer started"),
                     L.t("الإقامة ${PrayerCalc.fmtTime(t.iqama)}", "Iqama ${PrayerCalc.fmtTime(t.iqama)}"), 1f, true)
