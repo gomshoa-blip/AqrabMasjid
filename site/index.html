@@ -908,6 +908,9 @@ function prayerTimes(lat, lng, labelKey){
   ptArgs = [lat, lng, labelKey];
   // Qirat link: show only when the user's location is in Riyadh (about 70 km from the center)
   const qb = document.getElementById("goQirat");
+  if (qb) { const R = 6371, rad = x => x * Math.PI / 180, dLa = rad(lat - 24.7136), dLo = rad(lng - 46.6753);
+    const km = 2 * R * Math.asin(Math.sqrt(Math.sin(dLa/2)**2 + Math.cos(rad(lat)) * Math.cos(rad(24.7136)) * Math.sin(dLo/2)**2));
+    qb.hidden = !(labelKey === "byLoc" && km <= 70); qb.style.display = qb.hidden ? "none" : ""; }
   const mt = pickMethod(labelKey === "byLoc");
   saudi = labelKey !== "byLoc" || deviceTZ() === "Asia/Riyadh";
   $("iqSet").hidden = saudi;

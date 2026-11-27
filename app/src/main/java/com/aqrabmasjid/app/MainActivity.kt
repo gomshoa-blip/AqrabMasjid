@@ -410,6 +410,9 @@ class MainActivity : Activity() {
         tvWeekday.text = java.text.SimpleDateFormat("EEEE", L.locale).format(java.util.Date(now))
         tvClock.text = PrayerCalc.fmtTime(now)
         tvGregorian.text = java.text.SimpleDateFormat("d MMMM yyyy", L.locale).format(java.util.Date(now)) + L.t(" م", "")
+        // Qirat (Riyadh funerals and cemeteries): only for people in Riyadh (about 70 km from the center)
+        findViewById<View>(R.id.tileQirat)?.visibility =
+            if (MosqueRepo.distanceKm(lat, lng, 24.7136, 46.6753) <= 70) View.VISIBLE else View.GONE
         fillHero(lat, lng, now)
         reminderBtn.text = PrayerReminders.ayah(st.time.prayer)
         tvMethod.text = L.t("طريقة الحساب: ${day.methodName}", "Method: ${day.methodName}")
