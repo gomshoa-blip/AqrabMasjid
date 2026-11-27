@@ -27,6 +27,10 @@ class QuranActivity : Activity() {
         web.setBackgroundColor(Color.parseColor(if (night) "#111613" else "#FBF7EC"))
         web.settings.javaScriptEnabled = true
         web.settings.domStorageEnabled = true   // remembers the last page
+        // Recitation goes from ayah to ayah by itself
+        web.settings.mediaPlaybackRequiresUserGesture = false
+        // Reading or listening: the screen stays on
+        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         web.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, req: WebResourceRequest): Boolean {
                 // Stay on the mushaf page; any other link (like ✕) closes the screen

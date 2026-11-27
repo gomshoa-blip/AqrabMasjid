@@ -89,6 +89,17 @@
   #list .empty{color:#888;text-align:center;padding:30px 10px;line-height:1.8}
   #list .credit{color:#888;font-size:12px;text-align:center;margin-top:18px;line-height:1.7}
   #close{position:sticky;top:0;float:left;border:0;background:var(--btn);color:var(--btnt);border-radius:10px;padding:9px 16px;font:inherit;font-weight:800;z-index:1}
+  /* Recitation: current ayah colored green, and a player bar above the buttons */
+  :is(#sheet,.scopy) .pl{position:absolute;z-index:0;background:rgba(15,107,79,.22);border-radius:8px;pointer-events:none}
+  html[data-theme=dark] :is(#sheet,.scopy) .pl{background:rgba(143,217,182,.22)}
+  #abar{position:fixed;left:8px;right:8px;bottom:calc(env(safe-area-inset-bottom) + 80px);z-index:5;display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--panel);border:2px solid var(--gold);border-radius:16px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+  #abar[hidden]{display:none}
+  #abar button{width:46px;height:46px;flex:none;border:0;border-radius:50%;background:var(--btn);color:var(--btnt);font-size:20px;padding:0}
+  #abar button.on{background:var(--gold);color:#fff}
+  #abar #aInfo{flex:1;min-width:0;font:700 15px system-ui,sans-serif;color:var(--green);line-height:1.35}
+  #abar #aInfo small{display:block;color:var(--soft);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  @media (max-height:500px){#abar{bottom:calc(env(safe-area-inset-bottom) + 58px)}}
+  #list .s.on{background:var(--btn);border-radius:10px}
   #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:rgba(0,0,0,.8);color:#fff;padding:11px 18px;border-radius:12px;font-weight:700;z-index:9;display:none;white-space:nowrap}
 </style>
 </head>
@@ -97,6 +108,7 @@
   <b id="sura"></b><span id="juz"></span><span class="sp"></span>
   <button id="zIn" class="z" aria-label="تكبير">أ+</button>
   <button id="zOut" class="z" aria-label="تصغير">أ−</button>
+  <button id="bPlay" aria-label="استماع">🎧</button>
   <button id="bMark" aria-label="علامة">🔖</button>
   <button id="bTheme" aria-label="الوضع الليلي">🌙</button>
   <a href="/" aria-label="رجوع">✕</a>
@@ -111,6 +123,12 @@
 <div id="zlbl"></div>
 <button id="gomark" hidden></button>
 <div id="toast"></div>
+<div id="abar" hidden>
+  <button id="aPlay" aria-label="تشغيل">⏸</button>
+  <span id="aInfo"></span>
+  <button id="aRep" aria-label="تكرار الآية">🔁</button>
+  <button id="aStop" aria-label="إيقاف">✕</button>
+</div>
 
 <div id="list" hidden>
   <button id="close">✕</button>
@@ -118,6 +136,7 @@
     <button data-t="s" class="on">السور</button>
     <button data-t="j">الأجزاء</button>
     <button data-t="m">🔖 العلامة</button>
+    <button data-t="r">🎧 القارئ</button>
   </div>
   <div id="slist"></div>
   <button id="bSound" style="display:block;margin:16px auto 0;border:2px solid var(--gold);background:transparent;color:var(--green);border-radius:12px;padding:10px 18px;font:800 16px system-ui,sans-serif"></button>
@@ -314,6 +333,21 @@ function showMarks(){
     }
   }
   markBtn();
+  showPlaying();
+}
+// Color all the words of ayah v on the page with class cls
+function colorAyah(sheet, v, cls){
+  const base = sheet.getBoundingClientRect();
+  sheet.querySelectorAll(".ln").forEach(ln => {
+    const ws = [...ln.querySelectorAll(`span[data-v="${v}"]`)];
+    if (!ws.length) return;
+    let l = Infinity, r = -Infinity;
+    ws.forEach(w => { const b = w.getBoundingClientRect(); l = Math.min(l, b.left); r = Math.max(r, b.right); });
+    const h = ln.offsetHeight, d = document.createElement("div");
+    d.className = cls;
+    d.style.cssText = `left:${l - base.left - 3}px;width:${r - l + 6}px;top:${ln.offsetTop + h * 0.08}px;height:${h * 0.84}px`;
+    sheet.appendChild(d);
+  });
 }
 function putMark(v){
   const old = getMark();
@@ -360,6 +394,9 @@ function fillList(){
   else if (tab === "j") {
     const first = {}; D.p.forEach((x, i) => { if (!first[x[1]]) first[x[1]] = i + 1; });
     html = Object.keys(first).map(j => `<div class="s" data-p="${first[j]}"><span>الجزء ${AR(j)}</span><span>صفحة ${AR(first[j])}</span></div>`).join("");
+  } else if (tab === "r") {
+    html = RECITERS.map(([id, n]) => `<div class="s${id === reciter ? " on" : ""}" data-r="${id}"><span>🎧 ${n}</span><span>${id === reciter ? "✓ المختار" : ""}</span></div>`).join("")
+      + `<div class="empty">اختر القارئ، ثم اضغط 🎧 في الأعلى.<br>أثناء التلاوة: اضغط على أي آية لتبدأ منها.</div>`;
   } else { fillMarks($("slist")); return; }
   $("slist").innerHTML = html;
 }
@@ -367,6 +404,8 @@ $("tabs").onclick = e => { const b = e.target.closest("button"); if (b) { tab = 
 $("slist").addEventListener("click", e => {
   const d = e.target.closest("[data-del]");
   if (d) { e.stopPropagation(); setMarkObj(null); fillList(); showMarks(); return; }
+  const rc = e.target.closest("[data-r]");
+  if (rc) { setReciter(rc.dataset.r); fillList(); return; }
   const r = e.target.closest(".s,.bm"); if (r) { go(+r.dataset.p); $("list").hidden = true; }
 });
 
@@ -565,6 +604,121 @@ addEventListener("resize", relayout);
 addEventListener("orientationchange", relayout);
 if (window.visualViewport) visualViewport.addEventListener("resize", relayout);
 if (window.ResizeObserver) new ResizeObserver(relayout).observe($("view"));
+
+// ---- Recitation: ayah by ayah, the ayah is colored, the page turns by itself ----
+// Audio: everyayah.com (one file per ayah, high quality)
+const RECITERS = [
+  ["Alafasy_128kbps", "مشاري العفاسي"],
+  ["MaherAlMuaiqly128kbps", "ماهر المعيقلي"],
+  ["Abdurrahmaan_As-Sudais_192kbps", "عبدالرحمن السديس"],
+  ["Saood_ash-Shuraym_128kbps", "سعود الشريم"],
+  ["Yasser_Ad-Dussary_128kbps", "ياسر الدوسري"],
+  ["Husary_128kbps", "محمود خليل الحصري"],
+  ["Minshawy_Murattal_128kbps", "محمد صديق المنشاوي"],
+  ["Abdul_Basit_Murattal_192kbps", "عبدالباسط عبدالصمد"]
+];
+let reciter = store.get("qreciter", RECITERS[0][0]);
+if (!RECITERS.some(r => r[0] === reciter)) reciter = RECITERS[0][0];
+const recName = () => RECITERS.find(r => r[0] === reciter)[1];
+const player = new Audio(), pre = new Audio();
+player.preload = "auto"; pre.preload = "auto";
+let cur = null, basmala = false, repeat = false, active = false, wake = null;
+const p3 = n => String(n).padStart(3, "0");
+const urlOf = (s, a) => `https://everyayah.com/data/${reciter}/${p3(s)}${p3(a)}.mp3`;
+const urlV = v => { const [s, a] = v.split(":"); return urlOf(+s, +a); };
+// Ayahs on a page, in order
+function ayahsOn(p){
+  const out = [];
+  (D.p[p-1][4] || []).forEach(l => (l || []).forEach(x => { const v = x && x[1]; if (v && !out.includes(v)) out.push(v); }));
+  return out;
+}
+function showPlaying(){
+  const sheet = $("sheet");
+  sheet.querySelectorAll(".pl").forEach(e => e.remove());
+  if (cur && active) colorAyah(sheet, cur, "pl");
+}
+function barInfo(){
+  $("aInfo").innerHTML = (cur ? ayaName(cur) : "") + `<small>🎧 ${recName()}</small>`;
+  $("aPlay").textContent = player.paused ? "▶" : "⏸";
+  $("aRep").classList.toggle("on", repeat);
+  $("bPlay").classList.toggle("on", active);
+}
+function keepAwake(on){
+  try {
+    if (on && !wake && navigator.wakeLock) navigator.wakeLock.request("screen").then(w => wake = w).catch(() => {});
+    if (!on && wake) { wake.release(); wake = null; }
+  } catch(_) {}
+}
+function playAyah(v){
+  cur = v; active = true; $("abar").hidden = false;
+  const [s, a] = v.split(":").map(Number);
+  // Basmala before the first ayah of each surah (not Al-Fatiha, it is ayah 1; not At-Tawbah)
+  basmala = a === 1 && s !== 1 && s !== 9;
+  player.src = basmala ? urlOf(1, 1) : urlV(v);
+  player.play().catch(() => { toast("اضغط ▶ للتشغيل"); barInfo(); });
+  // Get the next ayah ready
+  const n = nextAyah(v); if (n) pre.src = urlV(n.v);
+  showPlaying(); barInfo(); keepAwake(true); media();
+}
+function nextAyah(v){
+  const list = ayahsOn(page), i = list.indexOf(v);
+  if (i >= 0 && i < list.length - 1) return {v: list[i + 1], p: page};
+  for (let p = page + 1; p <= Math.min(604, page + 1); p++) {
+    const n = ayahsOn(p).find(x => x !== v);
+    if (n) return {v: n, p};
+  }
+  return null;
+}
+function stopAudio(){
+  player.pause(); player.removeAttribute("src"); active = false; cur = null;
+  $("abar").hidden = true; showPlaying(); barInfo(); keepAwake(false);
+}
+player.addEventListener("ended", () => {
+  if (basmala) { basmala = false; player.src = urlV(cur); player.play().catch(() => {}); return; }
+  if (repeat) { player.currentTime = 0; player.play().catch(() => {}); return; }
+  const n = nextAyah(cur);
+  if (!n) { stopAudio(); toast("صدق الله العظيم"); return; }
+  if (n.p !== page) { turn(1); setTimeout(() => playAyah(n.v), 350); }
+  else playAyah(n.v);
+});
+player.addEventListener("play", barInfo);
+player.addEventListener("pause", barInfo);
+player.addEventListener("error", () => { if (active && player.getAttribute("src")) { toast("تعذر تشغيل التلاوة. تأكد من الإنترنت"); player.pause(); barInfo(); } });
+function setReciter(id){
+  reciter = id; store.set("qreciter", id);
+  toast("🎧 " + recName());
+  if (active && cur) playAyah(cur);
+}
+$("bPlay").onclick = () => {
+  if (!D) return;
+  if (active) { player.paused ? player.play().catch(() => {}) : player.pause(); return; }
+  // Start from the bookmarked ayah if it is on this page, else from the first ayah of the page
+  const m = getMark(), list = ayahsOn(page);
+  playAyah(m && m.p === page && m.v && list.includes(m.v) ? m.v : list[0]);
+};
+$("aPlay").onclick = () => { if (player.paused) { if (!player.getAttribute("src") && cur) playAyah(cur); else player.play().catch(() => {}); } else player.pause(); };
+$("aStop").onclick = stopAudio;
+$("aRep").onclick = () => { repeat = !repeat; toast(repeat ? "🔁 تكرار الآية: يعمل" : "تكرار الآية: متوقف"); barInfo(); };
+// While reciting: tap any ayah to start from it
+$("view").addEventListener("click", e => {
+  if (!active) return;
+  const w = e.target.closest("span[data-v]");
+  if (w) playAyah(w.dataset.v);
+});
+// Lock screen and headphone / car buttons
+function media(){
+  if (!("mediaSession" in navigator) || !cur) return;
+  try {
+    navigator.mediaSession.metadata = new MediaMetadata({title: ayaName(cur), artist: recName(), album: "القرآن الكريم – أقرب مسجد",
+      artwork: [{src: "/icon-512.png", sizes: "512x512", type: "image/png"}]});
+    navigator.mediaSession.setActionHandler("play", () => player.play());
+    navigator.mediaSession.setActionHandler("pause", () => player.pause());
+    navigator.mediaSession.setActionHandler("stop", stopAudio);
+    navigator.mediaSession.setActionHandler("nexttrack", () => { const n = nextAyah(cur); if (n) { if (n.p !== page) turn(1); playAyah(n.v); } });
+    navigator.mediaSession.setActionHandler("previoustrack", () => { const l = ayahsOn(page), i = l.indexOf(cur); if (i > 0) playAyah(l[i - 1]); });
+  } catch(_) {}
+}
+document.addEventListener("visibilitychange", () => { if (!document.hidden && active) keepAwake(true); });
 
 fetch("mushaf.json").then(r => r.json()).then(j => { D = j; render(); setTimeout(offerMark, 800); })
   .catch(() => { $("msg").innerHTML = "تعذر تحميل المصحف.<br>تأكد من الإنترنت."; });
