@@ -138,7 +138,8 @@ class QiblaActivity : ComponentActivity(), SensorEventListener {
         else { cameraAsked = true; startCamera(); locate() }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    @Deprecated("Deprecated in Java")
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         cameraAsked = true
         if (granted(Manifest.permission.CAMERA)) startCamera() else show(Msg.CAMERA_DENIED)
