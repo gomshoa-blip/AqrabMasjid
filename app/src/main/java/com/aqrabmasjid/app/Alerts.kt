@@ -139,7 +139,7 @@ object Alerts {
         val now = System.currentTimeMillis()
         val day = java.text.SimpleDateFormat("EEEE", L.locale).format(java.util.Date(now))
         v.setTextViewText(R.id.nDate, "$day ${PrayerCalc.hijriText(now)}  ·  $left")
-        v.setTextViewText(R.id.nPrayer, L.t("${prayer.ar} ${PrayerCalc.fmtTime(adhan)}", "${prayer.ar} ${PrayerCalc.fmtTime(adhan)}"))
+        v.setTextViewText(R.id.nPrayer, L.t("${pn(prayer, adhan)} ${PrayerCalc.fmtTime(adhan)}", "${pn(prayer, adhan)} ${PrayerCalc.fmtTime(adhan)}"))
         v.setTextViewText(R.id.nSub, sub)
         val base = android.os.SystemClock.elapsedRealtime() + (target - now)
         v.setChronometer(R.id.nChrono, base, null, true)
@@ -160,7 +160,7 @@ object Alerts {
         )
         val n = NotificationCompat.Builder(c, PRE_CHANNEL)
             .setSmallIcon(R.drawable.ic_stat_mosque)
-            .setContentTitle(L.t("${prayer.ar} · الأذان ${PrayerCalc.fmtTime(adhan)}", "${prayer.ar} · Adhan ${PrayerCalc.fmtTime(adhan)}"))
+            .setContentTitle(L.t("${pn(prayer, adhan)} · الأذان ${PrayerCalc.fmtTime(adhan)}", "${pn(prayer, adhan)} · Adhan ${PrayerCalc.fmtTime(adhan)}"))
             .setContentText(L.t("الإقامة ${PrayerCalc.fmtTime(iqama)}", "Iqama ${PrayerCalc.fmtTime(iqama)}"))
             .setSubText(L.t("متبقي للأذان", "to adhan"))
             .setWhen(adhan)
@@ -184,6 +184,9 @@ object Alerts {
             .build()
         try { NotificationManagerCompat.from(c).notify(300, n) } catch (_: SecurityException) {}
     }
+
+    /** Prayer name for alerts: "الجمعة" on Friday instead of "الظهر". */
+    private fun pn(p: Prayer, adhan: Long): String = PrayerTime(p, adhan, adhan).pname
 
     /** Friday Dhuhr = Jumuah: there is a khutbah, so no iqama alert. */
     private fun isJumuah(t: PrayerTime): Boolean {
@@ -282,8 +285,8 @@ object Alerts {
 
         val title = if (type == "iqama") {
             val left = ((iqama - System.currentTimeMillis()) / MIN).toInt()
-            if (left > 0) L.t("إقامة ${prayer.ar} بعد $left د", "${prayer.ar} iqama in $left min") else L.t("حان وقت إقامة ${prayer.ar}", "Time for ${prayer.ar} iqama")
-        } else L.t("حان الآن وقت أذان ${prayer.ar}", "It is time for ${prayer.ar} adhan")
+            if (left > 0) L.t("إقامة ${pn(prayer, adhan)} بعد $left د", "${pn(prayer, adhan)} iqama in $left min") else L.t("حان وقت إقامة ${pn(prayer, adhan)}", "Time for ${pn(prayer, adhan)} iqama")
+        } else L.t("حان الآن وقت أذان ${pn(prayer, adhan)}", "It is time for ${pn(prayer, adhan)} adhan")
         // Saved mosque may be old (user moved to another city) -> show it only if still close
         val nearest = Prefs.nearest(c)?.takeIf { it.distKm <= 5.0 }
         // Phone alert: a short reminder for this prayer + iqama time

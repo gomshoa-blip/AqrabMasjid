@@ -10,4 +10,10 @@
     <string name="w_times">Azan 15:15 · Iqamah 15:35</string>
     <string name="w_left">sisa</string>
     <string name="w_go">🕌 Masjid terdekat</string>
+    <string name="widget_mini_name">Sholat berikutnya – kecil</string>
+    <string name="widget_round_name">Lingkaran sholat</string>
+    <string name="widget_strip_name">Hari ini – strip</string>
+    <string name="widget_mini_desc">Sholat berikutnya dan hitungan</string>
+    <string name="widget_round_desc">Lingkaran dengan sholat berikutnya</string>
+    <string name="widget_strip_desc">Lima sholat dalam satu baris</string>
 </resources>

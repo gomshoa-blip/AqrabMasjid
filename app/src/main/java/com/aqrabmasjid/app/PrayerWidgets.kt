@@ -12,9 +12,12 @@ import android.view.View
 import android.widget.RemoteViews
 
 /**
- * Two home screen widgets:
+ * Home screen widgets (5 shapes and sizes):
  * - NextPrayerWidget: next prayer, adhan + iqama, live countdown, "nearest mosque" button.
  * - DayPrayerWidget: today's five prayers, the coming one highlighted.
+ * - MiniPrayerWidget: small box, next prayer + big counter (1x1 to 3x2).
+ * - RoundPrayerWidget: a circle with the next prayer + big counter.
+ * - StripPrayerWidget: wide light strip, the five prayers in one row.
  * The countdown is a Chronometer, so it ticks by itself without waking the app.
  * The widgets are refreshed at each adhan / iqama (alarm below), and every 30 minutes by Android.
  */
@@ -29,9 +32,15 @@ object PrayerWidgets {
             val wm = AppWidgetManager.getInstance(app)
             val nextIds = wm.getAppWidgetIds(ComponentName(app, NextPrayerWidget::class.java))
             val dayIds = wm.getAppWidgetIds(ComponentName(app, DayPrayerWidget::class.java))
-            if (nextIds.isEmpty() && dayIds.isEmpty()) return
+            val miniIds = wm.getAppWidgetIds(ComponentName(app, MiniPrayerWidget::class.java))
+            val roundIds = wm.getAppWidgetIds(ComponentName(app, RoundPrayerWidget::class.java))
+            val stripIds = wm.getAppWidgetIds(ComponentName(app, StripPrayerWidget::class.java))
+            if (nextIds.isEmpty() && dayIds.isEmpty() && miniIds.isEmpty() && roundIds.isEmpty() && stripIds.isEmpty()) return
             if (nextIds.isNotEmpty()) wm.updateAppWidget(nextIds, nextViews(app))
             if (dayIds.isNotEmpty()) wm.updateAppWidget(dayIds, dayViews(app))
+            if (miniIds.isNotEmpty()) wm.updateAppWidget(miniIds, counterViews(app, R.layout.widget_mini, R.id.mRoot, R.id.mLabel, R.id.mName, R.id.mChrono, R.id.mTime))
+            if (roundIds.isNotEmpty()) wm.updateAppWidget(roundIds, counterViews(app, R.layout.widget_round, R.id.rRoot, R.id.rLabel, R.id.rName, R.id.rChrono, R.id.rTime))
+            if (stripIds.isNotEmpty()) wm.updateAppWidget(stripIds, stripViews(app))
             scheduleTick(app)
         } catch (_: Exception) {
         }
@@ -49,13 +58,13 @@ object PrayerWidgets {
         val st = PrayerCalc.status(c, lat, lng, now)
         val t = st.time
         return if (!st.isCurrent) {
-            Now(L.t("الصلاة القادمة", "Next prayer"), t.prayer.ar, t.adhan, t.iqama,
+            Now(L.t("الصلاة القادمة", "Next prayer"), t.pname, t.adhan, t.iqama,
                 t.adhan, L.t("متبقي للأذان", "to adhan"), t.prayer, t.adhan)
         } else if (t.iqama > now) {
-            Now(L.t("حان وقت الصلاة", "Prayer time now"), t.prayer.ar, t.adhan, t.iqama,
+            Now(L.t("حان وقت الصلاة", "Prayer time now"), t.pname, t.adhan, t.iqama,
                 t.iqama, L.t("متبقي للإقامة", "to iqama"), t.prayer, t.iqama)
         } else {
-            Now(L.t("أقيمت الصلاة", "Prayer has started"), t.prayer.ar, t.adhan, t.iqama,
+            Now(L.t("أقيمت الصلاة", "Prayer has started"), t.pname, t.adhan, t.iqama,
                 null, "", t.prayer, maxOf(t.adhan + 30 * MIN, t.iqama + 5 * MIN))
         }
     }
@@ -138,11 +147,85 @@ object PrayerWidgets {
         val list = PrayerCalc.day(c, loc.first, loc.second, n.adhan).list
         for ((i, p) in list.withIndex()) {
             if (i > 4) break
-            v.setTextViewText(nameIds[i], p.prayer.ar)
+            v.setTextViewText(nameIds[i], p.pname)
             v.setTextViewText(adhanIds[i], PrayerCalc.fmtTime(p.adhan))
             v.setTextViewText(iqamaIds[i], PrayerCalc.fmtTime(p.iqama))
             v.setInt(rowIds[i], "setBackgroundResource",
                 if (p.prayer == n.prayer) R.drawable.widget_row_on else R.drawable.widget_row_off)
+        }
+        return v
+    }
+
+    /**
+     * Small and round widgets: the same big counter as the app.
+     * Red in the last 30 min before adhan (counts down), green for 30 min after adhan (counts up).
+     */
+    private fun counterViews(c: Context, layout: Int, root: Int, label: Int, name: Int, chrono: Int, time: Int): RemoteViews {
+        val v = RemoteViews(c.packageName, layout)
+        v.setOnClickPendingIntent(root, openApp(c))
+        val loc = Prefs.location(c)
+        if (loc == null) {
+            v.setTextViewText(label, L.t("أقرب مسجد", "Aqrab Masjid"))
+            v.setTextViewText(name, "🕌")
+            v.setTextViewText(time, L.t("افتح التطبيق", "Open the app"))
+            v.setViewVisibility(chrono, View.GONE)
+            return v
+        }
+        val now = System.currentTimeMillis()
+        val st = PrayerCalc.status(c, loc.first, loc.second, now)
+        val t = st.time
+        v.setTextViewText(name, t.pname)
+        v.setViewVisibility(chrono, View.VISIBLE)
+        val red = 0xFFFF6B6B.toInt(); val green = 0xFF3BE37F.toInt(); val gold = 0xFFF6D46B.toInt()
+        val base = SystemClock.elapsedRealtime() + (t.adhan - now)
+        if (!st.isCurrent) {
+            val soon = t.adhan - now <= 30 * MIN
+            v.setTextViewText(label, if (soon) L.t("باقي على دخول صلاة", "Time left to") else L.t("الصلاة القادمة", "Next prayer"))
+            v.setChronometer(chrono, base, null, true)
+            v.setChronometerCountDown(chrono, true)
+            v.setTextColor(chrono, if (soon) red else gold)
+            v.setTextColor(label, if (soon) red else gold)
+            v.setTextViewText(time, L.t("الأذان ${PrayerCalc.fmtTime(t.adhan)}", "Adhan ${PrayerCalc.fmtTime(t.adhan)}"))
+        } else if (now - t.adhan < 30 * MIN) {
+            v.setTextViewText(label, L.t("وقت صلاة", "It is now time for"))
+            v.setChronometer(chrono, base, null, true)
+            v.setChronometerCountDown(chrono, false)
+            v.setTextColor(chrono, green)
+            v.setTextColor(label, green)
+            v.setTextViewText(time, if (t.isJumuah) L.t("خطبة الجمعة", "Jumuah khutbah")
+                else L.t("الإقامة ${PrayerCalc.fmtTime(t.iqama)}", "Iqama ${PrayerCalc.fmtTime(t.iqama)}"))
+        } else {
+            v.setTextViewText(label, L.t("أقيمت الصلاة", "Prayer has started"))
+            v.setTextColor(label, gold)
+            v.setViewVisibility(chrono, View.GONE)
+            v.setTextViewText(time, L.t("الإقامة ${PrayerCalc.fmtTime(t.iqama)}", "Iqama ${PrayerCalc.fmtTime(t.iqama)}"))
+        }
+        return v
+    }
+
+    private val sColIds = intArrayOf(R.id.sCol0, R.id.sCol1, R.id.sCol2, R.id.sCol3, R.id.sCol4)
+    private val sNameIds = intArrayOf(R.id.sName0, R.id.sName1, R.id.sName2, R.id.sName3, R.id.sName4)
+    private val sTimeIds = intArrayOf(R.id.sTime0, R.id.sTime1, R.id.sTime2, R.id.sTime3, R.id.sTime4)
+
+    /** Wide light strip: the five prayers in one row, the coming one in green. */
+    private fun stripViews(c: Context): RemoteViews {
+        val v = RemoteViews(c.packageName, R.layout.widget_strip)
+        v.setOnClickPendingIntent(R.id.sRoot, openApp(c))
+        val loc = Prefs.location(c)
+        val n = now(c)
+        if (loc == null || n == null) {
+            v.setTextViewText(sNameIds[2], L.t("افتح التطبيق", "Open the app"))
+            return v
+        }
+        val list = PrayerCalc.day(c, loc.first, loc.second, n.adhan).list
+        for ((i, p) in list.withIndex()) {
+            if (i > 4) break
+            val on = p.prayer == n.prayer
+            v.setTextViewText(sNameIds[i], p.pname)
+            v.setTextViewText(sTimeIds[i], PrayerCalc.fmtTime(p.adhan))
+            v.setInt(sColIds[i], "setBackgroundResource", if (on) R.drawable.widget_strip_on else R.drawable.widget_row_off)
+            v.setTextColor(sNameIds[i], if (on) 0xFFFFFFFF.toInt() else 0xFF1B1606.toInt())
+            v.setTextColor(sTimeIds[i], if (on) 0xFFF6D46B.toInt() else 0xFF0F6B4F.toInt())
         }
         return v
     }
@@ -155,7 +238,10 @@ object PrayerWidgets {
             c, 403, Intent(c, NextPrayerWidget::class.java).setAction(ACTION_TICK),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        val at = maxOf(n.nextChange + 2_000, System.currentTimeMillis() + 60_000)
+        val nowMs = System.currentTimeMillis()
+        val red = n.adhan - 30 * MIN
+        val change = if (red > nowMs && red < n.nextChange) red else n.nextChange
+        val at = maxOf(change + 2_000, nowMs + 60_000)
         try {
             if (Alerts.canExact(c)) am.setExactAndAllowWhileIdle(AlarmManager.RTC, at, pi)
             else am.setAndAllowWhileIdle(AlarmManager.RTC, at, pi)
@@ -173,5 +259,17 @@ class NextPrayerWidget : AppWidgetProvider() {
 }
 
 class DayPrayerWidget : AppWidgetProvider() {
+    override fun onUpdate(c: Context, wm: AppWidgetManager, ids: IntArray) = PrayerWidgets.updateAll(c)
+}
+
+class MiniPrayerWidget : AppWidgetProvider() {
+    override fun onUpdate(c: Context, wm: AppWidgetManager, ids: IntArray) = PrayerWidgets.updateAll(c)
+}
+
+class RoundPrayerWidget : AppWidgetProvider() {
+    override fun onUpdate(c: Context, wm: AppWidgetManager, ids: IntArray) = PrayerWidgets.updateAll(c)
+}
+
+class StripPrayerWidget : AppWidgetProvider() {
     override fun onUpdate(c: Context, wm: AppWidgetManager, ids: IntArray) = PrayerWidgets.updateAll(c)
 }

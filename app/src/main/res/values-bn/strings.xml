@@ -10,4 +10,10 @@
     <string name="w_times">আজান ৩:১৫ · ইকামত ৩:৩৫</string>
     <string name="w_left">বাকি</string>
     <string name="w_go">🕌 নিকটতম মসজিদ</string>
+    <string name="widget_mini_name">পরবর্তী নামাজ – ছোট</string>
+    <string name="widget_round_name">নামাজ বৃত্ত</string>
+    <string name="widget_strip_name">আজ – স্ট্রিপ</string>
+    <string name="widget_mini_desc">পরবর্তী নামাজ ও কাউন্টার</string>
+    <string name="widget_round_desc">পরবর্তী নামাজসহ বৃত্ত</string>
+    <string name="widget_strip_desc">পাঁচ ওয়াক্ত এক সারিতে</string>
 </resources>

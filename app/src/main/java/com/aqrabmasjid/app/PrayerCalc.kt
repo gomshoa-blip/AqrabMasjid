@@ -21,7 +21,13 @@ enum class Prayer(private val arName: String, private val enName: String) {
     val ar: String get() = L.t(arName, enName)
 }
 
-data class PrayerTime(val prayer: Prayer, val adhan: Long, val iqama: Long)
+data class PrayerTime(val prayer: Prayer, val adhan: Long, val iqama: Long) {
+    /** Friday Dhuhr is Jumuah. */
+    val isJumuah: Boolean get() = prayer == Prayer.DHUHR &&
+        java.util.Calendar.getInstance().apply { timeInMillis = adhan }.get(java.util.Calendar.DAY_OF_WEEK) == java.util.Calendar.FRIDAY
+    /** Name to show: "الجمعة" on Friday instead of "الظهر". */
+    val pname: String get() = if (isJumuah) L.t("الجمعة", "Jumuah") else prayer.ar
+}
 
 data class DayTimes(val list: List<PrayerTime>, val methodName: String, val ramadan: Boolean)
 

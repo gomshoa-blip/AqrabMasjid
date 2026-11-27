@@ -102,8 +102,8 @@
 
                 <com.aqrabmasjid.app.CountdownRing
                     android:id="@+id/ring"
-                    android:layout_width="140dp"
-                    android:layout_height="140dp"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
                     android:layout_marginEnd="10dp" />
 
                 <LinearLayout
@@ -338,48 +338,6 @@
             android:textColor="@color/text_primary"
             android:textSize="21sp"
             android:textStyle="bold" />
-
-        <!-- Mode switch: driving (car only) or home (full app) + language -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <!-- "More": shows/hides the rest of the app (Quran, Adhkar, Qirat, prayer table ...) -->
-            <LinearLayout
-                android:id="@+id/btnMode"
-                android:layout_width="wrap_content"
-                android:layout_height="52dp"
-                android:background="@drawable/bg_seg_on"
-                android:clickable="true"
-                android:elevation="3dp"
-                android:focusable="true"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:paddingStart="22dp"
-                android:paddingEnd="22dp">
-
-                <ImageView
-                    android:id="@+id/icMode"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/ic_apps"
-                    android:tint="#FFFFFF" />
-
-                <TextView
-                    android:id="@+id/tvMode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="المزيد"
-                    android:textColor="#FFFFFF"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-        </LinearLayout>
 
         <!-- Radio card (modern): header pill, Quran (right) · play/pause (middle) · Sunnah (left),
              live wave on the station that is really playing, status line, save / my clips -->
@@ -681,6 +639,46 @@
                     android:src="@drawable/ic_antenna" />
             </LinearLayout>
         </FrameLayout>
+
+        <!-- "More": under the radio card; opens / hides the rest of the app -->
+        <LinearLayout
+            android:id="@+id/btnMode"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_more_btn"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp">
+
+            <FrameLayout
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:background="@drawable/bg_more_icon">
+
+                <ImageView
+                    android:id="@+id/icMode"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_apps"
+                    android:tint="#1B1606" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tvMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="المزيد"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
         </LinearLayout>
 
         <!-- Part 2: at home / office (hidden in driving mode) -->
@@ -815,149 +813,6 @@
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:baselineAligned="false"
-            android:orientation="horizontal">
-            <LinearLayout
-                android:id="@+id/btnTarteel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/bg_tile"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:minHeight="112dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="10dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp">
-
-                <FrameLayout
-                    android:layout_width="58dp"
-                    android:layout_height="58dp"
-                    android:background="@drawable/bg_icon_tile">
-
-                    <ImageView
-                        android:layout_width="34dp"
-                        android:layout_height="34dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_book"
-                        android:tint="@color/icon" />
-                </FrameLayout>
-
-                <TextView
-                    android:id="@+id/btnTarteelText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center"
-                    android:text="ترتيل"
-                    android:maxLines="2"
-                    android:textColor="@color/text_primary"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/btnWahy"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="10dp"
-                android:background="@drawable/bg_tile"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:minHeight="112dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="10dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp">
-
-                <FrameLayout
-                    android:layout_width="58dp"
-                    android:layout_height="58dp"
-                    android:background="@drawable/bg_icon_tile">
-
-                    <ImageView
-                        android:layout_width="34dp"
-                        android:layout_height="34dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_book"
-                        android:tint="@color/icon" />
-                </FrameLayout>
-
-                <TextView
-                    android:id="@+id/btnWahyText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center"
-                    android:text="وحي"
-                    android:maxLines="2"
-                    android:textColor="@color/text_primary"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:baselineAligned="false"
-            android:orientation="horizontal">
-            <LinearLayout
-                android:id="@+id/tileRadio"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/bg_tile"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:minHeight="112dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="10dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp">
-
-                <FrameLayout
-                    android:layout_width="58dp"
-                    android:layout_height="58dp"
-                    android:background="@drawable/bg_icon_tile">
-
-                    <ImageView
-                        android:layout_width="34dp"
-                        android:layout_height="34dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_radio"
-                        android:tint="@color/icon" />
-                </FrameLayout>
-
-                <TextView
-                    android:id="@+id/tileRadioText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center"
-                    android:text="إذاعة"
-                    android:maxLines="2"
-                    android:textColor="@color/text_primary"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:layout_marginStart="10dp" />
-        </LinearLayout>
-        </LinearLayout>
         <TextView
             android:id="@+id/tvGrpMosques"
             android:layout_width="wrap_content"
@@ -1058,18 +913,112 @@
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
+        <!-- Recommended apps and sites -->
+        <TextView
+            android:id="@+id/tvRecommended"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="4dp"
+            android:text="تطبيقات ومواقع ننصح بها"
+            android:textColor="@color/text_hint"
+            android:textSize="14sp"
+            android:textStyle="bold" />
         <LinearLayout
-            android:id="@+id/rowQirat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
             android:baselineAligned="false"
             android:orientation="horizontal">
+            <LinearLayout
+                android:id="@+id/btnTarteel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_tile"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:minHeight="112dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <FrameLayout
+                    android:layout_width="58dp"
+                    android:layout_height="58dp"
+                    android:background="@drawable/bg_icon_tile">
+
+                    <ImageView
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_book"
+                        android:tint="@color/icon" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/btnTarteelText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:text="ترتيل"
+                    android:maxLines="2"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/btnWahy"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                                android:background="@drawable/bg_tile"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:minHeight="112dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <FrameLayout
+                    android:layout_width="58dp"
+                    android:layout_height="58dp"
+                    android:background="@drawable/bg_icon_tile">
+
+                    <ImageView
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_book"
+                        android:tint="@color/icon" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/btnWahyText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:text="وحي"
+                    android:maxLines="2"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
             <LinearLayout
                 android:id="@+id/tileQirat"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_marginStart="10dp"
                 android:background="@drawable/bg_tile"
                 android:clickable="true"
                 android:focusable="true"
@@ -1106,11 +1055,6 @@
                     android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:layout_marginStart="10dp" />
         </LinearLayout>
         <TextView
             android:id="@+id/tvGrpContact"

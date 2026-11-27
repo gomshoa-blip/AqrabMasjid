@@ -10,4 +10,10 @@
     <string name="w_times">Adhan 3:15 PM · Iqama 3:35 PM</string>
     <string name="w_left">left</string>
     <string name="w_go">🕌 Nearest mosque</string>
+    <string name="widget_mini_name">Next prayer – small</string>
+    <string name="widget_round_name">Prayer circle</string>
+    <string name="widget_strip_name">Today – strip</string>
+    <string name="widget_mini_desc">Next prayer and counter in a small box</string>
+    <string name="widget_round_desc">A circle with the next prayer and counter</string>
+    <string name="widget_strip_desc">The five prayers in one row</string>
 </resources>

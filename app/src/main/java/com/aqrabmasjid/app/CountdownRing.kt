@@ -87,7 +87,7 @@ class CountdownRing @JvmOverloads constructor(
 
         track.strokeWidth = stroke
         arc.strokeWidth = stroke
-        val color = if (afterAdhan) Color.parseColor("#7FD3AE") else Color.parseColor("#C9A227")
+        val color = if (afterAdhan) Color.parseColor("#3BE37F") else Color.parseColor("#FF5A5A")
         arc.color = color
         dot.color = color
 
@@ -113,12 +113,12 @@ class CountdownRing @JvmOverloads constructor(
     /** Small ring for the main card: only the clock and one short line. */
     private fun drawCompact(canvas: Canvas) {
         val size = min(width, height).toFloat()
-        val stroke = size * 0.045f
+        val stroke = size * 0.06f
         val pad = stroke / 2 + 2 * density
         box.set(pad, pad, size - pad, size - pad)
         track.strokeWidth = stroke
         arc.strokeWidth = stroke
-        val color = if (afterAdhan) Color.parseColor("#7FD3AE") else Color.parseColor("#F6D46B")
+        val color = if (afterAdhan) Color.parseColor("#3BE37F") else Color.parseColor("#FF5A5A")
         arc.color = color
         track.color = Color.parseColor("#26FFFFFF")
         canvas.drawArc(box, 0f, 360f, false, track)
@@ -126,7 +126,7 @@ class CountdownRing @JvmOverloads constructor(
         if (sweep > 0.5f) canvas.drawArc(box, -90f, sweep, false, arc)
         val cx = size / 2
         val cy = size / 2
-        bigPaint.textSize = fitSize(bigText, size * 0.22f, size * 0.74f)
+        bigPaint.textSize = fitSize(bigText, size * 0.27f, size * 0.78f)
         bigPaint.color = color
         smallText.textSize = size * 0.085f
         canvas.drawText(bigText, cx, cy + bigPaint.textSize * 0.32f, bigPaint)

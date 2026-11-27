@@ -10,4 +10,10 @@
     <string name="w_times">Ezan 15:15 · Kamet 15:35</string>
     <string name="w_left">kalan</string>
     <string name="w_go">🕌 En yakın cami</string>
+    <string name="widget_mini_name">Sıradaki namaz – küçük</string>
+    <string name="widget_round_name">Namaz dairesi</string>
+    <string name="widget_strip_name">Bugün – şerit</string>
+    <string name="widget_mini_desc">Sıradaki namaz ve sayaç</string>
+    <string name="widget_round_desc">Sıradaki namazlı daire</string>
+    <string name="widget_strip_desc">Beş vakit tek satırda</string>
 </resources>

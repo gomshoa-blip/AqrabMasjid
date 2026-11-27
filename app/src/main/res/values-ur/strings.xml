@@ -10,4 +10,10 @@
     <string name="w_times">اذان 3:15 · اقامت 3:35</string>
     <string name="w_left">باقی</string>
     <string name="w_go">🕌 قریب ترین مسجد</string>
+    <string name="widget_mini_name">اگلی نماز – چھوٹا</string>
+    <string name="widget_round_name">نماز دائرہ</string>
+    <string name="widget_strip_name">آج – پٹی</string>
+    <string name="widget_mini_desc">اگلی نماز اور کاؤنٹر</string>
+    <string name="widget_round_desc">اگلی نماز کے ساتھ دائرہ</string>
+    <string name="widget_strip_desc">پانچوں نمازیں ایک قطار میں</string>
 </resources>

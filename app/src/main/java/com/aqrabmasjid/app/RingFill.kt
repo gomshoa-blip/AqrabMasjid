@@ -9,7 +9,7 @@ object RingFill {
     fun fill(c: Context, ring: CountdownRing, lat: Double, lng: Double, now: Long = System.currentTimeMillis()) {
         val st = PrayerCalc.status(c, lat, lng, now)
         val t = st.time
-        val name = t.prayer.ar
+        val name = t.pname
 
         if (!st.isCurrent) {
             // Waiting for adhan: ring shrinks from the previous adhan to the next one
@@ -27,7 +27,7 @@ object RingFill {
             // Last 30 min: ring shrinks to zero at adhan
             val total = WINDOW
             ring.update(
-                L.t("بقي على صلاة", "Time left to"),
+                L.t("باقي على دخول صلاة", "Time left to"),
                 name,
                 CountdownRing.clock(left),
                 L.t("الأذان ${PrayerCalc.fmtTime(t.adhan)}", "Adhan ${PrayerCalc.fmtTime(t.adhan)}"),
@@ -35,27 +35,17 @@ object RingFill {
                 false
             )
         } else {
-            val left = t.iqama - now
-            if (left > 0) {
-                // After adhan: green ring, counts down to iqama
-                val total = (t.iqama - t.adhan).coerceAtLeast(1L)
-                ring.update(
-                    L.t("أذّن · بقي على الإقامة", "Adhan done · Iqama in"),
-                    name,
-                    CountdownRing.clock(left),
-                    L.t("الإقامة ${PrayerCalc.fmtTime(t.iqama)}", "Iqama ${PrayerCalc.fmtTime(t.iqama)}"),
-                    left.toFloat() / total,
-                    true
-                )
+            // After adhan: green, counts up for 30 min from the adhan
+            val since = now - t.adhan
+            val iq = if (t.isJumuah) L.t("خطبة الجمعة", "Jumuah khutbah")
+                else if (t.iqama > now) L.t("الإقامة بعد ${CountdownRing.clock(t.iqama - now)}", "Iqama in ${CountdownRing.clock(t.iqama - now)}")
+                else L.t("أقيمت الصلاة", "Prayer started")
+            if (since in 0 until WINDOW) {
+                ring.update(L.t("وقت صلاة", "It is now time for"), name, CountdownRing.clock(since), iq,
+                    since.toFloat() / WINDOW, true)
             } else {
-                ring.update(
-                    "",
-                    name,
-                    L.t("أقيمت الصلاة", "Prayer started"),
-                    L.t("الإقامة ${PrayerCalc.fmtTime(t.iqama)}", "Iqama ${PrayerCalc.fmtTime(t.iqama)}"),
-                    1f,
-                    true
-                )
+                ring.update("", name, L.t("أقيمت الصلاة", "Prayer started"),
+                    L.t("الإقامة ${PrayerCalc.fmtTime(t.iqama)}", "Iqama ${PrayerCalc.fmtTime(t.iqama)}"), 1f, true)
             }
         }
     }

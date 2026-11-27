@@ -10,4 +10,10 @@
     <string name="w_times">الأذان 3:15 م · الإقامة 3:35 م</string>
     <string name="w_left">متبقي</string>
     <string name="w_go">🕌 أقرب مسجد</string>
+    <string name="widget_mini_name">الصلاة القادمة – صغير</string>
+    <string name="widget_round_name">دائرة الصلاة</string>
+    <string name="widget_strip_name">مواقيت اليوم – شريط</string>
+    <string name="widget_mini_desc">الصلاة القادمة والعداد في مربع صغير</string>
+    <string name="widget_round_desc">دائرة فيها الصلاة القادمة والعداد</string>
+    <string name="widget_strip_desc">الصلوات الخمس في سطر واحد</string>
 </resources>

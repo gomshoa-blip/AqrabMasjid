@@ -10,4 +10,10 @@
     <string name="w_times">Adhan 15:15 · Iqama 15:35</string>
     <string name="w_left">restant</string>
     <string name="w_go">🕌 Mosquée la plus proche</string>
+    <string name="widget_mini_name">Prochaine prière – petit</string>
+    <string name="widget_round_name">Cercle de prière</string>
+    <string name="widget_strip_name">Aujourd\'hui – bande</string>
+    <string name="widget_mini_desc">Prochaine prière et compteur</string>
+    <string name="widget_round_desc">Un cercle avec la prochaine prière</string>
+    <string name="widget_strip_desc">Les cinq prières sur une ligne</string>
 </resources>

@@ -168,14 +168,6 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.tileShare).setOnClickListener { share() }
         findViewById<View>(R.id.tileAdd).setOnClickListener { addMosqueDialog() }
         findViewById<View>(R.id.btnPrivacy).setOnClickListener { openUrl(Config.PRIVACY_URL) }
-        // Radio tile: go to the radio card (it is on the main screen)
-        findViewById<View>(R.id.tileRadio).setOnClickListener {
-            findViewById<android.widget.ScrollView>(R.id.rootScroll).post {
-                val bar = findViewById<View>(R.id.radioBar)
-                val y = bar.top + (bar.parent as View).top
-                findViewById<android.widget.ScrollView>(R.id.rootScroll).smoothScrollTo(0, (y - 24).coerceAtLeast(0))
-            }
-        }
         // Radio card: Quran (right) and Sunnah (left) select at once; the middle button plays / pauses
         findViewById<View>(R.id.radioStQuran).setOnClickListener { radioSelect("quran") }
         findViewById<View>(R.id.radioStSunnah).setOnClickListener { radioSelect("sunnah") }
@@ -368,9 +360,6 @@ class MainActivity : Activity() {
         tvGregorian.text = java.text.SimpleDateFormat("d MMMM yyyy", L.locale).format(java.util.Date(now)) + L.t(" م", "")
         fillHero(lat, lng, now)
         reminderBtn.text = PrayerReminders.ayah(st.time.prayer)
-        // قيراط: Riyadh only
-        val riyadh = lat in 24.3..25.2 && lng in 46.2..47.3
-        findViewById<View>(R.id.rowQirat).visibility = if (riyadh) View.VISIBLE else View.GONE
         tvMethod.text = L.t("طريقة الحساب: ${day.methodName}", "Method: ${day.methodName}")
 
         // Rebuild the table only when something in it changed (saves battery)
@@ -391,7 +380,7 @@ class MainActivity : Activity() {
         layoutTimes.addView(row(L.t("الصلاة", "Prayer"), L.t("الأذان", "Adhan"), L.t("الإقامة", "Iqama"), header = true, highlight = false))
         for (p in day.list) {
             layoutTimes.addView(
-                row(p.prayer.ar, PrayerCalc.fmtTime(p.adhan), PrayerCalc.fmtTime(p.iqama),
+                row(p.pname, PrayerCalc.fmtTime(p.adhan), PrayerCalc.fmtTime(p.iqama),
                     header = false, highlight = p.prayer == st.time.prayer)
             )
         }
@@ -429,30 +418,39 @@ class MainActivity : Activity() {
         val nameBefore = tvHeroName.text.toString()
         val ringBefore = ring.visibility
         // Left side: next prayer, then adhan and iqama times (always)
-        setIf(tvHeroName, t.prayer.ar)
+        setIf(tvHeroName, t.pname)
         heroNameBig = false
         setIf(tvHeroAdhan, L.t("الأذان ${PrayerCalc.fmtTime(t.adhan)}", "Adhan ${PrayerCalc.fmtTime(t.adhan)}"))
-        setIf(tvIqamaLeft, L.t("الإقامة ${PrayerCalc.fmtTime(t.iqama)}", "Iqama ${PrayerCalc.fmtTime(t.iqama)}"))
-        // Right side: countdown ring only in the last 30 min before adhan, and from adhan to iqama
+        if (!st.isCurrent) setIf(tvIqamaLeft, if (t.isJumuah) L.t("خطبة الجمعة · بكّر بالحضور", "Jumuah khutbah · go early")
+            else L.t("الإقامة ${PrayerCalc.fmtTime(t.iqama)}", "Iqama ${PrayerCalc.fmtTime(t.iqama)}"))
+        // Big counter: red in the last 30 min before adhan (counts down),
+        // then green for 30 min after adhan (counts up from the adhan)
         val w = 30 * 60_000L
         if (!st.isCurrent) {
-            setIf(tvHeroLabel, L.t("الصلاة القادمة", "Next prayer"))
             val left = t.adhan - now
             if (left in 1..w) {
+                setIf(tvHeroLabel, L.t("باقي على دخول صلاة", "Time left to"))
                 ring.visibility = View.VISIBLE
                 ring.update("", "", CountdownRing.clock(left), L.t("متبقية للأذان", "to adhan"), left.toFloat() / w, false)
-            } else ring.visibility = View.GONE
+            } else {
+                setIf(tvHeroLabel, L.t("الصلاة القادمة", "Next prayer"))
+                ring.visibility = View.GONE
+            }
         } else {
-            val left = t.iqama - now
-            if (left > 0) {
-                setIf(tvHeroLabel, L.t("حان وقت الصلاة", "Prayer time now"))
+            val since = now - t.adhan
+            if (since in 0 until w) {
+                setIf(tvHeroLabel, L.t("وقت صلاة", "It is now time for"))
                 ring.visibility = View.VISIBLE
-                ring.update("", "", CountdownRing.clock(left), L.t("متبقية للإقامة", "to iqama"),
-                    left.toFloat() / (t.iqama - t.adhan).coerceAtLeast(1L), true)
+                ring.update("", "", CountdownRing.clock(since), L.t("منذ الأذان", "since adhan"), since.toFloat() / w, true)
             } else {
                 setIf(tvHeroLabel, L.t("أقيمت الصلاة", "Prayer has started"))
                 ring.visibility = View.GONE
             }
+            // Under the name: live time left to iqama (not for Jumuah: there is a khutbah)
+            val toIq = t.iqama - now
+            if (t.isJumuah) setIf(tvIqamaLeft, L.t("خطبة الجمعة", "Jumuah khutbah"))
+            else if (toIq > 0) setIf(tvIqamaLeft, L.t("الإقامة بعد ${CountdownRing.clock(toIq)}", "Iqama in ${CountdownRing.clock(toIq)}"))
+            else setIf(tvIqamaLeft, L.t("أقيمت الصلاة", "Prayer has started"))
         }
         // Measure the big name again only when the name or the ring changed
         if (nameBefore != tvHeroName.text.toString() || ringBefore != ring.visibility || tvHeroName.tag != "sized") {
@@ -1051,9 +1049,9 @@ class MainActivity : Activity() {
         b(R.id.tvServices, "القرآن والذكر", "Quran & Dhikr")
         b(R.id.tvGrpMosques, "المساجد", "Mosques")
         b(R.id.tvGrpContact, "تواصل", "Contact")
+        b(R.id.tvRecommended, "تطبيقات ومواقع ننصح بها", "Recommended apps and sites")
         b(R.id.btnPrivacy, "سياسة الخصوصية", "Privacy policy")
         b(R.id.btnAbout, "عن أقرب مسجد", "About Aqrab Masjid")
-        b(R.id.tileRadioText, "إذاعة", "Radio")
         b(R.id.radioLabel, "اختر البث", "Choose a station")
         b(R.id.radioRecs, "🎧 تسجيلاتي", "🎧 My clips")
         b(R.id.tileQuranText, "القرآن", "Quran")
@@ -1141,7 +1139,7 @@ class MainActivity : Activity() {
         } else {
             row.orientation = LinearLayout.HORIZONTAL
             row.gravity = android.view.Gravity.CENTER_VERTICAL
-            row.addView(ring, LinearLayout.LayoutParams(dp(140), dp(140)).also { it.marginEnd = dp(10) })
+            row.addView(ring, LinearLayout.LayoutParams(dp(160), dp(160)).also { it.marginEnd = dp(10) })
             row.addView(infoV, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
             (infoV as LinearLayout).addView(dateV)
         }

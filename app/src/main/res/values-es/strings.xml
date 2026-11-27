@@ -10,4 +10,10 @@
     <string name="w_times">Adhan 15:15 · Iqama 15:35</string>
     <string name="w_left">restante</string>
     <string name="w_go">🕌 Mezquita más cercana</string>
+    <string name="widget_mini_name">Próxima oración – pequeño</string>
+    <string name="widget_round_name">Círculo de oración</string>
+    <string name="widget_strip_name">Hoy – franja</string>
+    <string name="widget_mini_desc">Próxima oración y contador</string>
+    <string name="widget_round_desc">Un círculo con la próxima oración</string>
+    <string name="widget_strip_desc">Las cinco oraciones en una fila</string>
 </resources>

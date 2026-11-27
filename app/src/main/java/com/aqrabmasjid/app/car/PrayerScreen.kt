@@ -61,10 +61,10 @@ class PrayerScreen(carContext: CarContext) : Screen(carContext), DefaultLifecycl
 
             val head = if (st.isCurrent) {
                 val left = st.time.iqama - now
-                if (left > 0) L.t("${st.time.prayer.ar}: الإقامة بعد ${PrayerCalc.fmtLeft(left)}", "${st.time.prayer.ar}: iqama in ${PrayerCalc.fmtLeft(left)}")
-                else L.t("الصلاة الحالية: ${st.time.prayer.ar}", "Current prayer: ${st.time.prayer.ar}")
+                if (left > 0) L.t("${st.time.pname}: الإقامة بعد ${PrayerCalc.fmtLeft(left)}", "${st.time.pname}: iqama in ${PrayerCalc.fmtLeft(left)}")
+                else L.t("الصلاة الحالية: ${st.time.pname}", "Current prayer: ${st.time.pname}")
             } else {
-                L.t("${st.time.prayer.ar} بعد ${PrayerCalc.fmtLeft(st.time.adhan - now)}", "${st.time.prayer.ar} in ${PrayerCalc.fmtLeft(st.time.adhan - now)}")
+                L.t("${st.time.pname} بعد ${PrayerCalc.fmtLeft(st.time.adhan - now)}", "${st.time.pname} in ${PrayerCalc.fmtLeft(st.time.adhan - now)}")
             }
 
             // Driver-first: the coming prayer is the first, highlighted row
@@ -88,7 +88,7 @@ class PrayerScreen(carContext: CarContext) : Screen(carContext), DefaultLifecycl
                 if (p.adhan <= now || p.prayer == st.time.prayer) continue
                 list.addItem(
                     Row.Builder()
-                        .setTitle(p.prayer.ar)
+                        .setTitle(p.pname)
                         .addText(L.t("الأذان ${PrayerCalc.fmtTime(p.adhan)} · الإقامة ${PrayerCalc.fmtTime(p.iqama)}", "Adhan ${PrayerCalc.fmtTime(p.adhan)} · Iqama ${PrayerCalc.fmtTime(p.iqama)}"))
                         .build()
                 )
