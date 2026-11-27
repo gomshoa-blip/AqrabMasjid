@@ -189,7 +189,10 @@ class MainActivity : Activity() {
                 runCatching { packageManager.getPackageInfo(packageName, 0).versionName }.getOrDefault("") + ")"
             openUrl(Config.WHATSAPP_URL + "?text=" + Uri.encode(L.t("⚠️ بلاغ عن خطأ في تطبيق أقرب مسجد:\n", "⚠️ Problem report for Aqrab Masjid:\n") + info))
         }
-        findViewById<View>(R.id.radioMore)?.setOnClickListener { radioDialog() }
+        findViewById<View>(R.id.radioMore)?.setOnClickListener { favSlotDialog() }
+        // Arrows: in Arabic the right arrow goes back (screen is right-to-left)
+        findViewById<View>(R.id.radioPrev)?.setOnClickListener { radioStep(-1) }
+        findViewById<View>(R.id.radioNext)?.setOnClickListener { radioStep(1) }
         findViewById<View>(R.id.radioSave).setOnClickListener { saveRadioClip() }
         findViewById<View>(R.id.radioRecs).setOnClickListener { radioClipsDialog() }
         findViewById<View>(R.id.radioPlay).setOnClickListener {
@@ -847,9 +850,13 @@ class MainActivity : Activity() {
         val fav0 = Prefs.favRadio(this, 0); val fav1 = Prefs.favRadio(this, 1)
         station(fav0, R.id.radioStQuran, R.id.radioIcQuran, R.id.radioTxQuran, R.id.radioWaveQuran, R.id.radioLiveQuran)
         station(fav1, R.id.radioStSunnah, R.id.radioIcSunnah, R.id.radioTxSunnah, R.id.radioWaveSunnah, R.id.radioLiveSunnah)
-        findViewById<TextView>(R.id.radioTxQuran)?.text = RadioService.station(fav0)?.short ?: ""
-        findViewById<TextView>(R.id.radioTxSunnah)?.text = RadioService.station(fav1)?.short ?: ""
-        findViewById<TextView>(R.id.radioMore)?.text = "📻  " + L.t("إذاعات أخرى", "More stations")
+        findViewById<TextView>(R.id.radioTxQuran)?.text = "⭐ " + (RadioService.station(fav0)?.short ?: "")
+        findViewById<TextView>(R.id.radioTxSunnah)?.text = "⭐ " + (RadioService.station(fav1)?.short ?: "")
+        findViewById<TextView>(R.id.radioMore)?.text = L.t("⭐ اختر مفضلاتي", "⭐ Choose my favorites")
+        val rtl = L.lang == "ar" || L.lang == "ur"
+        findViewById<TextView>(R.id.radioPrev)?.text = if (rtl) "›" else "‹"
+        findViewById<TextView>(R.id.radioNext)?.text = if (rtl) "‹" else "›"
+        fillRadioStrip(sel, live)
 
         // Middle button: pause while sound is wanted, play otherwise; spinner while connecting / retrying
         findViewById<android.widget.ImageView>(R.id.radioPlayIcon)
@@ -1061,6 +1068,49 @@ class MainActivity : Activity() {
             .setNeutralButton(L.t("⭐ المفضلة", "⭐ Favorites")) { _, _ -> favSlotDialog() }
         if (now != null) b.setPositiveButton(L.t("⏹ إيقاف", "⏹ Stop")) { _, _ -> RadioService.stop(this) }
         b.show()
+    }
+
+    /** Icon for each station in the strip. */
+    private fun stationIcon(id: String) = when (id) {
+        "quran" -> "📖"; "sunnah" -> "🕌"; "qasim" -> "🎙️"; "sabah" -> "🌅"; "masa" -> "🌙"; else -> "🌍"
+    }
+
+    private var stripKey = ""
+
+    /** The strip of all stations: icon + short name; the chosen one is gold, the playing one shows 🔊. */
+    private fun fillRadioStrip(sel: String, live: Boolean) {
+        val strip = findViewById<LinearLayout>(R.id.radioStrip) ?: return
+        val key = L.lang + "|" + sel + "|" + live + "|" + RadioService.current
+        if (key == stripKey && strip.childCount > 0) return
+        stripKey = key
+        strip.removeAllViews()
+        var selView: View? = null
+        for (st in RadioService.STATIONS) {
+            val on = st.id == sel
+            val playing = live && RadioService.current == st.id
+            val chip = TextView(this).apply {
+                text = (if (playing) "🔊 " else stationIcon(st.id) + " ") + st.short
+                textSize = 15f
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
+                gravity = android.view.Gravity.CENTER
+                minHeight = dp(52)
+                setPadding(dp(16), dp(8), dp(16), dp(8))
+                setBackgroundResource(if (on) R.drawable.bg_station_sel else R.drawable.bg_station_idle)
+                setTextColor(getColor(if (on) R.color.title_text else R.color.text_primary))
+                isClickable = true
+                contentDescription = st.label
+                setOnClickListener {
+                    // Tap = play this station now
+                    radioSelect(st.id)
+                    if (RadioService.current == null) { RadioService.play(this@MainActivity, st.id); showRadioBar() }
+                }
+            }
+            strip.addView(chip, LinearLayout.LayoutParams(-2, -2).also { it.marginEnd = dp(8) })
+            if (on) selView = chip
+        }
+        // Keep the chosen station visible
+        selView?.let { v -> findViewById<android.widget.HorizontalScrollView>(R.id.radioStripScroll)?.post {
+            findViewById<android.widget.HorizontalScrollView>(R.id.radioStripScroll)?.smoothScrollTo((v.left - dp(40)).coerceAtLeast(0), 0) } }
     }
 
     /** Which favorite button to change (the two buttons on the radio card). */

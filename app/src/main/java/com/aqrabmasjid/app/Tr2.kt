@@ -7,6 +7,7 @@ package com.aqrabmasjid.app
 object Tr2 {
     /** Index in each array: 0 = French, 1 = Italian, 2 = Spanish. */
     val MAP: Map<String, Array<String>> = mapOf(
+        "⭐ Choose my favorites" to arrayOf("⭐ Choisir mes favoris", "⭐ Scegli i miei preferiti", "⭐ Elegir mis favoritas"),
         "🕌 Mosque" to arrayOf("🕌 Mosquée", "🕌 Moschea", "🕌 Mezquita"),
         "👩 Women's prayer room" to arrayOf("👩 Salle de prière pour femmes", "👩 Sala di preghiera per donne", "👩 Sala de oración para mujeres"),
         "Place name (e.g. mall women's room)" to arrayOf("Nom du lieu (ex. salle d'un centre commercial)", "Nome del luogo (es. sala di un centro commerciale)", "Nombre del lugar (p. ej. sala de un centro comercial)"),

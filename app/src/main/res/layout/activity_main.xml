@@ -540,18 +540,34 @@
                     </FrameLayout>
                 </LinearLayout>
 
-                <!-- Other stations (adhkar, reciters, translations) -->
-                <TextView
-                    android:id="@+id/radioMore"
+                <!-- All stations: a strip you slide with your finger (filled in code) -->
+                <HorizontalScrollView
+                    android:id="@+id/radioStripScroll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/bg_station_idle"
+                    android:layout_marginTop="12dp"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/radioStrip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" />
+                </HorizontalScrollView>
+
+                <!-- Choose the two favorite stations -->
+                <TextView
+                    android:id="@+id/radioMore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="6dp"
                     android:gravity="center"
-                    android:minHeight="48dp"
-                    android:padding="10dp"
-                    android:textColor="@color/title_text"
-                    android:textSize="17sp"
+                    android:minHeight="40dp"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:textColor="@color/jami_gold"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <!-- Status line: "Holy Quran Radio is playing now" -->
@@ -562,16 +578,23 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="1dp"
-                        android:layout_weight="1"
-                        android:alpha="0.6"
-                        android:background="@drawable/line_gold" />
+                    <TextView
+                        android:id="@+id/radioPrev"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_pill_soft"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:text="‹"
+                        android:textColor="@color/jami_gold"
+                        android:textSize="26sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/radioName"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="10dp"
@@ -581,12 +604,18 @@
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="1dp"
-                        android:layout_weight="1"
-                        android:alpha="0.6"
-                        android:background="@drawable/line_gold" />
+                    <TextView
+                        android:id="@+id/radioNext"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_pill_soft"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:text="›"
+                        android:textColor="@color/jami_gold"
+                        android:textSize="26sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <!-- Save the last 3 minutes / saved clips -->
