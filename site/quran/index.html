@@ -827,6 +827,8 @@ const RECITERS = [
   ["Husary_128kbps", "محمود خليل الحصري"],
   ["Minshawy_Murattal_128kbps", "محمد صديق المنشاوي"],
   ["Abdul_Basit_Murattal_192kbps", "عبدالباسط عبدالصمد"],
+  // Whole-surah recitation (no file per ayah): the surah plays from start to end
+  ["SURAH:https://cdn.mp3quran.net/audio/muhammad-luhaidan/r1/", "محمد اللحيدان"],
   ["Muhsin_Al_Qasim_192kbps", "عبدالمحسن القاسم"],
   ["Khaalid_Abdullaah_al-Qahtaanee_192kbps", "خالد القحطاني"],
   ["Nasser_Alqatami_128kbps", "ناصر القطامي"],
@@ -863,6 +865,7 @@ let dlNow = null;   // {label, done, total}
 function kbps(){ const m = reciter.match(/(\d+)kbps/i); return m ? +m[1] : 128; }
 function fullMB(){ return Math.round(kbps() * 7.9); }   // about 18 hours of recitation
 function dlBox(){
+  if (surahMode()) return `<div class="dlb"><h2>⬇️ الاستماع بدون إنترنت</h2><div class="empty">التحميل غير متاح لهذا القارئ حاليًا.</div></div>`;
   if (!NAT) return `<div class="dlb"><h2>⬇️ الاستماع بدون إنترنت</h2><div class="empty">تحميل السور متاح في تطبيق «أقرب مسجد» على الجوال.</div></div>`;
   const mb = NAT.sizeMB(reciter), busy = NAT.busy();
   let h = `<div class="dlb"><h2>⬇️ الاستماع بدون إنترنت – ${recName()}</h2>`;
@@ -949,10 +952,11 @@ function ayahsOn(p){
 function showPlaying(){
   const sheet = $("sheet");
   sheet.querySelectorAll(".pl").forEach(e => e.remove());
-  if (cur && active) colorAyah(sheet, cur, "pl");
+  if (cur && active && !surahMode()) colorAyah(sheet, cur, "pl");
 }
 function barInfo(){
-  $("aInfo").innerHTML = (cur ? ayaName(cur) : "") + `<small>🎧 ${recName()}</small>`;
+  $("aInfo").innerHTML = (cur ? (surahMode() ? "سورة " + D.s[+cur.split(":")[0] - 1][0] + " – تلاوة كاملة" : ayaName(cur)) : "") + `<small>🎧 ${recName()}</small>`;
+  document.querySelectorAll("#aPrevA small,#aNextA small").forEach((e, i) => e.textContent = surahMode() ? "١٥ ث" : "آية");
   $("aPlay").textContent = player.paused ? "▶" : "⏸";
   $("aRep").classList.toggle("on", repeat);
   $("bPlay").classList.toggle("on", active);
@@ -963,7 +967,17 @@ function keepAwake(on){
     if (!on && wake) { wake.release(); wake = null; }
   } catch(_) {}
 }
+const surahMode = () => reciter.startsWith("SURAH:");
 function playAyah(v){
+  if (surahMode()) {
+    // One file per surah: play the surah of this ayah (keep playing if it is the same surah)
+    const s = +v.split(":")[0], url = reciter.slice(6) + p3(s) + ".mp3";
+    active = true; $("abar").hidden = false; basmala = false;
+    if (player.getAttribute("src") !== url) { cur = s + ":1"; player.src = url; }
+    player.play().catch(() => { toast("اضغط ▶ للتشغيل"); barInfo(); });
+    showPlaying(); barInfo(); keepAwake(true); media();
+    return;
+  }
   cur = v; active = true; $("abar").hidden = false;
   const [s, a] = v.split(":").map(Number);
   // Basmala before the first ayah of each surah (not Al-Fatiha, it is ayah 1; not At-Tawbah)
@@ -988,6 +1002,12 @@ function stopAudio(){
   $("abar").hidden = true; showPlaying(); barInfo(); keepAwake(false);
 }
 player.addEventListener("ended", () => {
+  if (surahMode()) {   // whole surah finished: the next surah
+    const s = cur ? +cur.split(":")[0] : 1;
+    if (repeat) { player.currentTime = 0; player.play().catch(() => {}); return; }
+    if (s >= 114) { stopAudio(); toast("صدق الله العظيم"); return; }
+    goAyah((s + 1) + ":1"); return;
+  }
   if (basmala) { basmala = false; player.src = urlV(cur); player.play().catch(() => {}); return; }
   if (repeat) { player.currentTime = 0; player.play().catch(() => {}); return; }
   const n = nextAyah(cur);
@@ -1012,8 +1032,8 @@ $("bPlay").onclick = () => {
 };
 $("aPlay").onclick = () => { if (player.paused) { if (!player.getAttribute("src") && cur) playAyah(cur); else player.play().catch(() => {}); } else player.pause(); };
 $("aStop").onclick = stopAudio;
-$("aPrevA").onclick = () => { const v = stepAyah(-1); if (v) goAyah(v); else toast("هذه أول آية"); };
-$("aNextA").onclick = () => { const v = stepAyah(1); if (v) goAyah(v); else toast("هذه آخر آية"); };
+$("aPrevA").onclick = () => { if (surahMode()) { player.currentTime = Math.max(0, player.currentTime - 15); return; } const v = stepAyah(-1); if (v) goAyah(v); else toast("هذه أول آية"); };
+$("aNextA").onclick = () => { if (surahMode()) { player.currentTime = Math.min(player.duration || 0, player.currentTime + 15); return; } const v = stepAyah(1); if (v) goAyah(v); else toast("هذه آخر آية"); };
 $("aPrevS").onclick = () => {
   // Inside a surah: back to its start; at its start: the surah before
   const s = cur ? +cur.split(":")[0] : 1, a = cur ? +cur.split(":")[1] : 1;
