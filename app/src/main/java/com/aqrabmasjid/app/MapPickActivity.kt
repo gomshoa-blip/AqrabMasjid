@@ -19,6 +19,10 @@ import android.webkit.WebViewClient
  * The chosen place is saved for the whole app: Qibla, prayer times, nearest mosque.
  */
 class MapPickActivity : Activity() {
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(Look.wrap(base))   // day / night choice
+    }
+
 
     private lateinit var web: WebView
 

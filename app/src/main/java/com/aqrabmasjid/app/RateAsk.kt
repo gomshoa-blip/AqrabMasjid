@@ -105,6 +105,10 @@ class RateReceiver : BroadcastReceiver() {
 
 /** Opens WhatsApp from the notification, then closes. */
 class RateActivity : Activity() {
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(Look.wrap(base))   // day / night choice
+    }
+
     override fun onCreate(b: Bundle?) {
         super.onCreate(b)
         RateAsk.done(this)

@@ -856,7 +856,7 @@ class MainActivity : Activity() {
         // "‹" and "›" are mirrored by the system in Arabic/Urdu, so they always point outwards
         findViewById<TextView>(R.id.radioPrev)?.text = "‹"
         findViewById<TextView>(R.id.radioNext)?.text = "›"
-        fillRadioStrip(sel, live)
+        fillRadioList(cur, st)
 
         // Middle button: pause while sound is wanted, play otherwise; spinner while connecting / retrying
         findViewById<android.widget.ImageView>(R.id.radioPlayIcon)
@@ -1068,6 +1068,69 @@ class MainActivity : Activity() {
             .setNeutralButton(L.t("⭐ المفضلة", "⭐ Favorites")) { _, _ -> favSlotDialog() }
         if (now != null) b.setPositiveButton(L.t("⏹ إيقاف", "⏹ Stop")) { _, _ -> RadioService.stop(this) }
         b.show()
+    }
+
+    /**
+     * Radio as a simple list, like an old phone radio: one big row per station
+     * (favorites first, with a star) and its own play / stop button.
+     */
+    private fun fillRadioList(cur: String?, st: RadioService.Status) {
+        val box = findViewById<LinearLayout>(R.id.radioList) ?: return
+        box.removeAllViews()
+        val fav = listOf(Prefs.favRadio(this, 0), Prefs.favRadio(this, 1))
+        val all = RadioService.STATIONS
+        val order = all.filter { it.id in fav }.sortedBy { fav.indexOf(it.id) } + all.filter { it.id !in fav }
+        for (stn in order) {
+            val mine = stn.id == cur && !RadioService.paused
+            val loading = mine && (st == RadioService.Status.LOADING || st == RadioService.Status.LOST)
+            val live = mine && st == RadioService.Status.PLAYING
+            val row = LinearLayout(this).apply {
+                orientation = LinearLayout.HORIZONTAL
+                gravity = android.view.Gravity.CENTER_VERTICAL
+                minimumHeight = dp(64)
+                setPadding(dp(14), dp(8), dp(10), dp(8))
+                setBackgroundResource(if (mine) R.drawable.bg_station_sel else R.drawable.bg_station_idle)
+                isClickable = true
+                contentDescription = stn.label
+            }
+            row.addView(TextView(this).apply { text = stationIcon(stn.id); textSize = 24f },
+                LinearLayout.LayoutParams(-2, -2).also { it.marginEnd = dp(12) })
+            val texts = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+            texts.addView(TextView(this).apply {
+                text = (if (stn.id in fav) "⭐ " else "") + stn.label
+                textSize = 17f; maxLines = 2
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
+                setTextColor(getColor(if (mine) R.color.title_text else R.color.text_primary))
+            })
+            if (mine) texts.addView(TextView(this).apply {
+                text = when {
+                    live -> L.t("🔴 مباشر – يعمل الآن", "🔴 Live – playing now")
+                    loading -> L.t("⏳ جاري الاتصال…", "⏳ Connecting…")
+                    else -> ""
+                }
+                textSize = 13f
+                setTextColor(getColor(R.color.jami_gold))
+            })
+            row.addView(texts, LinearLayout.LayoutParams(0, -2, 1f))
+            // Big round play / stop button
+            row.addView(TextView(this).apply {
+                text = if (loading) "⏳" else if (mine) "⏸" else "▶"
+                textSize = 22f
+                gravity = android.view.Gravity.CENTER
+                setTextColor(0xFF1B1606.toInt())
+                setBackgroundResource(R.drawable.bg_circle_gold)
+                contentDescription = if (mine) L.t("إيقاف", "Stop") else L.t("تشغيل", "Play")
+                isClickable = false
+            }, LinearLayout.LayoutParams(dp(52), dp(52)).also { it.marginStart = dp(8) })
+            row.setOnClickListener {
+                if (mine || loading) RadioService.stop(this)
+                else { getSharedPreferences("aqrab", MODE_PRIVATE).edit().putString("radio_sel", stn.id).apply(); RadioService.play(this, stn.id) }
+                radioLastShown = ""
+                showRadioBar()
+                handler.removeCallbacks(ringTick); handler.post(ringTick)   // refresh the status every second
+            }
+            box.addView(row, LinearLayout.LayoutParams(-1, -2).also { it.bottomMargin = dp(8) })
+        }
     }
 
     /** Icon for each station in the strip. */

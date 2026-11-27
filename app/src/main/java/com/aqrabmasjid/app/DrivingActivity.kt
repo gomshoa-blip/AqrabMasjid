@@ -1,5 +1,6 @@
 package com.aqrabmasjid.app
 
+import android.content.Context
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
@@ -23,6 +24,10 @@ import android.widget.TextView
  * easy to read and tap in the car. The screen stays on.
  */
 class DrivingActivity : Activity() {
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(Look.wrap(base))   // day / night choice
+    }
+
 
     private val handler = Handler(Looper.getMainLooper())
     private val tick = object : Runnable {

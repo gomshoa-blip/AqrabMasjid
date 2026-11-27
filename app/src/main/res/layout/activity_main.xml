@@ -392,6 +392,7 @@
 
                 <!-- Stations and play button. Fixed order: Quran on the right, Sunnah on the left -->
                 <LinearLayout
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
@@ -541,7 +542,16 @@
                 </LinearLayout>
 
                 <!-- All stations: a strip you slide with your finger (filled in code) -->
+                <!-- All stations as a simple list: each row has its own play / stop button (filled in code) -->
+                <LinearLayout
+                    android:id="@+id/radioList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="vertical" />
+
                 <HorizontalScrollView
+                    android:visibility="gone"
                     android:id="@+id/radioStripScroll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -580,6 +590,7 @@
 
                     <TextView
                         android:id="@+id/radioPrev"
+                        android:visibility="gone"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:background="@drawable/bg_pill_soft"
@@ -606,6 +617,7 @@
 
                     <TextView
                         android:id="@+id/radioNext"
+                        android:visibility="gone"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:background="@drawable/bg_pill_soft"

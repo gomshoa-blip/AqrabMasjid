@@ -1,5 +1,6 @@
 package com.aqrabmasjid.app
 
+import android.content.Context
 import android.app.Activity
 import android.content.res.Configuration
 import android.graphics.Typeface
@@ -19,6 +20,10 @@ import android.widget.TextView
  * Tap a card to count down; it turns green when done.
  */
 class AdhkarActivity : Activity() {
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(Look.wrap(base))   // day / night choice
+    }
+
 
     private val morning get() = AdhkarData.morning
     private val evening get() = AdhkarData.evening

@@ -86,6 +86,7 @@ object L {
         return null
     }
 
+    @Suppress("DEPRECATION")   // Locale("in", "ID") keeps the old Indonesian code that Android resources use
     val locale: Locale get() = when (lang) {
         "en" -> Locale.ENGLISH
         "ur" -> Locale("ur")

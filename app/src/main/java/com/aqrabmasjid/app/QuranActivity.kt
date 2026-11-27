@@ -1,5 +1,6 @@
 package com.aqrabmasjid.app
 
+import android.content.Context
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Color
@@ -14,6 +15,10 @@ import android.webkit.WebViewClient
 
 /** Full-screen mushaf: our simple Quran page (King Fahd Complex text and Hafs font). */
 class QuranActivity : Activity() {
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(Look.wrap(base))   // day / night choice
+    }
+
 
     private lateinit var web: WebView
 

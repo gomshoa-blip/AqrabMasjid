@@ -8,6 +8,9 @@ package com.aqrabmasjid.app
 object Tr {
     /** Index in each array: 0 = Urdu, 1 = Indonesian, 2 = Bengali, 3 = Turkish. */
     val MAP: Map<String, Array<String>> = mapOf(
+        "🔴 Live – playing now" to arrayOf("🔴 براہِ راست – اب چل رہا ہے", "🔴 Langsung – sedang diputar", "🔴 সরাসরি – এখন চলছে", "🔴 Canlı – şimdi çalıyor"),
+        "⏳ Connecting…" to arrayOf("⏳ جڑ رہا ہے…", "⏳ Menghubungkan…", "⏳ সংযোগ হচ্ছে…", "⏳ Bağlanıyor…"),
+        "Stop" to arrayOf("روکیں", "Berhenti", "বন্ধ", "Durdur"),
         "⭐ Choose my favorites" to arrayOf("⭐ اپنے پسندیدہ چنیں", "⭐ Pilih favorit saya", "⭐ আমার প্রিয় বেছে নিন", "⭐ Favorilerimi seç"),
         "🕌 Mosque" to arrayOf("🕌 مسجد", "🕌 Masjid", "🕌 মসজিদ", "🕌 Cami"),
         "👩 Women's prayer room" to arrayOf("👩 خواتین کی نماز گاہ", "👩 Musala wanita", "👩 মহিলাদের নামাজের স্থান", "👩 Kadınlar mescidi"),

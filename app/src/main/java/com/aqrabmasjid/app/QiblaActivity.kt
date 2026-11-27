@@ -53,6 +53,10 @@ import kotlin.math.tan
  * When something is wrong, a clear message tells the user what to do, with a button.
  */
 class QiblaActivity : ComponentActivity(), SensorEventListener {
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(Look.wrap(base))   // day / night choice
+    }
+
 
     private lateinit var preview: PreviewView
     private lateinit var overlay: Overlay
@@ -134,13 +138,15 @@ class QiblaActivity : ComponentActivity(), SensorEventListener {
         if (!LocationHelper.hasPermission(this)) {
             need.add(Manifest.permission.ACCESS_FINE_LOCATION); need.add(Manifest.permission.ACCESS_COARSE_LOCATION)
         }
-        if (need.isNotEmpty()) requestPermissions(need.toTypedArray(), 7)
+        if (need.isNotEmpty()) permAsk.launch(need.toTypedArray())
         else { cameraAsked = true; startCamera(); locate() }
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    /** Location permission answer (asked again from the location message). */
+    private val locAsk = registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions()) { locate() }
+
+    /** Camera and location permission answer. */
+    private val permAsk = registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions()) {
         cameraAsked = true
         if (granted(Manifest.permission.CAMERA)) startCamera() else show(Msg.CAMERA_DENIED)
         locate()
@@ -300,7 +306,7 @@ class QiblaActivity : ComponentActivity(), SensorEventListener {
 
     private fun buzz() {
         try {
-            val v = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+            val v = getSystemService(Vibrator::class.java) ?: return
             if (Build.VERSION.SDK_INT >= 26) v.vibrate(VibrationEffect.createOneShot(60, VibrationEffect.DEFAULT_AMPLITUDE))
         } catch (_: Exception) {}
     }
@@ -360,7 +366,7 @@ class QiblaActivity : ComponentActivity(), SensorEventListener {
 
     private fun retryLocation() {
         if (LocationHelper.hasPermission(this)) locate()
-        else requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 8)
+        else locAsk.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
     }
 
     private fun openAppSettings() {

@@ -1,5 +1,6 @@
 package com.aqrabmasjid.app
 
+import android.content.Context
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
@@ -21,6 +22,10 @@ import android.widget.TextView
  * navigation starts. Nothing is sent to Google Maps until the user picks.
  */
 class MosquesActivity : Activity() {
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(Look.wrap(base))   // day / night choice
+    }
+
 
     private lateinit var list: LinearLayout
     private lateinit var status: TextView

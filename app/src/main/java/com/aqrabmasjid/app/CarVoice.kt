@@ -224,7 +224,7 @@ class CarVoiceService : Service(), TextToSpeech.OnInitListener {
     override fun onInit(status: Int) {
         val t = tts ?: return
         if (status != TextToSpeech.SUCCESS) { finish(); return }
-        val r = t.setLanguage(Locale("ar", "SA"))
+        val r = t.setLanguage(Locale.forLanguageTag("ar-SA"))
         if (r == TextToSpeech.LANG_MISSING_DATA || r == TextToSpeech.LANG_NOT_SUPPORTED) {
             // No Arabic voice on this phone: keep the dua on screen only
             stopForeground(STOP_FOREGROUND_REMOVE)

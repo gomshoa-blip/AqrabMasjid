@@ -7,6 +7,9 @@ package com.aqrabmasjid.app
 object Tr2 {
     /** Index in each array: 0 = French, 1 = Italian, 2 = Spanish. */
     val MAP: Map<String, Array<String>> = mapOf(
+        "🔴 Live – playing now" to arrayOf("🔴 En direct – en cours", "🔴 In diretta – in riproduzione", "🔴 En directo – sonando ahora"),
+        "⏳ Connecting…" to arrayOf("⏳ Connexion…", "⏳ Connessione…", "⏳ Conectando…"),
+        "Stop" to arrayOf("Arrêter", "Ferma", "Detener"),
         "⭐ Choose my favorites" to arrayOf("⭐ Choisir mes favoris", "⭐ Scegli i miei preferiti", "⭐ Elegir mis favoritas"),
         "🕌 Mosque" to arrayOf("🕌 Mosquée", "🕌 Moschea", "🕌 Mezquita"),
         "👩 Women's prayer room" to arrayOf("👩 Salle de prière pour femmes", "👩 Sala di preghiera per donne", "👩 Sala de oración para mujeres"),
