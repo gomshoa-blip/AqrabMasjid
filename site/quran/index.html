@@ -42,15 +42,18 @@
   #nav #bPrev,#nav #bNext{background:var(--btn)}
   #nav button.on{background:var(--gold)}#nav button.on small{color:#fff}
   /* Bookmark tray: three ribbons in the top corner, ready to be dragged */
-  #tray{position:fixed;top:calc(env(safe-area-inset-top) + 54px);left:10px;z-index:4;display:flex;gap:7px;touch-action:none}
-  #tray .rb{width:30px;height:58px;position:relative;cursor:grab;touch-action:none;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))}
+  #tray{position:fixed;top:calc(env(safe-area-inset-top) + 50px);left:8px;z-index:4;display:flex;gap:4px;touch-action:none}
+  /* Each ribbon is thin and short (like the silk ribbon of a paper mushaf); the touch area is wider than what you see */
+  #tray .rb{width:24px;height:34px;position:relative;cursor:grab;touch-action:none}
+  #tray div.rb i{left:7px;right:7px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}
   #tray .rb i{position:absolute;inset:0;clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%)}
   #tray .rb[data-c=r] i{background:#C0392B}#tray .rb[data-c=g] i{background:#1E9A72}#tray .rb[data-c=b] i{background:#2F6FD6}
-  #tray .rb.used{opacity:.45;height:40px}
+  #tray .rb.used{opacity:.35;height:20px}
   #tray .rb.drag{opacity:.15}
-  #ghost{position:fixed;left:0;top:0;width:34px;height:90px;z-index:20;pointer-events:none;filter:drop-shadow(0 6px 6px rgba(0,0,0,.35))}
+  #ghost{position:fixed;left:0;top:0;width:16px;height:44px;z-index:20;pointer-events:none;filter:drop-shadow(0 6px 6px rgba(0,0,0,.35))}
   #ghost[hidden]{display:none}
   #ghost svg{width:100%;height:100%}
+  :is(#sheet,.scopy) .ring{position:absolute;z-index:2;border:3px solid;border-radius:50%;pointer-events:none;box-shadow:0 0 0 2px rgba(255,255,255,.6)}
   :is(#sheet,.scopy) .hov{position:absolute;z-index:0;border-radius:8px;pointer-events:none;background:rgba(201,162,39,.45);outline:2px dashed var(--gold)}
   :is(#sheet,.scopy) .hl.c-r{background:rgba(192,57,43,.22)}:is(#sheet,.scopy) .hl.c-g{background:rgba(30,154,114,.25)}:is(#sheet,.scopy) .hl.c-b{background:rgba(47,111,214,.22)}
   /* Question window and options */
@@ -96,7 +99,7 @@
   html[data-theme=dark] #bind .spine{filter:brightness(0) opacity(.9)}
   @media (max-height:500px){#bind{top:calc(env(safe-area-inset-top) + 44px);bottom:calc(env(safe-area-inset-bottom) + 52px)}}
   /* Bookmark ribbon hanging on a marked page */
-  :is(#sheet,.scopy) .rib{position:absolute;top:-8px;width:24px;height:78px;opacity:.95;z-index:2;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3));pointer-events:none}
+  :is(#sheet,.scopy) .rib{position:absolute;top:-6px;width:10px;height:34px;opacity:.9;z-index:2;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3));pointer-events:none}
   /* "Go to bookmark" chip, shown when the mushaf opens on another page */
   #gomark{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 86px);transform:translateX(-50%);z-index:5;border:2px solid var(--gold);background:var(--panel);color:var(--green);border-radius:999px;padding:11px 18px;font:800 16px system-ui,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25);white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis}
   #gomark[hidden]{display:none}
@@ -386,17 +389,17 @@ function markBtn(){
 }
 function showMarks(){
   const sheet = $("sheet");
-  sheet.querySelectorAll(".hl,.rib,.hov").forEach(e => e.remove());
+  sheet.querySelectorAll(".hl,.rib,.hov,.ring").forEach(e => e.remove());
   const m = allMarks();
   let k = 0;
   Object.keys(MC).forEach(c => {
     const x = m[c];
     if (!x || x.p !== page) return;
     // Ribbon hanging over the outer edge of the page (away from the spine)
-    const off = -6 + k * 26; k++;
+    const off = -3 + k * 13; k++;
     const side = page % 2 ? `right:${off}px` : `left:${off}px`;
     sheet.insertAdjacentHTML("beforeend", `<svg class="rib" style="${side}" viewBox="0 0 24 78" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0h24v78l-12-12L0 78z" fill="${MC[c][0]}"/><path d="M4 0h3v70l-3 3z M17 0h3v73l-3-3z" fill="rgba(255,255,255,.22)"/></svg>`);
-    if (x.v) colorAyah(sheet, x.v, "hl c-" + c);
+    if (x.v) ringAyah(sheet, x.v, MC[c][0]);
   });
   markBtn();
   showPlaying();
@@ -414,6 +417,16 @@ function colorAyah(sheet, v, cls){
     d.style.cssText = `left:${l - base.left - 3}px;width:${r - l + 6}px;top:${ln.offsetTop + h * 0.08}px;height:${h * 0.84}px`;
     sheet.appendChild(d);
   });
+}
+// Small colored ring around the ayah number (the last sign of the ayah on the page)
+function ringAyah(sheet, v, color){
+  const ws = sheet.querySelectorAll(`span[data-v="${v}"]`);
+  if (!ws.length) return;
+  const end = ws[ws.length - 1], base = sheet.getBoundingClientRect(), b = end.getBoundingClientRect();
+  const size = Math.max(b.width, b.height * 0.72) + 8, d = document.createElement("div");
+  d.className = "ring";
+  d.style.cssText = `left:${b.left - base.left + b.width / 2 - size / 2}px;top:${b.top - base.top + b.height / 2 - size / 2}px;width:${size}px;height:${size}px;border-color:${color}`;
+  sheet.appendChild(d);
 }
 function buzz(ms){ try { navigator.vibrate && navigator.vibrate(ms); } catch(_){} }
 // Small question window. btns: [[text, class, fn], ...]
@@ -459,12 +472,13 @@ function hoverAt(pt){
   sheet.querySelectorAll(".hov").forEach(x => x.remove());
   const el = document.elementFromPoint(pt.x, pt.y);
   const w = el && el.closest && el.closest("#sheet span[data-v]");
-  if (w) colorAyah(sheet, w.dataset.v, "hov");
+  sheet.querySelectorAll(".ring.tmp").forEach(x => x.remove());
+  if (w) { ringAyah(sheet, w.dataset.v, drag ? MC[drag.c][0] : "#C9A227"); const rr = sheet.querySelectorAll(".ring"); rr[rr.length - 1].classList.add("tmp"); }
   return {w, inPage: !!(el && el.closest && el.closest("#sheet"))};
 }
 function moveGhost(e){
   const pt = dropPoint(e), g = $("ghost");
-  g.style.transform = `translate(${pt.x - 17}px, ${pt.y - 90}px)`;
+  g.style.transform = `translate(${pt.x - 8}px, ${pt.y - 44}px)`;
   drag.hit = hoverAt(pt);
 }
 document.querySelectorAll("#tray .rb").forEach(rb => {
@@ -487,7 +501,7 @@ document.querySelectorAll("#tray .rb").forEach(rb => {
     if (!drag || drag.rb !== rb) return;
     const d = drag; drag = null;
     rb.classList.remove("drag"); $("ghost").hidden = true;
-    $("sheet").querySelectorAll(".hov").forEach(x => x.remove());
+    $("sheet").querySelectorAll(".hov,.ring.tmp").forEach(x => x.remove());
     if (!d.moved) {   // just a tap
       const x = allMarks()[d.c];
       if (x && x.p) ask("العلامة " + MC[d.c][1] + ":\n" + markName(x), [["اذهب إليها", "gold", () => go(x.p)], ["أزل العلامة", "red", () => removeMark(d.c)], ["إغلاق", "", null]]);
@@ -495,7 +509,7 @@ document.querySelectorAll("#tray .rb").forEach(rb => {
       return;
     }
     if (e.type === "pointercancel") return;
-    const hit = hoverAt(dropPoint(e)); $("sheet").querySelectorAll(".hov").forEach(x => x.remove());
+    drag = d; const hit = hoverAt(dropPoint(e)); drag = null; $("sheet").querySelectorAll(".hov,.ring.tmp").forEach(x => x.remove());
     if (hit.w) place(d.c, page, hit.w.dataset.v);
     else if (hit.inPage) place(d.c, page, "");
     else toast("ضع العلامة على الآية في الصفحة");
@@ -651,27 +665,25 @@ function audio(){
   } catch(_) { return null; }
 }
 function paperSound(v){
-  // One soft sheet of paper: a gentle "swish" (smooth noise, a filter that sweeps up then down), no crackle
+  // A light sheet of newspaper: short, crisp and quiet (high soft noise with tiny crackles), no "air" sound
   const ac = audio(); if (!ac) return;
   try {
-    const t0 = ac.currentTime, len = 0.42, n = Math.floor(ac.sampleRate * len);
+    const t0 = ac.currentTime, len = 0.2, n = Math.floor(ac.sampleRate * len);
     const buf = ac.createBuffer(1, n, ac.sampleRate), d = buf.getChannelData(0);
-    let b0 = 0, b1 = 0;
     for (let i = 0; i < n; i++) {
-      // Soft (pink-like) noise
-      const w = Math.random() * 2 - 1;
-      b0 = 0.97 * b0 + 0.03 * w; b1 = 0.6 * b1 + 0.4 * w;
-      const x = i / n, env = Math.pow(Math.sin(Math.PI * x), 2.2);   // smooth rise and fall
-      d[i] = (b0 * 3 + b1 * 0.35) * env;
+      const x = i / n;
+      const env = x < 0.08 ? x / 0.08 : Math.pow(1 - (x - 0.08) / 0.92, 2.4);   // quick start, soft end
+      let w = (Math.random() * 2 - 1) * 0.5;
+      if (Math.random() < 0.004) w += (Math.random() < 0.5 ? -1 : 1) * 0.9;     // tiny paper crackles
+      d[i] = w * env;
     }
     const src = ac.createBufferSource(); src.buffer = buf;
-    const lp = ac.createBiquadFilter(); lp.type = "lowpass"; lp.Q.value = 0.4;
-    lp.frequency.setValueAtTime(900, t0);
-    lp.frequency.linearRampToValueAtTime(2600, t0 + len * 0.45);
-    lp.frequency.linearRampToValueAtTime(1100, t0 + len);
-    const hp = ac.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 250;
-    const g = ac.createGain(); g.gain.value = 0.22 * (v || 1);
-    src.connect(lp); lp.connect(hp); hp.connect(g); g.connect(ac.destination);
+    const bp = ac.createBiquadFilter(); bp.type = "bandpass"; bp.Q.value = 0.7;
+    bp.frequency.setValueAtTime(3200, t0);
+    bp.frequency.linearRampToValueAtTime(5200, t0 + len);
+    const hp = ac.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 1800;
+    const g = ac.createGain(); g.gain.value = 0.07 * (v || 1);
+    src.connect(bp); bp.connect(hp); hp.connect(g); g.connect(ac.destination);
     src.start(t0);
   } catch(_) {}
 }
