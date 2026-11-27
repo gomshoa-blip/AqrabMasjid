@@ -15,14 +15,16 @@
   html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);overflow:hidden;font-family:system-ui,sans-serif}
   /* Top and bottom info */
   .top{position:fixed;top:0;left:0;right:0;height:calc(env(safe-area-inset-top) + 54px);padding:env(safe-area-inset-top) 8px 0;display:flex;align-items:center;gap:6px;font-size:15px;color:var(--soft);z-index:3;background:var(--paper)}
-  .top b{font-weight:800;color:var(--green);font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .top b{font-weight:800;color:var(--green);font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .top .ttl{display:flex;flex-direction:column;min-width:0;line-height:1.25;padding-inline-start:4px}
+  .top .ttl>span{font-size:14px;font-weight:700;color:var(--soft);white-space:nowrap}
   .top #juz{white-space:nowrap}
   .top .sp{flex:1;min-width:4px}
   .top button{width:46px;height:46px;flex:none;border-radius:50%;border:2px solid var(--gold);background:var(--paper);color:var(--green);font-size:21px;padding:0;line-height:1}
   .top button.on{background:var(--gold)}
   .top a{width:46px;height:46px;flex:none;border-radius:50%;border:2px solid var(--gold);color:var(--green);display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:21px;font-weight:800}
   .top .z{font:800 20px system-ui,sans-serif}
-  @media (max-width:440px){.top{gap:5px}.top button,.top a{width:42px;height:42px}.top #juz{display:none}.top b{font-size:16px}}
+  @media (max-width:440px){.top{gap:5px}.top button,.top a{width:42px;height:42px}.top b{font-size:16px}}
   @media (max-width:360px){.top button,.top a{width:38px;height:38px}}
   /* Phone turned sideways: thinner bars, more room for the text */
   @media (max-height:500px){
@@ -33,9 +35,47 @@
   }
   /* Bottom: previous on the right, next on the left, like a paper mushaf */
   #nav{position:fixed;left:0;right:0;bottom:0;height:calc(env(safe-area-inset-bottom) + 72px);padding:8px 8px calc(env(safe-area-inset-bottom) + 8px);display:flex;gap:8px;background:var(--panel);border-top:1px solid var(--line);z-index:3}
-  #nav button{flex:1;border:0;border-radius:14px;font:800 20px system-ui,sans-serif;background:var(--btn);color:var(--btnt);padding:0 4px}
-  #nav #bList{flex:.9;background:transparent;border:2px solid var(--gold);color:var(--green);line-height:1.15}
-  #nav #bList small{display:block;font-size:13px;font-weight:700;color:var(--soft);white-space:nowrap}
+  #nav{gap:5px;padding-left:6px;padding-right:6px}
+  #nav button{flex:1;min-width:0;border:0;border-radius:14px;font:800 15px system-ui,sans-serif;background:transparent;color:var(--btnt);padding:2px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+  #nav button b{font-size:22px;line-height:1}
+  #nav button small{font-size:13px;font-weight:800;white-space:nowrap;color:var(--green)}
+  #nav #bPrev,#nav #bNext{background:var(--btn)}
+  #nav button.on{background:var(--gold)}#nav button.on small{color:#fff}
+  /* Bookmark tray: three ribbons in the top corner, ready to be dragged */
+  #tray{position:fixed;top:calc(env(safe-area-inset-top) + 54px);left:10px;z-index:4;display:flex;gap:7px;touch-action:none}
+  #tray .rb{width:30px;height:58px;position:relative;cursor:grab;touch-action:none;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))}
+  #tray .rb i{position:absolute;inset:0;clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%)}
+  #tray .rb[data-c=r] i{background:#C0392B}#tray .rb[data-c=g] i{background:#1E9A72}#tray .rb[data-c=b] i{background:#2F6FD6}
+  #tray .rb.used{opacity:.45;height:40px}
+  #tray .rb.drag{opacity:.15}
+  #ghost{position:fixed;left:0;top:0;width:34px;height:90px;z-index:20;pointer-events:none;filter:drop-shadow(0 6px 6px rgba(0,0,0,.35))}
+  #ghost[hidden]{display:none}
+  #ghost svg{width:100%;height:100%}
+  :is(#sheet,.scopy) .hov{position:absolute;z-index:0;border-radius:8px;pointer-events:none;background:rgba(201,162,39,.45);outline:2px dashed var(--gold)}
+  :is(#sheet,.scopy) .hl.c-r{background:rgba(192,57,43,.22)}:is(#sheet,.scopy) .hl.c-g{background:rgba(30,154,114,.25)}:is(#sheet,.scopy) .hl.c-b{background:rgba(47,111,214,.22)}
+  /* Question window and options */
+  #ask,#opts{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;padding:16px 12px calc(env(safe-area-inset-bottom) + 16px)}
+  #ask[hidden],#opts[hidden]{display:none}
+  #ask .card,#opts .card{width:100%;max-width:460px;background:var(--panel);border:2px solid var(--gold);border-radius:20px;padding:18px 16px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  #askT{font:800 19px system-ui,sans-serif;color:var(--ink);line-height:1.6;text-align:center;margin-bottom:14px;white-space:pre-line}
+  #askB{display:grid;gap:10px}
+  #askB button,#opts .wide{width:100%;min-height:54px;border:0;border-radius:14px;font:800 18px system-ui,sans-serif;background:var(--btn);color:var(--btnt);margin-top:8px}
+  #askB button.gold,#opts .wide.gold{background:var(--gold);color:#fff}
+  #askB button.red{background:#C0392B;color:#fff}
+  #askB .dots{display:flex;gap:10px}#askB .dots button{flex:1}
+  #opts .oh{font:800 20px system-ui,sans-serif;color:var(--green);text-align:center;margin-bottom:10px}
+  #opts .orow{display:flex;align-items:center;justify-content:space-between;gap:10px;font:800 18px system-ui,sans-serif;color:var(--ink)}
+  #opts .orow button{width:64px;height:54px;border:2px solid var(--gold);border-radius:14px;background:var(--paper);color:var(--green);font:800 22px system-ui,sans-serif}
+  /* Index: search and go to page */
+  #find{display:flex;gap:8px;margin:6px 0 4px;flex-wrap:wrap}
+  #find input{font:700 17px system-ui,sans-serif;padding:12px;border:2px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);min-width:0}
+  #find #q{flex:1 1 180px}#find .pg{display:flex;gap:6px;flex:0 0 auto}#find #qp{width:96px}
+  #find button{border:0;border-radius:12px;background:var(--gold);color:#fff;font:800 16px system-ui,sans-serif;padding:0 16px}
+  #list .bm3{display:flex;align-items:center;gap:10px;padding:14px 10px;border-bottom:1px solid var(--line);font-size:18px}
+  #list .bm3 .dot{width:16px;height:28px;flex:none;clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%)}
+  #list .bm3 .nm{flex:1;min-width:0;cursor:pointer}
+  #list .bm3 .nm small{display:block;color:#888;font-size:14px}
+  #list .bm3 button{border:0;border-radius:10px;background:var(--btn);color:var(--btnt);font:800 15px system-ui,sans-serif;padding:9px 12px}
   /* Page turn: the old page is a "leaf" that turns over the new page, like a paper book */
   #turnbox{position:fixed;z-index:4;pointer-events:none;perspective:1300px;overflow:visible}
   #leaf{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform}
@@ -105,19 +145,36 @@
 </head>
 <body>
 <div class="top">
-  <b id="sura"></b><span id="juz"></span><span class="sp"></span>
-  <button id="zIn" class="z" aria-label="تكبير">أ+</button>
-  <button id="zOut" class="z" aria-label="تصغير">أ−</button>
-  <button id="bPlay" aria-label="استماع">🎧</button>
-  <button id="bMark" aria-label="علامة">🔖</button>
-  <button id="bTheme" aria-label="الوضع الليلي">🌙</button>
+  <div class="ttl"><b id="sura"></b><span><span id="juz"></span> <span id="pno2"></span></span></div>
+  <span class="sp"></span>
   <a href="/" aria-label="رجوع">✕</a>
 </div>
+<!-- Three bookmarks in the corner: drag one with your finger and drop it on the ayah number -->
+<div id="tray" aria-label="العلامات">
+  <div class="rb" data-c="r" aria-label="العلامة الحمراء"><i></i></div>
+  <div class="rb" data-c="g" aria-label="العلامة الخضراء"><i></i></div>
+  <div class="rb" data-c="b" aria-label="العلامة الزرقاء"><i></i></div>
+</div>
+<div id="ghost" hidden><svg viewBox="0 0 30 80" aria-hidden="true"><path d="M0 0h30v80l-15-14L0 80z"/></svg></div>
+<!-- Small window for questions (move bookmark? / which bookmark?) -->
+<div id="ask" hidden><div class="card"><div id="askT"></div><div id="askB"></div></div></div>
+<!-- Reading options -->
+<div id="opts" hidden><div class="card">
+  <div class="oh">العرض</div>
+  <div class="orow"><button id="zOut" class="z" aria-label="تصغير">أ−</button><span>حجم الخط</span><button id="zIn" class="z" aria-label="تكبير">أ+</button></div>
+  <button id="bTheme" class="wide" aria-label="الوضع الليلي">🌙</button>
+  <button id="bAwake" class="wide"></button>
+  <button id="bMark" class="wide" hidden>🔖</button>
+  <button id="optsX" class="wide gold">تم</button>
+</div></div>
 <div id="view"><div id="sheet"></div><button id="nextp">الصفحة التالية ←</button><div id="msg">جاري التحميل…</div></div>
 <div id="nav">
-  <button id="bPrev">→ السابقة</button>
-  <button id="bList">☰ الفهرس<small id="pno"></small></button>
-  <button id="bNext">التالية ←</button>
+  <button id="bPrev"><b>→</b><small>السابقة</small></button>
+  <button id="bList"><b>☰</b><small>الفهرس</small><small id="pno" hidden></small></button>
+  <button id="bPlay"><b>🎧</b><small>استماع</small></button>
+  <button id="bMarks"><b>🔖</b><small>علاماتي</small></button>
+  <button id="bOpts"><b>أ</b><small>العرض</small></button>
+  <button id="bNext"><b>←</b><small>التالية</small></button>
 </div>
 <div id="bind"><div class="spine"></div><div class="edges"></div></div>
 <div id="zlbl"></div>
@@ -135,9 +192,10 @@
   <div id="tabs" style="clear:both;padding-top:8px">
     <button data-t="s" class="on">السور</button>
     <button data-t="j">الأجزاء</button>
-    <button data-t="m">🔖 العلامة</button>
+    <button data-t="m">🔖 العلامات</button>
     <button data-t="r">🎧 القارئ</button>
   </div>
+  <div id="find"><input id="q" type="search" placeholder="🔍 ابحث عن سورة…" autocomplete="off"><span class="pg"><input id="qp" type="number" inputmode="numeric" min="1" max="604" placeholder="صفحة"><button id="qgo">اذهب</button></span></div>
   <div id="slist"></div>
   <button id="bSound" style="display:block;margin:16px auto 0;border:2px solid var(--gold);background:transparent;color:var(--green);border-radius:12px;padding:10px 18px;font:800 16px system-ui,sans-serif"></button>
   <div class="credit">مصحف المدينة النبوية – مجمع الملك فهد لطباعة المصحف الشريف<br>رواية حفص عن عاصم – خط عثمان طه</div>
@@ -195,8 +253,9 @@ async function render(keep){
   const id = ++renderId;
   const [f, juz, sura, lines] = D.p[page-1];
   $("sura").textContent = "سورة " + D.s[sura-1][0];
-  $("juz").textContent = "· ج" + AR(juz);
+  $("juz").textContent = "الجزء " + AR(juz);
   $("pno").textContent = "صفحة " + AR(page) + (page % 2 ? " · اليمنى" : " · اليسرى");
+  $("pno2").textContent = "· صفحة " + AR(page);
   $("bind").className = page % 2 ? "r" : "l";
   store.set("qpage", page);
   history.replaceState(null, "", "#p" + page);
@@ -293,45 +352,52 @@ function go(p){ p = Math.min(604, Math.max(1, p)); if (p !== page) { page = p; r
 let theme = store.get("qtheme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
 function applyTheme(){
   document.documentElement.dataset.theme = theme;
-  $("bTheme").textContent = theme === "dark" ? "☀️" : "🌙";
+  $("bTheme").textContent = theme === "dark" ? "☀️ الوضع النهاري" : "🌙 الوضع الليلي";
   document.querySelector('meta[name=theme-color]').content = theme === "dark" ? "#111613" : "#FBF7EC";
 }
 $("bTheme").onclick = () => { theme = theme === "dark" ? "light" : "dark"; store.set("qtheme", theme); applyTheme(); };
 applyTheme();
 
-// ---- Bookmark: ONE ribbon, like a paper mushaf ----
-// Tap 🔖: put the ribbon on this page (tap again on the same page: remove it).
-// Press and hold on an ayah: put the ribbon there and color that ayah.
-// Opening the mushaf on another page shows "go to bookmark".
-let marking = false;   // kept for old code paths; no special mode any more
-function getMark(){ try { const m = (JSON.parse(store.get("qmarks", "[]")) || [])[0]; return m && m.p ? m : null; } catch(_) { return null; } }
-function marks(){ const m = getMark(); return m ? [m] : []; }
-function setMarkObj(m){ store.set("qmarks", JSON.stringify(m ? [m] : [])); }
+// ---- Bookmarks: THREE colored ribbons (red, green, blue) ----
+// Drag a ribbon from the top corner and drop it on the ayah (its number). If that color is
+// already used somewhere else, we ask first: move it here (and remove it from there)?
+// Press and hold on an ayah: choose a color from a small window (easy for everyone).
+const MC = {r: ["#C0392B", "الحمراء", "🔴"], g: ["#1E9A72", "الخضراء", "🟢"], b: ["#2F6FD6", "الزرقاء", "🔵"]};
+let marking = false;   // kept for old code paths
+function allMarks(){
+  let m = {};
+  try { m = JSON.parse(store.get("qmarks3", "null")) || {}; } catch(_) { m = {}; }
+  if (!Object.keys(m).length) {   // first time: keep the old single bookmark as the red one
+    try { const old = (JSON.parse(store.get("qmarks", "[]")) || [])[0]; if (old && old.p) m.r = old; } catch(_){}
+  }
+  return m;
+}
+function saveMarks(m){ store.set("qmarks3", JSON.stringify(m)); }
+function setMark(c, x){ const m = allMarks(); if (x) m[c] = x; else delete m[c]; saveMarks(m); }
+// The bookmark used last (for "go to bookmark" and for starting the recitation)
+function getMark(){ const m = allMarks(); return Object.values(m).filter(x => x && x.p).sort((a, b) => (b.t || 0) - (a.t || 0))[0] || null; }
+function marks(){ return Object.values(allMarks()).filter(x => x && x.p); }
+function setMarkObj(x){ if (!x) saveMarks({}); else setMark("r", x); }
 function ayaName(v){ const [s, a] = v.split(":"); return "سورة " + D.s[s-1][0] + " – الآية " + AR(a); }
 function markName(x){ return x.v ? ayaName(x.v) : "سورة " + D.s[D.p[x.p-1][2]-1][0] + " – صفحة " + AR(x.p); }
-function markBtn(){ const m = getMark(); $("bMark").classList.toggle("on", !!m && m.p === page); }
+function markBtn(){
+  const m = allMarks();
+  document.querySelectorAll("#tray .rb").forEach(el => el.classList.toggle("used", !!m[el.dataset.c]));
+}
 function showMarks(){
   const sheet = $("sheet");
-  sheet.querySelectorAll(".hl,.rib").forEach(e => e.remove());
-  const m = getMark();
-  if (m && m.p === page) {
+  sheet.querySelectorAll(".hl,.rib,.hov").forEach(e => e.remove());
+  const m = allMarks();
+  let k = 0;
+  Object.keys(MC).forEach(c => {
+    const x = m[c];
+    if (!x || x.p !== page) return;
     // Ribbon hanging over the outer edge of the page (away from the spine)
-    const side = page % 2 ? "right:-6px" : "left:-6px";
-    sheet.insertAdjacentHTML("beforeend", `<svg class="rib" style="${side}" viewBox="0 0 24 78" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0h24v78l-12-12L0 78z" fill="#C0392B"/><path d="M4 0h3v70l-3 3z M17 0h3v73l-3-3z" fill="rgba(255,255,255,.22)"/></svg>`);
-    if (m.v) {
-      const base = sheet.getBoundingClientRect();
-      sheet.querySelectorAll(".ln").forEach(ln => {
-        const ws = [...ln.querySelectorAll(`span[data-v="${m.v}"]`)];
-        if (!ws.length) return;
-        let l = Infinity, r = -Infinity;
-        ws.forEach(w => { const b = w.getBoundingClientRect(); l = Math.min(l, b.left); r = Math.max(r, b.right); });
-        const h = ln.offsetHeight, d = document.createElement("div");
-        d.className = "hl";
-        d.style.cssText = `left:${l - base.left - 3}px;width:${r - l + 6}px;top:${ln.offsetTop + h * 0.08}px;height:${h * 0.84}px`;
-        sheet.appendChild(d);
-      });
-    }
-  }
+    const off = -6 + k * 26; k++;
+    const side = page % 2 ? `right:${off}px` : `left:${off}px`;
+    sheet.insertAdjacentHTML("beforeend", `<svg class="rib" style="${side}" viewBox="0 0 24 78" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0h24v78l-12-12L0 78z" fill="${MC[c][0]}"/><path d="M4 0h3v70l-3 3z M17 0h3v73l-3-3z" fill="rgba(255,255,255,.22)"/></svg>`);
+    if (x.v) colorAyah(sheet, x.v, "hl c-" + c);
+  });
   markBtn();
   showPlaying();
 }
@@ -349,14 +415,100 @@ function colorAyah(sheet, v, cls){
     sheet.appendChild(d);
   });
 }
-function putMark(v){
-  const old = getMark();
-  if (old && old.p === page && (!v || old.v === v)) { setMarkObj(null); toast("حُذفت العلامة"); }
-  else { setMarkObj({p: page, v: v || "", t: Date.now()}); toast("🔖 " + (v ? ayaName(v) : "وُضعت العلامة على صفحة " + AR(page))); paperSound(0.35); }
-  $("gomark").hidden = true;
-  showMarks();
+function buzz(ms){ try { navigator.vibrate && navigator.vibrate(ms); } catch(_){} }
+// Small question window. btns: [[text, class, fn], ...]
+function ask(text, btns){
+  $("askT").textContent = text;
+  $("askB").innerHTML = "";
+  btns.forEach(([t, cls, fn]) => {
+    const b = document.createElement("button");
+    b.textContent = t; if (cls) b.className = cls;
+    b.onclick = () => { $("ask").hidden = true; fn && fn(); };
+    $("askB").appendChild(b);
+  });
+  $("ask").hidden = false;
 }
-$("bMark").onclick = () => putMark("");
+$("ask").addEventListener("click", e => { if (e.target === $("ask")) $("ask").hidden = true; });
+// Put bookmark c at page p, ayah v (v = "" : the whole page)
+function place(c, p, v){
+  const old = allMarks()[c];
+  const put = () => {
+    setMark(c, {p, v: v || "", t: Date.now()});
+    buzz(40); paperSound(0.35);
+    toast(MC[c][2] + " " + (v ? ayaName(v) : "صفحة " + AR(p)));
+    $("gomark").hidden = true;
+    showMarks();
+  };
+  if (old && old.p === p && (old.v || "") === (v || "")) { toast(MC[c][2] + " العلامة موجودة هنا"); return; }
+  if (old && old.p) {
+    buzz([30, 60, 30]);
+    ask("العلامة " + MC[c][1] + " موجودة الآن في:\n" + markName(old) + "\n\nهل تريد إزالتها من هناك ووضعها هنا؟",
+      [["نعم، انقلها إلى هنا", "gold", put], ["لا، اتركها مكانها", "", null]]);
+  } else put();
+}
+function removeMark(c){
+  const x = allMarks()[c]; if (!x) return;
+  ask("هل تريد إزالة العلامة " + MC[c][1] + "؟\n" + markName(x),
+    [["نعم، أزلها", "red", () => { setMark(c, null); toast("حُذفت العلامة " + MC[c][1]); showMarks(); if (!$("list").hidden) fillList(); }], ["لا", "", null]]);
+}
+// ---- Drag from the tray ----
+let drag = null;
+function dropPoint(e){ return {x: e.clientX, y: e.clientY - 46}; }   // the ribbon tip is just above the finger
+function hoverAt(pt){
+  const sheet = $("sheet");
+  sheet.querySelectorAll(".hov").forEach(x => x.remove());
+  const el = document.elementFromPoint(pt.x, pt.y);
+  const w = el && el.closest && el.closest("#sheet span[data-v]");
+  if (w) colorAyah(sheet, w.dataset.v, "hov");
+  return {w, inPage: !!(el && el.closest && el.closest("#sheet"))};
+}
+function moveGhost(e){
+  const pt = dropPoint(e), g = $("ghost");
+  g.style.transform = `translate(${pt.x - 17}px, ${pt.y - 90}px)`;
+  drag.hit = hoverAt(pt);
+}
+document.querySelectorAll("#tray .rb").forEach(rb => {
+  rb.addEventListener("pointerdown", e => {
+    e.preventDefault();
+    const c = rb.dataset.c;
+    drag = {c, x0: e.clientX, y0: e.clientY, moved: false, rb, hit: null};
+    try { rb.setPointerCapture(e.pointerId); } catch(_){}
+  });
+  rb.addEventListener("pointermove", e => {
+    if (!drag || drag.rb !== rb) return;
+    if (!drag.moved && Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) > 8) {
+      drag.moved = true; buzz(25);
+      const g = $("ghost"); g.querySelector("path").setAttribute("fill", MC[drag.c][0]); g.hidden = false;
+      rb.classList.add("drag");
+    }
+    if (drag.moved) moveGhost(e);
+  });
+  const end = e => {
+    if (!drag || drag.rb !== rb) return;
+    const d = drag; drag = null;
+    rb.classList.remove("drag"); $("ghost").hidden = true;
+    $("sheet").querySelectorAll(".hov").forEach(x => x.remove());
+    if (!d.moved) {   // just a tap
+      const x = allMarks()[d.c];
+      if (x && x.p) ask("العلامة " + MC[d.c][1] + ":\n" + markName(x), [["اذهب إليها", "gold", () => go(x.p)], ["أزل العلامة", "red", () => removeMark(d.c)], ["إغلاق", "", null]]);
+      else toast("اسحب العلامة " + MC[d.c][1] + " وضعها على رقم الآية");
+      return;
+    }
+    if (e.type === "pointercancel") return;
+    const hit = hoverAt(dropPoint(e)); $("sheet").querySelectorAll(".hov").forEach(x => x.remove());
+    if (hit.w) place(d.c, page, hit.w.dataset.v);
+    else if (hit.inPage) place(d.c, page, "");
+    else toast("ضع العلامة على الآية في الصفحة");
+  };
+  rb.addEventListener("pointerup", end);
+  rb.addEventListener("pointercancel", end);
+});
+$("bMark").onclick = () => place("r", page, "");
+function putMark(v){   // press and hold on an ayah: choose the color
+  const m = allMarks();
+  const btn = c => [MC[c][2] + " " + (m[c] && m[c].p ? "انقل العلامة " : "علامة ") + MC[c][1], "", () => place(c, page, v)];
+  ask("ضع علامة على:\n" + ayaName(v), [btn("r"), btn("g"), btn("b"), ["إلغاء", "", null]]);
+}
 // Press and hold on an ayah
 let holdT = null, hx = 0, hy = 0;
 $("view").addEventListener("touchstart", e => {
@@ -364,7 +516,7 @@ $("view").addEventListener("touchstart", e => {
   clearTimeout(holdT);
   if (!w || e.touches.length > 1) return;
   hx = e.touches[0].clientX; hy = e.touches[0].clientY;
-  holdT = setTimeout(() => { holdT = null; try { navigator.vibrate && navigator.vibrate(30); } catch(_){} if (!T || T.mode === "?") putMark(w.dataset.v); }, 600);
+  holdT = setTimeout(() => { holdT = null; buzz(30); if (!T || T.mode === "?") putMark(w.dataset.v); }, 600);
 }, {passive:true});
 $("view").addEventListener("touchmove", e => { if (holdT && Math.hypot(e.touches[0].clientX - hx, e.touches[0].clientY - hy) > 10) { clearTimeout(holdT); holdT = null; } }, {passive:true});
 $("view").addEventListener("touchend", () => { clearTimeout(holdT); holdT = null; }, {passive:true});
@@ -374,15 +526,19 @@ function offerMark(){
   const m = getMark();
   if (!m || m.p === page) return;
   const b = $("gomark");
-  b.textContent = "🔖 اذهب إلى العلامة: " + markName(m);
+  b.textContent = "🔖 أكمل من العلامة: " + markName(m);
   b.hidden = false;
   b.onclick = () => { b.hidden = true; go(m.p); };
   clearTimeout(offerMark.t); offerMark.t = setTimeout(() => b.hidden = true, 9000);
 }
 function fillMarks(el){
-  const m = getMark();
-  el.innerHTML = m ? `<div class="s" data-p="${m.p}"><span>🔖 ${markName(m)}</span><span>صفحة ${AR(m.p)} <button class="x" data-del="0">✕</button></span></div>`
-    : `<div class="empty">لا توجد علامة.<br>اضغط 🔖 في الأعلى لوضع العلامة على الصفحة،<br>أو اضغط مطولاً على الآية.</div>`;
+  const m = allMarks();
+  el.innerHTML = Object.keys(MC).map(c => {
+    const x = m[c];
+    return `<div class="bm3"><span class="dot" style="background:${MC[c][0]}"></span>` +
+      (x && x.p ? `<span class="nm" data-p="${x.p}">${markName(x)}<small>صفحة ${AR(x.p)}</small></span><button data-go="${x.p}">اذهب</button><button data-del="${c}">✕</button>`
+               : `<span class="nm">العلامة ${MC[c][1]}<small>غير مستخدمة – اسحبها من الركن إلى الآية</small></span>`) + `</div>`;
+  }).join("") + `<div class="empty">اسحب أي علامة من أعلى الصفحة وضعها على رقم الآية.<br>أو اضغط مطولاً على الآية واختر اللون.</div>`;
 }
 
 // ---- Index: surahs, parts, bookmarks ----
@@ -390,7 +546,11 @@ let tab = "s";
 function fillList(){
   document.querySelectorAll("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.t === tab));
   let html = "";
-  if (tab === "s") html = D.s.map(([n, p], i) => `<div class="s" data-p="${p}"><span>${AR(i+1)}. سورة ${n}</span><span>صفحة ${AR(p)}</span></div>`).join("");
+  const q = ($("q").value || "").trim().replace(/[أإآ]/g, "ا").replace(/ة/g, "ه");
+  const norm = t => t.replace(/[\u064B-\u0652\u0670]/g, "").replace(/[أإآٱ]/g, "ا").replace(/ة/g, "ه");
+  $("find").style.display = tab === "s" ? "" : "none";
+  if (tab === "s") html = D.s.map(([n, p], i) => [n, p, i]).filter(([n, p, i]) => !q || norm(n).includes(q) || String(i + 1) === q)
+    .map(([n, p, i]) => `<div class="s" data-p="${p}"><span>${AR(i+1)}. سورة ${n}</span><span>صفحة ${AR(p)}</span></div>`).join("") || `<div class="empty">لا توجد سورة بهذا الاسم</div>`;
   else if (tab === "j") {
     const first = {}; D.p.forEach((x, i) => { if (!first[x[1]]) first[x[1]] = i + 1; });
     html = Object.keys(first).map(j => `<div class="s" data-p="${first[j]}"><span>الجزء ${AR(j)}</span><span>صفحة ${AR(first[j])}</span></div>`).join("");
@@ -403,7 +563,9 @@ function fillList(){
 $("tabs").onclick = e => { const b = e.target.closest("button"); if (b) { tab = b.dataset.t; fillList(); } };
 $("slist").addEventListener("click", e => {
   const d = e.target.closest("[data-del]");
-  if (d) { e.stopPropagation(); setMarkObj(null); fillList(); showMarks(); return; }
+  if (d) { e.stopPropagation(); removeMark(d.dataset.del); return; }
+  const g = e.target.closest("[data-go]");
+  if (g) { go(+g.dataset.go); $("list").hidden = true; return; }
   const rc = e.target.closest("[data-r]");
   if (rc) { setReciter(rc.dataset.r); fillList(); return; }
   const r = e.target.closest(".s,.bm"); if (r) { go(+r.dataset.p); $("list").hidden = true; }
@@ -593,7 +755,27 @@ addEventListener("touchcancel", () => { if (T && T.mode === "turn") endTurn(T.t,
 addEventListener("keydown", e => { if (e.key === "ArrowLeft") turn(1); if (e.key === "ArrowRight") turn(-1); });
 $("bNext").onclick = () => turn(1);
 $("bPrev").onclick = () => turn(-1);
-$("bList").onclick = () => { fillList(); $("list").hidden = false; };
+$("bList").onclick = () => { if (tab === "m") tab = "s"; fillList(); $("list").hidden = false; };
+$("bMarks").onclick = () => { tab = "m"; fillList(); $("list").hidden = false; };
+$("q").addEventListener("input", fillList);
+const goPage = () => { const n = +$("qp").value; if (n >= 1 && n <= 604) { go(n); $("list").hidden = true; $("qp").value = ""; } else toast("اكتب رقم صفحة من ١ إلى ٦٠٤"); };
+$("qgo").onclick = goPage;
+$("qp").addEventListener("keydown", e => { if (e.key === "Enter") goPage(); });
+// Reading options: text size, night mode, keep the screen on
+$("bOpts").onclick = () => { awakeBtn(); $("opts").hidden = false; };
+$("optsX").onclick = () => $("opts").hidden = true;
+$("opts").addEventListener("click", e => { if (e.target === $("opts")) $("opts").hidden = true; });
+let awakeOn = store.get("qawake", "1") === "1", readLock = null;
+function awakeBtn(){ $("bAwake").textContent = awakeOn ? "💡 الشاشة تبقى مضاءة أثناء القراءة: نعم" : "💡 الشاشة تبقى مضاءة أثناء القراءة: لا"; }
+async function readAwake(){
+  try {
+    if (awakeOn && !document.hidden && "wakeLock" in navigator) { if (!readLock) { readLock = await navigator.wakeLock.request("screen"); readLock.addEventListener("release", () => readLock = null); } }
+    else if (readLock) { readLock.release(); readLock = null; }
+  } catch(_){}
+}
+$("bAwake").onclick = () => { awakeOn = !awakeOn; store.set("qawake", awakeOn ? "1" : "0"); awakeBtn(); readAwake(); };
+document.addEventListener("visibilitychange", readAwake);
+readAwake();
 $("close").onclick = () => $("list").hidden = true;
 function soundBtn(){ $("bSound").textContent = soundOn ? "🔊 صوت تقليب الورق: يعمل" : "🔇 صوت تقليب الورق: متوقف"; }
 $("bSound").onclick = () => { soundOn = !soundOn; store.set("qsound", soundOn ? "1" : "0"); soundBtn(); if (soundOn) paperSound(0.8); };
