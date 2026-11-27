@@ -853,9 +853,9 @@ class MainActivity : Activity() {
         findViewById<TextView>(R.id.radioTxQuran)?.text = "⭐ " + (RadioService.station(fav0)?.short ?: "")
         findViewById<TextView>(R.id.radioTxSunnah)?.text = "⭐ " + (RadioService.station(fav1)?.short ?: "")
         findViewById<TextView>(R.id.radioMore)?.text = L.t("⭐ اختر مفضلاتي", "⭐ Choose my favorites")
-        val rtl = L.lang == "ar" || L.lang == "ur"
-        findViewById<TextView>(R.id.radioPrev)?.text = if (rtl) "›" else "‹"
-        findViewById<TextView>(R.id.radioNext)?.text = if (rtl) "‹" else "›"
+        // "‹" and "›" are mirrored by the system in Arabic/Urdu, so they always point outwards
+        findViewById<TextView>(R.id.radioPrev)?.text = "‹"
+        findViewById<TextView>(R.id.radioNext)?.text = "›"
         fillRadioStrip(sel, live)
 
         // Middle button: pause while sound is wanted, play otherwise; spinner while connecting / retrying

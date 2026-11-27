@@ -1473,8 +1473,7 @@ function drawRadioBar(){
   const t = L(), sel = radioOn !== null ? radioOn : radioSel;
   bar.className = "rBar st-" + rState;
   $("rName").textContent = t[RADIOS[sel].k];
-  const rtl = lang === "ar" || lang === "ur";
-  $("rPrev").textContent = rtl ? "›" : "‹"; $("rNext").textContent = rtl ? "‹" : "›";
+  $("rPrev").textContent = "‹"; $("rNext").textContent = "›";   // mirrored by the browser in Arabic/Urdu
   const ICON = ["📖","🕌","🎙️","🌅","🌙","🌍","🌍","🌍"];
   const sk = lang + "|" + sel + "|" + rState + "|" + radioOn;
   if ($("rStrip").dataset.k !== sk) {
