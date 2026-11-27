@@ -171,6 +171,7 @@ class MainActivity : Activity() {
         // Radio card: Quran (right) and Sunnah (left) select at once; the middle button plays / pauses
         findViewById<View>(R.id.radioStQuran).setOnClickListener { radioSelect("quran") }
         findViewById<View>(R.id.radioStSunnah).setOnClickListener { radioSelect("sunnah") }
+        findViewById<View>(R.id.radioMore)?.setOnClickListener { radioDialog() }
         findViewById<View>(R.id.radioSave).setOnClickListener { saveRadioClip() }
         findViewById<View>(R.id.radioRecs).setOnClickListener { radioClipsDialog() }
         findViewById<View>(R.id.radioPlay).setOnClickListener {
@@ -799,6 +800,7 @@ class MainActivity : Activity() {
         station("sunnah", R.id.radioStSunnah, R.id.radioIcSunnah, R.id.radioTxSunnah, R.id.radioWaveSunnah, R.id.radioLiveSunnah)
         findViewById<TextView>(R.id.radioTxQuran)?.text = L.t("القرآن الكريم", "Holy Quran")
         findViewById<TextView>(R.id.radioTxSunnah)?.text = L.t("السنة النبوية", "Prophet's Sunnah")
+        findViewById<TextView>(R.id.radioMore)?.text = "📻  " + L.t("إذاعات أخرى", "More stations")
 
         // Middle button: pause while sound is wanted, play otherwise; spinner while connecting / retrying
         findViewById<android.widget.ImageView>(R.id.radioPlayIcon)

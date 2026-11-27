@@ -51,7 +51,19 @@ class RadioService : Service() {
             Station("quran", "إذاعة القرآن الكريم – السعودية", "Holy Quran Radio – Saudi Arabia",
                 listOf("https://stream.radiojar.com/0tpy1h0kxtzuv", "https://stream.radiojar.com/4wqre23fytzuv", "http://stream.radiojar.com/0tpy1h0kxtzuv")),
             Station("sunnah", "إذاعة السنة – المملكة العربية السعودية", "Sunnah Radio – Saudi Arabia",
-                listOf("https://radiosunna.radioca.st/stream", "http://radiosunna.radioca.st/stream"))
+                listOf("https://radiosunna.radioca.st/stream", "http://radiosunna.radioca.st/stream")),
+            Station("qasim", "تلاوات الشيخ عبدالمحسن القاسم", "Sheikh Abdulmohsen Al-Qasim",
+                listOf("https://backup.qurango.net/radio/abdulmohsen_alqasim", "https://qurango.net/radio/abdulmohsen_alqasim")),
+            Station("sabah", "أذكار الصباح", "Morning adhkar",
+                listOf("https://backup.qurango.net/radio/athkar_sabah", "https://qurango.net/radio/athkar_sabah")),
+            Station("masa", "أذكار المساء", "Evening adhkar",
+                listOf("https://backup.qurango.net/radio/athkar_masa", "https://qurango.net/radio/athkar_masa")),
+            Station("urdu", "ترجمة معاني القرآن بالأوردية", "Quran translation in Urdu",
+                listOf("https://backup.qurango.net/radio/translation_quran_urdu_basit", "https://qurango.net/radio/translation_quran_urdu_basit")),
+            Station("spanish", "ترجمة معاني القرآن بالإسبانية", "Quran translation in Spanish",
+                listOf("https://backup.qurango.net/radio/translation_quran_spanish_afs", "https://qurango.net/radio/translation_quran_spanish_afs")),
+            Station("french", "ترجمة معاني القرآن بالفرنسية", "Quran translation in French",
+                listOf("https://backup.qurango.net/radio/translation_quran_french", "https://qurango.net/radio/translation_quran_french"))
         )
 
         /** Station chosen (playing, loading or paused); null when the radio is closed. */

@@ -193,6 +193,13 @@ object Tr {
         "So the adhan alert comes exactly on time, with no delay, allow the app to use \"Alarms & reminders\".\n\nOn the next page: turn the switch on, then come back to the app." to arrayOf("تاکہ اذان کی اطلاع بالکل وقت پر آئے، ایپ کو \"الارم اور یاد دہانیاں\" کی اجازت دیں۔\n\nاگلے صفحے پر: بٹن آن کریں، پھر ایپ پر واپس آئیں۔", "Agar pengingat azan datang tepat waktu tanpa terlambat, izinkan aplikasi memakai \"Alarm & pengingat\".\n\nDi halaman berikutnya: nyalakan tombolnya, lalu kembali ke aplikasi.", "আজানের সতর্কতা যেন ঠিক সময়ে আসে, অ্যাপকে \"অ্যালার্ম ও রিমাইন্ডার\" ব্যবহারের অনুমতি দিন।\n\nপরের পাতায়: সুইচ চালু করুন, তারপর অ্যাপে ফিরে আসুন।", "Ezan uyarısının tam zamanında gelmesi için uygulamaya \"Alarmlar ve hatırlatıcılar\" izni verin.\n\nSonraki sayfada: düğmeyi açın, sonra uygulamaya dönün."),
         "📖 Friday: don't forget Surat Al-Kahf" to arrayOf("📖 جمعہ: سورۂ کہف پڑھنا نہ بھولیں", "📖 Jumat: jangan lupa Surah Al-Kahfi", "📖 জুমা: সূরা কাহফ পড়তে ভুলবেন না", "📖 Cuma: Kehf Suresi'ni unutmayın"),
         "🕌 Friday: go early to the mosque" to arrayOf("🕌 جمعہ: مسجد جلدی جائیں", "🕌 Jumat: datanglah lebih awal ke masjid", "🕌 জুমা: আগে আগে মসজিদে যান", "🕌 Cuma: camiye erken gidin"),
+        "Sheikh Abdulmohsen Al-Qasim" to arrayOf("شیخ عبدالمحسن القاسم کی تلاوت", "Syaikh Abdulmohsen Al-Qasim", "শাইখ আব্দুল মুহসিন আল-কাসিম", "Şeyh Abdulmuhsin el-Kasım"),
+        "Morning adhkar" to arrayOf("صبح کے اذکار", "Dzikir pagi", "সকালের জিকির", "Sabah zikirleri"),
+        "Evening adhkar" to arrayOf("شام کے اذکار", "Dzikir petang", "সন্ধ্যার জিকির", "Akşam zikirleri"),
+        "Quran translation in Urdu" to arrayOf("قرآن مجید کا اردو ترجمہ", "Terjemahan Al-Quran bahasa Urdu", "উর্দুতে কুরআনের অনুবাদ", "Kuran'ın Urduca meali"),
+        "Quran translation in Spanish" to arrayOf("قرآن مجید کا ہسپانوی ترجمہ", "Terjemahan Al-Quran bahasa Spanyol", "স্প্যানিশে কুরআনের অনুবাদ", "Kuran'ın İspanyolca meali"),
+        "Quran translation in French" to arrayOf("قرآن مجید کا فرانسیسی ترجمہ", "Terjemahan Al-Quran bahasa Prancis", "ফরাসিতে কুরআনের অনুবাদ", "Kuran'ın Fransızca meali"),
+        "More stations" to arrayOf("مزید ریڈیو", "Radio lainnya", "আরও রেডিও", "Diğer radyolar"),
         "Allow" to arrayOf("اجازت دیں", "Izinkan", "অনুমতি দিন", "İzin ver"),
     )
 }
