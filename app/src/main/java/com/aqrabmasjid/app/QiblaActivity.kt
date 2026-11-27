@@ -138,15 +138,15 @@ class QiblaActivity : ComponentActivity(), SensorEventListener {
         if (!LocationHelper.hasPermission(this)) {
             need.add(Manifest.permission.ACCESS_FINE_LOCATION); need.add(Manifest.permission.ACCESS_COARSE_LOCATION)
         }
-        if (need.isNotEmpty()) permAsk.launch(need.toTypedArray())
+        if (need.isNotEmpty()) requestPermissions(need.toTypedArray(), 7)
         else { cameraAsked = true; startCamera(); locate() }
     }
 
-    /** Location permission answer (asked again from the location message). */
-    private val locAsk = registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions()) { locate() }
-
-    /** Camera and location permission answer. */
-    private val permAsk = registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions()) {
+    // The newer permission API needs a Fragment library upgrade (release lint check), so keep the classic one
+    @Deprecated("Deprecated in Java")
+    @Suppress("DEPRECATION")
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         cameraAsked = true
         if (granted(Manifest.permission.CAMERA)) startCamera() else show(Msg.CAMERA_DENIED)
         locate()
@@ -366,7 +366,7 @@ class QiblaActivity : ComponentActivity(), SensorEventListener {
 
     private fun retryLocation() {
         if (LocationHelper.hasPermission(this)) locate()
-        else locAsk.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
+        else requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 8)
     }
 
     private fun openAppSettings() {
