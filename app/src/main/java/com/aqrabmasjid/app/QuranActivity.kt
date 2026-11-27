@@ -21,6 +21,7 @@ class QuranActivity : Activity() {
 
 
     private lateinit var web: WebView
+    private lateinit var audio: QuranAudio
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +37,13 @@ class QuranActivity : Activity() {
         web.settings.mediaPlaybackRequiresUserGesture = false
         // Reading or listening: the screen stays on
         window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        // Saved recitation (listen without internet)
+        audio = QuranAudio(this, web)
+        web.addJavascriptInterface(audio, "AqrabAudio")
         web.webViewClient = object : WebViewClient() {
+            override fun shouldInterceptRequest(view: WebView, req: WebResourceRequest): android.webkit.WebResourceResponse? =
+                QuranAudio.local(this@QuranActivity, req.url.toString()) ?: super.shouldInterceptRequest(view, req)
+
             override fun shouldOverrideUrlLoading(view: WebView, req: WebResourceRequest): Boolean {
                 // Stay on the mushaf page; any other link (like ✕) closes the screen
                 if (req.url.path?.startsWith("/quran") == true) return false
@@ -75,6 +82,7 @@ class QuranActivity : Activity() {
     }
 
     override fun onDestroy() {
+        audio.cancel()
         web.destroy()
         super.onDestroy()
     }

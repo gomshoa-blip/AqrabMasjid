@@ -74,6 +74,11 @@
   #find input{font:700 17px system-ui,sans-serif;padding:12px;border:2px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);min-width:0}
   #find #q{flex:1 1 180px}#find .pg{display:flex;gap:6px;flex:0 0 auto}#find #qp{width:96px}
   #find button{border:0;border-radius:12px;background:var(--gold);color:#fff;font:800 16px system-ui,sans-serif;padding:0 16px}
+  .dlb h2{font-size:17px!important}
+  .dlbtn{display:block;width:100%;min-height:50px;margin:8px 0;border:2px solid var(--gold);border-radius:14px;background:transparent;color:var(--green);font:800 16px system-ui,sans-serif}
+  .dlbtn.red{border-color:#C0392B;color:#C0392B}
+  .dlp{height:12px;border-radius:999px;background:var(--line);overflow:hidden;margin:10px 0 4px}.dlp div{height:100%;background:var(--gold)}
+  .dlt{color:var(--soft);font-size:14px;font-weight:700;text-align:center;margin:4px 0}
   #list .bm3{display:flex;align-items:center;gap:10px;padding:14px 10px;border-bottom:1px solid var(--line);font-size:18px}
   #list .bm3 .dot{width:16px;height:28px;flex:none;clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%)}
   #list .bm3 .nm{flex:1;min-width:0;cursor:pointer}
@@ -135,10 +140,17 @@
   /* Recitation: current ayah colored green, and a player bar above the buttons */
   :is(#sheet,.scopy) .pl{position:absolute;z-index:0;background:rgba(15,107,79,.22);border-radius:8px;pointer-events:none}
   html[data-theme=dark] :is(#sheet,.scopy) .pl{background:rgba(143,217,182,.22)}
-  #abar{position:fixed;left:8px;right:8px;bottom:calc(env(safe-area-inset-bottom) + 80px);z-index:5;display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--panel);border:2px solid var(--gold);border-radius:16px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+  #abar{position:fixed;left:8px;right:8px;bottom:calc(env(safe-area-inset-bottom) + 80px);z-index:5;display:flex;flex-direction:column;gap:6px;padding:8px 10px;background:var(--panel);border:2px solid var(--gold);border-radius:16px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
   #abar[hidden]{display:none}
   #abar button{width:46px;height:46px;flex:none;border:0;border-radius:50%;background:var(--btn);color:var(--btnt);font-size:20px;padding:0}
   #abar button.on{background:var(--gold);color:#fff}
+  #abar .arow{display:flex;align-items:center;gap:8px}
+  #abar .aseek{display:flex;align-items:center;gap:8px;direction:ltr;font:700 13px system-ui,sans-serif;color:var(--soft)}
+  #abar .aseek input{flex:1;accent-color:#C9A227;height:28px}
+  #abar .actl{display:flex;align-items:center;justify-content:space-between;direction:ltr;gap:4px}
+  #abar .actl button{width:auto;flex:1;height:54px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+  #abar .actl button b{font-size:20px;line-height:1}#abar .actl button small{font:800 12px system-ui,sans-serif}
+  #abar .actl button.big{flex:1.3;height:58px;border-radius:18px;background:var(--gold);color:#fff;font-size:26px}
   #abar #aInfo{flex:1;min-width:0;font:700 15px system-ui,sans-serif;color:var(--green);line-height:1.35}
   #abar #aInfo small{display:block;color:var(--soft);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   @media (max-height:500px){#abar{bottom:calc(env(safe-area-inset-bottom) + 58px)}}
@@ -184,10 +196,15 @@
 <button id="gomark" hidden></button>
 <div id="toast"></div>
 <div id="abar" hidden>
-  <button id="aPlay" aria-label="تشغيل">⏸</button>
-  <span id="aInfo"></span>
-  <button id="aRep" aria-label="تكرار الآية">🔁</button>
-  <button id="aStop" aria-label="إيقاف">✕</button>
+  <div class="arow"><span id="aInfo"></span><button id="aRep" aria-label="تكرار الآية">🔁</button><button id="aStop" aria-label="إيقاف">✕</button></div>
+  <div class="aseek"><span id="aT1">0:00</span><input id="aSeek" type="range" min="0" max="100" step="0.1" value="0" aria-label="تمرير"><span id="aT2">0:00</span></div>
+  <div class="actl">
+    <button id="aPrevS" aria-label="السورة السابقة"><b>⏮</b><small>سورة</small></button>
+    <button id="aPrevA" aria-label="الآية السابقة"><b>⏪</b><small>آية</small></button>
+    <button id="aPlay" class="big" aria-label="تشغيل">⏸</button>
+    <button id="aNextA" aria-label="الآية التالية"><b>⏩</b><small>آية</small></button>
+    <button id="aNextS" aria-label="السورة التالية"><b>⏭</b><small>سورة</small></button>
+  </div>
 </div>
 
 <div id="list" hidden>
@@ -570,7 +587,7 @@ function fillList(){
     html = Object.keys(first).map(j => `<div class="s" data-p="${first[j]}"><span>الجزء ${AR(j)}</span><span>صفحة ${AR(first[j])}</span></div>`).join("");
   } else if (tab === "r") {
     html = RECITERS.map(([id, n]) => `<div class="s${id === reciter ? " on" : ""}" data-r="${id}"><span>🎧 ${n}</span><span>${id === reciter ? "✓ المختار" : ""}</span></div>`).join("")
-      + `<div class="empty">اختر القارئ، ثم اضغط 🎧 في الأعلى.<br>أثناء التلاوة: اضغط على أي آية لتبدأ منها.</div>`;
+      + `<div class="empty">اختر القارئ، ثم اضغط 🎧 استماع.<br>أثناء التلاوة: اضغط على أي آية لتبدأ منها.</div>` + dlBox();
   } else { fillMarks($("slist")); return; }
   $("slist").innerHTML = html;
 }
@@ -827,7 +844,6 @@ const RECITERS = [
   ["Ibrahim_Akhdar_64kbps", "إبراهيم الأخضر"],
   ["Abdullah_Matroud_128kbps", "عبدالله المطرود"],
   ["Yaser_Salamah_128kbps", "ياسر سلامة"],
-  ["Akram_AlAlaqimy_128kbps", "أكرم العلاقمي"],
   ["Muhammad_Jibreel_128kbps", "محمد جبريل"],
   ["Mohammad_al_Tablaway_128kbps", "محمد محمود الطبلاوي"],
   ["Mustafa_Ismail_48kbps", "مصطفى إسماعيل"]
@@ -841,6 +857,89 @@ let cur = null, basmala = false, repeat = false, active = false, wake = null;
 const p3 = n => String(n).padStart(3, "0");
 const urlOf = (s, a) => `https://everyayah.com/data/${reciter}/${p3(s)}${p3(a)}.mp3`;
 const urlV = v => { const [s, a] = v.split(":"); return urlOf(+s, +a); };
+// ---- Save recitation on the phone (in the app), to listen without internet ----
+const NAT = window.AqrabAudio || null;
+let dlNow = null;   // {label, done, total}
+function kbps(){ const m = reciter.match(/(\d+)kbps/i); return m ? +m[1] : 128; }
+function fullMB(){ return Math.round(kbps() * 7.9); }   // about 18 hours of recitation
+function dlBox(){
+  if (!NAT) return `<div class="dlb"><h2>⬇️ الاستماع بدون إنترنت</h2><div class="empty">تحميل السور متاح في تطبيق «أقرب مسجد» على الجوال.</div></div>`;
+  const mb = NAT.sizeMB(reciter), busy = NAT.busy();
+  let h = `<div class="dlb"><h2>⬇️ الاستماع بدون إنترنت – ${recName()}</h2>`;
+  if (busy && dlNow) h += `<div class="dlp"><div style="width:${Math.round(dlNow.done / Math.max(1, dlNow.total) * 100)}%"></div></div><div class="dlt">${dlNow.label}: ${AR(dlNow.done)} من ${AR(dlNow.total)}</div><button class="dlbtn" data-dl="stop">⏹ إيقاف التحميل</button>`;
+  else h += `<button class="dlbtn" data-dl="cur">⬇️ تحميل السورة الحالية (${"سورة " + D.s[(cur ? +cur.split(":")[0] : D.p[page-1][2]) - 1][0]})</button>` +
+    `<button class="dlbtn" data-dl="pick">⬇️ اختر سورة للتحميل</button>` +
+    `<button class="dlbtn" data-dl="all">⬇️ تحميل القارئ كاملًا (تقريبًا ${AR(fullMB())} ميجابايت)</button>`;
+  h += `<div class="dlt">المحفوظ في الجوال لهذا القارئ: ${AR(mb)} ميجابايت</div>`;
+  if (mb > 0 && !busy) h += `<button class="dlbtn red" data-dl="del">🗑 حذف تحميلات هذا القارئ</button>`;
+  return h + `</div>`;
+}
+function startDl(surahs, label){
+  if (!NAT) return;
+  if (NAT.busy()) { toast("انتظر حتى ينتهي التحميل الحالي"); return; }
+  const ok = NAT.download(reciter, JSON.stringify(surahs.map(n => [n, AYAS[n - 1]])));
+  if (!ok) { toast("تعذر بدء التحميل"); return; }
+  dlNow = {label, done: 0, total: 1};
+  toast("⬇️ بدأ التحميل: " + label);
+  if (!$("list").hidden && tab === "r") fillList();
+}
+window.dlProgress = (done, total, failed) => { if (dlNow) { dlNow.done = done; dlNow.total = total; } if (!$("list").hidden && tab === "r") fillList(); };
+window.dlDone = (stopped, failed) => {
+  const l = dlNow ? dlNow.label : ""; dlNow = null;
+  toast(stopped ? "⏹ توقف التحميل" : failed ? "اكتمل التحميل، وتعذر " + AR(failed) + " ملف. أعد المحاولة لاحقًا" : "✅ اكتمل تحميل " + l + " – تقدر تسمعه بدون إنترنت");
+  if (!$("list").hidden && tab === "r") fillList();
+};
+function pickSurah(){
+  const rows = D.s.map(([n], i) => {
+    const c = NAT ? NAT.count(reciter, i + 1) : 0, full = c >= AYAS[i];
+    return `<div class="s" data-dls="${i + 1}"><span>${AR(i + 1)}. سورة ${n}</span><span>${full ? "✅ محفوظة" : c ? "⬇️ " + AR(c) + "/" + AR(AYAS[i]) : "⬇️ تحميل"}</span></div>`;
+  }).join("");
+  $("slist").innerHTML = `<div class="dlb"><h2>⬇️ اختر سورة للتحميل – ${recName()}</h2><button class="dlbtn" data-dl="back">→ رجوع</button></div>` + rows;
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-dl]");
+  if (b) {
+    e.stopPropagation();
+    const k = b.dataset.dl, s0 = cur ? +cur.split(":")[0] : D.p[page-1][2];
+    if (k === "cur") startDl([s0], "سورة " + D.s[s0 - 1][0]);
+    else if (k === "pick") pickSurah();
+    else if (k === "back") fillList();
+    else if (k === "stop") NAT && NAT.cancel();
+    else if (k === "all") ask("تحميل كل القرآن بصوت " + recName() + "\nالحجم تقريبًا " + AR(fullMB()) + " ميجابايت.\nيفضل على شبكة واي فاي، واترك صفحة المصحف مفتوحة حتى ينتهي.",
+      [["نعم، حمّل الكل", "gold", () => startDl(AYAS.map((_, i) => i + 1), "القرآن كاملًا")], ["لا", "", null]]);
+    else if (k === "del") ask("حذف كل التحميلات لصوت " + recName() + "؟", [["نعم، احذف", "red", () => { NAT.remove(reciter, 0); toast("🗑 حُذفت التحميلات"); fillList(); }], ["لا", "", null]]);
+    return;
+  }
+  const d = e.target.closest("[data-dls]");
+  if (d) { e.stopPropagation(); const n = +d.dataset.dls; startDl([n], "سورة " + D.s[n - 1][0]); tab = "r"; fillList(); }
+}, true);
+
+// Number of ayahs in each surah
+const AYAS = [7,286,200,176,120,165,206,75,129,109,123,111,43,52,99,128,111,110,98,135,112,78,118,64,77,227,93,88,69,60,34,30,73,54,45,83,182,88,75,85,54,53,89,59,37,35,38,29,18,45,60,49,62,55,78,96,29,22,24,13,14,11,11,18,12,12,30,52,52,44,28,28,20,56,40,31,50,40,46,42,29,19,36,25,22,17,19,26,30,20,15,21,11,8,8,19,5,8,8,11,11,8,3,9,5,4,7,3,6,3,5,4,5,6];
+let VPAGE = null;
+function pageOfV(v){
+  if (!VPAGE) { VPAGE = {}; D.p.forEach((x, i) => (x[4] || []).forEach(l => (l || []).forEach(y => { const k = y && y[1]; if (k && !VPAGE[k]) VPAGE[k] = i + 1; }))); }
+  return VPAGE[v] || page;
+}
+// Play ayah v, turning to its page first if needed
+function goAyah(v){
+  if (!v) return;
+  const p = pageOfV(v);
+  if (p !== page) { go(p); setTimeout(() => playAyah(v), 350); } else playAyah(v);
+}
+function stepAyah(d){
+  if (!cur) return null;
+  let [s, a] = cur.split(":").map(Number);
+  a += d;
+  if (a < 1) { if (s === 1) return null; s--; a = AYAS[s - 1]; }
+  if (a > AYAS[s - 1]) { if (s === 114) return null; s++; a = 1; }
+  return s + ":" + a;
+}
+function stepSurah(d){
+  const s = cur ? +cur.split(":")[0] : D.p[page-1][2];
+  const n = Math.min(114, Math.max(1, s + d));
+  return n + ":1";
+}
 // Ayahs on a page, in order
 function ayahsOn(p){
   const out = [];
@@ -913,6 +1012,25 @@ $("bPlay").onclick = () => {
 };
 $("aPlay").onclick = () => { if (player.paused) { if (!player.getAttribute("src") && cur) playAyah(cur); else player.play().catch(() => {}); } else player.pause(); };
 $("aStop").onclick = stopAudio;
+$("aPrevA").onclick = () => { const v = stepAyah(-1); if (v) goAyah(v); else toast("هذه أول آية"); };
+$("aNextA").onclick = () => { const v = stepAyah(1); if (v) goAyah(v); else toast("هذه آخر آية"); };
+$("aPrevS").onclick = () => {
+  // Inside a surah: back to its start; at its start: the surah before
+  const s = cur ? +cur.split(":")[0] : 1, a = cur ? +cur.split(":")[1] : 1;
+  goAyah(a > 1 ? s + ":1" : stepSurah(-1));
+};
+$("aNextS").onclick = () => { const v = stepSurah(1); if (cur && +cur.split(":")[0] === 114) toast("هذه آخر سورة"); else goAyah(v); };
+// Seek bar: move inside the ayah
+const mmss = t => { t = Math.max(0, Math.floor(t || 0)); return Math.floor(t / 60) + ":" + String(t % 60).padStart(2, "0"); };
+let seeking = false;
+player.addEventListener("timeupdate", () => {
+  if (seeking) return;
+  const d = player.duration || 0;
+  $("aSeek").value = d ? (player.currentTime / d * 100) : 0;
+  $("aT1").textContent = mmss(player.currentTime); $("aT2").textContent = mmss(d);
+});
+$("aSeek").addEventListener("input", () => { seeking = true; const d = player.duration || 0; $("aT1").textContent = mmss(d * $("aSeek").value / 100); });
+$("aSeek").addEventListener("change", () => { const d = player.duration || 0; if (d) player.currentTime = d * $("aSeek").value / 100; seeking = false; });
 $("aRep").onclick = () => { repeat = !repeat; toast(repeat ? "🔁 تكرار الآية: يعمل" : "تكرار الآية: متوقف"); barInfo(); };
 // While reciting: tap any ayah to start from it
 $("view").addEventListener("click", e => {
@@ -929,8 +1047,8 @@ function media(){
     navigator.mediaSession.setActionHandler("play", () => player.play());
     navigator.mediaSession.setActionHandler("pause", () => player.pause());
     navigator.mediaSession.setActionHandler("stop", stopAudio);
-    navigator.mediaSession.setActionHandler("nexttrack", () => { const n = nextAyah(cur); if (n) { if (n.p !== page) turn(1); playAyah(n.v); } });
-    navigator.mediaSession.setActionHandler("previoustrack", () => { const l = ayahsOn(page), i = l.indexOf(cur); if (i > 0) playAyah(l[i - 1]); });
+    navigator.mediaSession.setActionHandler("nexttrack", () => goAyah(stepAyah(1)));
+    navigator.mediaSession.setActionHandler("previoustrack", () => goAyah(stepAyah(-1)));
   } catch(_) {}
 }
 document.addEventListener("visibilitychange", () => { if (!document.hidden && active) keepAwake(true); });
