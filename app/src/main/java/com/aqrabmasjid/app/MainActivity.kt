@@ -256,6 +256,9 @@ class MainActivity : Activity() {
         if (resumedOnce) checkAlerts()
         handler.post(tick)
         handler.post(ringTick)
+        // Fill the radio stations list (it was only filled after a tap, so the card looked empty)
+        radioLastShown = ""
+        try { showRadioBar() } catch (_: Exception) {}
         Alerts.scheduleNext(this)
         PrayerWidgets.updateAll(this)
         // Update the location automatically when the app comes back
