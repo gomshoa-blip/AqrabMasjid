@@ -170,7 +170,7 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.tileAdhkar).setOnClickListener { startActivity(Intent(this, AdhkarActivity::class.java)) }
         findViewById<View>(R.id.tileQirat).setOnClickListener { openUrl(Config.QIRAT_URL) }
         findViewById<View>(R.id.btnQibla).setOnClickListener { startActivity(Intent(this, QiblaActivity::class.java)) }
-        findViewById<View>(R.id.tileContact).setOnClickListener { openUrl(Config.WHATSAPP_URL) }
+        findViewById<View>(R.id.tileContact).setOnClickListener { startActivity(ContactActivity.intent(this, 0)) }
         findViewById<View>(R.id.tileShare).setOnClickListener { share() }
         findViewById<View>(R.id.tileAdd).setOnClickListener { addMosqueDialog() }
         findViewById<View>(R.id.btnPrivacy).setOnClickListener { openUrl(Config.PRIVACY_URL) }
@@ -181,14 +181,8 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.radioStQuran).setOnLongClickListener { favRadioDialog(0); true }
         findViewById<View>(R.id.radioStSunnah).setOnLongClickListener { favRadioDialog(1); true }
         // Suggest a feature / report a problem: WhatsApp with a ready message
-        findViewById<View>(R.id.btnSuggest).setOnClickListener {
-            openUrl(Config.WHATSAPP_URL + "?text=" + Uri.encode(L.t("💡 اقتراح ميزة لتطبيق أقرب مسجد:\n", "💡 Feature idea for Aqrab Masjid:\n")))
-        }
-        findViewById<View>(R.id.btnBug).setOnClickListener {
-            val info = "\n\n(" + Build.MANUFACTURER + " " + Build.MODEL + " · Android " + Build.VERSION.RELEASE + " · " +
-                runCatching { packageManager.getPackageInfo(packageName, 0).versionName }.getOrDefault("") + ")"
-            openUrl(Config.WHATSAPP_URL + "?text=" + Uri.encode(L.t("⚠️ بلاغ عن خطأ في تطبيق أقرب مسجد:\n", "⚠️ Problem report for Aqrab Masjid:\n") + info))
-        }
+        findViewById<View>(R.id.btnSuggest).setOnClickListener { startActivity(ContactActivity.intent(this, 1)) }
+        findViewById<View>(R.id.btnBug).setOnClickListener { startActivity(ContactActivity.intent(this, 2)) }
         findViewById<View>(R.id.radioMore)?.setOnClickListener { favSlotDialog() }
         // Arrows: in Arabic the right arrow goes back (screen is right-to-left)
         findViewById<View>(R.id.radioPrev)?.setOnClickListener { radioStep(-1) }
@@ -236,6 +230,12 @@ class MainActivity : Activity() {
                 requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_CONNECT), 2)
         }
         swDua.setOnCheckedChangeListener(carListener)
+        // Ramadan: suhoor alert 45 minutes before Fajr
+        findViewById<Switch>(R.id.switchSuhoor)?.apply {
+            text = L.t("🌙 رمضان: تنبيه السحور قبل الفجر بـ ٤٥ دقيقة", "🌙 Ramadan: suhoor alert 45 minutes before Fajr")
+            isChecked = Prefs.suhoorOn(this@MainActivity)
+            setOnCheckedChangeListener { _, on -> Prefs.setSuhoor(this@MainActivity, on); Alerts.scheduleNext(this@MainActivity) }
+        }
         swAdhkar.setOnCheckedChangeListener(carListener)
 
         // Warning button: opens the settings page for what is missing
@@ -420,6 +420,7 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.tileQirat)?.visibility =
             if (MosqueRepo.distanceKm(lat, lng, 24.7136, 46.6753) <= 70) View.VISIBLE else View.GONE
         fillHero(lat, lng, now)
+        fillRamadan(lat, lng, now, day.ramadan)
         reminderBtn.text = PrayerReminders.ayah(st.time.prayer)
         tvMethod.text = L.t("طريقة الحساب: ${day.methodName}", "Method: ${day.methodName}")
 
@@ -555,6 +556,34 @@ class MainActivity : Activity() {
         }
     }
 
+    /**
+     * Ramadan line on the green card: before Maghrib "time left to iftar",
+     * at night "suhoor ends (Fajr) at …". Hidden outside Ramadan.
+     */
+    private fun fillRamadan(lat: Double, lng: Double, now: Long, ramadan: Boolean) {
+        val tv = findViewById<TextView>(R.id.tvRamadan) ?: return
+        // Not Ramadan and not the night before it: nothing to compute
+        if (!ramadan && !PrayerCalc.isRamadan(now + 86_400_000L)) { tv.visibility = View.GONE; return }
+        val list = PrayerCalc.upcoming(this, lat, lng, now - 60 * 60_000L)
+        val fajr = list.firstOrNull { it.prayer == Prayer.FAJR && it.adhan > now }
+        val maghrib = list.firstOrNull { it.prayer == Prayer.MAGHRIB && it.adhan > now }
+        val txt = when {
+            // Daytime of a Ramadan day: iftar is today's Maghrib (before the next Fajr)
+            maghrib != null && PrayerCalc.isRamadan(maghrib.adhan) && (fajr == null || maghrib.adhan < fajr.adhan) -> {
+                val left = maghrib.adhan - now
+                L.t("🌙 الإفطار ${PrayerCalc.fmtTime(maghrib.adhan)}", "🌙 Iftar ${PrayerCalc.fmtTime(maghrib.adhan)}") +
+                    if (left <= 6 * 3600_000L) L.t(" · باقي ${CountdownRing.clock(left)}", " · in ${CountdownRing.clock(left)}") else ""
+            }
+            // Night before a fasting day: suhoor ends at Fajr
+            fajr != null && PrayerCalc.isRamadan(fajr.adhan + 3 * 3600_000L) ->
+                L.t("🌙 ينتهي السحور ${PrayerCalc.fmtTime(fajr.adhan)} (أذان الفجر)", "🌙 Suhoor ends ${PrayerCalc.fmtTime(fajr.adhan)} (Fajr)")
+            else -> null
+        }
+        if (txt == null) { tv.visibility = View.GONE; return }
+        if (tv.text.toString() != txt) tv.text = txt
+        tv.visibility = View.VISIBLE
+    }
+
     private fun row(a: String, b: String, c: String, header: Boolean, highlight: Boolean): View {
         val l = LinearLayout(this)
         l.orientation = LinearLayout.HORIZONTAL
@@ -577,14 +606,6 @@ class MainActivity : Activity() {
         return l
     }
 
-    private fun openMaps(m: Mosque) {
-        val nav = Intent(Intent.ACTION_VIEW, Uri.parse("google.navigation:q=${m.lat},${m.lng}"))
-        try {
-            startActivity(nav)
-        } catch (_: Exception) {
-            openUrl("https://www.google.com/maps/dir/?api=1&destination=${m.lat},${m.lng}")
-        }
-    }
 
     /** Opens an app page (or a search) in Google Play. */
     private fun openStore(pkg: String?, search: String?) {
@@ -1147,23 +1168,6 @@ class MainActivity : Activity() {
         } catch (_: Exception) { toast(L.t("تعذرت المشاركة", "Could not share")) }
     }
 
-    /** Live Quran radio: pick a station; it keeps playing with the screen off. */
-    private fun radioDialog() {
-        val st = RadioService.STATIONS
-        val now = RadioService.current
-        val items = st.map { (if (it.id == now) "▶️ " else "📻 ") + it.label }.toMutableList()
-        val b = AlertDialog.Builder(this)
-            .setTitle(L.t("إذاعة", "Radio"))
-            .setItems(items.toTypedArray()) { _, i ->
-                RadioService.play(this, st[i].id)
-                toast(L.t("جاري تشغيل: ", "Playing: ") + st[i].label)
-                showRadioBar()
-            }
-            .setNegativeButton(L.t("إغلاق", "Close"), null)
-            .setNeutralButton(L.t("⭐ المفضلة", "⭐ Favorites")) { _, _ -> favSlotDialog() }
-        if (now != null) b.setPositiveButton(L.t("⏹ إيقاف", "⏹ Stop")) { _, _ -> RadioService.stop(this) }
-        b.show()
-    }
 
     /**
      * Radio as a simple list, like an old phone radio: one big row per station
@@ -1234,43 +1238,7 @@ class MainActivity : Activity() {
         "siyra" -> "🐪"; "anbiya" -> "📜"; "mukhtasar" -> "🎙️"; else -> "🌍"
     }
 
-    private var stripKey = ""
 
-    /** The strip of all stations: icon + short name; the chosen one is gold, the playing one shows 🔊. */
-    private fun fillRadioStrip(sel: String, live: Boolean) {
-        val strip = findViewById<LinearLayout>(R.id.radioStrip) ?: return
-        val key = L.lang + "|" + sel + "|" + live + "|" + RadioService.current
-        if (key == stripKey && strip.childCount > 0) return
-        stripKey = key
-        strip.removeAllViews()
-        var selView: View? = null
-        for (st in RadioService.STATIONS) {
-            val on = st.id == sel
-            val playing = live && RadioService.current == st.id
-            val chip = TextView(this).apply {
-                text = (if (playing) "🔊 " else stationIcon(st.id) + " ") + st.short
-                textSize = 15f
-                setTypeface(typeface, android.graphics.Typeface.BOLD)
-                gravity = android.view.Gravity.CENTER
-                minHeight = dp(52)
-                setPadding(dp(16), dp(8), dp(16), dp(8))
-                setBackgroundResource(if (on) R.drawable.bg_station_sel else R.drawable.bg_station_idle)
-                setTextColor(getColor(if (on) R.color.title_text else R.color.text_primary))
-                isClickable = true
-                contentDescription = st.label
-                setOnClickListener {
-                    // Tap = play this station now
-                    radioSelect(st.id)
-                    if (RadioService.current == null) { RadioService.play(this@MainActivity, st.id); showRadioBar() }
-                }
-            }
-            strip.addView(chip, LinearLayout.LayoutParams(-2, -2).also { it.marginEnd = dp(8) })
-            if (on) selView = chip
-        }
-        // Keep the chosen station visible
-        selView?.let { v -> findViewById<android.widget.HorizontalScrollView>(R.id.radioStripScroll)?.post {
-            findViewById<android.widget.HorizontalScrollView>(R.id.radioStripScroll)?.smoothScrollTo((v.left - dp(40)).coerceAtLeast(0), 0) } }
-    }
 
     /** Which favorite button to change (the two buttons on the radio card). */
     private fun favSlotDialog() {
@@ -1452,7 +1420,6 @@ class MainActivity : Activity() {
 
     private lateinit var reminderBtn: TextView
 
-    private fun tvHeroNameView(): TextView = findViewById(R.id.tvHeroName)
 
     private fun setMode(drive: Boolean) {
         getSharedPreferences("ui", MODE_PRIVATE).edit().putBoolean("drive", drive).apply()

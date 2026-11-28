@@ -231,6 +231,9 @@ object Alerts {
                 evs += Ev(it.adhan + Config.IQAMA_ALERT_AFTER_MIN * MIN, "iqama", it)
                 if (it.iqama > it.adhan + (Config.IQAMA_ALERT_AFTER_MIN + 1) * MIN) evs += Ev(it.iqama, "iqama", it)
             }
+            // Ramadan: suhoor alert 45 minutes before Fajr
+            if (it.prayer == Prayer.FAJR && Prefs.suhoorOn(app) && PrayerCalc.isRamadan(it.adhan + 3 * 3600_000L))
+                evs += Ev(it.adhan - 45 * MIN, "suhoor", it)
             // Friday: read Surat Al-Kahf (9:00 AM), and go early for the khutbah (1 hour before adhan)
             if (isJumuah(it)) {
                 val nine = java.util.Calendar.getInstance().apply {
@@ -292,6 +295,28 @@ object Alerts {
         try { NotificationManagerCompat.from(c).notify(if (kahf) 310 else 311, n) } catch (_: SecurityException) {}
     }
 
+    /** Ramadan: time for suhoor, Fajr adhan at … */
+    private fun showSuhoor(c: Context, fajr: Long) {
+        val title = L.t("🌙 السحور: أذان الفجر ${PrayerCalc.fmtTime(fajr)}", "🌙 Suhoor: Fajr adhan at ${PrayerCalc.fmtTime(fajr)}")
+        val text = L.t("«تسحّروا فإن في السحور بركة» متفق عليه", "“Eat suhoor, for in suhoor there is blessing” (Bukhari, Muslim)")
+        val open = PendingIntent.getActivity(c, 205, Intent(c, MainActivity::class.java),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val n = NotificationCompat.Builder(c, channelFor(c))
+            .setSmallIcon(R.drawable.ic_stat_mosque)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setContentTitle(title)
+            .setContentText(text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_REMINDER)
+            .setContentIntent(open)
+            .setAutoCancel(true)
+            .setWhen(fajr).setShowWhen(true).setUsesChronometer(true).setChronometerCountDown(true)
+            .setTimeoutAfter(fajr - System.currentTimeMillis() + 60_000)
+            .build()
+        try { NotificationManagerCompat.from(c).notify(312, n) } catch (_: SecurityException) {}
+    }
+
     fun show(c: Context, type: String, prayer: Prayer, adhan: Long, iqama: Long) {
         if (Build.VERSION.SDK_INT >= 33 &&
             ContextCompat.checkSelfPermission(c, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
@@ -300,6 +325,7 @@ object Alerts {
         createChannel(c)
         if (type == "pre") { showPre(c, prayer, adhan, iqama); return }
         if (type == "kahf" || type == "early") { showFriday(c, type, adhan); return }
+        if (type == "suhoor") { showSuhoor(c, adhan); return }
 
         val title = if (type == "iqama") {
             val left = ((iqama - System.currentTimeMillis()) / MIN).toInt()
@@ -308,7 +334,11 @@ object Alerts {
         // Saved mosque may be old (user moved to another city) -> show it only if still close
         val nearest = Prefs.nearest(c)?.takeIf { it.distKm <= 5.0 }
         // Phone alert: a short reminder for this prayer + iqama time
+        // Ramadan Maghrib: iftar dua first
+        val iftar = type == "adhan" && prayer == Prayer.MAGHRIB && PrayerCalc.isRamadan(adhan)
         val phoneText = if (type == "iqama") null else
+            (if (iftar) L.t("🌙 دعاء الإفطار: «ذهب الظمأ، وابتلّت العروق، وثبت الأجر إن شاء الله» رواه أبو داود\n",
+                "🌙 Iftar dua: “The thirst is gone, the veins are moist, and the reward is sure, if Allah wills” (Abu Dawud)\n") else "") +
             PrayerReminders.next(c, prayer) + L.t("\nالإقامة ${PrayerCalc.fmtTime(iqama)}", "\nIqama ${PrayerCalc.fmtTime(iqama)}")
         val text = buildString {
             if (nearest != null) append(L.t("أقرب مسجد: ${nearest.name} على بعد ${MosqueRepo.fmtDistance(nearest.distKm)}", "Nearest mosque: ${nearest.name}, ${MosqueRepo.fmtDistance(nearest.distKm)} away"))
@@ -339,7 +369,7 @@ object Alerts {
 
         // Full adhan voice: start it; if it can not play (no saved voice, phone on silent) use the soft chime
         val adhanVoice = type == "adhan" && tone(c) == Tone.ADHAN &&
-            Adhan.start(c, prayer, L.t("أذان ${pn(prayer, adhan)}", "${pn(prayer, adhan)} adhan"))
+            Adhan.start(c, prayer, L.t("أذان ${pn(prayer, adhan)}", "Adhan: ${pn(prayer, adhan)}"))
         val ch = if (type == "adhan" && tone(c) == Tone.ADHAN) (if (adhanVoice) Tone.ADHAN.channel else Tone.SOFT.channel) else channelFor(c)
         val nb = NotificationCompat.Builder(c, ch)
             .setSmallIcon(R.drawable.ic_stat_mosque)

@@ -80,6 +80,12 @@
             android:name=".AdhkarActivity"
             android:exported="false" />
 
+        <!-- Contact us form (message, phone, photo or video) -->
+        <activity
+            android:name=".ContactActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
         <!-- Nearby mosques list: pick one, then navigation starts -->
         <activity
             android:name=".MosquesActivity"

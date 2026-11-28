@@ -168,6 +168,23 @@
                         android:textSize="17sp"
                         android:textStyle="bold" />
 
+                    <!-- Ramadan: time left to iftar / end of suhoor -->
+                    <TextView
+                        android:id="@+id/tvRamadan"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/bg_date_frame"
+                        android:gravity="center"
+                        android:paddingStart="14dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="14dp"
+                        android:paddingBottom="4dp"
+                        android:textColor="#F6D46B"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
                     <LinearLayout
                         android:id="@+id/heroDate"
                         android:layout_width="wrap_content"
@@ -564,21 +581,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:orientation="vertical" />
-
-                <HorizontalScrollView
-                    android:visibility="gone"
-                    android:id="@+id/radioStripScroll"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:scrollbars="none">
-
-                    <LinearLayout
-                        android:id="@+id/radioStrip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal" />
-                </HorizontalScrollView>
 
                 <!-- Choose the two favorite stations -->
                 <TextView
@@ -1293,6 +1295,16 @@
 
         <Switch
             android:id="@+id/switchCarDua"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_surface"
+            android:padding="16dp"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp" />
+
+        <Switch
+            android:id="@+id/switchSuhoor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"

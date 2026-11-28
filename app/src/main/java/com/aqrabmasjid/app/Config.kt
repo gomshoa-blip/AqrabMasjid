@@ -7,6 +7,7 @@ object Config {
     /** Page where people suggest a missing mosque (Google Form or site form). */
     /** "Add a mosque" requests arrive by email at the app address. */
     const val FORM_URL = "https://formsubmit.co/ajax/aqrabmasjid.app@gmail.com"
+    const val CONTACT_EMAIL = "aqrabmasjid.app@gmail.com"
     const val ADD_MOSQUE_URL = "https://masjid.gomshoa.com/#add"
 
     /** Donate opens official platforms only. */

@@ -17,6 +17,10 @@ object Prefs {
             .putLong("loc_t", System.currentTimeMillis()).apply()
     }
 
+    /** Ramadan: alert before Fajr for suhoor (on by default). */
+    fun suhoorOn(c: Context): Boolean = p(c).getBoolean("suhoor_on", true)
+    fun setSuhoor(c: Context, on: Boolean) = p(c).edit().putBoolean("suhoor_on", on).apply()
+
     /** When the location was last updated (0 = not known). */
     fun locationTime(c: Context): Long = p(c).getLong("loc_t", 0L)
 
