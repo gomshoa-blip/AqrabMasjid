@@ -47,6 +47,7 @@ class RadioCarService : MediaLibraryService() {
         super.onCreate()
         L.init(this)
         val http = DefaultHttpDataSource.Factory().setAllowCrossProtocolRedirects(true)
+            .setUserAgent(RadioService.UA).setConnectTimeoutMs(15_000).setReadTimeoutMs(20_000)
         val p = ExoPlayer.Builder(this)
             .setMediaSourceFactory(DefaultMediaSourceFactory(DefaultDataSource.Factory(this, http)))
             .setAudioAttributes(

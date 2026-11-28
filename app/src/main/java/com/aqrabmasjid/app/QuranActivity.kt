@@ -40,6 +40,8 @@ class QuranActivity : Activity() {
         // Saved recitation (listen without internet)
         audio = QuranAudio(this, web)
         web.addJavascriptInterface(audio, "AqrabAudio")
+        // Tafsir text (the phone gets it, no browser limits) and sharing an ayah
+        web.addJavascriptInterface(QuranNet(this, web), "AqrabNet")
         web.webViewClient = object : WebViewClient() {
             override fun shouldInterceptRequest(view: WebView, req: WebResourceRequest): android.webkit.WebResourceResponse? =
                 QuranAudio.local(this@QuranActivity, req.url.toString()) ?: super.shouldInterceptRequest(view, req)
@@ -85,5 +87,34 @@ class QuranActivity : Activity() {
         audio.cancel()
         web.destroy()
         super.onDestroy()
+    }
+}
+
+/** Small helper for the mushaf page: get a web page's text, and share text. */
+class QuranNet(private val a: Activity, private val web: WebView) {
+    @android.webkit.JavascriptInterface
+    fun get(url: String, cb: String) {
+        // Only the tafsir site
+        if (!url.startsWith("https://quranenc.com/") || !cb.matches(Regex("[A-Za-z0-9_]+"))) return
+        Thread {
+            val txt = try {
+                val con = java.net.URL(url).openConnection() as java.net.HttpURLConnection
+                con.connectTimeout = 15_000; con.readTimeout = 20_000
+                if (con.responseCode in 200..299) con.inputStream.use { it.readBytes().toString(Charsets.UTF_8) } else ""
+            } catch (_: Exception) { "" }
+            val arg = org.json.JSONObject.quote(txt)
+            a.runOnUiThread { try { web.evaluateJavascript("window['$cb'] && window['$cb']($arg)", null) } catch (_: Exception) {} }
+        }.start()
+    }
+
+    @android.webkit.JavascriptInterface
+    fun share(text: String) {
+        a.runOnUiThread {
+            try {
+                val i = android.content.Intent(android.content.Intent.ACTION_SEND).setType("text/plain")
+                    .putExtra(android.content.Intent.EXTRA_TEXT, text)
+                a.startActivity(android.content.Intent.createChooser(i, L.t("مشاركة", "Share")))
+            } catch (_: Exception) {}
+        }
     }
 }

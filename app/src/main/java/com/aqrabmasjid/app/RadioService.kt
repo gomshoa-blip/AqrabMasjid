@@ -41,6 +41,9 @@ class RadioService : Service() {
             "urdu" -> L.t("ترجمة أوردو", "Urdu translation")
             "spanish" -> L.t("ترجمة إسبانية", "Spanish translation")
             "french" -> L.t("ترجمة فرنسية", "French translation")
+            "siyra" -> L.t("في ظلال السيرة", "Seerah")
+            "anbiya" -> L.t("قصص الأنبياء", "Prophets' stories")
+            "mukhtasar" -> L.t("المختصر في التفسير", "Tafsir Al-Mukhtasar")
             else -> label
         }
     }
@@ -58,12 +61,26 @@ class RadioService : Service() {
         const val ACTION_PLAY = "com.aqrabmasjid.app.RADIO_PLAY"
         const val ACTION_STOP = "com.aqrabmasjid.app.RADIO_STOP"
         const val ACTION_TOGGLE = "com.aqrabmasjid.app.RADIO_TOGGLE"
+        /** Some stations refuse unknown players: introduce ourselves like a normal phone browser. */
+        const val UA = "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Mobile Safari/537.36 AqrabMasjid"
+
+        /** MP3Quran live radio: main address first, then the backup addresses. */
+        private fun mq(slug: String) = listOf(
+            "https://backup.qurango.net/radio/$slug", "https://qurango.net/radio/$slug",
+            "http://backup.qurango.net/radio/$slug")
+
+        /** Error shown on the radio card (helps us know why a station did not play). */
+        @Volatile var lastError: String = ""
 
         val STATIONS = listOf(
             Station("quran", "إذاعة القرآن الكريم – السعودية", "Holy Quran Radio – Saudi Arabia",
                 listOf("https://stream.radiojar.com/0tpy1h0kxtzuv", "https://stream.radiojar.com/4wqre23fytzuv", "http://stream.radiojar.com/0tpy1h0kxtzuv")),
             Station("sunnah", "إذاعة السنة – المملكة العربية السعودية", "Sunnah Radio – Saudi Arabia",
                 listOf("https://radiosunna.radioca.st/stream", "http://radiosunna.radioca.st/stream")),
+            Station("siyra", "في ظلال السيرة النبوية (٤٠٠ حلقة)", "In the shade of the Seerah (400 episodes)",
+                mq("fi_zilal_alsiyra")),
+            Station("anbiya", "قصص الأنبياء", "Stories of the Prophets", mq("alanbiya")),
+            Station("mukhtasar", "المختصر في تفسير القرآن الكريم", "Al-Mukhtasar in Quran Tafsir", mq("mukhtasartafsir")),
             Station("qasim", "تلاوات الشيخ عبدالمحسن القاسم", "Sheikh Abdulmohsen Al-Qasim",
                 listOf("https://backup.qurango.net/radio/abdulmohsen_alqasim", "https://qurango.net/radio/abdulmohsen_alqasim")),
             Station("sabah", "أذكار الصباح", "Morning adhkar",
@@ -113,6 +130,9 @@ class RadioService : Service() {
     }
 
     private var player: ExoPlayer? = null
+    /** Second way to play (Android's own player) when ExoPlayer can not open the station. */
+    private var mp: android.media.MediaPlayer? = null
+    private var triedMp = false
     private var urlIndex = 0
     private var everPlayed = false
     private var retries = 0
@@ -146,7 +166,7 @@ class RadioService : Service() {
                 current = st.id
                 status = Status.LOADING
                 startForegroundNow(st)
-                urlIndex = 0; everPlayed = false; retries = 0; cancelRetry()
+                urlIndex = 0; everPlayed = false; retries = 0; triedMp = false; lastError = ""; cancelRetry()
                 startPlayer(st)
             }
             ACTION_TOGGLE -> {
@@ -154,7 +174,7 @@ class RadioService : Service() {
                 if (paused) {
                     status = Status.LOADING
                     startForegroundNow(st)
-                    urlIndex = 0; everPlayed = false; retries = 0; cancelRetry()
+                    urlIndex = 0; everPlayed = false; retries = 0; triedMp = false; cancelRetry()
                     startPlayer(st)
                 } else {
                     cancelRetry()
@@ -173,7 +193,11 @@ class RadioService : Service() {
         RadioRecorder.begin(st.id)
         try {
             // The stream also goes to the recorder (last 3 minutes, for "Save")
-            val http = DefaultHttpDataSource.Factory().setAllowCrossProtocolRedirects(true)
+            val http = DefaultHttpDataSource.Factory()
+                .setAllowCrossProtocolRedirects(true)
+                .setUserAgent(UA)
+                .setConnectTimeoutMs(15_000)
+                .setReadTimeoutMs(20_000)
             val base = DefaultDataSource.Factory(this, http)
             val rec = DataSource.Factory { RecordingDataSource(base.createDataSource()) }
             val p = ExoPlayer.Builder(this).setMediaSourceFactory(DefaultMediaSourceFactory(rec)).build()
@@ -218,8 +242,9 @@ class RadioService : Service() {
                         startPlayer(st)
                     } else {
                         releasePlayer()
-                        status = Status.ERROR
-                        notifyNow(st)
+                        lastError = "E" + error.errorCode
+                        if (!triedMp) { triedMp = true; startMediaPlayer(st, 0) }
+                        else { status = Status.ERROR; notifyNow(st) }
                     }
                 }
             })
@@ -231,6 +256,42 @@ class RadioService : Service() {
             status = Status.ERROR
             notifyNow(st)
         }
+    }
+
+    /** Android's own player: try each address of the station. */
+    private fun startMediaPlayer(st: Station, idx: Int) {
+        releaseMp()
+        if (idx >= st.urls.size || current != st.id) { status = Status.ERROR; notifyNow(st); return }
+        try {
+            val m = android.media.MediaPlayer()
+            m.setAudioAttributes(android.media.AudioAttributes.Builder()
+                .setUsage(android.media.AudioAttributes.USAGE_MEDIA)
+                .setContentType(android.media.AudioAttributes.CONTENT_TYPE_SPEECH).build())
+            m.setWakeMode(this, android.os.PowerManager.PARTIAL_WAKE_LOCK)
+            m.setDataSource(this, android.net.Uri.parse(st.urls[idx]), mapOf("User-Agent" to UA))
+            m.setOnPreparedListener {
+                if (mp !== m || current != st.id) return@setOnPreparedListener
+                it.start(); everPlayed = true; status = Status.PLAYING; lastError = ""; notifyNow(st)
+            }
+            m.setOnErrorListener { _, what, extra ->
+                if (mp === m) {
+                    lastError = "M$what/$extra"
+                    if (everPlayed) { releaseMp(); lost(st) } else startMediaPlayer(st, idx + 1)
+                }
+                true
+            }
+            m.setOnCompletionListener { if (mp === m && current != null) { releaseMp(); lost(st) } }
+            mp = m
+            m.prepareAsync()
+        } catch (e: Exception) {
+            lastError = "M:" + (e.javaClass.simpleName)
+            startMediaPlayer(st, idx + 1)
+        }
+    }
+
+    private fun releaseMp() {
+        try { mp?.release() } catch (_: Exception) {}
+        mp = null
     }
 
     private fun statusText(): String = when (status) {
@@ -285,6 +346,7 @@ class RadioService : Service() {
     private fun releasePlayer() {
         try { player?.release() } catch (_: Exception) {}
         player = null
+        releaseMp()
     }
 
     private fun stopAll() {

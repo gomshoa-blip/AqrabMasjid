@@ -13,8 +13,12 @@ object Prefs {
     }
 
     fun saveLocation(c: Context, lat: Double, lng: Double) {
-        p(c).edit().putString("lat", lat.toString()).putString("lng", lng.toString()).apply()
+        p(c).edit().putString("lat", lat.toString()).putString("lng", lng.toString())
+            .putLong("loc_t", System.currentTimeMillis()).apply()
     }
+
+    /** When the location was last updated (0 = not known). */
+    fun locationTime(c: Context): Long = p(c).getLong("loc_t", 0L)
 
     /** ISO country code like "SA", "EG". Null if not known yet. */
     fun country(c: Context): String? = p(c).getString("country", null)

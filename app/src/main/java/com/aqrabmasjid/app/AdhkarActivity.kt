@@ -57,6 +57,26 @@ class AdhkarActivity : Activity() {
         head.gravity = Gravity.CENTER
         root.addView(head)
 
+        // Read the adhkar on Atheer Radio's site, and their app
+        fun link(label: String, url: String, gold: Boolean) {
+            val b = TextView(this)
+            b.text = label
+            b.textSize = if (gold) 17f else 14f
+            b.setTypeface(null, Typeface.BOLD)
+            b.gravity = Gravity.CENTER
+            b.setTextColor(if (gold) 0xFF1B1606.toInt() else getColor(R.color.title_text))
+            b.setPadding(dp(12), dp(12), dp(12), dp(12))
+            b.setBackgroundResource(if (gold) R.drawable.bg_circle_gold_rect else R.drawable.bg_station_idle)
+            b.isClickable = true
+            b.setOnClickListener {
+                try { startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(url))) } catch (_: Exception) {}
+            }
+            root.addView(b, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+                .apply { topMargin = dp(10) })
+        }
+        link(L.t("📖 قراءة الأذكار", "📖 Read the adhkar"), Config.ATHEER_ADHKAR_URL, true)
+        link(L.t("📲 تطبيق إذاعة أثير: قرآن وتلاوات ومحاضرات", "📲 Atheer Radio app: Quran, recitations, lectures"), Config.ATHEER_APP_URL, false)
+
         // Tabs
         val tabRow = LinearLayout(this)
         tabRow.orientation = LinearLayout.HORIZONTAL

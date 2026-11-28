@@ -26,7 +26,7 @@ import com.aqrabmasjid.app.car.MasjidCarAppService
  */
 object Alerts {
     // New channel id: Android does not allow changing the sound of an existing channel
-    const val CHANNEL = "prayer_soft_v3"
+    const val CHANNEL = "prayer_soft_v4"
     const val PRE_CHANNEL = "prayer_pre_v1"
     private const val OLD_CHANNEL = "prayer_alerts"
     const val ACTION_SHOW_MOSQUES = "com.aqrabmasjid.app.SHOW_MOSQUES"
@@ -36,14 +36,16 @@ object Alerts {
 
     /** Alert sound the user picks. Android fixes the sound per channel, so each choice has its own channel. */
     enum class Tone(val channel: String, val ar: String, val en: String, val raw: Int?) {
-        SOFT("prayer_soft_v3", "نغمة هادئة", "Soft chime", R.raw.prayer_chime),
-        BELL("prayer_bell_v3", "جرس (نغمتين)", "Bell (two notes)", R.raw.prayer_bell),
-        BELL1("prayer_bell1_v3", "جرس واحد", "Single bell", R.raw.tone_bell1),
-        CHIME3("prayer_chime3_v3", "ثلاث نغمات صاعدة", "Three rising chimes", R.raw.tone_chime3),
-        WOOD("prayer_wood_v3", "نغمة خشبية", "Wooden tones", R.raw.tone_wood),
-        DIGITAL("prayer_digital_v3", "تنبيه رقمي", "Digital beep", R.raw.tone_digital),
-        VIBRATE("prayer_vibrate_v3", "اهتزاز فقط", "Vibrate only", null),
-        SILENT("prayer_silent_v3", "صامت (بدون صوت واهتزاز)", "Silent", null),
+        SOFT("prayer_soft_v4", "نغمة هادئة", "Soft chime", R.raw.prayer_chime),
+        BELL("prayer_bell_v4", "جرس (نغمتين)", "Bell (two notes)", R.raw.prayer_bell),
+        BELL1("prayer_bell1_v4", "جرس واحد", "Single bell", R.raw.tone_bell1),
+        CHIME3("prayer_chime3_v4", "ثلاث نغمات صاعدة", "Three rising chimes", R.raw.tone_chime3),
+        WOOD("prayer_wood_v4", "نغمة خشبية", "Wooden tones", R.raw.tone_wood),
+        DIGITAL("prayer_digital_v4", "تنبيه رقمي", "Digital beep", R.raw.tone_digital),
+        // Full adhan in a muezzin's voice (played by AdhanService; the alert itself only vibrates)
+        ADHAN("prayer_adhan_v4", "🕌 الأذان بصوت المؤذن", "🕌 Full adhan (muezzin)", null),
+        VIBRATE("prayer_vibrate_v4", "اهتزاز فقط", "Vibrate only", null),
+        SILENT("prayer_silent_v4", "صامت (بدون صوت واهتزاز)", "Silent", null),
         // A sound the user picked from the phone. Its channel id changes with each new sound.
         CUSTOM("", "نغمة من جهازي", "From my phone", null);
         val label: String get() = L.t(ar, en)
@@ -54,11 +56,14 @@ object Alerts {
         nm.deleteNotificationChannel(OLD_CHANNEL)
         // Old channels (they showed a number on the app icon)
         for (old in listOf("prayer_gong_v1", "prayer_alerts_v2", "prayer_bell_v1", "prayer_bell1_v1", "prayer_chime3_v1",
-                "prayer_wood_v1", "prayer_digital_v1", "prayer_vibrate_v1", "prayer_silent_v1"))
+                "prayer_wood_v1", "prayer_digital_v1", "prayer_vibrate_v1", "prayer_silent_v1",
+                "prayer_soft_v3", "prayer_bell_v3", "prayer_bell1_v3", "prayer_chime3_v3", "prayer_wood_v3",
+                "prayer_digital_v3", "prayer_vibrate_v3", "prayer_silent_v3"))
             nm.deleteNotificationChannel(old)
         // Quiet channel for the "adhan soon" countdown (30 minutes before adhan)
         nm.createNotificationChannel(NotificationChannel(PRE_CHANNEL, L.t("العد التنازلي للأذان", "Countdown to adhan"),
-            NotificationManager.IMPORTANCE_LOW).apply { setSound(null, null); enableVibration(false); setShowBadge(false) })
+            NotificationManager.IMPORTANCE_LOW).apply { setSound(null, null); enableVibration(false); setShowBadge(false)
+                lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC })
         val attrs = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_NOTIFICATION)
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -66,14 +71,15 @@ object Alerts {
         // The user's own sound
         val cu = customUri(c)
         var cid = sp(c).getString("custom_ch", null)
-        if (cid != null && !cid.endsWith("_nb")) {   // made before badges were turned off
+        if (cid != null && !cid.endsWith("_ls")) {   // made before badges were off / before lock screen was public
             nm.deleteNotificationChannel(cid)
-            cid = "prayer_custom_" + System.currentTimeMillis() + "_nb"
+            cid = "prayer_custom_" + System.currentTimeMillis() + "_ls"
             sp(c).edit().putString("custom_ch", cid).apply()
         }
         if (cu != null && cid != null) {
             val ch = NotificationChannel(cid, L.t("تنبيه الصلاة - نغمة من جهازي", "Prayer alerts - my sound"), NotificationManager.IMPORTANCE_HIGH)
             ch.setShowBadge(false)
+            ch.lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
             ch.setSound(cu, attrs)
             ch.enableVibration(true)
             ch.vibrationPattern = longArrayOf(0, 250, 150, 250)
@@ -85,6 +91,9 @@ object Alerts {
                 if (t == Tone.SILENT) NotificationManager.IMPORTANCE_DEFAULT else NotificationManager.IMPORTANCE_HIGH)
             ch.description = L.t("تنبيه قبل الأذان، وعند الأذان، وبعده بـ 7 دقائق، وعند الإقامة", "Alert before adhan, at adhan, 7 minutes later, and at iqama")
             ch.setShowBadge(false)
+            // Show the whole alert on the lock screen
+            ch.lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
+            ch.setBypassDnd(false)
             if (t.raw != null) ch.setSound(soundUri(c, t.raw), attrs) else ch.setSound(null, null)
             ch.enableVibration(t != Tone.SILENT)
             if (t != Tone.SILENT) ch.vibrationPattern = longArrayOf(0, 250, 150, 250)
@@ -104,15 +113,17 @@ object Alerts {
         sp(c).edit()
             .putString("custom_uri", uri.toString())
             .putString("custom_name", name)
-            .putString("custom_ch", "prayer_custom_" + System.currentTimeMillis() + "_nb")
+            .putString("custom_ch", "prayer_custom_" + System.currentTimeMillis() + "_ls")
             .putString("tone", Tone.CUSTOM.name)
             .apply()
         createChannel(c)
     }
 
     /** Channel to post the alert on, for the sound the user picked. */
-    fun channelFor(c: Context): String {
+    fun channelFor(c: Context, atAdhan: Boolean = false): String {
         val t = tone(c)
+        // Full adhan: only the adhan alert uses it; the other alerts ring the soft chime
+        if (t == Tone.ADHAN) return if (atAdhan) Tone.ADHAN.channel else Tone.SOFT.channel
         if (t == Tone.CUSTOM) {
             val id = sp(c).getString("custom_ch", null)
             if (id != null && customUri(c) != null) return id
@@ -161,6 +172,7 @@ object Alerts {
         // At the chosen time it rings once with the user's tone; opened later (app start) it stays quiet
         val n = NotificationCompat.Builder(c, if (sound) channelFor(c) else PRE_CHANNEL)
             .setSmallIcon(R.drawable.ic_stat_mosque)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setContentTitle(L.t("${pn(prayer, adhan)} · الأذان ${PrayerCalc.fmtTime(adhan)}", "${pn(prayer, adhan)} · Adhan ${PrayerCalc.fmtTime(adhan)}"))
             .setContentText(L.t("الإقامة ${PrayerCalc.fmtTime(iqama)}", "Iqama ${PrayerCalc.fmtTime(iqama)}"))
             .setSubText(L.t("متبقي للأذان", "to adhan"))
@@ -266,6 +278,7 @@ object Alerts {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         val n = NotificationCompat.Builder(c, channelFor(c))
             .setSmallIcon(R.drawable.ic_stat_mosque)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setContentTitle(title)
             .setContentText(text)
             .setStyle(NotificationCompat.BigTextStyle().bigText(text))
@@ -324,8 +337,13 @@ object Alerts {
             .addAction(R.drawable.ic_stat_mosque, L.t("خذني لأقرب مسجد", "Take me to nearest mosque"), carPending)
             .build()
 
-        val nb = NotificationCompat.Builder(c, channelFor(c))
+        // Full adhan voice: start it; if it can not play (no saved voice, phone on silent) use the soft chime
+        val adhanVoice = type == "adhan" && tone(c) == Tone.ADHAN &&
+            Adhan.start(c, prayer, L.t("أذان ${pn(prayer, adhan)}", "${pn(prayer, adhan)} adhan"))
+        val ch = if (type == "adhan" && tone(c) == Tone.ADHAN) (if (adhanVoice) Tone.ADHAN.channel else Tone.SOFT.channel) else channelFor(c)
+        val nb = NotificationCompat.Builder(c, ch)
             .setSmallIcon(R.drawable.ic_stat_mosque)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setContentTitle(title)
             .setContentText(phoneText ?: text)
             .setStyle(NotificationCompat.BigTextStyle().bigText(phoneText ?: text))

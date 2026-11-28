@@ -5,5 +5,7 @@
         <domain includeSubdomains="true">radiojar.com</domain>
         <domain includeSubdomains="true">revma.com</domain>
         <domain includeSubdomains="true">radioca.st</domain>
+        <domain includeSubdomains="true">qurango.net</domain>
+        <domain includeSubdomains="true">mp3quran.net</domain>
     </domain-config>
 </network-security-config>

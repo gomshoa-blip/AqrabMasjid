@@ -43,6 +43,10 @@ object Config {
     /** Our simple mushaf page (King Fahd Complex text and Hafs font), shown full screen in the app. */
     const val QURAN_URL = "https://masjid.gomshoa.com/quran/"
 
+    /** Adhkar to read on Atheer Radio, and the Atheer Radio app on Google Play. */
+    const val ATHEER_ADHKAR_URL = "https://www.atheer-radio.com/library/2/10904"
+    const val ATHEER_APP_URL = "https://play.google.com/store/apps/details?id=atheer.mp3quran.net"
+
     /** Recommended Quran apps. */
     const val TARTEEL_PKG = "com.mmmoussa.iqra"
     const val WAHY_PKG = "com.logicdev.quran_reader"

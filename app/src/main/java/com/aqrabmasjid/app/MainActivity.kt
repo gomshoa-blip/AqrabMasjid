@@ -422,7 +422,7 @@ class MainActivity : Activity() {
 
         // Rebuild the table only when something in it changed (saves battery)
         val city = Prefs.city(this, lat, lng)
-        val tableKey = L.lang + "|" + city + "|" + st.time.prayer + "|" + day.list.joinToString { "${p(it)}" }
+        val tableKey = L.lang + "|" + city + "|" + st.time.prayer + "|" + Prefs.locationTime(this) + "|" + day.list.joinToString { "${p(it)}" }
         if (tableKey == lastTableKey && layoutTimes.childCount > 0) return
         lastTableKey = tableKey
         layoutTimes.removeAllViews()
@@ -434,7 +434,25 @@ class MainActivity : Activity() {
             setTypeface(typeface, android.graphics.Typeface.BOLD)
             setTextColor(getColor(R.color.title_text))
             gravity = android.view.Gravity.CENTER
-            setPadding(0, 0, 0, dp(8))
+            setPadding(0, 0, 0, dp(4))
+        })
+        // Last location update + button to update now
+        layoutTimes.addView(TextView(this).apply {
+            val at = Prefs.locationTime(this@MainActivity)
+            val whenTxt = if (at <= 0) "" else {
+                val d = java.util.Date(at)
+                val today = android.text.format.DateUtils.isToday(at)
+                (if (today) L.t("اليوم", "today") else java.text.SimpleDateFormat("d MMM", L.locale).format(d)) + " " + PrayerCalc.fmtTime(at)
+            }
+            text = (if (whenTxt.isNotEmpty()) L.t("🕒 آخر تحديث للموقع: ", "🕒 Location updated: ") + whenTxt + "   " else "") +
+                L.t("📍 حدّث موقعي", "📍 Update my location")
+            textSize = 14f
+            setTextColor(getColor(R.color.text_primary))
+            gravity = android.view.Gravity.CENTER
+            setPadding(dp(8), dp(6), dp(8), dp(10))
+            isClickable = true
+            setBackgroundResource(android.R.drawable.list_selector_background)
+            setOnClickListener { refresh() }
         })
         layoutTimes.addView(row(L.t("الصلاة", "Prayer"), L.t("الأذان", "Adhan"), L.t("الإقامة", "Iqama"), header = true, highlight = false))
         for (p in day.list) {
@@ -443,6 +461,18 @@ class MainActivity : Activity() {
                     header = false, highlight = p.prayer == st.time.prayer)
             )
         }
+        // Change the iqama time (minutes after adhan) for each prayer
+        layoutTimes.addView(TextView(this).apply {
+            text = L.t("⏱️ تعديل وقت الإقامة", "⏱️ Change iqama time")
+            textSize = 16f
+            setTypeface(typeface, android.graphics.Typeface.BOLD)
+            setTextColor(getColor(R.color.title_text))
+            gravity = android.view.Gravity.CENTER
+            setPadding(dp(12), dp(12), dp(12), dp(12))
+            setBackgroundResource(R.drawable.bg_station_idle)
+            isClickable = true
+            setOnClickListener { iqamaDialog() }
+        }, LinearLayout.LayoutParams(-1, -2).also { it.topMargin = dp(10) })
     }
 
     private var lastTableKey = ""
@@ -480,8 +510,11 @@ class MainActivity : Activity() {
         setIf(tvHeroName, t.pname)
         heroNameBig = false
         setIf(tvHeroAdhan, L.t("الأذان ${PrayerCalc.fmtTime(t.adhan)}", "Adhan ${PrayerCalc.fmtTime(t.adhan)}"))
-        if (!st.isCurrent) setIf(tvIqamaLeft, if (t.isJumuah) L.t("خطبة الجمعة · بكّر بالحضور", "Jumuah khutbah · go early")
-            else L.t("الإقامة ${PrayerCalc.fmtTime(t.iqama)}", "Iqama ${PrayerCalc.fmtTime(t.iqama)}"))
+        if (!st.isCurrent) {
+            setIf(tvIqamaLeft, if (t.isJumuah) L.t("خطبة الجمعة · بكّر بالحضور", "Jumuah khutbah · go early")
+                else L.t("الإقامة ${PrayerCalc.fmtTime(t.iqama)}", "Iqama ${PrayerCalc.fmtTime(t.iqama)}"))
+            tvIqamaLeft.setTextColor(0xFFFFFFFF.toInt())
+        }
         // Big yellow counter: 60 min before adhan it counts down to the adhan,
         // after adhan it counts down to the iqama, then "أقيمت الصلاة" for 10 min
         val w = 60 * 60_000L
@@ -508,7 +541,9 @@ class MainActivity : Activity() {
             // Under the name: live time left to iqama (not for Jumuah: there is a khutbah)
             if (t.isJumuah) setIf(tvIqamaLeft, L.t("خطبة الجمعة", "Jumuah khutbah"))
             else if (toIq > 0) setIf(tvIqamaLeft, L.t("تبقى على الإقامة ${CountdownRing.clock(toIq)}", "Iqama in ${CountdownRing.clock(toIq)}"))
-            else setIf(tvIqamaLeft, L.t("أقيمت الصلاة", "Prayer has started"))
+            else setIf(tvIqamaLeft, L.t("أقيمت الصلاة · الإقامة ${PrayerCalc.fmtTime(t.iqama)}", "Prayer started · iqama ${PrayerCalc.fmtTime(t.iqama)}"))
+            // After adhan the iqama line turns yellow; after the iqama it turns red
+            tvIqamaLeft.setTextColor(if (t.isJumuah || toIq > 0) 0xFFFFD43B.toInt() else 0xFFFF6B6B.toInt())
         }
         // Measure the big name again only when the name or the ring changed
         if (nameBefore != tvHeroName.text.toString() || ringBefore != ring.visibility || tvHeroName.tag != "sized") {
@@ -645,7 +680,8 @@ class MainActivity : Activity() {
 
     private fun showTone() {
         val t = Alerts.tone(this)
-        val name = if (t == Alerts.Tone.CUSTOM) (Alerts.customName(this) ?: t.label) else t.label
+        val name = if (t == Alerts.Tone.CUSTOM) (Alerts.customName(this) ?: t.label)
+            else if (t == Alerts.Tone.ADHAN) (Adhan.voiceName(this)?.let { "🕌 $it" } ?: t.label) else t.label
         findViewById<TextView>(R.id.btnTone).text = L.t("🔔 نغمة التنبيه: ", "🔔 Alert sound: ") + name + "  ›"
         val m = Prefs.preMin(this)
         findViewById<TextView>(R.id.btnPreMin)?.text = L.t("⏰ التنبيه قبل الأذان: $m دقائق", "⏰ Alert before adhan: $m minutes") + "  ›"
@@ -686,6 +722,13 @@ class MainActivity : Activity() {
                     return@setSingleChoiceItems
                 }
                 val t = tones[i]
+                Adhan.preview(this, null)
+                if (t == Alerts.Tone.ADHAN) {
+                    playSound(null)
+                    // Pick the muezzin voice (saved on the phone)
+                    dlg.dismiss(); adhanVoiceDialog()
+                    return@setSingleChoiceItems
+                }
                 if (t.raw != null) playSound(Alerts.soundUri(this, t.raw))
                 else {
                     playSound(null)
@@ -705,6 +748,53 @@ class MainActivity : Activity() {
             .setOnDismissListener { playSound(null) }
             .create()
         dlg.show()
+    }
+
+    /** Adhan voices from our site: tap one to save it on the phone and use it at adhan time. */
+    private fun adhanVoiceDialog() {
+        toast(L.t("جاري تحميل قائمة الأذان…", "Loading the adhan list…"))
+        Thread {
+            val voices = Adhan.loadVoices()
+            runOnUiThread {
+                if (isFinishing) return@runOnUiThread
+                if (voices.isEmpty()) {
+                    AlertDialog.Builder(this)
+                        .setTitle(L.t("🕌 الأذان بصوت المؤذن", "🕌 Full adhan"))
+                        .setMessage(L.t("لا توجد أصوات أذان متاحة الآن. تأكد من الإنترنت، أو جرّب لاحقًا.\n\nيمكنك الآن اختيار ملف أذان من جوالك: «نغمة من جهازي» ← «ملف صوتي».",
+                            "No adhan voices are available now. Check the internet, or try later.\n\nYou can pick an adhan file from your phone: “Sound from my phone” → “Audio file”."))
+                        .setPositiveButton(L.t("حسنًا", "OK"), null)
+                        .show()
+                    return@runOnUiThread
+                }
+                val cur = Adhan.voiceId(this)
+                val labels = voices.map { (if (it.id == cur) "✅ " else "") + it.label }.toTypedArray()
+                AlertDialog.Builder(this)
+                    .setTitle(L.t("اختر صوت الأذان", "Choose the adhan voice"))
+                    .setItems(labels) { _, i ->
+                        val v = voices[i]
+                        toast(L.t("جاري حفظ الأذان في جوالك…", "Saving the adhan on your phone…"))
+                        Thread {
+                            val ok = Adhan.download(this, v)
+                            runOnUiThread {
+                                if (ok) {
+                                    Alerts.setTone(this, Alerts.Tone.ADHAN)
+                                    showTone()
+                                    Adhan.preview(this, Adhan.file(this, v.id))
+                                    AlertDialog.Builder(this)
+                                        .setTitle("✅ " + v.label)
+                                        .setMessage(L.t("سيُرفع الأذان كاملًا عند دخول وقت كل صلاة. لإيقافه اضغط «إيقاف الأذان» في التنبيه.\nإذا كان الجوال على الصامت أو الاهتزاز فلن يُسمع الأذان.",
+                                            "The full adhan will play at every prayer time. To stop it, tap “Stop adhan” in the alert.\nIf the phone is on silent or vibrate, the adhan will not play."))
+                                        .setPositiveButton(L.t("حسنًا", "OK")) { _, _ -> Adhan.preview(this, null) }
+                                        .setOnDismissListener { Adhan.preview(this, null) }
+                                        .show()
+                                } else toast(L.t("تعذر حفظ الأذان. تأكد من الإنترنت", "Could not save the adhan. Check the internet"))
+                            }
+                        }.start()
+                    }
+                    .setNegativeButton(L.t("إلغاء", "Cancel"), null)
+                    .show()
+            }
+        }.start()
     }
 
     /** Choose: one of the phone's sounds, or an audio file (Android 10+). */
@@ -883,7 +973,9 @@ class MainActivity : Activity() {
             }
             RadioService.Status.LOADING -> { dot?.setBackgroundResource(R.drawable.dot_amber); txt?.text = L.t("جاري الاتصال…", "Connecting…") }
             RadioService.Status.LOST -> { dot?.setBackgroundResource(R.drawable.dot_red); txt?.text = L.t("انقطع البث · نحاول من جديد", "Signal lost · retrying") }
-            RadioService.Status.ERROR -> { dot?.setBackgroundResource(R.drawable.dot_red); txt?.text = L.t("تعذر التشغيل · اضغط للمحاولة", "Could not play · tap to retry") }
+            RadioService.Status.ERROR -> { dot?.setBackgroundResource(R.drawable.dot_red)
+                val code = RadioService.lastError.let { if (it.isBlank()) "" else " ($it)" }
+                txt?.text = L.t("تعذر التشغيل · اضغط للمحاولة", "Could not play · tap to retry") + code }
             else -> { dot?.setBackgroundResource(R.drawable.dot_grey); txt?.text = L.t("جاهز للتشغيل", "Ready to play") }
         }
         findViewById<TextView>(R.id.radioName)?.text = when (st) {
@@ -1135,7 +1227,8 @@ class MainActivity : Activity() {
 
     /** Icon for each station in the strip. */
     private fun stationIcon(id: String) = when (id) {
-        "quran" -> "📖"; "sunnah" -> "🕌"; "qasim" -> "🎙️"; "sabah" -> "🌅"; "masa" -> "🌙"; else -> "🌍"
+        "quran" -> "📖"; "sunnah" -> "🕌"; "qasim" -> "🎙️"; "sabah" -> "🌅"; "masa" -> "🌙"
+        "siyra" -> "🐪"; "anbiya" -> "📜"; "mukhtasar" -> "🎙️"; else -> "🌍"
     }
 
     private var stripKey = ""
@@ -1419,8 +1512,9 @@ class MainActivity : Activity() {
             it.height = if (big) ViewGroup.LayoutParams.MATCH_PARENT else ViewGroup.LayoutParams.WRAP_CONTENT
         }
         findViewById<TextView>(R.id.btnTasbih).textSize = if (big) 24f else 21f
-        findViewById<TextView>(R.id.tvHeroAdhan).textSize = if (big) 24f else 17f
-        findViewById<TextView>(R.id.tvIqamaLeft).textSize = if (big) 24f else 17f
+        // Prayer (adhan) time is bigger than the iqama line
+        findViewById<TextView>(R.id.tvHeroAdhan).textSize = if (big) 32f else 24f
+        findViewById<TextView>(R.id.tvIqamaLeft).textSize = if (big) 20f else 15f
         for (id in listOf(R.id.btnGo, R.id.btnJami)) {
             val v = findViewById<View>(id)
             v.layoutParams = v.layoutParams.also { it.height = if (big) ViewGroup.LayoutParams.MATCH_PARENT else dp(76) }

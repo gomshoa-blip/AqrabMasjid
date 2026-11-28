@@ -105,6 +105,12 @@
             </intent-filter>
         </service>
 
+        <!-- Full adhan sound at adhan time (Stop button in the notification) -->
+        <service
+            android:name=".AdhanService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
+
         <!-- Quran radio (live stream) -->
         <service
             android:name=".RadioService"

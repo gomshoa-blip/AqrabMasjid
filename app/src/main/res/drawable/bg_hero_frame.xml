@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Islamic-style double gold frame inside the green prayer card -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:left="6dp" android:top="6dp" android:right="6dp" android:bottom="6dp">
+        <shape android:shape="rectangle">
+            <stroke android:width="1.5dp" android:color="#B3F6D46B" />
+            <corners android:radius="22dp" />
+        </shape>
+    </item>
+    <item android:left="10dp" android:top="10dp" android:right="10dp" android:bottom="10dp">
+        <shape android:shape="rectangle">
+            <stroke android:width="0.8dp" android:color="#66F6D46B" android:dashWidth="6dp" android:dashGap="4dp" />
+            <corners android:radius="18dp" />
+        </shape>
+    </item>
+</layer-list>

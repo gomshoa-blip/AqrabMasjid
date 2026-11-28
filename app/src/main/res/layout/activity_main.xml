@@ -47,6 +47,22 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/pattern_tile" />
 
+            <!-- Gold ornament frame and star on top -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_hero_frame" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:layout_marginTop="12dp"
+                android:importantForAccessibility="no"
+                android:text="۞"
+                android:textColor="#F6D46B"
+                android:textSize="26sp" />
+
             <!-- Qibla (camera) inside the card -->
             <TextView
                 android:id="@+id/btnQibla"
@@ -139,7 +155,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:textColor="#FFD43B"
-                        android:textSize="21sp"
+                        android:textSize="28sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -149,22 +165,21 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:textColor="#FFFFFF"
-                        android:textSize="19sp"
+                        android:textSize="17sp"
                         android:textStyle="bold" />
 
                     <LinearLayout
                         android:id="@+id/heroDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_date_frame"
                         android:gravity="center_horizontal"
-                        android:orientation="vertical">
-
-                        <View
-                            android:layout_width="120dp"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="12dp"
-                            android:layout_marginBottom="8dp"
-                            android:background="#40FFFFFF" />
+                        android:orientation="vertical"
+                        android:paddingStart="14dp"
+                        android:paddingTop="6dp"
+                        android:paddingEnd="14dp"
+                        android:paddingBottom="6dp">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
